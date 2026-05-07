@@ -1,0 +1,120 @@
+// ============================================================
+// AI 国学生活顾问 — Prisma Schema
+// 准生产 Demo 目标：Vercel + Neon Postgres
+// 如需继续使用本地 SQLite，请保留旧 schema 或使用单独本地分支。
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Vercel Marketplace Neon 会注入 DATABASE_URL。
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------- 用户 -----------------
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  phone     String?  @unique
+  nickname  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile  UserProfile?
+  reports  Report[]
+  payments Payment[]
+  logs     ModelLog[]
+}
+
+// ----------------- 用户档案 -----------------
+model UserProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  gender        String?  // male | female | other
+  birthDate     String?  // ISO yyyy-MM-dd
+  birthTime     String?  // HH:mm
+  birthLocation String?
+  timezone      String?  @default("Asia/Shanghai")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ----------------- 报告 -----------------
+model Report {
+  id            String   @id @default(cuid())
+  userId        String
+  reportType    String   // see ReportType in src/lib/types.ts
+  inputData     String   // JSON string
+  ruleResult    String?  // JSON string
+  aiResult      String?  // markdown
+  safetyResult  String?  // JSON string
+  isPaid        Boolean  @default(false)
+  paymentId     String?
+  status        String   @default("draft") // draft | generated | blocked | paid | failed
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments Payment[]
+  logs     ModelLog[]
+
+  @@index([userId])
+  @@index([reportType])
+  @@index([status])
+}
+
+// ----------------- 支付 -----------------
+model Payment {
+  id        String   @id @default(cuid())
+  userId    String
+  reportId  String
+  amount    Int      // 分
+  currency  String   @default("CNY")
+  provider  String   // mock | wechat | alipay
+  status    String   @default("pending") // pending | success | failed | refunded
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([reportId])
+}
+
+// ----------------- 模型调用日志 -----------------
+model ModelLog {
+  id               String   @id @default(cuid())
+  userId           String
+  reportId         String?
+  provider         String
+  model            String
+  reasoningEffort  String?
+  promptTokens     Int?
+  completionTokens Int?
+  rawRequest       String?  // JSON; 视 LOG_AI_RAW_PAYLOAD 决定是否落库
+  rawResponse      String?  // JSON
+  safetyFlags      String?  // JSON
+  createdAt        DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  report Report? @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ----------------- 内容安全规则（可热更新） -----------------
+model ContentSafetyRule {
+  id        String   @id @default(cuid())
+  ruleName  String
+  pattern   String   // 正则字符串
+  severity  String   // low | medium | high
+  action    String   // soften | rewrite | block
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html, body {
+  background: theme('colors.rice');
+  color: theme('colors.ink');
+  font-family: theme('fontFamily.sans');
+}
+
+/* 报告 markdown 风格 */
+.prose-report h1 { @apply font-serif text-2xl mt-2 mb-4 text-ink; }
+.prose-report h2 { @apply font-serif text-xl mt-6 mb-2 text-ink border-l-2 border-cinnabar pl-2; }
+.prose-report h3 { @apply font-serif text-lg mt-4 mb-2 text-ink; }
+.prose-report p  { @apply leading-7 my-2 text-ink/90; }
+.prose-report ul { @apply list-disc pl-6 my-2; }
+.prose-report ol { @apply list-decimal pl-6 my-2; }
+.prose-report li { @apply leading-7; }
+.prose-report blockquote {
+  @apply border-l-4 border-gold/60 bg-mist/40 pl-4 py-2 my-3 italic text-ink/80;
+}
+.prose-report hr { @apply my-6 border-mist; }
+.prose-report code {
+  @apply bg-mist px-1 py-0.5 rounded text-sm;
+}
+.prose-report strong { @apply font-semibold; }
+
+/* 表单基础 */
+.field-label { @apply block text-sm font-medium text-ink/80 mb-1; }
+.field-input {
+  @apply w-full rounded-md border border-mist bg-white/70 px-3 py-2 text-sm
+         focus:outline-none focus:ring-2 focus:ring-cinnabar/40 focus:border-cinnabar/40;
+}
+.field-help { @apply text-xs text-ink/50 mt-1; }
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-md bg-cinnabar text-white
+         px-4 py-2 text-sm font-medium hover:bg-cinnabar/90 disabled:opacity-50
+         disabled:cursor-not-allowed transition;
+}
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-md border border-ink/20 bg-white
+         px-4 py-2 text-sm font-medium hover:bg-mist transition;
+}
+.card {
+  @apply bg-white/80 border border-mist rounded-xl shadow-scroll p-5;
+}

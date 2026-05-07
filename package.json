@@ -1,0 +1,45 @@
+{
+  "name": "ai-guoxue-life-advisor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI 国学生活顾问 — AI 黄历 + 八字 + 关系 + 住宅风水 + 择日 参考报告平台",
+  "scripts": {
+    "dev": "next dev",
+    "build": "NEXT_PRIVATE_BUILD_WORKER=1 next build",
+    "start": "next start",
+    "postinstall": "DATABASE_URL=${DATABASE_URL:-postgresql://USER:PASSWORD@HOST/db?sslmode=require} prisma generate",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:generate": "DATABASE_URL=${DATABASE_URL:-postgresql://USER:PASSWORD@HOST/db?sslmode=require} prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "setup": "npm install && npm run db:generate && npm run db:push && npm run db:seed"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "@vercel/analytics": "^2.0.1",
+    "next": "14.2.35",
+    "openai": "4.73.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-markdown": "9.0.1",
+    "remark-gfm": "4.0.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.0",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "autoprefixer": "10.4.20",
+    "postcss": "8.4.49",
+    "prisma": "5.22.0",
+    "tailwindcss": "3.4.14",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3",
+    "vitest": "2.1.5"
+  }
+}
