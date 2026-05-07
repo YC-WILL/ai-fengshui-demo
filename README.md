@@ -42,6 +42,7 @@
 | 测试 | Vitest |
 | 支付 | mock（生产预留微信支付 / 支付宝接口） |
 | Analytics | Vercel Web Analytics |
+| 服务器部署 | Docker + Next.js standalone（用于香港 / 新加坡 / 其他云服务器镜像） |
 
 ## 4. 文件结构
 
@@ -57,7 +58,8 @@
 │   │   │   ├── reports/generate
 │   │   │   ├── reports/[id]
 │   │   │   ├── payments/mock
-│   │   │   └── me
+│   │   │   ├── me
+│   │   │   └── health
 │   │   ├── bazi / marriage / fengshui / date-selection
 │   │   ├── reports/[id]
 │   │   ├── me
@@ -73,6 +75,20 @@
 │   │   └── types.ts            # 共享类型
 │   └── data/almanac.ts         # 黄历内容池
 └── tests/                      # Vitest 单测
+```
+
+## 非 Vercel 服务器部署
+
+当前 Vercel 仍保留为海外 Demo 主线路。为了改善中国大陆访问稳定性，项目已支持 Docker + Next.js standalone 服务器部署，可部署到阿里云香港 ECS、腾讯云香港 Lighthouse / CVM、AWS、GCP、DigitalOcean、Render、Railway 等平台。
+
+- 中国大陆访问方案评估：[docs/CHINA_ACCESS_DEPLOYMENT.md](./docs/CHINA_ACCESS_DEPLOYMENT.md)
+- 通用服务器部署指南：[docs/SERVER_DEPLOYMENT.md](./docs/SERVER_DEPLOYMENT.md)
+- 生产环境变量示例：[.env.production.example](./.env.production.example)
+
+健康检查：
+
+```bash
+curl http://localhost:3000/api/health
 ```
 
 ## 5. 本地运行
