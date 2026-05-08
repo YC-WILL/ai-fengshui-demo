@@ -12,7 +12,9 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
     ports:
-      - "3000:3000"
+      # Next.js only binds to localhost on the host. Public traffic must go through Nginx.
+      # Do not expose port 3000 directly to the internet.
+      - "127.0.0.1:3000:3000"
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O- http://127.0.0.1:3000/api/health | grep '\"ok\":true' || exit 1"]
       interval: 30s
