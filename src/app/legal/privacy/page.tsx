@@ -1,4 +1,6 @@
-export const metadata = { title: "隐私政策" };
+import { brand } from "@/lib/config/brand";
+
+export const metadata = { title: `隐私政策 · ${brand.brandFullName}` };
 
 export default function PrivacyPage() {
   return (
@@ -26,7 +28,7 @@ export default function PrivacyPage() {
 
       <h2>3. 信息存储</h2>
       <p>
-        您的信息存储于本服务的数据库中。MVP 阶段使用本地 SQLite，正式上线时会迁移至加密的云数据库。
+        您的信息存储于本服务的数据库中。MVP 阶段优先使用云端 PostgreSQL 数据库，也可能在本地开发环境使用 SQLite。
         您可在"我的"页面随时<strong>永久删除您的账户与全部数据</strong>。
       </p>
 

@@ -119,10 +119,10 @@ export const REPORT_PRICING: Record<ReportType, ReportPricing | null> = {
   bazi_basic: null,
   marriage_basic: null,
   home_fengshui_basic: null,
-  bazi_deep: { amountFen: 4900, currency: "CNY", label: "八字深度报告" },
-  marriage_deep: { amountFen: 4900, currency: "CNY", label: "关系深度报告" },
-  home_fengshui_deep: { amountFen: 6900, currency: "CNY", label: "住宅深度报告" },
-  date_selection: { amountFen: 2900, currency: "CNY", label: "择日参考报告" }
+  bazi_deep: { amountFen: 3900, currency: "CNY", label: "八字深度报告" },
+  marriage_deep: { amountFen: 4900, currency: "CNY", label: "关系匹配报告" },
+  home_fengshui_deep: { amountFen: 6900, currency: "CNY", label: "住宅空间报告" },
+  date_selection: { amountFen: 2900, currency: "CNY", label: "择日深度报告" }
 };
 
 export const REPORT_TYPE_LABEL: Record<ReportType, string> = {

@@ -1,4 +1,6 @@
-export const metadata = { title: "用户协议" };
+import { brand } from "@/lib/config/brand";
+
+export const metadata = { title: `用户协议 · ${brand.brandFullName}` };
 
 export default function TermsPage() {
   return (
@@ -6,14 +8,14 @@ export default function TermsPage() {
       <h1>用户协议</h1>
 
       <p>
-        欢迎使用「AI 国学生活顾问」（以下简称"本服务"）。在使用本服务前，请您仔细阅读并理解以下条款。
+        欢迎使用「{brand.brandFullName}」（以下简称"本服务"）。{brand.brandNameZh} 是一款基于传统历法、
+        空间环境建议与心理学框架的 AI 国学生活顾问。在使用本服务前，请您仔细阅读并理解以下条款；
         当您开始使用本服务，即视为您已阅读、理解并同意接受本协议全部内容。
       </p>
 
       <h2>1. 服务定位</h2>
       <p>
-        本服务基于传统历法、民俗文化、空间环境建议与心理学框架，由 AI 自动生成生活参考报告。
-        本服务<strong>不是算命服务，也不提供改命、化煞、消灾、保平安等承诺</strong>。
+        本服务由 AI 自动生成生活参考报告。<strong>本服务不是算命服务，也不提供改命、化煞、消灾、保平安等承诺</strong>。
         所有报告内容均为生活规划与文化参考，<strong>不构成医疗、法律、投资、婚姻、职业等任何专业建议</strong>。
       </p>
 

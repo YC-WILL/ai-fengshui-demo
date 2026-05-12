@@ -4,9 +4,9 @@ import { prisma } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/auth";
 import { makePreview } from "@/lib/reports/preview";
 import {
-  REPORT_PRICING, REPORT_TYPE_LABEL,
-  type ReportType
+  REPORT_PRICING, type ReportType
 } from "@/lib/types";
+import { PAGE_TITLE, brand } from "@/lib/config/brand";
 import ReportRenderer from "@/components/ReportRenderer";
 import PaywallCard from "@/components/PaywallCard";
 
@@ -20,7 +20,7 @@ export default async function ReportPage({ params }: { params: { id: string } })
   if (!report || report.userId !== userId) notFound();
 
   const reportType = report.reportType as ReportType;
-  const label = REPORT_TYPE_LABEL[reportType];
+  const label = PAGE_TITLE[reportType];
   const pricing = REPORT_PRICING[reportType];
   const needsPayment = !!pricing && !report.isPaid;
   const blocked = report.status === "blocked";
@@ -33,6 +33,16 @@ export default async function ReportPage({ params }: { params: { id: string } })
     <div className="space-y-4">
       <header className="flex flex-wrap items-baseline gap-3">
         <h1 className="font-serif text-2xl">{label}</h1>
+        {needsPayment && (
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-gold/15 text-ink/70 border border-gold/30">
+            预览模式 · 解锁后查看完整版
+          </span>
+        )}
+        {report.isPaid && (
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-jade/15 text-jade border border-jade/30">
+            已解锁
+          </span>
+        )}
         <span className="text-xs text-ink/50">
           报告 ID：{report.id.slice(0, 8)} · 生成于 {report.createdAt.toLocaleString("zh-CN")}
         </span>
@@ -55,8 +65,9 @@ export default async function ReportPage({ params }: { params: { id: string } })
       )}
 
       <div className="text-xs text-ink/50 leading-5">
-        本报告由 AI 自动生成，仅供文化与生活规划参考；
-        不构成医疗、法律、投资、婚姻、职业等专业建议。
+        {brand.brandDisclaimerShort}
+        {" "}本报告由 AI 自动生成，已通过 {brand.brandFullName} 内容安全规则审查；
+        如涉及健康、法律、投资、婚姻等重要事项，请咨询相应专业人士。
       </div>
     </div>
   );

@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { brand } from "@/lib/config/brand";
 
 const NAV_ITEMS = [
   { href: "/", label: "今日" },
   { href: "/bazi", label: "八字参考" },
-  { href: "/marriage", label: "关系参考" },
-  { href: "/fengshui", label: "住宅参考" },
-  { href: "/date-selection", label: "择日参考" },
+  { href: "/marriage", label: "关系匹配" },
+  { href: "/fengshui", label: "住宅空间" },
+  { href: "/date-selection", label: "民俗择日" },
   { href: "/me", label: "我的" }
 ];
 
@@ -13,9 +14,19 @@ export default function Nav() {
   return (
     <header className="border-b border-mist bg-white/70 backdrop-blur sticky top-0 z-30">
       <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-6">
-        <Link href="/" className="font-serif text-lg text-ink flex items-center gap-2">
-          <span className="text-cinnabar">华</span>
-          <span>AI 国学生活顾问</span>
+        <Link href="/" className="font-serif text-lg text-ink flex items-center gap-2 group">
+          <span
+            aria-hidden
+            className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-cinnabar/10 text-cinnabar text-sm group-hover:bg-cinnabar/20 transition"
+          >
+            卦
+          </span>
+          <span className="flex flex-col leading-tight">
+            <span className="font-semibold tracking-wide">{brand.brandNameZh}</span>
+            <span className="text-[10px] uppercase tracking-[0.25em] text-ink/40">
+              {brand.brandNameEn} · {brand.taglineZh}
+            </span>
+          </span>
         </Link>
         <nav className="hidden md:flex items-center gap-1 text-sm text-ink/80">
           {NAV_ITEMS.map(item => (

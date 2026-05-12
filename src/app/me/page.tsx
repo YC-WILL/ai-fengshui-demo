@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getOrCreateUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { REPORT_TYPE_LABEL, type ReportType } from "@/lib/types";
+import { type ReportType } from "@/lib/types";
+import { PAGE_TITLE, brand } from "@/lib/config/brand";
 import MeActions from "./MeActions";
 import DeleteAccountButton from "./DeleteAccountButton";
 
@@ -23,7 +24,7 @@ export default async function MePage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="font-serif text-2xl">我的</h1>
+        <h1 className="font-serif text-2xl">我的 · {brand.brandFullName}</h1>
         <p className="text-sm text-ink/60">
           匿名 ID：{user.id.slice(0, 8)} · 邮箱：{user.email ?? "（未绑定）"}
         </p>
@@ -40,7 +41,7 @@ export default async function MePage() {
             {reports.map(r => (
               <li key={r.id} className="py-2 flex items-center gap-3">
                 <Link href={`/reports/${r.id}`} className="font-medium hover:underline">
-                  {REPORT_TYPE_LABEL[r.reportType as ReportType] ?? r.reportType}
+                  {PAGE_TITLE[r.reportType as ReportType] ?? r.reportType}
                 </Link>
                 <span className={`text-xs px-2 py-0.5 rounded ${badgeColor(r.status)}`}>
                   {statusLabel(r.status)}

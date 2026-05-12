@@ -2,7 +2,7 @@
   "name": "ai-guoxue-life-advisor",
   "version": "0.1.0",
   "private": true,
-  "description": "AI 国学生活顾问 — AI 黄历 + 八字 + 关系 + 住宅风水 + 择日 参考报告平台",
+  "description": "卦安 GuaAn · AI 国学生活顾问 — 黄历、八字、关系、住宅空间与择日参考报告平台",
   "scripts": {
     "dev": "next dev",
     "build": "NEXT_PRIVATE_BUILD_WORKER=1 next build",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
+import PageIntro from "@/components/PageIntro";
 import { REPORT_PRICING, type BaziInput, type ReportType } from "@/lib/types";
 
 export default function BaziPage() {
@@ -34,13 +35,11 @@ export default function BaziPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="font-serif text-2xl mb-1">八字参考</h1>
-        <p className="text-sm text-ink/70">
-          基于传统四柱结构，结合心理学行为框架，输出生活节奏与可执行建议。
-          本报告**不预测命运、寿命、疾病、财富数字**。
-        </p>
-      </header>
+      <PageIntro
+        title="八字参考报告"
+        subtitle="从传统命理结构出发，分析五行分布、性格倾向、生活节奏与可执行建议。深度版补充事业方向、财富习惯、年度节奏与可执行行动建议。"
+        avoid={["命运绝对预测", "寿命与疾病判断", "财富数字预测", "改命 / 消灾承诺"]}
+      />
 
       <section className="card">
         <BaziFields value={input} onChange={setInput} />

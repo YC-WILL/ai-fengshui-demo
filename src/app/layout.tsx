@@ -3,11 +3,18 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import FooterDisclaimer from "@/components/FooterDisclaimer";
+import { brand } from "@/lib/config/brand";
 
 export const metadata: Metadata = {
-  title: "AI 国学生活顾问",
-  description: "基于传统历法、民俗文化、空间环境建议与心理学框架的生活参考报告平台。所有内容仅供文化与生活规划参考。",
-  robots: { index: false } // MVP 阶段不参与搜索引擎索引
+  title: `${brand.brandFullName} · ${brand.taglineZh}`,
+  description: brand.seoDescription,
+  robots: { index: false }, // MVP 阶段不参与搜索引擎索引
+  applicationName: brand.brandFullName,
+  openGraph: {
+    title: `${brand.brandFullName} · ${brand.taglineZh}`,
+    description: brand.seoDescription,
+    type: "website"
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

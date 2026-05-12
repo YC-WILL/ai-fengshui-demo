@@ -1,4 +1,6 @@
-export const metadata = { title: "AI 内容免责声明" };
+import { brand } from "@/lib/config/brand";
+
+export const metadata = { title: `AI 内容免责声明 · ${brand.brandFullName}` };
 
 export default function DisclaimerPage() {
   return (

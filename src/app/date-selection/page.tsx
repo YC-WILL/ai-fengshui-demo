@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
+import PageIntro from "@/components/PageIntro";
 import { REPORT_PRICING, type BaziInput, type DateSelectionEvent } from "@/lib/types";
 
 const EVENT_OPTIONS: { value: DateSelectionEvent; label: string }[] = [
@@ -53,13 +54,11 @@ export default function DateSelectionPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="font-serif text-2xl mb-1">择日参考</h1>
-        <p className="text-sm text-ink/70">
-          按事项与日期区间，给出多个推荐日期、原因与现实准备清单。
-          本报告为「民俗参考」，不作为唯一决策依据。
-        </p>
-      </header>
+      <PageIntro
+        title="民俗择日参考"
+        subtitle="基于传统黄历与民俗规则，提供日期参考与现实准备清单。"
+        avoid={["绝对吉凶", "保证顺利", "唯一决策依据"]}
+      />
 
       <section className="card space-y-3">
         <div className="grid md:grid-cols-3 gap-3">

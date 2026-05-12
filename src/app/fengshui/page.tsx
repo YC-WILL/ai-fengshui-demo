@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import SubmitBar from "@/components/forms/SubmitBar";
+import PageIntro from "@/components/PageIntro";
 import { REPORT_PRICING, type FengShuiInput, type ReportType } from "@/lib/types";
 
 const ROOM_OPTIONS = ["玄关", "客厅", "餐厅", "卧室", "厨房", "卫生间", "书房", "阳台"];
@@ -62,13 +63,11 @@ export default function FengShuiPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="font-serif text-2xl mb-1">住宅参考</h1>
-        <p className="text-sm text-ink/70">
-          结合传统视角与现实空间逻辑（采光、通风、动线、整洁度、噪音、隐私、心理舒适度），
-          深度版输出 0 元 / 300 元内 / 1000 元内 三档优化方案。**不承诺"发财、转运"**。
-        </p>
-      </header>
+      <PageIntro
+        title="住宅空间参考报告"
+        subtitle="结合传统风水文化、采光、通风、动线、收纳与心理舒适度，给出空间优化建议。深度版给出 0 元 / 300 元内 / 1000 元内三档可执行优化方案。"
+        avoid={["发财布局", "转运布局", "化煞保证有效", "玄学治病"]}
+      />
 
       <section className="card space-y-3">
         <div>

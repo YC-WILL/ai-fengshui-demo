@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { brand } from "@/lib/config/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,11 @@ export async function GET() {
   return NextResponse.json(
     {
       ok: true,
-      service: "ai-fengshui-demo",
+      service: "guaan",
+      brand: brand.brandFullName,
+      tagline: brand.taglineZh,
+      ai_provider: process.env.AI_PROVIDER ?? "mock",
+      payment_provider: process.env.PAYMENT_PROVIDER ?? "mock",
       timestamp: new Date().toISOString(),
       database
     },

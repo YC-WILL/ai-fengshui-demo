@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
+import PageIntro from "@/components/PageIntro";
 import { REPORT_PRICING, type BaziInput, type ReportType } from "@/lib/types";
 
 type Stage = "dating" | "engaged" | "married" | "considering";
@@ -42,12 +43,11 @@ export default function MarriagePage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="font-serif text-2xl mb-1">关系参考</h1>
-        <p className="text-sm text-ink/70">
-          仅描述沟通风格、潜在摩擦与相处建议，**不下"必合 / 必分 / 该不该结婚"判断**。
-        </p>
-      </header>
+      <PageIntro
+        title="关系匹配报告"
+        subtitle="结合传统文化结构与心理学沟通框架，分析双方关系优势、潜在摩擦与沟通建议。深度版扩展到金钱观、家庭责任倾向、冲突处理与适合共同推进的事项。"
+        avoid={["合婚断定", "正缘 / 孽缘 / 烂桃花标签", "必合 / 必分判断", "克夫 / 克妻"]}
+      />
 
       <section className="card">
         <h3 className="font-serif text-lg mb-2">甲方信息</h3>
