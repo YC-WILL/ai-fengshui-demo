@@ -20,6 +20,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.95.2",
     "@prisma/client": "5.22.0",
     "@vercel/analytics": "^2.0.1",
     "next": "14.2.35",

@@ -16,7 +16,7 @@
 - Neon Postgres / PostgreSQL 作为 Vercel 准生产 Demo 数据库
 - SQLite 仅作为旧本地 demo 方案；如需继续使用，请保留旧 schema 或单独本地分支
 - AI Provider 抽象层
-- 默认 mock provider，不调用真实外部 AI
+- 默认 mock provider，不调用真实外部 AI；可切换到 Anthropic Claude 或 OpenAI
 - Vercel Web Analytics
 - Docker + Next.js standalone，用于香港 / 新加坡 / 其他云服务器镜像部署
 
@@ -36,7 +36,7 @@ npx prisma db seed
 
 - `src/app`：Next.js 页面、布局与 API routes。
 - `src/components`：复用 UI 组件与表单组件。
-- `src/lib/ai`：AI Provider 抽象、mock provider、OpenAI provider 与 prompt。
+- `src/lib/ai`：AI Provider 抽象、mock provider、Anthropic provider、OpenAI provider 与 prompt。
 - `src/lib/domain`：黄历、八字、关系、住宅风水、择日等规则引擎。
 - `src/lib/safety`：安全规则、风险词过滤与免责声明处理。
 - `src/lib/reports`：报告输入校验、编排流程与付费预览。
@@ -47,6 +47,7 @@ npx prisma db seed
 ## 绝对禁止
 
 - 不允许硬编码 API Key、token、密码、支付密钥或数据库连接串。
+- 不允许硬编码 Anthropic API Key、OpenAI API Key 或任何真实 provider secret。
 - 不允许提交 `.env`、`.env.local`、真实数据库文件或私密本地设置。
 - 不允许绕过 `safetyFilter` 输出报告。
 - 不允许输出“必发财、必离婚、必有灾、改命、消灾、保证有效”等高风险内容。
@@ -55,6 +56,9 @@ npx prisma db seed
 - 不允许自动 push GitHub。
 - 不允许自动购买服务器、绑定域名、修改 DNS 或申请备案。
 - 不允许删除核心功能来规避测试或构建失败。
+- AI Provider 必须保持可切换，默认必须是 `AI_PROVIDER=mock`。
+- 线上切换到 `AI_PROVIDER=anthropic` 或 `AI_PROVIDER=openai` 前，必须先完成本地测试并由产品负责人确认。
+- 真实 AI API 调用会产生成本，任何真实调用前都必须人工确认。
 
 ## 完成标准
 

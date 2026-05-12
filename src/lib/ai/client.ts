@@ -3,6 +3,7 @@
 //
 // 当前支持：
 //   - mock     ：本地伪报告，无网络
+//   - anthropic：Claude Messages API，按 ANTHROPIC_MODEL（默认 claude-sonnet-4-6）
 //   - openai   ：使用官方 SDK，按 OPENAI_MODEL（默认 gpt-5.5）
 //
 // 后续可扩展：dashscope（通义）、ernie（文心）、doubao（豆包）等
@@ -10,6 +11,7 @@
 // ============================================================
 
 import type { AIGenerateInput, AIGenerateOutput, ReportTier } from "../types";
+import { AnthropicProvider } from "./anthropic";
 import { OpenAIProvider } from "./openai";
 import { MockProvider } from "./mock";
 
@@ -24,15 +26,23 @@ export function getAIProvider(): AIProvider {
   if (cached) return cached;
   const which = (process.env.AI_PROVIDER ?? "mock").toLowerCase();
   switch (which) {
+    case "mock":
+      cached = new MockProvider();
+      break;
+    case "anthropic":
+      cached = new AnthropicProvider();
+      break;
     case "openai":
       cached = new OpenAIProvider();
       break;
-    case "mock":
     default:
-      cached = new MockProvider();
-      break;
+      throw new Error(`Unknown AI_PROVIDER "${which}". Expected one of: mock, anthropic, openai`);
   }
   return cached;
+}
+
+export function resetAIProviderForTests(): void {
+  cached = null;
 }
 
 export function reasoningEffortFor(tier: ReportTier): string {

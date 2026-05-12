@@ -36,7 +36,7 @@
 | Frontend / Backend | **Next.js 14** (App Router) + TypeScript |
 | 样式 | Tailwind CSS（自定义"墨色 / 朱砂 / 米白 / 淡金"主题） |
 | ORM / DB | Prisma + **Neon Postgres**（Vercel 准生产 Demo）；SQLite 仅保留为旧本地 demo 思路 |
-| AI Provider | OpenAI SDK（默认 `gpt-5.5`，`reasoning_effort` 可配置）+ **mock 模式** |
+| AI Provider | **mock 模式** + Anthropic Claude SDK（默认 `claude-sonnet-4-6`）+ OpenAI SDK（默认 `gpt-5.5`） |
 | 校验 | zod |
 | 渲染 | react-markdown + remark-gfm |
 | 测试 | Vitest |
@@ -127,11 +127,53 @@ OPENAI_REASONING_EFFORT_BASIC=high
 OPENAI_REASONING_EFFORT_DEEP=xhigh
 ```
 
+## 启用 Claude Sonnet 4.6
+
+默认仍是 mock，不调用真实外部模型：
+
+```bash
+AI_PROVIDER=mock
+```
+
+本地启用 Claude：
+
+```bash
+# .env.local 或 .env，不要提交到 Git
+AI_PROVIDER=anthropic
+ANTHROPIC_API_KEY=<your-anthropic-api-key>
+ANTHROPIC_MODEL=claude-sonnet-4-6
+ANTHROPIC_MAX_TOKENS=4000
+ANTHROPIC_TEMPERATURE=0.4
+
+npm run dev
+```
+
+线上启用 Claude 时，分别在 Vercel 和香港服务器环境变量中设置：
+
+```bash
+AI_PROVIDER=anthropic
+ANTHROPIC_API_KEY=<your-anthropic-api-key>
+ANTHROPIC_MODEL=claude-sonnet-4-6
+ANTHROPIC_MAX_TOKENS=4000
+ANTHROPIC_TEMPERATURE=0.4
+```
+
+重要提醒：
+
+- 不要提交 Anthropic API Key。
+- 不要在日志、README、console 输出 API Key 或完整用户输入。
+- 真实 API 调用会产生成本，线上切换前必须人工确认。
+- 真实 AI 输出仍统一经过 `safetyFilter` 和合规免责声明。
+- 面向中国大陆正式上线前，仍需做 AI 服务合规、数据跨境与内容安全评估。
+
 ## 6. 环境变量速查
 
 | 变量 | 默认 | 说明 |
 | --- | --- | --- |
-| `AI_PROVIDER` | `mock` | `mock` / `openai`，未来 `dashscope` 等 |
+| `AI_PROVIDER` | `mock` | `mock` / `anthropic` / `openai` |
+| `ANTHROPIC_MODEL` | `claude-sonnet-4-6` | Claude 模型 |
+| `ANTHROPIC_MAX_TOKENS` | `4000` | Claude 单次最大输出 token |
+| `ANTHROPIC_TEMPERATURE` | `0.4` | Claude 输出温度 |
 | `OPENAI_MODEL` | `gpt-5.5` | 主模型 |
 | `OPENAI_FALLBACK_MODEL` | `gpt-5.5` | 主模型失败时降级 |
 | `OPENAI_REASONING_EFFORT_BASIC` | `high` | 基础报告 reasoning 强度 |
@@ -176,6 +218,10 @@ SESSION_SECRET=在 Vercel 中设置强随机字符串
 暂不启用：
 
 ```bash
+ANTHROPIC_API_KEY=
+ANTHROPIC_MODEL=claude-sonnet-4-6
+ANTHROPIC_MAX_TOKENS=4000
+ANTHROPIC_TEMPERATURE=0.4
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-5.5
 OPENAI_REASONING_EFFORT=high
@@ -186,8 +232,10 @@ OPENAI_REASONING_EFFORT_DEEP=xhigh
 说明：
 
 - 当前 Demo 不接真实 OpenAI。
+- 当前 Demo 不接真实 Anthropic Claude。
 - 当前 Demo 不接真实支付。
 - 当前 Demo 使用 Neon Postgres 保存报告和订单。
+- 以后正式接 Claude 时，只改 `AI_PROVIDER=anthropic` 并添加 `ANTHROPIC_API_KEY`。
 - 以后正式接 OpenAI 时，只改 `AI_PROVIDER=openai` 并添加 `OPENAI_API_KEY`。
 - 以后正式接支付时，再添加微信支付 / 支付宝配置。
 - Vercel Marketplace Neon 会注入 `DATABASE_URL`；数据库表结构仍需执行 `npx prisma db push` 初始化。

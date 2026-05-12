@@ -2,7 +2,7 @@
 
 ## 设计目标
 
-- **可替换**：今天用 OpenAI（gpt-5.5），明天切通义/文心/豆包，业务代码 0 改动。
+- **可替换**：默认 mock；可切 Anthropic Claude（claude-sonnet-4-6）、OpenAI（gpt-5.5）或后续通义/文心/豆包，业务代码 0 改动。
 - **可降级**：主模型失败时自动 fallback 到备用模型，再失败才抛错。
 - **可观测**：每次调用写一条 `ModelLog`（token usage + safetyFlags），生产可关闭原文落库。
 - **可低成本本地跑**：默认 `AI_PROVIDER=mock`，不依赖任何外部服务。
@@ -12,6 +12,7 @@
 | 文件 | 作用 |
 | --- | --- |
 | `client.ts` | `AIProvider` 接口 + `getAIProvider()` 工厂 + `reasoningEffortFor(tier)` |
+| `anthropic.ts` | Anthropic Claude Messages API 实现；system prompt 走顶层 `system` 字段 |
 | `openai.ts` | OpenAI 实现，使用官方 SDK；超时 / 重试 / fallback / token usage |
 | `mock.ts` | Mock 实现，根据 reportType 拼接示例 markdown，本地开发使用 |
 | `prompts.ts` | 共享硬约束（13 条）+ 每类报告 system prompt + user prompt 构造器 |
@@ -27,6 +28,12 @@
    ```
 2. 在 `client.ts:getAIProvider()` 的 switch 里加分支
 3. 在 `.env` 中设 `AI_PROVIDER=dashscope` + 对应 key
+
+当前支持值：
+
+- `mock`：默认，不调用外部 API
+- `anthropic`：需要 `ANTHROPIC_API_KEY`，默认 `ANTHROPIC_MODEL=claude-sonnet-4-6`
+- `openai`：需要 `OPENAI_API_KEY`，默认 `OPENAI_MODEL=gpt-5.5`
 
 `prompts.ts` 与 `safetyFilter` **不需改动**。
 

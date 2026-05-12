@@ -82,6 +82,8 @@ export interface AIGenerateOutput {
   reasoningEffort?: string;
   promptTokens?: number;
   completionTokens?: number;
+  finishReason?: string;
+  metadata?: Record<string, unknown>;
   raw?: unknown;
   fallbackUsed?: boolean;
 }
