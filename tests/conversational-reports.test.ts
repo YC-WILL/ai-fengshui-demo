@@ -4,18 +4,19 @@ import { buildSystemPrompt, buildUserPrompt } from "@/lib/ai/prompts";
 import { matchMarriage } from "@/lib/domain/marriage";
 import { assessFengShui } from "@/lib/domain/fengshui";
 import { selectDates } from "@/lib/domain/dateSelection";
-import type { AIGenerateInput, ReportType } from "@/lib/types";
+import { REPORT_PRICING, type AIGenerateInput, type ReportType } from "@/lib/types";
 
 const provider = new MockProvider();
 const personA = { gender: "male" as const, birthDate: "1992-04-10", birthTime: "08:30", unknownTime: false };
 const personB = { gender: "female" as const, birthDate: "1994-09-22", birthTime: "16:00", unknownTime: false };
 
 async function generate(reportType: ReportType, ruleResult: unknown) {
+  const tier = reportType.includes("deep") || reportType === "date_selection" ? "deep" : "basic";
   const input: AIGenerateInput = {
     reportType,
-    tier: reportType.includes("deep") ? "deep" : "basic",
-    systemPrompt: buildSystemPrompt(reportType, reportType.includes("deep") ? "deep" : "basic"),
-    userPrompt: buildUserPrompt(reportType, reportType.includes("deep") ? "deep" : "basic", ruleResult),
+    tier,
+    systemPrompt: buildSystemPrompt(reportType, tier),
+    userPrompt: buildUserPrompt(reportType, tier, ruleResult),
     ruleResult,
     userId: "test-user"
   };
@@ -73,7 +74,24 @@ describe("conversational report tone", () => {
     );
   });
 
-  it("presents date choices without numeric scoring or fatalism", async () => {
+  it("provides a useful free date selection without a paywall", async () => {
+    const selection = selectDates({
+      event: "moving",
+      dateRangeStart: "2026-08-01",
+      dateRangeEnd: "2026-08-20",
+      user: personA
+    });
+    const text = await generate("date_selection_basic", selection);
+
+    expect(text).toMatch(/^# 这位朋友，先挑个从容的日子/);
+    expect(text).toContain("## 3. 日子之外，先准备好这三件事");
+    expect(text.match(/这位朋友/g)).toHaveLength(1);
+    expect(text).not.toContain("有几个日子不妨绕开");
+    expect(text).toContain("每天都可以使用的免费民俗参考");
+    expect(REPORT_PRICING.date_selection_basic).toBeNull();
+  });
+
+  it("keeps more date options and comparison in the paid version", async () => {
     const selection = selectDates({
       event: "moving",
       dateRangeStart: "2026-08-01",
@@ -82,17 +100,21 @@ describe("conversational report tone", () => {
     });
     const text = await generate("date_selection", selection);
 
-    expect(text).toContain("这位朋友，先说说这段日子");
-    expect(text).toContain("这位朋友，日子之外更要准备好这些事");
+    expect(text).toMatch(/^# 这位朋友，我们把这段日子细细挑一遍/);
+    expect(text).toContain("## 3. 有几个日子不妨绕开");
+    expect(text).toContain("## 4. 日子之外更要准备好这些事");
+    expect(text.match(/这位朋友/g)).toHaveLength(1);
     expect(text).not.toMatch(/评分\s*\d|不建议日期|吉凶判断/);
     expect(text).toContain("民俗参考");
     expect(text).not.toMatch(/一定|必然|注定|保证顺利/);
+    expect(REPORT_PRICING.date_selection?.amountFen).toBe(2900);
   });
 
   it("tells the real AI to keep semantic requirements inside conversational sections", () => {
-    for (const type of ["marriage_basic", "marriage_deep", "home_fengshui_basic", "home_fengshui_deep", "date_selection"] as ReportType[]) {
-      const system = buildSystemPrompt(type, type.includes("deep") ? "deep" : "basic");
-      const user = buildUserPrompt(type, type.includes("deep") ? "deep" : "basic", {});
+    for (const type of ["marriage_basic", "marriage_deep", "home_fengshui_basic", "home_fengshui_deep", "date_selection_basic", "date_selection"] as ReportType[]) {
+      const tier = type.includes("deep") || type === "date_selection" ? "deep" : "basic";
+      const system = buildSystemPrompt(type, tier);
+      const user = buildUserPrompt(type, tier, {});
       expect(system).toContain("长者");
       expect(user).toContain("不要直接使用“分析 / 判断 / 风险点 / 依据”作为标题");
     }

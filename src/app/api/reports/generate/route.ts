@@ -13,7 +13,7 @@ const requestSchema = z.object({
     "bazi_basic", "bazi_deep",
     "marriage_basic", "marriage_deep",
     "home_fengshui_basic", "home_fengshui_deep",
-    "date_selection"
+    "date_selection_basic", "date_selection"
   ]),
   tier: z.enum(["basic", "deep"]),
   input: z.unknown()
@@ -71,6 +71,7 @@ function pickInnerSchema(reportType: ReportType) {
     case "home_fengshui_basic":
     case "home_fengshui_deep":
       return fengshuiGenerateSchema;
+    case "date_selection_basic":
     case "date_selection":
       return dateSelectionGenerateSchema;
     default:

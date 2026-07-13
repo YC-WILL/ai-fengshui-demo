@@ -41,7 +41,8 @@ export const PAGE_TITLE: Record<ReportType, string> = {
   marriage_deep: "关系匹配深度报告",
   home_fengshui_basic: "一起看看这个家",
   home_fengshui_deep: "把这个家细细走一遍",
-  date_selection: "民俗择日参考"
+  date_selection_basic: "挑个从容的日子",
+  date_selection: "把这段日子细细挑一遍"
 };
 
 // 入口卡片副标题（首页 / EntryGrid）
@@ -63,6 +64,6 @@ export const ENTRY_INTRO: Record<
   },
   "date-selection": {
     title: "民俗择日",
-    desc: "基于传统黄历与民俗规则，提供日期参考与现实准备清单。"
+    desc: "每天可以先免费挑一挑合适的日子，再按需要细看更多备选与现实准备。"
   }
 };

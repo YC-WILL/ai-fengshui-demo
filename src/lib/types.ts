@@ -10,6 +10,7 @@ export type ReportType =
   | "marriage_deep"
   | "home_fengshui_basic"
   | "home_fengshui_deep"
+  | "date_selection_basic"
   | "date_selection";
 
 export type ReportStatus = "draft" | "generated" | "blocked" | "paid" | "failed";
@@ -119,6 +120,7 @@ export const REPORT_PRICING: Record<ReportType, ReportPricing | null> = {
   bazi_basic: null,
   marriage_basic: null,
   home_fengshui_basic: null,
+  date_selection_basic: null,
   bazi_deep: { amountFen: 3900, currency: "CNY", label: "八字深度报告" },
   marriage_deep: { amountFen: 4900, currency: "CNY", label: "关系匹配报告" },
   home_fengshui_deep: { amountFen: 6900, currency: "CNY", label: "住宅空间报告" },
@@ -133,5 +135,6 @@ export const REPORT_TYPE_LABEL: Record<ReportType, string> = {
   marriage_deep: "关系深度参考",
   home_fengshui_basic: "住宅基础参考",
   home_fengshui_deep: "住宅深度参考",
-  date_selection: "择日参考"
+  date_selection_basic: "择日基础参考",
+  date_selection: "择日深度参考"
 };

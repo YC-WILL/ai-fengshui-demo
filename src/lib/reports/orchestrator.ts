@@ -49,7 +49,7 @@ interface OrchestrateResult {
 
 // 深度版报告类型集合
 const DEEP_TYPES: ReportType[] = ["bazi_deep", "marriage_deep", "home_fengshui_deep"];
-// 一律付费的报告类型（基础版免费、深度版付费；择日是单独付费）
+// 一律付费的报告类型（基础版免费、深度版付费）
 const PAID_TYPES: ReportType[] = [...DEEP_TYPES, "date_selection"];
 
 export async function orchestrateReport(args: OrchestrateArgs): Promise<OrchestrateResult> {
@@ -199,6 +199,7 @@ function runRuleEngine(reportType: ReportType, input: AnyInput): unknown {
     case "home_fengshui_basic":
     case "home_fengshui_deep":
       return assessFengShui(input as FengShuiInput);
+    case "date_selection_basic":
     case "date_selection":
       return selectDates(input as DateSelectionInput);
     default:

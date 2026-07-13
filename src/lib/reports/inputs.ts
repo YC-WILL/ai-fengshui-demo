@@ -42,7 +42,7 @@ export const fengshuiGenerateSchema = z.object({
 });
 
 export const dateSelectionGenerateSchema = z.object({
-  tier: z.literal("basic"),
+  tier: z.enum(["basic", "deep"]),
   input: z.object({
     event: z.enum(["wedding", "moving", "opening", "signing", "travel", "renovation_start"]),
     dateRangeStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),

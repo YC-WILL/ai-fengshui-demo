@@ -42,8 +42,10 @@ function mockMarkdown(input: AIGenerateInput): string {
       return mockFengshuiBasic(r);
     case "home_fengshui_deep":
       return mockFengshuiDeep(r);
+    case "date_selection_basic":
+      return mockDateSelection(r, false);
     case "date_selection":
-      return mockDateSelection(r);
+      return mockDateSelection(r, true);
     case "daily_almanac":
       return mockAlmanacNote(r);
     default:
@@ -246,7 +248,7 @@ ${mid || "- 暂无具体建议"}
 }
 
 // ----------------- 择日 -----------------
-function mockDateSelection(r: Record<string, unknown>): string {
+function mockDateSelection(r: Record<string, unknown>, deep: boolean): string {
   const recommended = (r["recommended"] as Array<{ date: string; ganzhiDay: string; zodiacOfDay: string; score: number; reasons: string[] }>) ?? [];
   const notRec = (r["notRecommended"] as Array<{ date: string; cautions: string[] }>) ?? [];
   const prep = ((r["preparationChecklist"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
@@ -260,27 +262,47 @@ function mockDateSelection(r: Record<string, unknown>): string {
     .replace("当日地支与本人年支相冲，传统视角下不宜大事，可视情况微调或避开。", "传统上认为当天与你的节奏稍有冲突，可以优先看看其他日期。")
     .replace("周末签约需确认对方主体在岗，避免拖延。", "若在周末签约，记得先确认相关人员是否在岗。")
     .replace("周末时段宾客出席率更高，现实层面更合适。", "周末通常更方便亲友到场，现实安排也更从容。");
-  return `
-# 民俗择日参考报告
+  const selectedDates = deep ? recommended : recommended.slice(0, 2);
+  const selectedPrep = deep
+    ? prep
+    : ((r["preparationChecklist"] as string[]) ?? []).slice(0, 3).map(s => `- ${s}`).join("\n");
+  const title = deep
+    ? "# 这位朋友，我们把这段日子细细挑一遍"
+    : "# 这位朋友，先挑个从容的日子";
+  const common = `
+${title}
 
-## 1. 这位朋友，先说说这段日子
+## 1. 先说说这段日子
 以下为民俗参考，不作为这件事的唯一决策依据。${firstDate ? `这段时间里，${firstDate}可以先放进备选；` : "这段时间暂时没有特别突出的选择，"}日子只是帮你安排得更从容，真正重要的仍是人、事和准备是否妥当。
 
-## 2. 这位朋友，这是为你挑出的几个日子
-${recommended.map(c => `- **${c.date}**（${c.ganzhiDay}日 / ${c.zodiacOfDay}日）：${c.reasons.map(sayNaturally).join("；") || "整体节奏较平稳，可以结合现实安排考虑。"}`).join("\n") || "- 当前区间没有特别突出的选择，可以放宽日期，或优先按人员与现实条件安排。"}
+## 2. 这是为你挑出的几个日子
+${selectedDates.map(c => `- **${c.date}**（${c.ganzhiDay}日 / ${c.zodiacOfDay}日）：${c.reasons.map(sayNaturally).join("；") || "整体节奏较平稳，可以结合现实安排考虑。"}`).join("\n") || "- 当前区间没有特别突出的选择，可以放宽日期，或优先按人员与现实条件安排。"}
+`.trim();
 
-## 3. 这位朋友，有几个日子不妨绕开
+  if (!deep) {
+    return `${common}
+
+## 3. 日子之外，先准备好这三件事
+${selectedPrep || "- 确认同行或参与人员的时间\n- 留意天气与交通\n- 给临时变化留一点余地"}
+
+## 4. 最后说一句
+> 这是每天都可以使用的免费民俗参考，不作为这件事的唯一决策依据。准备周全、彼此方便，往往比追求一个“完美日期”更重要。`;
+  }
+
+  return `${common}
+
+## 3. 有几个日子不妨绕开
 ${notRec.map(c => `- ${c.date}：${c.cautions.map(sayNaturally).join("；") || "当天安排可能不够从容，可以优先看看其他日期。"}`).join("\n") || "- 暂时没有特别需要绕开的日期，按现实安排选择即可。"}
 
-## 4. 这位朋友，日子之外更要准备好这些事
-${prep}
+## 4. 日子之外更要准备好这些事
+${selectedPrep}
 
-## 5. 这位朋友，临近时再确认一遍
+## 5. 临近时再确认一遍
 请再看看家庭安排、合同、签证、天气、交通和节假日；若现实条件变化，换一个日子也没有关系。
 
-## 6. 这位朋友，最后说一句
+## 6. 最后说一句
 > 本结果为民俗参考，不作为这件事的唯一决策依据，也不能预言事情结果。准备周全、彼此方便，通常比追求一个“完美日期”更重要。
-`.trim();
+`;
 }
 
 // ----------------- 黄历短文 -----------------

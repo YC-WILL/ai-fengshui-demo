@@ -29,17 +29,17 @@ export default function DateSelectionPage() {
   const [err, setErr] = useState<string | null>(null);
   const price = REPORT_PRICING.date_selection!.amountFen;
 
-  async function go() {
+  async function go(reportType: "date_selection_basic" | "date_selection", tier: "basic" | "deep") {
     setErr(null);
     if (!user.birthDate) { setErr("请填写本人出生日期"); return; }
-    setLoading("basic");
+    setLoading(tier);
     try {
       const r = await fetch("/api/reports/generate", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          reportType: "date_selection",
-          tier: "basic",
+          reportType,
+          tier,
           input: { event, dateRangeStart: start, dateRangeEnd: end, user, notes }
         })
       });
@@ -55,8 +55,8 @@ export default function DateSelectionPage() {
   return (
     <div className="space-y-6">
       <PageIntro
-        title="民俗择日参考"
-        subtitle="基于传统黄历与民俗规则，提供日期参考与现实准备清单。"
+        title="挑个从容的日子"
+        subtitle="每天可以先免费看看一两个合适的日子；想把整段时间细细挑一遍，再查看更多备选、绕开日期和完整准备清单。"
         avoid={["绝对吉凶", "保证顺利", "唯一决策依据"]}
       />
 
@@ -101,8 +101,11 @@ export default function DateSelectionPage() {
         <SubmitBar
           loading={loading}
           error={err}
-          basicLabel={`生成择日参考（¥${(price / 100).toFixed(0)}）`}
-          onBasic={go}
+          basicLabel="先免费看看合适的日子"
+          deepLabel="把这段日子细细挑一遍"
+          deepPriceFen={price}
+          onBasic={() => go("date_selection_basic", "basic")}
+          onDeep={() => go("date_selection", "deep")}
         />
       </section>
     </div>
