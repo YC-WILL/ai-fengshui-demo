@@ -39,8 +39,8 @@ export const PAGE_TITLE: Record<ReportType, string> = {
   bazi_deep: "八字深度参考报告",
   marriage_basic: "关系匹配报告",
   marriage_deep: "关系匹配深度报告",
-  home_fengshui_basic: "住宅空间参考报告",
-  home_fengshui_deep: "住宅空间深度参考报告",
+  home_fengshui_basic: "一起看看这个家",
+  home_fengshui_deep: "把这个家细细走一遍",
   date_selection: "民俗择日参考"
 };
 

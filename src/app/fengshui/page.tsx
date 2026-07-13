@@ -64,8 +64,8 @@ export default function FengShuiPage() {
   return (
     <div className="space-y-6">
       <PageIntro
-        title="住宅空间参考报告"
-        subtitle="结合传统风水文化、采光、通风、动线、收纳与心理舒适度，给出空间优化建议。深度版给出 0 元 / 300 元内 / 1000 元内三档可执行优化方案。"
+        title="一起看看这个家"
+        subtitle="从门口慢慢走进每个房间，看看光线、空气和日常动线，也聊聊怎样让家住得更舒服。深度版会再陪你细看调整顺序和不同预算的做法。"
         avoid={["发财布局", "转运布局", "化煞保证有效", "玄学治病"]}
       />
 

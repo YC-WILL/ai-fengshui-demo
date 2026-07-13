@@ -201,7 +201,7 @@ function mockFengshuiBasic(r: Record<string, unknown>): string {
   const zero = ((r["improvementsZeroBudget"] as string[]) ?? []).slice(0, 3).map(s => `- ${s}`).join("\n");
   const warnings = ((r["warnings"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   return `
-# 住宅基础参考报告
+# 这位朋友，我们一起看看这个家
 
 ## 1. 这位朋友，先说说这个家的整体感觉
 家像一个每天接住你的容器。先让光线、空气和走动的路线舒展开，再谈传统上的讲究，住起来往往会更安稳。
@@ -226,7 +226,10 @@ ${zero || "- 整理玄关与客厅 30 分钟\n- 调整沙发/床朝向使其「�
 
 // ----------------- 风水深度 -----------------
 function mockFengshuiDeep(r: Record<string, unknown>): string {
-  const basic = mockFengshuiBasic(r);
+  const basic = mockFengshuiBasic(r).replace(
+    "# 这位朋友，我们一起看看这个家",
+    "# 这位朋友，我们把这个家细细走一遍"
+  );
   const low = ((r["improvementsLowBudget"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const mid = ((r["improvementsMediumBudget"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   return basic + `

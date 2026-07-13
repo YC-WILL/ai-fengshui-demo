@@ -49,11 +49,26 @@ describe("conversational report tone", () => {
     });
     const text = await generate("home_fengshui_basic", assessment);
 
+    expect(text).toMatch(/^# 这位朋友，我们一起看看这个家/);
     expect(text).toContain("这位朋友，先说说这个家的整体感觉");
     expect(text).toContain("这位朋友，逐个看看你在意的空间");
     expect(text).not.toMatch(/整体空间判断|风险点|问题分析/);
     expect(text).toMatch(/采光|通风|潮湿/);
     expect(text).toContain("不承诺发财、转运或化煞效果");
+  });
+
+  it("uses a warmer title for the deep home report", async () => {
+    const assessment = assessFengShui({
+      orientation: "朝东",
+      layout: "一室一厅，下午光线较柔和",
+      rooms: [{ name: "客厅" }, { name: "书房" }]
+    });
+    const text = await generate("home_fengshui_deep", assessment);
+
+    expect(text).toMatch(/^# 这位朋友，我们把这个家细细走一遍/);
+    expect(buildSystemPrompt("home_fengshui_deep", "deep")).toContain(
+      "一级标题必须是“这位朋友，我们把这个家细细走一遍”"
+    );
   });
 
   it("presents date choices without numeric scoring or fatalism", async () => {
