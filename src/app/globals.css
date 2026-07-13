@@ -48,3 +48,31 @@ html, body {
 .card {
   @apply bg-white/80 border border-mist rounded-xl shadow-scroll p-5;
 }
+
+/* 首页安抚短句：从下方轻轻出现，再向上淡出。 */
+.hero-comfort {
+  @apply relative overflow-hidden text-sm md:text-base text-ink/70;
+  height: 3.5rem;
+}
+.hero-comfort-line {
+  @apply absolute inset-0 leading-7;
+  opacity: 0;
+  animation: hero-comfort-flow 12s ease-in-out infinite;
+}
+.hero-comfort-line:nth-child(2) { animation-delay: 4s; }
+.hero-comfort-line:nth-child(3) { animation-delay: 8s; }
+
+@keyframes hero-comfort-flow {
+  0% { opacity: 0; transform: translateY(0.75rem); }
+  8%, 27% { opacity: 1; transform: translateY(0); }
+  34%, 100% { opacity: 0; transform: translateY(-0.75rem); }
+}
+
+@media (min-width: 768px) {
+  .hero-comfort { height: 1.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-comfort-line { display: none; animation: none; }
+  .hero-comfort-line:first-child { display: block; opacity: 1; }
+}
