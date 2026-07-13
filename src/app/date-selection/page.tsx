@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
 import PageIntro from "@/components/PageIntro";
-import { REPORT_PRICING, type BaziInput, type DateSelectionEvent } from "@/lib/types";
+import { type BaziInput, type DateSelectionEvent } from "@/lib/types";
 
 const EVENT_OPTIONS: { value: DateSelectionEvent; label: string }[] = [
   { value: "wedding", label: "结婚" },
@@ -27,7 +27,6 @@ export default function DateSelectionPage() {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState<"basic" | "deep" | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const price = REPORT_PRICING.date_selection!.amountFen;
 
   async function go(reportType: "date_selection_basic" | "date_selection", tier: "basic" | "deep") {
     setErr(null);
@@ -103,7 +102,6 @@ export default function DateSelectionPage() {
           error={err}
           basicLabel="先免费看看合适的日子"
           deepLabel="把这段日子细细挑一遍"
-          deepPriceFen={price}
           onBasic={() => go("date_selection_basic", "basic")}
           onDeep={() => go("date_selection", "deep")}
         />

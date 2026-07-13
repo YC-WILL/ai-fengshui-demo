@@ -5,17 +5,15 @@ import { type ReportType } from "@/lib/types";
 import { PAGE_TITLE, brand } from "@/lib/config/brand";
 import MeActions from "./MeActions";
 import DeleteAccountButton from "./DeleteAccountButton";
+import MembershipCard from "@/components/MembershipCard";
+import { getMembershipStatus } from "@/lib/membership";
 
 export const dynamic = "force-dynamic";
 
 export default async function MePage() {
   const user = await getOrCreateUser();
+  const membership = getMembershipStatus();
   const reports = await prisma.report.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    take: 50
-  });
-  const payments = await prisma.payment.findMany({
     where: { userId: user.id },
     orderBy: { createdAt: "desc" },
     take: 50
@@ -31,6 +29,15 @@ export default async function MePage() {
       </header>
 
       <MeActions email={user.email} nickname={user.nickname} />
+
+      {membership.active ? (
+        <section className="card border-jade/30 bg-jade/5">
+          <h3 className="font-serif text-lg mb-1">卦安常伴会员</h3>
+          <p className="text-sm text-ink/70">
+            当前为{membership.plan === "annual" ? "年度" : "月度"}常伴会员，有效期至 {new Date(membership.expiresAt!).toLocaleDateString("zh-CN")}。
+          </p>
+        </section>
+      ) : <MembershipCard />}
 
       <section className="card">
         <h3 className="font-serif text-lg mb-2">我的报告</h3>
@@ -48,27 +55,6 @@ export default async function MePage() {
                 </span>
                 <span className="text-xs text-ink/50">
                   {r.createdAt.toLocaleString("zh-CN")}
-                </span>
-                {r.isPaid && <span className="text-xs text-jade">已解锁</span>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="card">
-        <h3 className="font-serif text-lg mb-2">订单记录</h3>
-        {payments.length === 0 ? (
-          <div className="text-sm text-ink/60">暂无订单。</div>
-        ) : (
-          <ul className="divide-y divide-mist text-sm">
-            {payments.map(p => (
-              <li key={p.id} className="py-2 flex items-center gap-3">
-                <span>¥{(p.amount / 100).toFixed(2)}</span>
-                <span className="text-xs text-ink/60">{p.provider}</span>
-                <span className="text-xs">{p.status}</span>
-                <span className="text-xs text-ink/50 ml-auto">
-                  {p.createdAt.toLocaleString("zh-CN")}
                 </span>
               </li>
             ))}

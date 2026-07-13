@@ -5,14 +5,13 @@ import { useRouter } from "next/navigation";
 import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
 import PageIntro from "@/components/PageIntro";
-import { REPORT_PRICING, type BaziInput, type ReportType } from "@/lib/types";
+import { type BaziInput, type ReportType } from "@/lib/types";
 
 export default function BaziPage() {
   const router = useRouter();
   const [input, setInput] = useState<BaziInput>(EMPTY_BAZI);
   const [loading, setLoading] = useState<"basic" | "deep" | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const deepPrice = REPORT_PRICING.bazi_deep!.amountFen;
 
   async function go(reportType: ReportType, tier: "basic" | "deep") {
     setErr(null);
@@ -48,7 +47,7 @@ export default function BaziPage() {
           error={err}
           onBasic={() => go("bazi_basic", "basic")}
           onDeep={() => go("bazi_deep", "deep")}
-          deepPriceFen={deepPrice}
+          deepLabel="继续细看八字"
         />
       </section>
 

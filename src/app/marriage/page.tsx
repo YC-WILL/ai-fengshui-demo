@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
 import PageIntro from "@/components/PageIntro";
-import { REPORT_PRICING, type BaziInput, type ReportType } from "@/lib/types";
+import { type BaziInput, type ReportType } from "@/lib/types";
 
 type Stage = "dating" | "engaged" | "married" | "considering";
 
@@ -17,7 +17,6 @@ export default function MarriagePage() {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState<"basic" | "deep" | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const deepPrice = REPORT_PRICING.marriage_deep!.amountFen;
 
   async function go(reportType: ReportType, tier: "basic" | "deep") {
     setErr(null);
@@ -90,7 +89,7 @@ export default function MarriagePage() {
           error={err}
           onBasic={() => go("marriage_basic", "basic")}
           onDeep={() => go("marriage_deep", "deep")}
-          deepPriceFen={deepPrice}
+          deepLabel="继续细看这段关系"
         />
       </section>
     </div>

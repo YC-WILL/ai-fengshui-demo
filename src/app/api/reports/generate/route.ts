@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getOrCreateUser } from "@/lib/auth";
+import { getMembershipStatus } from "@/lib/membership";
 import { orchestrateReport } from "@/lib/reports/orchestrator";
 import {
   baziGenerateSchema, marriageGenerateSchema,
@@ -46,12 +47,14 @@ export async function POST(req: NextRequest) {
   }
 
   const user = await getOrCreateUser();
+  const membership = getMembershipStatus();
   try {
     const result = await orchestrateReport({
       userId: user.id,
       reportType: reportType as ReportType,
       tier: tier as ReportTier,
-      input: inner.data.input as never
+      input: inner.data.input as never,
+      isMember: membership.active
     });
     return NextResponse.json({ ok: true, data: result });
   } catch (err: unknown) {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import SubmitBar from "@/components/forms/SubmitBar";
 import PageIntro from "@/components/PageIntro";
-import { REPORT_PRICING, type FengShuiInput, type ReportType } from "@/lib/types";
+import { type FengShuiInput, type ReportType } from "@/lib/types";
 
 const ROOM_OPTIONS = ["玄关", "客厅", "餐厅", "卧室", "厨房", "卫生间", "书房", "阳台"];
 const ORIENTATIONS = ["朝南", "朝北", "朝东", "朝西", "朝东南", "朝西南", "朝东北", "朝西北"];
@@ -19,7 +19,6 @@ export default function FengShuiPage() {
   });
   const [loading, setLoading] = useState<"basic" | "deep" | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const deepPrice = REPORT_PRICING.home_fengshui_deep!.amountFen;
 
   async function go(reportType: ReportType, tier: "basic" | "deep") {
     setErr(null);
@@ -141,7 +140,7 @@ export default function FengShuiPage() {
           error={err}
           onBasic={() => go("home_fengshui_basic", "basic")}
           onDeep={() => go("home_fengshui_deep", "deep")}
-          deepPriceFen={deepPrice}
+          deepLabel="把这个家细细走一遍"
         />
       </section>
     </div>

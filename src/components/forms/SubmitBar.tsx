@@ -3,8 +3,7 @@
 export default function SubmitBar({
   loading, error,
   basicLabel, deepLabel,
-  onBasic, onDeep,
-  deepPriceFen
+  onBasic, onDeep
 }: {
   loading: "basic" | "deep" | null;
   error: string | null;
@@ -12,7 +11,6 @@ export default function SubmitBar({
   deepLabel?: string;
   onBasic: () => void;
   onDeep?: () => void;
-  deepPriceFen?: number;
 }) {
   return (
     <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -33,7 +31,7 @@ export default function SubmitBar({
         >
           {loading === "deep"
             ? "生成中…"
-            : `${deepLabel ?? "生成深度参考"}${deepPriceFen ? `（¥${(deepPriceFen / 100).toFixed(0)}）` : ""}`}
+            : `${deepLabel ?? "生成深度参考"}（会员）`}
         </button>
       )}
       {error && <span className="text-sm text-cinnabar">{error}</span>}

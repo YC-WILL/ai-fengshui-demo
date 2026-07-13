@@ -108,24 +108,28 @@ export interface SafetyResult {
   rewritten: boolean;
 }
 
-// ----------------- 价目 -----------------
-export interface ReportPricing {
-  amountFen: number;  // 分
+// ----------------- 会员 -----------------
+export type MembershipPlan = "monthly" | "annual";
+
+export const MEMBERSHIP_PRICING: Record<MembershipPlan, {
+  amountFen: number;
   currency: "CNY";
   label: string;
-}
-
-export const REPORT_PRICING: Record<ReportType, ReportPricing | null> = {
-  daily_almanac: null,
-  bazi_basic: null,
-  marriage_basic: null,
-  home_fengshui_basic: null,
-  date_selection_basic: null,
-  bazi_deep: { amountFen: 3900, currency: "CNY", label: "八字深度报告" },
-  marriage_deep: { amountFen: 4900, currency: "CNY", label: "关系匹配报告" },
-  home_fengshui_deep: { amountFen: 6900, currency: "CNY", label: "住宅空间报告" },
-  date_selection: { amountFen: 2900, currency: "CNY", label: "择日深度报告" }
+}> = {
+  monthly: { amountFen: 1800, currency: "CNY", label: "月度常伴" },
+  annual: { amountFen: 12800, currency: "CNY", label: "年度常伴" }
 };
+
+export const MEMBER_REPORT_TYPES: ReportType[] = [
+  "bazi_deep",
+  "marriage_deep",
+  "home_fengshui_deep",
+  "date_selection"
+];
+
+export function isMemberReportType(reportType: ReportType): boolean {
+  return MEMBER_REPORT_TYPES.includes(reportType);
+}
 
 export const REPORT_TYPE_LABEL: Record<ReportType, string> = {
   daily_almanac: "今日黄历",

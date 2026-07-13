@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getOrCreateUser, bindEmail } from "@/lib/auth";
+import { getMembershipStatus, MEMBERSHIP_COOKIE_NAME } from "@/lib/membership";
 
 export async function GET() {
   const user = await getOrCreateUser();
@@ -14,17 +15,12 @@ export async function GET() {
       createdAt: true
     }
   });
-  const payments = await prisma.payment.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    take: 50
-  });
   return NextResponse.json({
     ok: true,
     data: {
       user: { id: user.id, email: user.email, nickname: user.nickname },
       reports,
-      payments
+      membership: getMembershipStatus()
     }
   });
 }
@@ -57,5 +53,7 @@ export async function PATCH(req: NextRequest) {
 export async function DELETE() {
   const user = await getOrCreateUser();
   await prisma.user.delete({ where: { id: user.id } });
-  return NextResponse.json({ ok: true });
+  const response = NextResponse.json({ ok: true });
+  response.cookies.delete(MEMBERSHIP_COOKIE_NAME);
+  return response;
 }

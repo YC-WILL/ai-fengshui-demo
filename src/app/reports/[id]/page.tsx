@@ -4,11 +4,12 @@ import { prisma } from "@/lib/db";
 import { getCurrentUserId } from "@/lib/auth";
 import { makePreview } from "@/lib/reports/preview";
 import {
-  REPORT_PRICING, type ReportType
+  isMemberReportType, type ReportType
 } from "@/lib/types";
+import { getMembershipStatus } from "@/lib/membership";
 import { PAGE_TITLE, brand } from "@/lib/config/brand";
 import ReportRenderer from "@/components/ReportRenderer";
-import PaywallCard from "@/components/PaywallCard";
+import MembershipCard from "@/components/MembershipCard";
 
 export const dynamic = "force-dynamic";
 
@@ -21,26 +22,26 @@ export default async function ReportPage({ params }: { params: { id: string } })
 
   const reportType = report.reportType as ReportType;
   const label = PAGE_TITLE[reportType];
-  const pricing = REPORT_PRICING[reportType];
-  const needsPayment = !!pricing && !report.isPaid;
+  const membership = getMembershipStatus();
+  const needsMembership = isMemberReportType(reportType) && !membership.active && !report.isPaid;
   const blocked = report.status === "blocked";
   const fullText = report.aiResult ?? "";
   const display = blocked
     ? fullText // safety filter 已经替换为安全提示文本
-    : (needsPayment ? makePreview(fullText) : fullText);
+    : (needsMembership ? makePreview(fullText) : fullText);
 
   return (
     <div className="space-y-4">
       <header className="flex flex-wrap items-baseline gap-3">
         <h1 className="font-serif text-2xl">{label}</h1>
-        {needsPayment && (
+        {needsMembership && (
           <span className="text-[11px] px-2 py-0.5 rounded-full bg-gold/15 text-ink/70 border border-gold/30">
-            预览模式 · 解锁后查看完整版
+            会员内容 · 当前展示预览
           </span>
         )}
-        {report.isPaid && (
+        {isMemberReportType(reportType) && membership.active && (
           <span className="text-[11px] px-2 py-0.5 rounded-full bg-jade/15 text-jade border border-jade/30">
-            已解锁
+            卦安常伴会员
           </span>
         )}
         <span className="text-xs text-ink/50">
@@ -60,8 +61,8 @@ export default async function ReportPage({ params }: { params: { id: string } })
         <ReportRenderer markdown={display} />
       </article>
 
-      {needsPayment && !blocked && (
-        <PaywallCard reportId={report.id} reportType={reportType} />
+      {needsMembership && !blocked && (
+        <MembershipCard />
       )}
 
       <div className="text-xs text-ink/50 leading-5">

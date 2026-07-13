@@ -24,6 +24,7 @@ import type {
   BaziInput, MarriageInput, FengShuiInput, DateSelectionInput,
   AIGenerateOutput
 } from "../types";
+import { isMemberReportType } from "../types";
 
 // ---- 不同报告输入类型联合 ----
 type AnyInput = BaziInput | MarriageInput | FengShuiInput | DateSelectionInput;
@@ -33,6 +34,7 @@ interface OrchestrateArgs {
   reportType: ReportType;
   tier: ReportTier;
   input: AnyInput;
+  isMember?: boolean;
 }
 
 interface OrchestrateResult {
@@ -43,17 +45,14 @@ interface OrchestrateResult {
   ruleResult: unknown;
   safety: ReturnType<typeof safetyFilter>;
   ai: { provider: string; model: string; reasoningEffort?: string };
-  isPaid: boolean;
-  needsPayment: boolean;
+  hasAccess: boolean;
+  needsMembership: boolean;
 }
 
-// 深度版报告类型集合
-const DEEP_TYPES: ReportType[] = ["bazi_deep", "marriage_deep", "home_fengshui_deep"];
-// 一律付费的报告类型（基础版免费、深度版付费）
-const PAID_TYPES: ReportType[] = [...DEEP_TYPES, "date_selection"];
-
 export async function orchestrateReport(args: OrchestrateArgs): Promise<OrchestrateResult> {
-  const { userId, reportType, tier, input } = args;
+  const { userId, reportType, tier, input, isMember = false } = args;
+  const memberOnly = isMemberReportType(reportType);
+  const hasAccess = !memberOnly || isMember;
 
   // 1) 规则引擎
   const ruleResult = runRuleEngine(reportType, input);
@@ -66,7 +65,9 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
       inputData: JSON.stringify(input),
       ruleResult: JSON.stringify(ruleResult),
       status: "draft",
-      isPaid: !PAID_TYPES.includes(reportType)
+      // 基础报告始终完整；会员深度报告的访问权由当前会员状态判断。
+      // 旧数据中已经单次解锁的深度报告仍保留 isPaid=true，继续永久可看。
+      isPaid: !memberOnly
     }
   });
 
@@ -133,10 +134,9 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
     }
   });
 
-  // 8) 构造返回（付费报告先返回 preview）
-  const isPaidReport = !PAID_TYPES.includes(reportType);
-  const needsPayment = PAID_TYPES.includes(reportType) && !isPaidReport;
-  const preview = needsPayment ? makePreview(safety.text) : undefined;
+  // 8) 构造返回（非会员访问深度报告时先返回 preview）
+  const needsMembership = memberOnly && !isMember;
+  const preview = needsMembership ? makePreview(safety.text) : undefined;
 
   return {
     reportId: report.id,
@@ -146,8 +146,8 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
     ruleResult,
     safety,
     ai: { provider: ai.provider, model: ai.model, reasoningEffort: ai.reasoningEffort },
-    isPaid: isPaidReport,
-    needsPayment
+    hasAccess,
+    needsMembership
   };
 }
 

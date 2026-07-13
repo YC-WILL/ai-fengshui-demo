@@ -4,7 +4,10 @@ import { buildSystemPrompt, buildUserPrompt } from "@/lib/ai/prompts";
 import { matchMarriage } from "@/lib/domain/marriage";
 import { assessFengShui } from "@/lib/domain/fengshui";
 import { selectDates } from "@/lib/domain/dateSelection";
-import { REPORT_PRICING, type AIGenerateInput, type ReportType } from "@/lib/types";
+import {
+  MEMBERSHIP_PRICING, isMemberReportType,
+  type AIGenerateInput, type ReportType
+} from "@/lib/types";
 
 const provider = new MockProvider();
 const personA = { gender: "male" as const, birthDate: "1992-04-10", birthTime: "08:30", unknownTime: false };
@@ -88,7 +91,7 @@ describe("conversational report tone", () => {
     expect(text.match(/这位朋友/g)).toHaveLength(1);
     expect(text).not.toContain("有几个日子不妨绕开");
     expect(text).toContain("每天都可以使用的免费民俗参考");
-    expect(REPORT_PRICING.date_selection_basic).toBeNull();
+    expect(isMemberReportType("date_selection_basic")).toBe(false);
   });
 
   it("keeps more date options and comparison in the paid version", async () => {
@@ -107,7 +110,9 @@ describe("conversational report tone", () => {
     expect(text).not.toMatch(/评分\s*\d|不建议日期|吉凶判断/);
     expect(text).toContain("民俗参考");
     expect(text).not.toMatch(/一定|必然|注定|保证顺利/);
-    expect(REPORT_PRICING.date_selection?.amountFen).toBe(2900);
+    expect(isMemberReportType("date_selection")).toBe(true);
+    expect(MEMBERSHIP_PRICING.monthly.amountFen).toBe(1800);
+    expect(MEMBERSHIP_PRICING.annual.amountFen).toBe(12800);
   });
 
   it("tells the real AI to keep semantic requirements inside conversational sections", () => {
