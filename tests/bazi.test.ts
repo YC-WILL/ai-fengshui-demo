@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { computeBazi, personalityProfile, lifeSuggestions } from "@/lib/domain/bazi";
+import {
+  computeBazi, personalityProfile, lifeSuggestions, lifeReminders,
+  friendlyCoreConclusion, friendlyElementNote
+} from "@/lib/domain/bazi";
 
 describe("computeBazi (simplified)", () => {
   it("returns 4 pillars when birth time is known", () => {
@@ -40,17 +43,21 @@ describe("computeBazi (simplified)", () => {
   });
 
   it("personalityProfile returns a 100-180 character behavioral description", () => {
-    const chart = computeBazi({
-      gender: "other",
-      birthDate: "1995-11-11",
-      birthTime: "06:00",
-      unknownTime: false
+    ["1985-03-22", "1990-06-15", "1995-11-11", "2000-01-01", "2004-08-18"].forEach(birthDate => {
+      const chart = computeBazi({
+        gender: "other",
+        birthDate,
+        birthTime: "06:00",
+        unknownTime: false
+      });
+      const profile = personalityProfile(chart);
+      expect(profile.length).toBeGreaterThanOrEqual(100);
+      expect(profile.length).toBeLessThanOrEqual(180);
+      expect(profile).toContain("这位朋友");
+      expect(profile).toMatch(/像|小镜子/);
+      expect(profile).toMatch(/可能|倾向|建议|从行为模式看/);
+      expect(profile).not.toMatch(/一定|必然|注定|保证|焦虑症|抑郁症|心理有问题/);
     });
-    const profile = personalityProfile(chart);
-    expect(profile.length).toBeGreaterThanOrEqual(100);
-    expect(profile.length).toBeLessThanOrEqual(180);
-    expect(profile).toMatch(/可能|倾向|建议|从行为模式看/);
-    expect(profile).not.toMatch(/一定|必然|注定|保证|焦虑症|抑郁症|心理有问题/);
   });
 
   it("varies personality profiles and life suggestions by chart structure", () => {
@@ -70,6 +77,28 @@ describe("computeBazi (simplified)", () => {
     expect(lifeSuggestions(first)).toHaveLength(3);
     expect(lifeSuggestions(second)).toHaveLength(3);
     expect(lifeSuggestions(first)).not.toEqual(lifeSuggestions(second));
+  });
+
+  it("builds concise, friendly and chart-specific free report copy", () => {
+    const first = computeBazi({
+      gender: "male",
+      birthDate: "1990-06-15",
+      birthTime: "10:30",
+      unknownTime: false
+    });
+    const second = computeBazi({
+      gender: "female",
+      birthDate: "2000-01-01",
+      birthTime: "12:00",
+      unknownTime: false
+    });
+
+    expect(friendlyCoreConclusion(first)).toContain("这位朋友");
+    expect(friendlyCoreConclusion(first)).toMatch(/像/);
+    expect(friendlyElementNote(first)).toContain("这位朋友");
+    expect(friendlyElementNote(first).length).toBeLessThan(100);
+    expect(lifeReminders(first)).toHaveLength(2);
+    expect(lifeReminders(first)).not.toEqual(lifeReminders(second));
   });
 
   it("rejects malformed date", () => {

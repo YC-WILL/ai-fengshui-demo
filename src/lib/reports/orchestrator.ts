@@ -12,7 +12,8 @@ import { getAIProvider } from "../ai/client";
 import { buildSystemPrompt, buildUserPrompt } from "../ai/prompts";
 import { safetyFilter } from "../safety/filter";
 import {
-  computeBazi, personalityProfile, lifeSuggestions, elementSummary, dayMasterDescription
+  computeBazi, personalityProfile, lifeSuggestions, lifeReminders, elementSummary,
+  dayMasterDescription, friendlyCoreConclusion, friendlyElementNote
 } from "../domain/bazi";
 import { matchMarriage } from "../domain/marriage";
 import { assessFengShui } from "../domain/fengshui";
@@ -171,7 +172,10 @@ function runRuleEngine(reportType: ReportType, input: AnyInput): unknown {
         elementWeakest: chart.elementDistribution.weakest,
         elementSummary: elementSummary(chart),
         dayMasterDescription: dayMasterDescription(chart),
+        friendlyCoreConclusion: friendlyCoreConclusion(chart),
+        friendlyElementNote: friendlyElementNote(chart),
         personalityProfile: personalityProfile(chart),
+        lifeReminders: lifeReminders(chart),
         lifeSuggestions: lifeSuggestions(chart),
         notes: chart.notes
       };

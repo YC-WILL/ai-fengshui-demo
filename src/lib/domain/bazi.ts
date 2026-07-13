@@ -191,10 +191,61 @@ const TRAITS_BY_DAY_MASTER: Record<Stem, string[]> = {
   癸: ["敏锐", "细腻", "深思"]
 };
 
+const IMAGE_BY_ELEMENT: Record<Element, string> = {
+  木: "一棵慢慢舒展枝叶的树",
+  火: "一盏愿意照亮身边的灯",
+  土: "一块让人感到踏实的土地",
+  金: "一件经过细细打磨的器物",
+  水: "一条会顺势寻找方向的河流"
+};
+
+const GIFT_BY_ELEMENT: Record<Element, string> = {
+  木: "生长和尝试",
+  火: "表达和行动",
+  土: "稳定和落实",
+  金: "取舍和边界",
+  水: "观察和转圜"
+};
+
+export function friendlyCoreConclusion(chart: BaziChart): string {
+  const dayMasterElement = STEM_ELEMENT[chart.dayMaster];
+  const { strongest, weakest } = chart.elementDistribution;
+  return `这位朋友，先给你一个整体印象：你有点像${IMAGE_BY_ELEMENT[dayMasterElement]}，有自己的生长方式，也有自己的步调。${strongest}的力量让你在熟悉的事情上更容易站稳脚跟；${weakest}相对少一些时，也提醒你遇到变化不必急着给出答案，给自己留一点转身的余地。`;
+}
+
+export function friendlyElementNote(chart: BaziChart): string {
+  const { strongest, weakest } = chart.elementDistribution;
+  return `这位朋友，你的五行里${strongest}比较显眼，${weakest}相对少一些。简单说，你较容易从${GIFT_BY_ELEMENT[strongest]}中找到熟悉的节奏，也可以有意识地为${GIFT_BY_ELEMENT[weakest]}多留一点空间。`;
+}
+
 export function personalityProfile(chart: BaziChart): string {
   const traits = TRAITS_BY_DAY_MASTER[chart.dayMaster].join("、");
   const { strongest, weakest } = chart.elementDistribution;
-  return `从传统结构看，你可能常以${traits}的方式理解和回应环境，面对明确目标时更容易形成自己的推进节奏。五行中${strongest}相对突出，提示你在熟悉情境里可能倾向沿用已有方法；${weakest}相对偏弱，则可以提醒你在信息不足或压力增加时，为观察和调整留出空间。从行为模式看，这些描述更适合作为自我观察的线索，而不是固定标签；建议结合真实经历，留意自己在决策、合作和恢复精力时的不同反应。`;
+  return `这位朋友，你身上可能有${traits}的一面，像${IMAGE_BY_ELEMENT[STEM_ELEMENT[chart.dayMaster]]}，不喧闹，却有自己的方向。熟悉的事情上，你往往愿意把节奏守稳，也在意事情是否做得妥帖；碰到变化时，可能会先观察，再决定怎样回应。${strongest}较明显，让你容易沿用有效的方法；${weakest}相对少一些，则提醒你多给自己一点调整空间。这不是给你贴标签，只是一面小镜子，不妨对照真实经历，看看哪些地方像你。`;
+}
+
+const REMINDER_FOR_STRONGEST_ELEMENT: Record<Element, string> = {
+  木: "想做的事情一多，枝叶容易伸得太开；记得先照顾好眼前最重要的一件事。",
+  火: "状态上来时，你可能走得很快；重要回应不妨慢半拍，听清自己也听清对方。",
+  土: "熟悉的安排会让人安心，也可能让改变来得慢一些；偶尔换个角度，会看到新的路。",
+  金: "标准清楚是长处，只是别把尺子一直对着自己；做得不错的地方，也值得被看见。",
+  水: "想法多时容易来回比较；先抓住两件最重要的事，心里会清爽一些。"
+};
+
+const REMINDER_FOR_WEAKEST_ELEMENT: Record<Element, string> = {
+  木: "遇到陌生选择时，可以从一个很小的尝试开始，不必等到万事齐备才行动。",
+  火: "有些感受若一直放在心里，别人未必猜得到；可以试着用一句具体的话说出来。",
+  土: "忙起来时更要记得照顾作息和收尾，让身体知道什么时候该停下来休息。",
+  金: "边界不清的事情容易反复消耗；答应之前，先问清标准、时间和彼此的责任。",
+  水: "日程排得太满时，判断也会变得拥挤；给自己留一点散步或安静独处的空白。"
+};
+
+export function lifeReminders(chart: BaziChart): string[] {
+  const { strongest, weakest } = chart.elementDistribution;
+  return [
+    REMINDER_FOR_STRONGEST_ELEMENT[strongest],
+    REMINDER_FOR_WEAKEST_ELEMENT[weakest]
+  ];
 }
 
 const ACTION_BY_DAY_MASTER_ELEMENT: Record<Element, string> = {
