@@ -56,7 +56,8 @@ function mockBaziBasic(r: Record<string, unknown>): string {
   const dm = (r["dayMaster"] as string) ?? "未知";
   const zodiac = (r["zodiac"] as string) ?? "—";
   const ele = (r["elementSummary"] as string) ?? "—";
-  const traits = ((r["personalityKeywords"] as string[]) ?? []).join("、");
+  const profile = (r["personalityProfile"] as string) ?? "暂无足够信息生成性格画像。";
+  const suggestions = ((r["lifeSuggestions"] as string[]) ?? []).map(item => `- ${item}`).join("\n");
   const pillars = (r["pillars"] as Record<string, string>) ?? {};
   return `
 # 八字基础参考
@@ -68,13 +69,11 @@ function mockBaziBasic(r: Record<string, unknown>): string {
 ## 2. 五行分布
 ${ele}
 
-## 3. 性格关键词
-${traits}
+## 3. 性格画像
+${profile}
 
 ## 4. 生活建议（3 条）
-- 在重要决策前给自己 24 小时缓冲，不要在情绪高峰期下结论。
-- 每周固定 1 小时复盘"做了什么 / 学到了什么 / 下周要调整什么"。
-- 在你偏强的五行所代表的领域，尝试做"减法"；在偏弱的领域有意识地"小步补齐"。
+${suggestions || "- 结合近期真实经历，选择一个最想调整的行为，从小步骤开始观察。"}
 
 > 本报告为基础版，仅供文化与生活规划参考，不构成任何专业决策建议。
 `.trim();

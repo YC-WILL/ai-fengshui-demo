@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeBazi, personalityKeywords } from "@/lib/domain/bazi";
+import { computeBazi, personalityProfile, lifeSuggestions } from "@/lib/domain/bazi";
 
 describe("computeBazi (simplified)", () => {
   it("returns 4 pillars when birth time is known", () => {
@@ -39,16 +39,37 @@ describe("computeBazi (simplified)", () => {
     expect([6, 8]).toContain(sum); // 4 pillars * 2 chars = 8 (with hour) or 6 (without)
   });
 
-  it("personalityKeywords returns 3 chinese words", () => {
+  it("personalityProfile returns a 100-180 character behavioral description", () => {
     const chart = computeBazi({
       gender: "other",
       birthDate: "1995-11-11",
       birthTime: "06:00",
       unknownTime: false
     });
-    const kws = personalityKeywords(chart);
-    expect(kws).toHaveLength(3);
-    kws.forEach(k => expect(k).toMatch(/[一-鿿]+/));
+    const profile = personalityProfile(chart);
+    expect(profile.length).toBeGreaterThanOrEqual(100);
+    expect(profile.length).toBeLessThanOrEqual(180);
+    expect(profile).toMatch(/可能|倾向|建议|从行为模式看/);
+    expect(profile).not.toMatch(/一定|必然|注定|保证|焦虑症|抑郁症|心理有问题/);
+  });
+
+  it("varies personality profiles and life suggestions by chart structure", () => {
+    const first = computeBazi({
+      gender: "male",
+      birthDate: "1990-06-15",
+      birthTime: "10:30",
+      unknownTime: false
+    });
+    const second = computeBazi({
+      gender: "female",
+      birthDate: "2000-01-01",
+      birthTime: "12:00",
+      unknownTime: false
+    });
+    expect(personalityProfile(first)).not.toBe(personalityProfile(second));
+    expect(lifeSuggestions(first)).toHaveLength(3);
+    expect(lifeSuggestions(second)).toHaveLength(3);
+    expect(lifeSuggestions(first)).not.toEqual(lifeSuggestions(second));
   });
 
   it("rejects malformed date", () => {

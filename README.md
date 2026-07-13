@@ -353,7 +353,7 @@ Vercel 操作步骤：
 | 测试 | 覆盖 |
 | --- | --- |
 | `tests/safety.test.ts` | 高/中/低 风险词命中、拦截、重写、软化、disclaimer 注入 |
-| `tests/bazi.test.ts` | 四柱计算、未知时辰、五行分布、性格关键词、错误日期处理 |
+| `tests/bazi.test.ts` | 四柱计算、未知时辰、五行分布、性格画像、动态生活建议、错误日期处理 |
 | `tests/marriage.test.ts` | 关系结构、不输出绝对判断、caveat 存在性 |
 | `tests/orchestrator.mock.test.ts` | mock provider + safetyFilter 的端到端冒烟 |
 

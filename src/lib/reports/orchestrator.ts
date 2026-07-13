@@ -12,7 +12,7 @@ import { getAIProvider } from "../ai/client";
 import { buildSystemPrompt, buildUserPrompt } from "../ai/prompts";
 import { safetyFilter } from "../safety/filter";
 import {
-  computeBazi, personalityKeywords, elementSummary, dayMasterDescription
+  computeBazi, personalityProfile, lifeSuggestions, elementSummary, dayMasterDescription
 } from "../domain/bazi";
 import { matchMarriage } from "../domain/marriage";
 import { assessFengShui } from "../domain/fengshui";
@@ -171,7 +171,8 @@ function runRuleEngine(reportType: ReportType, input: AnyInput): unknown {
         elementWeakest: chart.elementDistribution.weakest,
         elementSummary: elementSummary(chart),
         dayMasterDescription: dayMasterDescription(chart),
-        personalityKeywords: personalityKeywords(chart),
+        personalityProfile: personalityProfile(chart),
+        lifeSuggestions: lifeSuggestions(chart),
         notes: chart.notes
       };
     }

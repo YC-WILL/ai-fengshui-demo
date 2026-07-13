@@ -5,7 +5,7 @@ import { describe, it, expect } from "vitest";
 import { MockProvider } from "@/lib/ai/mock";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/ai/prompts";
 import { safetyFilter } from "@/lib/safety/filter";
-import { computeBazi, personalityKeywords, elementSummary } from "@/lib/domain/bazi";
+import { computeBazi, personalityProfile, lifeSuggestions, elementSummary } from "@/lib/domain/bazi";
 
 describe("MockProvider + safetyFilter (smoke)", () => {
   it("bazi_basic round trip", async () => {
@@ -22,7 +22,8 @@ describe("MockProvider + safetyFilter (smoke)", () => {
         hour: chart.hour?.pillarLabel
       },
       elementSummary: elementSummary(chart),
-      personalityKeywords: personalityKeywords(chart)
+      personalityProfile: personalityProfile(chart),
+      lifeSuggestions: lifeSuggestions(chart)
     };
     const provider = new MockProvider();
     const out = await provider.generateReport({
@@ -34,6 +35,9 @@ describe("MockProvider + safetyFilter (smoke)", () => {
       userId: "test-user"
     });
     expect(out.text).toContain("八字基础参考");
+    expect(out.text).toContain("性格画像");
+    expect(out.text).toContain(personalityProfile(chart));
+    lifeSuggestions(chart).forEach(item => expect(out.text).toContain(item));
     const safe = safetyFilter(out.text);
     expect(safe.blocked).toBe(false);
     expect(safe.text).toContain("免责声明");

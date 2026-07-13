@@ -176,8 +176,8 @@ export function computeBazi(input: BaziInput): BaziChart {
   };
 }
 
-// ---------- 简化"性格关键词"派生 ----------
-// 这里只用日干阴阳 + 五行强弱产出 3 个中性词，避免标签化
+// ---------- 简化"性格画像"与生活建议派生 ----------
+// 使用日主与五行相对强弱生成观察性描述，避免把传统结构写成固定人格标签。
 const TRAITS_BY_DAY_MASTER: Record<Stem, string[]> = {
   甲: ["主动", "进取", "坚定"],
   乙: ["温和", "柔韧", "细腻"],
@@ -190,8 +190,45 @@ const TRAITS_BY_DAY_MASTER: Record<Stem, string[]> = {
   壬: ["流动", "灵活", "广博"],
   癸: ["敏锐", "细腻", "深思"]
 };
-export function personalityKeywords(chart: BaziChart): string[] {
-  return TRAITS_BY_DAY_MASTER[chart.dayMaster];
+
+export function personalityProfile(chart: BaziChart): string {
+  const traits = TRAITS_BY_DAY_MASTER[chart.dayMaster].join("、");
+  const { strongest, weakest } = chart.elementDistribution;
+  return `从传统结构看，你可能常以${traits}的方式理解和回应环境，面对明确目标时更容易形成自己的推进节奏。五行中${strongest}相对突出，提示你在熟悉情境里可能倾向沿用已有方法；${weakest}相对偏弱，则可以提醒你在信息不足或压力增加时，为观察和调整留出空间。从行为模式看，这些描述更适合作为自我观察的线索，而不是固定标签；建议结合真实经历，留意自己在决策、合作和恢复精力时的不同反应。`;
+}
+
+const ACTION_BY_DAY_MASTER_ELEMENT: Record<Element, string> = {
+  木: "为当前最想推进的一件事写下本周最小行动，并在完成后再增加下一步，减少目标过多带来的分散。",
+  火: "重要表达前先区分“我想传达什么”和“对方需要听见什么”，可以尝试放慢回应速度，给沟通留出确认空间。",
+  土: "每周检查一次自己承担的事项，把可以协商或延后的部分明确说出来，避免习惯性包揽消耗精力。",
+  金: "做决定时除了列标准，也补写一个“仍需了解的信息”，帮助自己在坚持原则和保持弹性之间找到平衡。",
+  水: "把新想法先记入清单，隔一天再选择其中一项试行，用小规模行动检验灵感，避免同时开启过多方向。"
+};
+
+const ACTION_FOR_STRONGEST_ELEMENT: Record<Element, string> = {
+  木: "当计划不断扩展时，可以设定清晰的停止点，优先完成已经开始的任务，再评估是否继续增加目标。",
+  火: "在节奏较快或情绪较强时，可以先做几分钟低刺激活动，再处理需要判断或回应的事项。",
+  土: "面对熟悉流程时，尝试邀请一位信任的人提供不同看法，避免只因稳定而忽略更合适的选择。",
+  金: "复盘时不只记录问题，也写下一个已经有效的做法，让自我要求同时包含修正和肯定。",
+  水: "信息较多时先确定本次决定的两个核心条件，把其余内容放入待观察清单，降低反复比较的负担。"
+};
+
+const ACTION_FOR_WEAKEST_ELEMENT: Record<Element, string> = {
+  木: "每周安排一次不超过三十分钟的小尝试，例如学习新工具或调整工作方法，逐步增加面对变化的主动性。",
+  火: "在安全的关系中练习直接表达感受和需要，可以从一句具体事实开始，不必等到想法完全整理好。",
+  土: "为睡眠、饮食或工作收尾设置一个可重复的小仪式，用稳定线索帮助自己从忙乱切换到休整。",
+  金: "遇到边界模糊的任务时，先写清完成标准和截止时间，再与相关人确认，减少后续反复修改。",
+  水: "日程中保留一段不安排具体产出的空白时间，用散步、记录或安静独处观察自己的真实需要。"
+};
+
+export function lifeSuggestions(chart: BaziChart): string[] {
+  const { strongest, weakest } = chart.elementDistribution;
+  const dayMasterElement = STEM_ELEMENT[chart.dayMaster];
+  return [
+    ACTION_BY_DAY_MASTER_ELEMENT[dayMasterElement],
+    ACTION_FOR_STRONGEST_ELEMENT[strongest],
+    ACTION_FOR_WEAKEST_ELEMENT[weakest]
+  ];
 }
 
 export function elementSummary(chart: BaziChart): string {
