@@ -38,10 +38,28 @@ describe("conversational report tone", () => {
       suggestions: match.suggestions
     });
 
+    expect(text).toMatch(/^# 两位朋友，我们看看彼此相处的步调/);
     expect(text).toContain("两位朋友，先说说你们相处的感觉");
     expect(text).toContain("两位朋友，最后说一句");
     expect(text).not.toMatch(/沟通风格关键词|关系优势|潜在摩擦点|匹配度/);
     expect(text).not.toMatch(/必合|必分|正缘|孽缘|克夫|克妻/);
+  });
+
+  it("uses a warm title for the deep relationship report", async () => {
+    const match = matchMarriage({ partyA: personA, partyB: personB });
+    const text = await generate("marriage_deep", {
+      partyA: { dayMaster: match.partyA.dayMaster, zodiac: match.partyA.zodiac },
+      partyB: { dayMaster: match.partyB.dayMaster, zodiac: match.partyB.zodiac },
+      communicationStyle: match.communicationStyle,
+      strengths: match.strengths,
+      frictionPoints: match.frictionPoints,
+      suggestions: match.suggestions
+    });
+
+    expect(text).toMatch(/^# 两位朋友，我们把这段相处慢慢聊开/);
+    expect(buildSystemPrompt("marriage_deep", "deep")).toContain(
+      "一级标题必须是“两位朋友，我们把这段相处慢慢聊开”"
+    );
   });
 
   it("walks through the home in a practical, friendly voice", async () => {

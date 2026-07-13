@@ -35,8 +35,8 @@ export default function BaziPage() {
   return (
     <div className="space-y-6">
       <PageIntro
-        title="八字参考报告"
-        subtitle="从传统命理结构出发，分析五行分布、性格倾向、生活节奏与可执行建议。深度版补充事业方向、财富习惯、年度节奏与可执行行动建议。"
+        title="聊聊你的性格与步调"
+        subtitle="从传统文化的角度看看你的做事方式、生活节奏和内在力量，也给日常生活留几句温和、能做到的建议。"
         avoid={["命运绝对预测", "寿命与疾病判断", "财富数字预测", "改命 / 消灾承诺"]}
       />
 

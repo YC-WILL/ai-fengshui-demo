@@ -35,10 +35,10 @@ import type { ReportType } from "@/lib/types";
 
 export const PAGE_TITLE: Record<ReportType, string> = {
   daily_almanac: "今日黄历",
-  bazi_basic: "八字参考报告",
-  bazi_deep: "八字深度参考报告",
-  marriage_basic: "关系匹配报告",
-  marriage_deep: "关系匹配深度报告",
+  bazi_basic: "聊聊你的性格与步调",
+  bazi_deep: "把你的生活节奏细细看一遍",
+  marriage_basic: "看看你们相处的步调",
+  marriage_deep: "把你们的相处慢慢聊开",
   home_fengshui_basic: "一起看看这个家",
   home_fengshui_deep: "把这个家细细走一遍",
   date_selection_basic: "挑个从容的日子",
@@ -51,12 +51,12 @@ export const ENTRY_INTRO: Record<
   { title: string; desc: string }
 > = {
   "bazi": {
-    title: "八字参考",
-    desc: "从传统命理结构出发，分析五行分布、性格倾向、生活节奏与可执行建议。"
+    title: "聊聊你的性格与步调",
+    desc: "从传统文化的角度看看你的做事方式、生活节奏，以及有哪些小地方值得慢慢调整。"
   },
   "marriage": {
-    title: "关系匹配",
-    desc: "结合传统文化结构与心理学沟通框架，分析双方关系优势、潜在摩擦与沟通建议。"
+    title: "看看你们相处的步调",
+    desc: "聊聊两个人合拍的地方、各自不同的节奏，以及怎样更好地听见彼此。"
   },
   "fengshui": {
     title: "住宅空间",

@@ -133,10 +133,10 @@ export function isMemberReportType(reportType: ReportType): boolean {
 
 export const REPORT_TYPE_LABEL: Record<ReportType, string> = {
   daily_almanac: "今日黄历",
-  bazi_basic: "八字基础参考",
-  bazi_deep: "八字深度参考",
-  marriage_basic: "关系基础参考",
-  marriage_deep: "关系深度参考",
+  bazi_basic: "聊聊你的性格与步调",
+  bazi_deep: "把你的生活节奏细细看一遍",
+  marriage_basic: "看看你们相处的步调",
+  marriage_deep: "把你们的相处慢慢聊开",
   home_fengshui_basic: "住宅基础参考",
   home_fengshui_deep: "住宅深度参考",
   date_selection_basic: "择日基础参考",

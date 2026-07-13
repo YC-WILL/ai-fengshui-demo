@@ -62,7 +62,7 @@ function mockBaziBasic(r: Record<string, unknown>): string {
   const suggestions = ((r["lifeSuggestions"] as string[]) ?? []).map(item => `- ${item}`).join("\n");
   const pillars = (r["pillars"] as Record<string, string>) ?? {};
   return `
-# 八字基础参考
+# 这位朋友，我们聊聊你的性格与步调
 
 ## 1. 这位朋友，先说说整体印象
 ${core}
@@ -92,7 +92,7 @@ function mockBaziDeep(r: Record<string, unknown>): string {
   const ele = (r["elementSummary"] as string) ?? "—";
   const pillars = (r["pillars"] as Record<string, string>) ?? {};
   return `
-# 八字深度参考报告
+# 这位朋友，我们把你的生活节奏细细看一遍
 
 ## 1. 用户信息摘要
 日主：**${dm}**　生肖：**${zodiac}**
@@ -144,7 +144,7 @@ function mockMarriageBasic(r: Record<string, unknown>): string {
   const friction = ((r["frictionPoints"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const suggestions = ((r["suggestions"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   return `
-# 关系基础参考报告
+# 两位朋友，我们看看彼此相处的步调
 
 ## 1. 两位朋友，先说说你们相处的感觉
 你们更像两个并肩走路的人：有些时候步子自然合在一起，有些时候也需要等一等、问一句。关系没有固定答案，真正让人走得长久的，是愿意听见彼此，也愿意一起调整。
@@ -170,7 +170,10 @@ ${suggestions || "- 每周留十分钟，只聊近来的感受，不急着解决
 
 // ----------------- 关系深度 -----------------
 function mockMarriageDeep(r: Record<string, unknown>): string {
-  const basic = mockMarriageBasic(r);
+  const basic = mockMarriageBasic(r).replace(
+    "# 两位朋友，我们看看彼此相处的步调",
+    "# 两位朋友，我们把这段相处慢慢聊开"
+  );
   return basic + `
 
 ## 7. 两位朋友，聊聊金钱与家庭责任

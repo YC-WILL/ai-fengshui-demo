@@ -43,8 +43,8 @@ export default function MarriagePage() {
   return (
     <div className="space-y-6">
       <PageIntro
-        title="关系匹配报告"
-        subtitle="结合传统文化结构与心理学沟通框架，分析双方关系优势、潜在摩擦与沟通建议。深度版扩展到金钱观、家庭责任倾向、冲突处理与适合共同推进的事项。"
+        title="看看你们相处的步调"
+        subtitle="不替你们判断关系结果，只聊聊彼此合拍的地方、不同的节奏，以及怎样更好地听见对方。"
         avoid={["合婚断定", "正缘 / 孽缘 / 烂桃花标签", "必合 / 必分判断", "克夫 / 克妻"]}
       />
 
