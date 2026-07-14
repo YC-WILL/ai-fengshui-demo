@@ -175,7 +175,7 @@ export default function WoodenToad() {
 
             <div className="text-center">
               <h2 id="wooden-toad-title" className="font-serif text-2xl text-ink">敲一声，看看它的回应</h2>
-              <p className="mt-2 text-sm leading-6 text-ink/55">按住静坐的木蟾蓄力，松手轻敲；你的每一种力度，它都会自然回应。</p>
+              <p className="mt-2 text-sm leading-6 text-ink/55">轻敲请它吃颗团子，重敲请它吃个饭团；它会张嘴接住，也会慢慢嚼给你看。</p>
 
               <button
                 type="button"
@@ -221,9 +221,19 @@ export default function WoodenToad() {
                 aria-label="按住蓄力，松手轻敲木蟾"
               >
                 <ToadMalletArt />
+                <span className="toad-snack-plate" aria-hidden="true" />
                 <span key={`${mood}-${strikeCount}`} className="wooden-toad-sprite" aria-hidden="true">
                   <MeditatingToadArt mood={mood} struck={struck} />
                 </span>
+                {struck && mood !== "neutral" && (
+                  <span
+                    key={`snack-${strikeCount}`}
+                    className={`toad-flying-snack ${mood === "lively" ? "is-onigiri" : `is-dango snack-tone-${strikeCount % 3}`}`}
+                    aria-hidden="true"
+                  >
+                    {mood === "lively" && <i />}
+                  </span>
+                )}
                 {struck && <span key={`echo-${strikeCount}`} className="wooden-toad-echo" aria-hidden="true" />}
               </button>
 
@@ -231,7 +241,7 @@ export default function WoodenToad() {
                 {holding ? `正在蓄力 · ${woodenToadStrengthLabel(power)}` : lastStrength ? `${lastStrength} · 已敲 ${strikeCount} 下` : "按住木蟾，松手听响"}
               </div>
               <div className="mt-1 min-h-6 text-sm text-ink/60" aria-live="polite">
-                {reply ?? "轻一点，它缓缓眨眼；稳一些，它随呼吸回应；再深一点，它沉下身又安稳坐好。"}
+                {reply ?? "轻敲一声，它接住一颗团子；连着敲，它会一颗颗慢慢吃；重敲则会接住饭团。"}
               </div>
 
               <label className="mx-auto mt-5 block max-w-xs text-left text-xs text-ink/55">

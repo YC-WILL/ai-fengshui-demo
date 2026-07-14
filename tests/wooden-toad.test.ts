@@ -27,9 +27,9 @@ describe("wooden toad feedback", () => {
   });
 
   it("gives each strength a gentle, non-painful reaction", () => {
-    expect(woodenToadReaction(0.2)).toMatchObject({ mood: "gentle", label: "垂首听见" });
-    expect(woodenToadReaction(0.6)).toMatchObject({ mood: "steady", label: "静息相应" });
-    expect(woodenToadReaction(0.9)).toMatchObject({ mood: "lively", label: "沉身回稳" });
+    expect(woodenToadReaction(0.2)).toMatchObject({ mood: "gentle", label: "小口接住" });
+    expect(woodenToadReaction(0.6)).toMatchObject({ mood: "steady", label: "慢嚼团子" });
+    expect(woodenToadReaction(0.9)).toMatchObject({ mood: "lively", label: "接住饭团" });
     [0.2, 0.6, 0.9].forEach(intensity => {
       expect(woodenToadReaction(intensity).reply).not.toMatch(/疼|痛|受伤|生气/);
     });

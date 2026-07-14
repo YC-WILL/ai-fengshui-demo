@@ -37,6 +37,12 @@ export function MeditatingToadArt({ mood, struck }: Props) {
         strokeLinecap="round"
         opacity="0"
       />
+
+      <g className="toad-eating-mouth">
+        <ellipse cx="627" cy="430" rx="126" ry="57" fill="#4d3024" stroke="#8d6544" strokeWidth="8" />
+        <ellipse cx="627" cy="452" rx="76" ry="24" fill="#b96f67" opacity=".82" />
+        <path d="M535 416c54 19 130 19 184 0" fill="none" stroke="#efd7af" strokeWidth="9" strokeLinecap="round" opacity=".65" />
+      </g>
     </svg>
   );
 }

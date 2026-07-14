@@ -180,10 +180,10 @@ html, body {
   --wooden-power: 0.22;
   --toad-look-x: 0px;
   --toad-look-y: 0px;
-  @apply relative mx-auto mt-4 block h-72 w-72 touch-none select-none rounded-2xl bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/50 focus-visible:ring-offset-4 focus-visible:ring-offset-rice;
+  @apply relative mx-auto mt-4 block h-72 w-full max-w-[25rem] touch-none select-none rounded-2xl bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/50 focus-visible:ring-offset-4 focus-visible:ring-offset-rice;
 }
 .wooden-toad-sprite {
-  @apply absolute bottom-0 left-1/2 h-60 w-60 -translate-x-1/2;
+  @apply absolute bottom-0 left-[35%] z-10 h-56 w-56 -translate-x-1/2;
   transform: translateX(-50%) scale(calc(0.97 + var(--wooden-power) * 0.03));
   transform-origin: center bottom;
 }
@@ -206,9 +206,24 @@ html, body {
 }
 .toad-reference-eyelid-right { animation-delay: 35ms; }
 .toad-breath-highlight { transform-box: fill-box; transform-origin: center center; }
+.toad-eating-mouth {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center center;
+}
+.meditating-toad.is-reacting .toad-eating-mouth {
+  animation: toad-open-and-chew 1550ms ease-in-out;
+}
+.meditating-toad.is-reacting.mood-lively .toad-eating-mouth {
+  animation-name: toad-open-wide-and-chew;
+}
+.toad-snack-plate {
+  @apply pointer-events-none absolute bottom-2 right-0 z-0 h-36 w-44 bg-contain bg-bottom bg-no-repeat drop-shadow-[0_8px_9px_rgba(73,48,28,0.14)];
+  background-image: url('/assets/toad-snack-plate.png');
+}
 .wooden-toad-mallet {
   @apply absolute -top-8 z-20 h-28 w-[3.2rem] origin-bottom overflow-visible drop-shadow-[0_5px_5px_rgba(67,35,20,0.2)];
-  left: calc(100% - 3.25rem);
+  left: calc(35% + 5.25rem);
   transform: rotate(calc(-76deg + var(--wooden-power) * 16deg));
   transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -223,6 +238,9 @@ html, body {
 }
 .wooden-toad-button.is-struck .wooden-toad-mallet {
   animation: wooden-toad-hit 210ms ease-out;
+}
+.wooden-toad-button.is-struck .toad-snack-plate {
+  animation: toad-plate-nudge 520ms ease-out;
 }
 .wooden-toad-button.is-struck.mood-gentle .wooden-toad-sprite {
   animation: wooden-toad-nod 850ms ease-out;
@@ -243,8 +261,33 @@ html, body {
   animation: wooden-toad-settle 1450ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .wooden-toad-echo {
-  @apply pointer-events-none absolute bottom-3 left-1/2 h-48 w-56 -translate-x-1/2 rounded-[50%] border border-gold/50;
+  @apply pointer-events-none absolute bottom-3 left-[35%] h-44 w-52 -translate-x-1/2 rounded-[50%] border border-gold/50;
   animation: wooden-toad-echo 1100ms ease-out forwards;
+}
+.toad-flying-snack {
+  @apply pointer-events-none absolute z-30 block;
+  left: 79%;
+  bottom: 4.6rem;
+  animation: toad-snack-to-mouth 1180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.toad-flying-snack.is-dango {
+  @apply h-7 w-7 rounded-full border border-[#9d714a]/35 shadow-[inset_-4px_-5px_6px_rgba(124,74,44,0.14),0_4px_8px_rgba(74,46,28,0.16)];
+  background: radial-gradient(circle at 32% 25%, #fff8e4, #f0c9bd 68%, #c98f80);
+}
+.toad-flying-snack.is-dango.snack-tone-1 {
+  background: radial-gradient(circle at 32% 25%, #fffceb, #eee1bd 68%, #cdbb88);
+}
+.toad-flying-snack.is-dango.snack-tone-2 {
+  background: radial-gradient(circle at 32% 25%, #f2f4ce, #aebc69 68%, #788a42);
+}
+.toad-flying-snack.is-onigiri {
+  @apply h-10 w-11 border border-[#b99b72]/45 shadow-[0_4px_9px_rgba(74,46,28,0.18)];
+  border-radius: 48% 48% 30% 30%;
+  clip-path: polygon(50% 0, 100% 88%, 88% 100%, 12% 100%, 0 88%);
+  background: radial-gradient(circle at 38% 34%, #fffdf3, #eadfc6 78%);
+}
+.toad-flying-snack.is-onigiri > i {
+  @apply absolute bottom-0 left-1/2 h-4 w-5 -translate-x-1/2 bg-[#26342a];
 }
 
 @keyframes wooden-toad-hit {
@@ -274,6 +317,29 @@ html, body {
   from { opacity: 0.62; transform: translateX(-50%) scale(0.55); }
   to { opacity: 0; transform: translateX(-50%) scale(1.28); }
 }
+@keyframes toad-plate-nudge {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  32% { transform: translateX(-3px) rotate(-1.2deg); }
+  66% { transform: translateX(1px) rotate(.45deg); }
+}
+@keyframes toad-snack-to-mouth {
+  0% { left: 79%; bottom: 4.6rem; opacity: 0; transform: translate(-50%, 0) scale(.72) rotate(0); }
+  14% { opacity: 1; transform: translate(-50%, -6px) scale(1) rotate(-8deg); }
+  72% { left: 35%; bottom: 10.3rem; opacity: 1; transform: translate(-50%, 0) scale(.92) rotate(10deg); }
+  86%, 100% { left: 35%; bottom: 10.3rem; opacity: 0; transform: translate(-50%, 0) scale(.28) rotate(14deg); }
+}
+@keyframes toad-open-and-chew {
+  0%, 17%, 100% { opacity: 0; transform: scaleY(.08); }
+  30%, 70% { opacity: 1; transform: scale(.8, .68); }
+  82% { opacity: .75; transform: scale(.72, .2); }
+  90% { opacity: .5; transform: scale(.7, .42); }
+}
+@keyframes toad-open-wide-and-chew {
+  0%, 15%, 100% { opacity: 0; transform: scaleY(.08); }
+  26%, 72% { opacity: 1; transform: scale(1.02, 1.05); }
+  82% { opacity: .8; transform: scale(.9, .25); }
+  91% { opacity: .55; transform: scale(.86, .5); }
+}
 @keyframes toad-idle-breathe {
   0%, 100% { transform: translate(var(--toad-look-x), var(--toad-look-y)) scale(1); }
   50% { transform: translate(var(--toad-look-x), calc(var(--toad-look-y) - 1px)) scale(1.006, 1.01); }
@@ -302,5 +368,7 @@ html, body {
   .wooden-toad-button.is-struck .wooden-toad-mallet,
   .wooden-toad-button.is-struck .wooden-toad-sprite,
   .wooden-toad-echo,
+  .toad-flying-snack,
+  .toad-snack-plate,
   .meditating-toad * { animation-duration: 1ms !important; }
 }
