@@ -2,22 +2,26 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
-  woodenFishIntensity,
-  woodenFishStrengthLabel,
-  woodenFishVibration,
-  woodenFishVolume
-} from "@/lib/domain/woodenFish";
+  woodenToadIntensity,
+  woodenToadStrengthLabel,
+  woodenToadReaction,
+  type WoodenToadMood,
+  woodenToadVibration,
+  woodenToadVolume
+} from "@/lib/domain/woodenToad";
 
 type AudioWindow = Window & {
   webkitAudioContext?: typeof AudioContext;
 };
 
-export default function WoodenFish() {
+export default function WoodenToad() {
   const [open, setOpen] = useState(false);
   const [holding, setHolding] = useState(false);
   const [power, setPower] = useState(0.22);
   const [volume, setVolume] = useState(0.7);
   const [lastStrength, setLastStrength] = useState<string | null>(null);
+  const [mood, setMood] = useState<WoodenToadMood>("gentle");
+  const [reply, setReply] = useState<string | null>(null);
   const [strikeCount, setStrikeCount] = useState(0);
   const [struck, setStruck] = useState(false);
   const [hapticsSupported, setHapticsSupported] = useState<boolean | null>(null);
@@ -51,12 +55,12 @@ export default function WoodenFish() {
     if (holding) return;
     holdStartedAt.current = performance.now();
     maxPressure.current = pressure;
-    setPower(woodenFishIntensity(0, pressure));
+    setPower(woodenToadIntensity(0, pressure));
     setHolding(true);
     setLastStrength(null);
     powerTimer.current = window.setInterval(() => {
       if (holdStartedAt.current != null) {
-        setPower(woodenFishIntensity(performance.now() - holdStartedAt.current, maxPressure.current));
+        setPower(woodenToadIntensity(performance.now() - holdStartedAt.current, maxPressure.current));
       }
     }, 40);
   };
@@ -68,7 +72,7 @@ export default function WoodenFish() {
 
   const finishHold = () => {
     if (holdStartedAt.current == null) return;
-    const intensity = woodenFishIntensity(
+    const intensity = woodenToadIntensity(
       performance.now() - holdStartedAt.current,
       maxPressure.current
     );
@@ -91,9 +95,12 @@ export default function WoodenFish() {
   const strike = (intensity: number) => {
     playWoodenSound(intensity, volume);
     if (typeof navigator.vibrate === "function") {
-      navigator.vibrate(woodenFishVibration(intensity));
+      navigator.vibrate(woodenToadVibration(intensity));
     }
-    setLastStrength(woodenFishStrengthLabel(intensity));
+    setLastStrength(woodenToadStrengthLabel(intensity));
+    const reaction = woodenToadReaction(intensity);
+    setMood(reaction.mood);
+    setReply(`${reaction.label} · ${reaction.reply}`);
     setStrikeCount(count => count + 1);
     setStruck(false);
     window.requestAnimationFrame(() => {
@@ -109,7 +116,7 @@ export default function WoodenFish() {
     audioContext.current = context;
     void context.resume();
     const now = context.currentTime;
-    const amplitude = woodenFishVolume(masterVolume, intensity);
+    const amplitude = woodenToadVolume(masterVolume, intensity);
 
     const body = context.createOscillator();
     const bodyGain = context.createGain();
@@ -137,8 +144,8 @@ export default function WoodenFish() {
     <div>
       <div className="flex items-center justify-between gap-4 rounded-xl border border-mist bg-white/45 px-4 py-3">
         <div>
-          <div className="font-serif text-base text-ink">静一静，敲敲木鱼</div>
-          <p className="mt-0.5 text-xs text-ink/50">听一声清响，把注意力带回此刻</p>
+          <div className="font-serif text-base text-ink">静一静，敲敲木蟾</div>
+          <p className="mt-0.5 text-xs text-ink/50">圆圆的木蟾会用表情回应你的每一次轻敲</p>
         </div>
         <button type="button" className="btn-secondary shrink-0" onClick={() => setOpen(true)}>
           敲一下
@@ -149,11 +156,11 @@ export default function WoodenFish() {
         <div className="daily-sign-modal" role="presentation" onMouseDown={event => {
           if (event.target === event.currentTarget && !holding) setOpen(false);
         }}>
-          <div role="dialog" aria-modal="true" aria-labelledby="wooden-fish-title" className="daily-sign-dialog">
+          <div role="dialog" aria-modal="true" aria-labelledby="wooden-toad-title" className="daily-sign-dialog">
             <button
               type="button"
               className="absolute right-4 top-3 text-2xl leading-none text-ink/35 hover:text-ink/70 disabled:opacity-30"
-              aria-label="关闭木鱼"
+              aria-label="关闭木蟾"
               disabled={holding}
               onClick={() => setOpen(false)}
             >
@@ -161,12 +168,12 @@ export default function WoodenFish() {
             </button>
 
             <div className="text-center">
-              <h2 id="wooden-fish-title" className="font-serif text-2xl text-ink">敲一声，静一静</h2>
-              <p className="mt-2 text-sm leading-6 text-ink/55">按住蓄力，松手敲下；按得越久，声音越有分量。</p>
+              <h2 id="wooden-toad-title" className="font-serif text-2xl text-ink">敲一声，看看它的回应</h2>
+              <p className="mt-2 text-sm leading-6 text-ink/55">按住圆圆的木蟾蓄力，松手轻敲；不同力度，它会有不同表情。</p>
 
               <button
                 type="button"
-                className={`wooden-fish-button ${holding ? "is-holding" : ""} ${struck ? "is-struck" : ""}`}
+                className={`wooden-toad-button mood-${mood} ${holding ? "is-holding" : ""} ${struck ? "is-struck" : ""}`}
                 style={{ "--wooden-power": power } as CSSProperties}
                 onPointerDown={event => {
                   event.preventDefault();
@@ -192,14 +199,26 @@ export default function WoodenFish() {
                     finishHold();
                   }
                 }}
-                aria-label="按住蓄力，松手敲木鱼"
+                aria-label="按住蓄力，松手轻敲木蟾"
               >
-                <span className="wooden-fish-mallet" aria-hidden="true"><i /></span>
-                <span className="wooden-fish-body" aria-hidden="true"><i /></span>
+                <span className="wooden-toad-mallet" aria-hidden="true"><i /></span>
+                <span className="wooden-toad-body" aria-hidden="true">
+                  <i className="wooden-toad-eye eye-left"><b /></i>
+                  <i className="wooden-toad-eye eye-right"><b /></i>
+                  <i className="wooden-toad-cheek cheek-left" />
+                  <i className="wooden-toad-cheek cheek-right" />
+                  <i className="wooden-toad-mouth" />
+                  <i className="wooden-toad-belly">安</i>
+                  <i className="wooden-toad-leg leg-left" />
+                  <i className="wooden-toad-leg leg-right" />
+                </span>
               </button>
 
               <div className="mt-1 h-6 text-sm font-medium text-cinnabar" aria-live="polite">
-                {holding ? `正在蓄力 · ${woodenFishStrengthLabel(power)}` : lastStrength ? `${lastStrength} · 已敲 ${strikeCount} 下` : "按住木鱼，松手听响"}
+                {holding ? `正在蓄力 · ${woodenToadStrengthLabel(power)}` : lastStrength ? `${lastStrength} · 已敲 ${strikeCount} 下` : "按住木蟾，松手听响"}
+              </div>
+              <div className="mt-1 min-h-6 text-sm text-ink/60" aria-live="polite">
+                {reply ?? "轻一点会眯眼，稳一点会鼓腮，响一点会惊喜弹起。"}
               </div>
 
               <label className="mx-auto mt-5 block max-w-xs text-left text-xs text-ink/55">

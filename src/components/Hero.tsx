@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { brand } from "@/lib/config/brand";
 import DailySignDraw from "@/components/DailySignDraw";
-import WoodenFish from "@/components/WoodenFish";
+import WoodenToad from "@/components/WoodenToad";
 
 const COMFORT_LINES = [
   "不必急着把一切想明白，先把眼前这一小步走稳。",
@@ -58,7 +58,7 @@ export default function Hero() {
 
         <div className="space-y-3">
           <DailySignDraw />
-          <WoodenFish />
+          <WoodenToad />
         </div>
       </div>
     </section>
