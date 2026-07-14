@@ -180,14 +180,27 @@ export default function WoodenToad() {
               <button
                 type="button"
                 className={`wooden-toad-button mood-${mood} ${holding ? "is-holding" : ""} ${struck ? "is-struck" : ""}`}
-                style={{ "--wooden-power": power } as CSSProperties}
+                style={{ "--wooden-power": power, "--toad-look-x": "0px", "--toad-look-y": "0px" } as CSSProperties}
                 onPointerDown={event => {
                   event.preventDefault();
                   event.currentTarget.setPointerCapture(event.pointerId);
                   updatePressure(event.pressure, event.pointerType);
                   beginHold(maxPressure.current);
                 }}
-                onPointerMove={event => updatePressure(event.pressure, event.pointerType)}
+                onPointerMove={event => {
+                  updatePressure(event.pressure, event.pointerType);
+                  const bounds = event.currentTarget.getBoundingClientRect();
+                  const lookX = Math.max(-1, Math.min(1, (event.clientX - bounds.left) / bounds.width * 2 - 1));
+                  const lookY = Math.max(-1, Math.min(1, (event.clientY - bounds.top) / bounds.height * 2 - 1));
+                  event.currentTarget.style.setProperty("--toad-look-x", `${(lookX * 3).toFixed(2)}px`);
+                  event.currentTarget.style.setProperty("--toad-look-y", `${(lookY * 1.5).toFixed(2)}px`);
+                }}
+                onPointerLeave={event => {
+                  if (!holding) {
+                    event.currentTarget.style.setProperty("--toad-look-x", "0px");
+                    event.currentTarget.style.setProperty("--toad-look-y", "0px");
+                  }
+                }}
                 onPointerUp={event => {
                   updatePressure(event.pressure, event.pointerType);
                   finishHold();
