@@ -30,10 +30,10 @@ export function woodenToadReaction(intensity: number): {
   reply: string;
 } {
   if (intensity >= 0.8) {
-    return { mood: "lively", label: "惊喜一跃", reply: "它睁圆眼睛，轻轻弹了一下，又安稳坐好。" };
+    return { mood: "lively", label: "沉身回稳", reply: "它先沉下身子，袈裟轻轻一摆，又安稳坐好。" };
   }
   if (intensity >= 0.5) {
-    return { mood: "steady", label: "鼓腮回应", reply: "它鼓了鼓圆脸，稳稳陪你响了一声。" };
+    return { mood: "steady", label: "静息相应", reply: "它的喉间轻轻起伏，像陪你慢慢呼出一口气。" };
   }
-  return { mood: "gentle", label: "眯眼点头", reply: "它轻轻点了点头，像是在说：听见了。" };
+  return { mood: "gentle", label: "垂首听见", reply: "它缓缓眨了眨眼，微微垂首，像是在说：听见了。" };
 }

@@ -26,6 +26,7 @@ export default function WoodenToad() {
   const [reply, setReply] = useState<string | null>(null);
   const [strikeCount, setStrikeCount] = useState(0);
   const [struck, setStruck] = useState(false);
+  const reactionTimer = useRef<number | null>(null);
   const [hapticsSupported, setHapticsSupported] = useState<boolean | null>(null);
   const holdStartedAt = useRef<number | null>(null);
   const maxPressure = useRef(0);
@@ -36,6 +37,7 @@ export default function WoodenToad() {
     setHapticsSupported(typeof navigator !== "undefined" && typeof navigator.vibrate === "function");
     return () => {
       if (powerTimer.current) window.clearInterval(powerTimer.current);
+      if (reactionTimer.current) window.clearTimeout(reactionTimer.current);
       void audioContext.current?.close();
     };
   }, []);
@@ -104,11 +106,12 @@ export default function WoodenToad() {
     setMood(reaction.mood);
     setReply(`${reaction.label} · ${reaction.reply}`);
     setStrikeCount(count => count + 1);
-    setStruck(false);
-    window.requestAnimationFrame(() => {
-      setStruck(true);
-      window.setTimeout(() => setStruck(false), 1300);
-    });
+    setStruck(true);
+    if (reactionTimer.current) window.clearTimeout(reactionTimer.current);
+    reactionTimer.current = window.setTimeout(() => {
+      setStruck(false);
+      setMood("neutral");
+    }, 1800);
   };
 
   const playWoodenSound = (intensity: number, masterVolume: number) => {
@@ -147,7 +150,7 @@ export default function WoodenToad() {
       <div className="flex items-center justify-between gap-4 rounded-xl border border-mist bg-white/45 px-4 py-3">
         <div>
           <div className="font-serif text-base text-ink">静一静，敲敲木蟾</div>
-          <p className="mt-0.5 text-xs text-ink/50">圆圆的木蟾会用表情回应你的每一次轻敲</p>
+          <p className="mt-0.5 text-xs text-ink/50">它静静坐在这里，也会认真回应你的每一次轻敲</p>
         </div>
         <button type="button" className="btn-secondary shrink-0" onClick={() => setOpen(true)}>
           敲一下
@@ -171,7 +174,7 @@ export default function WoodenToad() {
 
             <div className="text-center">
               <h2 id="wooden-toad-title" className="font-serif text-2xl text-ink">敲一声，看看它的回应</h2>
-              <p className="mt-2 text-sm leading-6 text-ink/55">按住圆圆的木蟾蓄力，松手轻敲；不同力度，它会有不同表情。</p>
+              <p className="mt-2 text-sm leading-6 text-ink/55">按住静坐的木蟾蓄力，松手轻敲；你的每一种力度，它都会自然回应。</p>
 
               <button
                 type="button"
@@ -204,14 +207,15 @@ export default function WoodenToad() {
                 aria-label="按住蓄力，松手轻敲木蟾"
               >
                 <span className="wooden-toad-mallet" aria-hidden="true"><i /></span>
-                <span className="wooden-toad-sprite" aria-hidden="true" />
+                <span key={`${mood}-${strikeCount}`} className="wooden-toad-sprite" aria-hidden="true" />
+                {struck && <span key={`echo-${strikeCount}`} className="wooden-toad-echo" aria-hidden="true" />}
               </button>
 
               <div className="mt-1 h-6 text-sm font-medium text-cinnabar" aria-live="polite">
                 {holding ? `正在蓄力 · ${woodenToadStrengthLabel(power)}` : lastStrength ? `${lastStrength} · 已敲 ${strikeCount} 下` : "按住木蟾，松手听响"}
               </div>
               <div className="mt-1 min-h-6 text-sm text-ink/60" aria-live="polite">
-                {reply ?? "轻一点会眯眼，稳一点会鼓腮，响一点会惊喜弹起。"}
+                {reply ?? "轻一点，它缓缓眨眼；稳一些，它随呼吸回应；再深一点，它沉下身又安稳坐好。"}
               </div>
 
               <label className="mx-auto mt-5 block max-w-xs text-left text-xs text-ink/55">
