@@ -181,26 +181,20 @@ html, body {
   @apply relative mx-auto mt-4 block h-64 w-72 touch-none select-none rounded-2xl bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/50 focus-visible:ring-offset-4 focus-visible:ring-offset-rice;
 }
 .wooden-toad-sprite {
-  @apply absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 bg-no-repeat drop-shadow-[0_12px_14px_rgba(68,35,19,0.16)];
-  background-image: url('/assets/wooden-toad-reactions.png');
-  background-size: 200% 200%;
-  background-position: 0 0;
+  @apply absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2;
   transform: translateX(-50%) scale(calc(0.97 + var(--wooden-power) * 0.03));
   transform-origin: center bottom;
 }
-.wooden-toad-button.mood-neutral .wooden-toad-sprite { background-position: 0 0; }
-.wooden-toad-button.mood-gentle .wooden-toad-sprite { background-position: 100% 0; }
-.wooden-toad-button.mood-steady .wooden-toad-sprite { background-position: 0 100%; }
-.wooden-toad-button.mood-lively .wooden-toad-sprite { background-position: 100% 100%; }
+.meditating-toad { @apply h-full w-full overflow-visible; }
+.toad-whole { transform-box: fill-box; transform-origin: center bottom; }
+.toad-head,
+.toad-throat,
+.toad-robes { transform-box: fill-box; transform-origin: center center; }
+.toad-eyelid { opacity: 0; transform-box: fill-box; transform-origin: center center; }
 .wooden-toad-mallet {
-  @apply absolute right-8 top-3 z-10 h-36 w-4 origin-bottom rounded-full;
-  background: linear-gradient(90deg, #81502d, #d0a06a 48%, #62391f);
+  @apply absolute right-5 top-0 z-10 h-40 w-[4.6rem] origin-bottom overflow-visible drop-shadow-[0_5px_5px_rgba(67,35,20,0.2)];
   transform: rotate(calc(-34deg + var(--wooden-power) * -18deg));
   transition: transform 120ms ease;
-}
-.wooden-toad-mallet > i {
-  @apply absolute -left-3 -top-5 h-9 w-10 rounded-full border border-[#6a311d]/60;
-  background: radial-gradient(circle at 35% 30%, #e2ad72, #8c4b26 70%);
 }
 .wooden-toad-button.is-holding .wooden-toad-mallet {
   transform: rotate(calc(-34deg + var(--wooden-power) * -30deg));
@@ -217,8 +211,20 @@ html, body {
 .wooden-toad-button.is-struck.mood-gentle .wooden-toad-sprite {
   animation: wooden-toad-nod 850ms ease-out;
 }
+.meditating-toad.is-reacting.mood-gentle .toad-eyelid {
+  animation: toad-blink 1050ms ease-in-out;
+}
+.meditating-toad.is-reacting.mood-gentle .toad-head {
+  animation: toad-bow 1050ms ease-in-out;
+}
 .wooden-toad-button.is-struck.mood-steady .wooden-toad-sprite {
   animation: wooden-toad-sway 1000ms ease-out;
+}
+.meditating-toad.is-reacting.mood-steady .toad-throat {
+  animation: toad-breathe 1300ms ease-in-out;
+}
+.meditating-toad.is-reacting.mood-steady .toad-robes {
+  animation: toad-robe-breathe 1300ms ease-in-out;
 }
 .wooden-toad-button.is-struck.mood-lively .wooden-toad-sprite {
   animation: wooden-toad-settle 1450ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -254,6 +260,22 @@ html, body {
   from { opacity: 0.62; transform: translateX(-50%) scale(0.55); }
   to { opacity: 0; transform: translateX(-50%) scale(1.28); }
 }
+@keyframes toad-blink {
+  0%, 18%, 70%, 100% { opacity: 0; transform: scaleY(.15); }
+  28%, 48% { opacity: 1; transform: scaleY(1); }
+}
+@keyframes toad-bow {
+  0%, 100% { transform: translateY(0); }
+  38%, 58% { transform: translateY(4px) rotate(.2deg); }
+}
+@keyframes toad-breathe {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(1.075, 1.11); }
+}
+@keyframes toad-robe-breathe {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  45% { transform: translateY(2px) scaleX(1.018); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .wooden-toad-button,
@@ -261,5 +283,6 @@ html, body {
   .wooden-toad-mallet { transition: none; }
   .wooden-toad-button.is-struck .wooden-toad-mallet,
   .wooden-toad-button.is-struck .wooden-toad-sprite,
-  .wooden-toad-echo { animation-duration: 1ms; }
+  .wooden-toad-echo,
+  .meditating-toad * { animation-duration: 1ms !important; }
 }

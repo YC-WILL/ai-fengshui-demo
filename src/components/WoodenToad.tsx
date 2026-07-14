@@ -9,6 +9,7 @@ import {
   woodenToadVibration,
   woodenToadVolume
 } from "@/lib/domain/woodenToad";
+import { MeditatingToadArt, ToadMalletArt } from "@/components/MeditatingToadArt";
 
 type WoodenToadDisplayMood = "neutral" | WoodenToadMood;
 
@@ -206,8 +207,10 @@ export default function WoodenToad() {
                 }}
                 aria-label="按住蓄力，松手轻敲木蟾"
               >
-                <span className="wooden-toad-mallet" aria-hidden="true"><i /></span>
-                <span key={`${mood}-${strikeCount}`} className="wooden-toad-sprite" aria-hidden="true" />
+                <ToadMalletArt />
+                <span key={`${mood}-${strikeCount}`} className="wooden-toad-sprite" aria-hidden="true">
+                  <MeditatingToadArt mood={mood} struck={struck} />
+                </span>
                 {struck && <span key={`echo-${strikeCount}`} className="wooden-toad-echo" aria-hidden="true" />}
               </button>
 
