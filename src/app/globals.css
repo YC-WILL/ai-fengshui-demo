@@ -174,3 +174,72 @@ html, body {
     animation-iteration-count: 1;
   }
 }
+
+/* 静心木鱼：按住蓄力，松手敲下。 */
+.wooden-fish-button {
+  --wooden-power: 0.22;
+  @apply relative mx-auto mt-5 block h-64 w-72 touch-none select-none rounded-2xl bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/50 focus-visible:ring-offset-4 focus-visible:ring-offset-rice;
+}
+.wooden-fish-body {
+  @apply absolute bottom-7 left-1/2 h-28 w-48 -translate-x-1/2 rounded-[48%_52%_45%_45%] border border-[#7d2e20]/60 shadow-lg;
+  background:
+    radial-gradient(circle at 30% 38%, rgba(255,220,153,0.38), transparent 24%),
+    linear-gradient(145deg, #c85a31, #8e2f22 62%, #672018);
+  transform: translateX(-50%) scale(calc(0.97 + var(--wooden-power) * 0.03));
+  transition: transform 120ms ease, filter 120ms ease;
+}
+.wooden-fish-body::before {
+  content: "";
+  @apply absolute left-8 right-8 top-8 h-2 rounded-full bg-[#4f1914]/80 shadow-inner;
+}
+.wooden-fish-body::after {
+  content: "";
+  @apply absolute right-9 top-12 h-3 w-3 rounded-full border border-gold/70 bg-[#34100d];
+}
+.wooden-fish-body > i {
+  @apply absolute bottom-4 left-1/2 h-4 w-24 -translate-x-1/2 rounded-[50%] border-b border-gold/35;
+}
+.wooden-fish-mallet {
+  @apply absolute right-8 top-5 z-10 h-36 w-5 origin-bottom rounded-full;
+  background: linear-gradient(90deg, #8f5a31, #d2a169 48%, #70401f);
+  transform: rotate(calc(-34deg + var(--wooden-power) * -18deg));
+  transition: transform 120ms ease;
+}
+.wooden-fish-mallet > i {
+  @apply absolute -left-3 -top-5 h-10 w-11 rounded-full border border-[#6a311d]/60;
+  background: radial-gradient(circle at 35% 30%, #e2ad72, #8c4b26 70%);
+}
+.wooden-fish-button.is-holding .wooden-fish-mallet {
+  transform: rotate(calc(-34deg + var(--wooden-power) * -30deg));
+}
+.wooden-fish-button.is-holding::after {
+  content: "";
+  @apply absolute inset-5 rounded-full border border-gold/45;
+  transform: scale(calc(0.75 + var(--wooden-power) * 0.25));
+  opacity: calc(0.25 + var(--wooden-power) * 0.6);
+}
+.wooden-fish-button.is-struck .wooden-fish-mallet {
+  animation: wooden-fish-hit 210ms ease-out;
+}
+.wooden-fish-button.is-struck .wooden-fish-body {
+  animation: wooden-fish-pulse 240ms ease-out;
+}
+
+@keyframes wooden-fish-hit {
+  0% { transform: rotate(-55deg); }
+  45% { transform: rotate(-12deg); }
+  100% { transform: rotate(-34deg); }
+}
+@keyframes wooden-fish-pulse {
+  0% { filter: brightness(1); transform: translateX(-50%) scale(1); }
+  45% { filter: brightness(1.18); transform: translateX(-50%) scale(1.035); }
+  100% { filter: brightness(1); transform: translateX(-50%) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wooden-fish-button,
+  .wooden-fish-body,
+  .wooden-fish-mallet { transition: none; }
+  .wooden-fish-button.is-struck .wooden-fish-mallet,
+  .wooden-fish-button.is-struck .wooden-fish-body { animation: none; }
+}
