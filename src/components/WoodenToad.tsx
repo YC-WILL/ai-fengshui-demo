@@ -10,6 +10,8 @@ import {
   woodenToadVolume
 } from "@/lib/domain/woodenToad";
 
+type WoodenToadDisplayMood = "neutral" | WoodenToadMood;
+
 type AudioWindow = Window & {
   webkitAudioContext?: typeof AudioContext;
 };
@@ -20,7 +22,7 @@ export default function WoodenToad() {
   const [power, setPower] = useState(0.22);
   const [volume, setVolume] = useState(0.7);
   const [lastStrength, setLastStrength] = useState<string | null>(null);
-  const [mood, setMood] = useState<WoodenToadMood>("gentle");
+  const [mood, setMood] = useState<WoodenToadDisplayMood>("neutral");
   const [reply, setReply] = useState<string | null>(null);
   const [strikeCount, setStrikeCount] = useState(0);
   const [struck, setStruck] = useState(false);
@@ -105,7 +107,7 @@ export default function WoodenToad() {
     setStruck(false);
     window.requestAnimationFrame(() => {
       setStruck(true);
-      window.setTimeout(() => setStruck(false), 220);
+      window.setTimeout(() => setStruck(false), 1300);
     });
   };
 
@@ -202,16 +204,7 @@ export default function WoodenToad() {
                 aria-label="按住蓄力，松手轻敲木蟾"
               >
                 <span className="wooden-toad-mallet" aria-hidden="true"><i /></span>
-                <span className="wooden-toad-body" aria-hidden="true">
-                  <i className="wooden-toad-eye eye-left"><b /></i>
-                  <i className="wooden-toad-eye eye-right"><b /></i>
-                  <i className="wooden-toad-cheek cheek-left" />
-                  <i className="wooden-toad-cheek cheek-right" />
-                  <i className="wooden-toad-mouth" />
-                  <i className="wooden-toad-belly">安</i>
-                  <i className="wooden-toad-leg leg-left" />
-                  <i className="wooden-toad-leg leg-right" />
-                </span>
+                <span className="wooden-toad-sprite" aria-hidden="true" />
               </button>
 
               <div className="mt-1 h-6 text-sm font-medium text-cinnabar" aria-live="polite">

@@ -180,51 +180,18 @@ html, body {
   --wooden-power: 0.22;
   @apply relative mx-auto mt-4 block h-64 w-72 touch-none select-none rounded-2xl bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/50 focus-visible:ring-offset-4 focus-visible:ring-offset-rice;
 }
-.wooden-toad-body {
-  @apply absolute bottom-6 left-1/2 h-36 w-52 rounded-[48%_48%_44%_44%] border border-[#71301f]/60 shadow-lg;
-  background:
-    radial-gradient(circle at 32% 28%, rgba(255,224,163,0.42), transparent 24%),
-    repeating-radial-gradient(ellipse at 50% 80%, transparent 0 16px, rgba(92,43,24,0.08) 17px 18px),
-    linear-gradient(150deg, #ca7847, #9a4d2e 64%, #71301f);
+.wooden-toad-sprite {
+  @apply absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 bg-no-repeat drop-shadow-[0_12px_14px_rgba(68,35,19,0.16)];
+  background-image: url('/assets/wooden-toad-reactions.png');
+  background-size: 200% 200%;
+  background-position: 0 0;
   transform: translateX(-50%) scale(calc(0.97 + var(--wooden-power) * 0.03));
-  transition: transform 140ms ease, filter 140ms ease;
+  transform-origin: center bottom;
 }
-.wooden-toad-body::before {
-  content: "";
-  @apply absolute left-1/2 top-5 h-5 w-24 -translate-x-1/2 rounded-[50%] border-t border-gold/20;
-}
-.wooden-toad-eye {
-  @apply absolute top-4 h-11 w-11 rounded-full border border-[#71301f]/50;
-  background: linear-gradient(145deg, #da9060, #a95532);
-  transition: height 130ms ease, transform 130ms ease;
-}
-.wooden-toad-eye.eye-left { left: 2.75rem; }
-.wooden-toad-eye.eye-right { right: 2.75rem; }
-.wooden-toad-eye > b {
-  @apply absolute left-1/2 top-1/2 h-4 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#321612];
-  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.3);
-  transition: transform 130ms ease, height 130ms ease;
-}
-.wooden-toad-cheek {
-  @apply absolute top-[4.7rem] h-7 w-9 rounded-full bg-cinnabar/20;
-  transition: transform 160ms ease, background-color 160ms ease;
-}
-.wooden-toad-cheek.cheek-left { left: 2rem; }
-.wooden-toad-cheek.cheek-right { right: 2rem; }
-.wooden-toad-mouth {
-  @apply absolute left-1/2 top-[5.15rem] h-4 w-14 -translate-x-1/2 rounded-[50%] border-b-2 border-[#502218]/70;
-  transition: transform 150ms ease;
-}
-.wooden-toad-belly {
-  @apply absolute bottom-4 left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border border-gold/45 font-serif text-base not-italic text-rice/90;
-  background: rgba(181,59,42,0.45);
-}
-.wooden-toad-leg {
-  @apply absolute -bottom-2 h-10 w-20 rounded-[50%] border border-[#71301f]/45;
-  background: linear-gradient(160deg, #a85a35, #733522);
-}
-.wooden-toad-leg.leg-left { left: -0.7rem; transform: rotate(-8deg); }
-.wooden-toad-leg.leg-right { right: -0.7rem; transform: rotate(8deg); }
+.wooden-toad-button.mood-neutral .wooden-toad-sprite { background-position: 0 0; }
+.wooden-toad-button.mood-gentle .wooden-toad-sprite { background-position: 100% 0; }
+.wooden-toad-button.mood-steady .wooden-toad-sprite { background-position: 0 100%; }
+.wooden-toad-button.mood-lively .wooden-toad-sprite { background-position: 100% 100%; }
 .wooden-toad-mallet {
   @apply absolute right-8 top-3 z-10 h-36 w-4 origin-bottom rounded-full;
   background: linear-gradient(90deg, #81502d, #d0a06a 48%, #62391f);
@@ -247,23 +214,14 @@ html, body {
 .wooden-toad-button.is-struck .wooden-toad-mallet {
   animation: wooden-toad-hit 210ms ease-out;
 }
-.wooden-toad-button.is-struck.mood-gentle .wooden-toad-body {
-  animation: wooden-toad-nod 320ms ease-out;
+.wooden-toad-button.is-struck.mood-gentle .wooden-toad-sprite {
+  animation: wooden-toad-nod 850ms ease-out;
 }
-.wooden-toad-button.is-struck.mood-gentle .wooden-toad-eye {
-  animation: wooden-toad-blink 320ms ease-out;
+.wooden-toad-button.is-struck.mood-steady .wooden-toad-sprite {
+  animation: wooden-toad-sway 1000ms ease-out;
 }
-.wooden-toad-button.is-struck.mood-steady .wooden-toad-body {
-  animation: wooden-toad-sway 420ms ease-out;
-}
-.wooden-toad-button.is-struck.mood-steady .wooden-toad-cheek {
-  animation: wooden-toad-puff 420ms ease-out;
-}
-.wooden-toad-button.is-struck.mood-lively .wooden-toad-body {
-  animation: wooden-toad-hop 480ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.wooden-toad-button.is-struck.mood-lively .wooden-toad-eye > b {
-  animation: wooden-toad-wide-eyes 480ms ease-out;
+.wooden-toad-button.is-struck.mood-lively .wooden-toad-sprite {
+  animation: wooden-toad-hop 1200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes wooden-toad-hit {
@@ -275,38 +233,23 @@ html, body {
   0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
   50% { transform: translateX(-50%) translateY(0.35rem) scale(1.015, 0.97); }
 }
-@keyframes wooden-toad-blink {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.2); }
-}
 @keyframes wooden-toad-sway {
   0%, 100% { transform: translateX(-50%) rotate(0); }
-  30% { transform: translateX(-50%) rotate(-3deg); }
-  70% { transform: translateX(-50%) rotate(3deg); }
-}
-@keyframes wooden-toad-puff {
-  0%, 100% { transform: scale(1); background-color: rgba(181,59,42,0.2); }
-  50% { transform: scale(1.35); background-color: rgba(181,59,42,0.35); }
+  25% { transform: translateX(-50%) rotate(-4deg) scale(1.025); }
+  58% { transform: translateX(-50%) rotate(4deg) scale(1.025); }
+  82% { transform: translateX(-50%) rotate(-1.5deg); }
 }
 @keyframes wooden-toad-hop {
   0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
-  38% { transform: translateX(-50%) translateY(-1.15rem) scale(1.04, 0.97); }
-  70% { transform: translateX(-50%) translateY(0.18rem) scale(0.98, 1.03); }
-}
-@keyframes wooden-toad-wide-eyes {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  40% { transform: translate(-50%, -50%) scale(1.35); }
+  32% { transform: translateX(-50%) translateY(-1.65rem) rotate(-2deg) scale(1.055, 0.96); }
+  62% { transform: translateX(-50%) translateY(0.2rem) scale(0.97, 1.04); }
+  78% { transform: translateX(-50%) translateY(-0.35rem) scale(1.015); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .wooden-toad-button,
-  .wooden-toad-body,
-  .wooden-toad-mallet,
-  .wooden-toad-eye,
-  .wooden-toad-cheek { transition: none; }
+  .wooden-toad-sprite,
+  .wooden-toad-mallet { transition: none; }
   .wooden-toad-button.is-struck .wooden-toad-mallet,
-  .wooden-toad-button.is-struck .wooden-toad-body,
-  .wooden-toad-button.is-struck .wooden-toad-eye,
-  .wooden-toad-button.is-struck .wooden-toad-cheek,
-  .wooden-toad-button.is-struck .wooden-toad-eye > b { animation: none; }
+  .wooden-toad-button.is-struck .wooden-toad-sprite { animation: none; }
 }
