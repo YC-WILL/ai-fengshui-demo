@@ -103,3 +103,23 @@ export function getSignCandidates(period: SignPeriod): DailySign[] {
     }))
   );
 }
+
+export function pickSignCandidate(
+  period: SignPeriod,
+  recentIds: readonly string[] = [],
+  random: () => number = Math.random
+): DailySign {
+  const candidates = getSignCandidates(period);
+  const recentWords = new Set(
+    recentIds.slice(0, 6).map(id => candidates.find(candidate => candidate.id === id)?.word).filter(Boolean)
+  );
+  let available = candidates.filter(candidate =>
+    !recentIds.includes(candidate.id) && !recentWords.has(candidate.word)
+  );
+  if (available.length === 0) {
+    available = candidates.filter(candidate => !recentIds.includes(candidate.id));
+  }
+  if (available.length === 0) available = candidates;
+  const value = Math.max(0, Math.min(0.999999999, random()));
+  return available[Math.floor(value * available.length)];
+}

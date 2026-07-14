@@ -107,3 +107,70 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
   .daily-sign-reveal { animation: none; }
 }
+
+.daily-sign-modal {
+  @apply fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink/35 p-4 backdrop-blur-sm;
+}
+.daily-sign-dialog {
+  @apply relative w-full max-w-md rounded-2xl border border-mist bg-rice px-6 py-7 shadow-2xl;
+}
+.daily-sign-cylinder-button {
+  @apply relative mx-auto mt-6 block h-72 w-52 cursor-pointer bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/50 focus-visible:ring-offset-4 focus-visible:ring-offset-rice disabled:cursor-wait;
+}
+.daily-sign-sticks {
+  @apply absolute left-1/2 top-0 h-44 w-44 -translate-x-1/2;
+}
+.daily-sign-sticks > span {
+  --stick-index: 0;
+  @apply absolute bottom-0 left-1/2 h-40 w-2 origin-bottom rounded-t-full border border-gold/45;
+  background: linear-gradient(to right, #ead9b8, #fff7e8 50%, #d8b878);
+  transform: translateX(-50%) rotate(calc((var(--stick-index) - 6) * 3.2deg));
+}
+.daily-sign-sticks > span:nth-child(3n) { height: 9rem; }
+.daily-sign-sticks > span:nth-child(4n) { height: 10.5rem; }
+.daily-sign-sticks > span:nth-child(5n) { border-top-color: rgba(181, 59, 42, 0.65); }
+.daily-sign-cylinder {
+  @apply absolute bottom-3 left-1/2 flex h-44 w-40 -translate-x-1/2 items-center justify-center border-x border-b border-cinnabar/45 text-white shadow-scroll;
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(90deg, rgba(92,26,19,0.25), transparent 28%, transparent 72%, rgba(92,26,19,0.25)),
+    #a93627;
+}
+.daily-sign-cylinder::before,
+.daily-sign-cylinder::after {
+  content: "";
+  @apply absolute left-2 right-2 h-px bg-gold/55;
+}
+.daily-sign-cylinder::before { top: 0.75rem; }
+.daily-sign-cylinder::after { bottom: 0.75rem; }
+.daily-sign-cylinder > span {
+  @apply rounded-full border border-gold/55 px-3 py-2 font-serif text-lg tracking-[0.2em] text-rice;
+  text-indent: 0.2em;
+}
+.daily-sign-cylinder-button:hover:not(:disabled) .daily-sign-cylinder {
+  filter: brightness(1.05);
+}
+.daily-sign-cylinder-button.is-shaking {
+  animation: daily-sign-shake 180ms ease-in-out infinite;
+}
+.daily-sign-cylinder-button.is-shaking .daily-sign-sticks {
+  animation: daily-sign-sticks 220ms ease-in-out infinite alternate;
+}
+
+@keyframes daily-sign-shake {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  25% { transform: translateX(-0.55rem) rotate(-3deg); }
+  75% { transform: translateX(0.55rem) rotate(3deg); }
+}
+@keyframes daily-sign-sticks {
+  from { transform: translateX(-50%) translateY(0) rotate(-1deg); }
+  to { transform: translateX(-50%) translateY(-0.4rem) rotate(1deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daily-sign-cylinder-button.is-shaking,
+  .daily-sign-cylinder-button.is-shaking .daily-sign-sticks {
+    animation-duration: 800ms;
+    animation-iteration-count: 1;
+  }
+}

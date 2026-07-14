@@ -3,6 +3,7 @@ import {
   getSignCandidates,
   getSignDateKey,
   getSignPeriod,
+  pickSignCandidate,
   type SignPeriod
 } from "@/lib/domain/dailySign";
 
@@ -36,5 +37,15 @@ describe("daily sign", () => {
       expect(sign.message.length).toBeGreaterThan(15);
       expect(sign.message).not.toMatch(/一定|必然|注定|保证|大吉|大凶|发财|改运/);
     });
+  });
+
+  it("allows repeated draws while avoiding recent results", () => {
+    const first = pickSignCandidate("morning", [], () => 0);
+    const second = pickSignCandidate("morning", [first.id], () => 0);
+    expect(second.id).not.toBe(first.id);
+    expect(second.word).not.toBe(first.word);
+
+    const allIds = getSignCandidates("morning").map(sign => sign.id);
+    expect(() => pickSignCandidate("morning", allIds, () => 0.5)).not.toThrow();
   });
 });

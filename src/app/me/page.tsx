@@ -13,10 +13,21 @@ export const dynamic = "force-dynamic";
 export default async function MePage() {
   const user = await getOrCreateUser();
   const membership = getMembershipStatus();
-  const reports = await prisma.report.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    take: 50
+  const [reports, signRecords] = await Promise.all([
+    prisma.report.findMany({
+      where: { userId: user.id, NOT: { reportType: "daily_sign" } },
+      orderBy: { createdAt: "desc" },
+      take: 50
+    }),
+    prisma.report.findMany({
+      where: { userId: user.id, reportType: "daily_sign" },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, aiResult: true, createdAt: true }
+    })
+  ]);
+  const signs = signRecords.flatMap(record => {
+    const snapshot = parseSignSnapshot(record.aiResult);
+    return snapshot ? [{ ...record, ...snapshot }] : [];
   });
 
   return (
@@ -27,6 +38,11 @@ export default async function MePage() {
           匿名 ID：{user.id.slice(0, 8)} · 邮箱：{user.email ?? "（未绑定）"}
         </p>
       </header>
+
+      <nav className="flex flex-wrap gap-2" aria-label="我的内容">
+        <Link href="#reports" className="btn-secondary">我的报告</Link>
+        <Link href="#signs" className="btn-secondary">我的求签</Link>
+      </nav>
 
       <MeActions email={user.email} nickname={user.nickname} />
 
@@ -39,7 +55,7 @@ export default async function MePage() {
         </section>
       ) : <MembershipCard />}
 
-      <section className="card">
+      <section id="reports" className="card scroll-mt-24">
         <h3 className="font-serif text-lg mb-2">我的报告</h3>
         {reports.length === 0 ? (
           <div className="text-sm text-ink/60">还没有生成报告。<Link href="/" className="text-cinnabar">回首页</Link>。</div>
@@ -62,15 +78,66 @@ export default async function MePage() {
         )}
       </section>
 
+      <section id="signs" className="card scroll-mt-24">
+        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+          <div>
+            <h3 className="font-serif text-lg">我的求签</h3>
+            <p className="mt-1 text-xs text-ink/50">每一次求得的安签都会留在这里，按时间倒序保存。</p>
+          </div>
+          <Link href="/#daily-sign" className="text-sm text-cinnabar hover:underline">再求一签 →</Link>
+        </div>
+        {signs.length === 0 ? (
+          <div className="text-sm text-ink/60">
+            还没有求过安签。<Link href="/#daily-sign" className="text-cinnabar">现在去摇一摇</Link>。
+          </div>
+        ) : (
+          <ul className="grid gap-3 md:grid-cols-2">
+            {signs.map(sign => (
+              <li key={sign.id} className="rounded-xl border border-gold/35 bg-rice/70 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-serif text-2xl tracking-[0.18em] text-cinnabar">{sign.word}</span>
+                  <span className="text-xs text-ink/45">{sign.periodLabel}</span>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-ink/75">{sign.message}</p>
+                <time className="mt-3 block text-xs text-ink/45" dateTime={sign.createdAt.toISOString()}>
+                  {sign.createdAt.toLocaleString("zh-CN")}
+                </time>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <section className="card border-cinnabar/30">
         <h3 className="font-serif text-lg mb-2 text-cinnabar">数据与隐私</h3>
         <p className="text-sm text-ink/70 mb-3">
-          您可以随时删除您的所有报告、订单与个人信息。删除后账户与数据将无法恢复。
+          您可以随时删除您的所有报告、求签记录、订单与个人信息。删除后账户与数据将无法恢复。
         </p>
         <DeleteAccountButton />
       </section>
     </div>
   );
+}
+
+function parseSignSnapshot(value: string | null): {
+  word: string;
+  message: string;
+  periodLabel: string;
+} | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value) as Record<string, unknown>;
+    if (
+      typeof parsed.word === "string" &&
+      typeof parsed.message === "string" &&
+      typeof parsed.periodLabel === "string"
+    ) {
+      return { word: parsed.word, message: parsed.message, periodLabel: parsed.periodLabel };
+    }
+  } catch {
+    return null;
+  }
+  return null;
 }
 
 function statusLabel(s: string) {

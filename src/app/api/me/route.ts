@@ -6,20 +6,28 @@ import { getMembershipStatus, MEMBERSHIP_COOKIE_NAME } from "@/lib/membership";
 
 export async function GET() {
   const user = await getOrCreateUser();
-  const reports = await prisma.report.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-    select: {
-      id: true, reportType: true, status: true, isPaid: true,
-      createdAt: true
-    }
-  });
+  const [reports, signs] = await Promise.all([
+    prisma.report.findMany({
+      where: { userId: user.id, NOT: { reportType: "daily_sign" } },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+      select: {
+        id: true, reportType: true, status: true, isPaid: true,
+        createdAt: true
+      }
+    }),
+    prisma.report.findMany({
+      where: { userId: user.id, reportType: "daily_sign" },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, aiResult: true, createdAt: true }
+    })
+  ]);
   return NextResponse.json({
     ok: true,
     data: {
       user: { id: user.id, email: user.email, nickname: user.nickname },
       reports,
+      signs,
       membership: getMembershipStatus()
     }
   });
