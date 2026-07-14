@@ -53,7 +53,7 @@ describe("computeBazi (simplified)", () => {
       const profile = personalityProfile(chart);
       expect(profile.length).toBeGreaterThanOrEqual(100);
       expect(profile.length).toBeLessThanOrEqual(180);
-      expect(profile).toContain("这位朋友");
+      expect(profile).not.toContain("这位朋友");
       expect(profile).toMatch(/像|小镜子/);
       expect(profile).toMatch(/可能|倾向|建议|从行为模式看/);
       expect(profile).not.toMatch(/一定|必然|注定|保证|焦虑症|抑郁症|心理有问题/);
@@ -93,9 +93,9 @@ describe("computeBazi (simplified)", () => {
       unknownTime: false
     });
 
-    expect(friendlyCoreConclusion(first)).toContain("这位朋友");
+    expect(friendlyCoreConclusion(first)).not.toContain("这位朋友");
     expect(friendlyCoreConclusion(first)).toMatch(/像/);
-    expect(friendlyElementNote(first)).toContain("这位朋友");
+    expect(friendlyElementNote(first)).not.toContain("这位朋友");
     expect(friendlyElementNote(first).length).toBeLessThan(100);
     expect(lifeReminders(first)).toHaveLength(2);
     expect(lifeReminders(first)).not.toEqual(lifeReminders(second));

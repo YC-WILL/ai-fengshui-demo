@@ -210,18 +210,18 @@ const GIFT_BY_ELEMENT: Record<Element, string> = {
 export function friendlyCoreConclusion(chart: BaziChart): string {
   const dayMasterElement = STEM_ELEMENT[chart.dayMaster];
   const { strongest, weakest } = chart.elementDistribution;
-  return `这位朋友，先给你一个整体印象：你有点像${IMAGE_BY_ELEMENT[dayMasterElement]}，有自己的生长方式，也有自己的步调。${strongest}的力量让你在熟悉的事情上更容易站稳脚跟；${weakest}相对少一些时，也提醒你遇到变化不必急着给出答案，给自己留一点转身的余地。`;
+  return `先给你一个整体印象：你有点像${IMAGE_BY_ELEMENT[dayMasterElement]}，有自己的生长方式，也有自己的步调。${strongest}的力量让你在熟悉的事情上更容易站稳脚跟；${weakest}相对少一些时，也提醒你遇到变化不必急着给出答案，给自己留一点转身的余地。`;
 }
 
 export function friendlyElementNote(chart: BaziChart): string {
   const { strongest, weakest } = chart.elementDistribution;
-  return `这位朋友，你的五行里${strongest}比较显眼，${weakest}相对少一些。简单说，你较容易从${GIFT_BY_ELEMENT[strongest]}中找到熟悉的节奏，也可以有意识地为${GIFT_BY_ELEMENT[weakest]}多留一点空间。`;
+  return `你的五行里${strongest}比较显眼，${weakest}相对少一些。简单说，你较容易从${GIFT_BY_ELEMENT[strongest]}中找到熟悉的节奏，也可以有意识地为${GIFT_BY_ELEMENT[weakest]}多留一点空间。`;
 }
 
 export function personalityProfile(chart: BaziChart): string {
   const traits = TRAITS_BY_DAY_MASTER[chart.dayMaster].join("、");
   const { strongest, weakest } = chart.elementDistribution;
-  return `这位朋友，你身上可能有${traits}的一面，像${IMAGE_BY_ELEMENT[STEM_ELEMENT[chart.dayMaster]]}，不喧闹，却有自己的方向。熟悉的事情上，你往往愿意把节奏守稳，也在意事情是否做得妥帖；碰到变化时，可能会先观察，再决定怎样回应。${strongest}较明显，让你容易沿用有效的方法；${weakest}相对少一些，则提醒你多给自己一点调整空间。这不是给你贴标签，只是一面小镜子，不妨对照真实经历，看看哪些地方像你。`;
+  return `你身上可能有${traits}的一面，像${IMAGE_BY_ELEMENT[STEM_ELEMENT[chart.dayMaster]]}，不喧闹，却有自己的方向。熟悉的事情上，你往往愿意把节奏守稳，也在意事情是否做得妥帖；碰到变化时，可能会先观察，再决定怎样回应。${strongest}较明显，让你容易沿用有效的方法；${weakest}相对少一些，则提醒你多给自己一点调整空间。这不是给你贴标签，只是一面小镜子，不妨对照真实经历，看看哪些地方像你。`;
 }
 
 const REMINDER_FOR_STRONGEST_ELEMENT: Record<Element, string> = {

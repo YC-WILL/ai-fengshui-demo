@@ -55,8 +55,8 @@ function mockMarkdown(input: AIGenerateInput): string {
 
 // ----------------- 八字基础 -----------------
 function mockBaziBasic(r: Record<string, unknown>): string {
-  const core = (r["friendlyCoreConclusion"] as string) ?? "这位朋友，你的这份结果更适合当作一面观察自己的小镜子，不必急着给自己下结论。";
-  const elementNote = (r["friendlyElementNote"] as string) ?? "这位朋友，五行只是传统文化里的观察线索，结合自己的真实经历来看就好。";
+  const core = (r["friendlyCoreConclusion"] as string) ?? "你的这份结果更适合当作一面观察自己的小镜子，不必急着给自己下结论。";
+  const elementNote = (r["friendlyElementNote"] as string) ?? "五行只是传统文化里的观察线索，结合自己的真实经历来看就好。";
   const profile = (r["personalityProfile"] as string) ?? "暂无足够信息生成性格画像。";
   const reminders = ((r["lifeReminders"] as string[]) ?? []).map(item => `- ${item}`).join("\n");
   const suggestions = ((r["lifeSuggestions"] as string[]) ?? []).map(item => `- ${item}`).join("\n");
@@ -64,23 +64,23 @@ function mockBaziBasic(r: Record<string, unknown>): string {
   return `
 # 这位朋友，我们聊聊你的性格与步调
 
-## 1. 这位朋友，先说说整体印象
+## 1. 先说说整体印象
 ${core}
 
-## 2. 这位朋友，看看五行的小提示
+## 2. 看看五行的小提示
 四柱参考：年 ${pillars.year ?? "—"} · 月 ${pillars.month ?? "—"} · 日 ${pillars.day ?? "—"} · 时 ${pillars.hour ?? "—"}
 ${elementNote}
 
-## 3. 这位朋友，来看看你的性格画像
+## 3. 来看看你的性格画像
 ${profile}
 
-## 4. 这位朋友，有两件事想提醒你
+## 4. 有两件事想提醒你
 ${reminders || "- 忙的时候也给自己留一点停顿，先看清真正重要的事。\n- 这些描述只是参考，请以自己的真实感受和经历为准。"}
 
-## 5. 这位朋友，给你三句小建议
+## 5. 给你三句小建议
 ${suggestions || "- 结合近期真实经历，选择一个最想调整的行为，从小步骤开始观察。"}
 
-## 6. 这位朋友，最后说一句
+## 6. 最后说一句
 > 本报告为基础版，仅供传统文化体验、自我观察与生活规划参考，不构成医疗、心理、法律或投资等专业建议。
 `.trim();
 }
