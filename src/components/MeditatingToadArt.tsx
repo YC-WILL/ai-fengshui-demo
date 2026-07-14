@@ -12,6 +12,11 @@ export function MeditatingToadArt({ mood, struck }: Props) {
       className={`meditating-toad mood-${mood} ${struck ? "is-reacting" : ""}`}
       aria-hidden="true"
     >
+      <defs>
+        <clipPath id="toad-lower-jaw-clip">
+          <ellipse cx="627" cy="500" rx="205" ry="112" />
+        </clipPath>
+      </defs>
       <image
         href="/assets/meditating-toad-reference.png"
         width="1254"
@@ -38,10 +43,21 @@ export function MeditatingToadArt({ mood, struck }: Props) {
         opacity="0"
       />
 
-      <g className="toad-eating-mouth">
-        <ellipse cx="627" cy="430" rx="126" ry="57" fill="#4d3024" stroke="#8d6544" strokeWidth="8" />
-        <ellipse cx="627" cy="452" rx="76" ry="24" fill="#b96f67" opacity=".82" />
-        <path d="M535 416c54 19 130 19 184 0" fill="none" stroke="#efd7af" strokeWidth="9" strokeLinecap="round" opacity=".65" />
+      <g className="toad-mouth-opening">
+        <path
+          className="toad-mouth-cavity"
+          d="M478 421c72-32 226-32 298 0-22 61-75 87-149 87s-127-26-149-87z"
+          fill="#51362b"
+          stroke="#8c6546"
+          strokeWidth="7"
+        />
+        <image
+          href="/assets/meditating-toad-reference.png"
+          width="1254"
+          height="1254"
+          clipPath="url(#toad-lower-jaw-clip)"
+          className="toad-lower-jaw"
+        />
       </g>
     </svg>
   );

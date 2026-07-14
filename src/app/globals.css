@@ -206,16 +206,29 @@ html, body {
 }
 .toad-reference-eyelid-right { animation-delay: 35ms; }
 .toad-breath-highlight { transform-box: fill-box; transform-origin: center center; }
-.toad-eating-mouth {
-  opacity: 0;
+.toad-mouth-opening {
+  pointer-events: none;
   transform-box: fill-box;
   transform-origin: center center;
 }
-.meditating-toad.is-reacting .toad-eating-mouth {
-  animation: toad-open-and-chew 1550ms ease-in-out;
+.toad-mouth-cavity {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center top;
 }
-.meditating-toad.is-reacting.mood-lively .toad-eating-mouth {
-  animation-name: toad-open-wide-and-chew;
+.toad-lower-jaw {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center top;
+}
+.meditating-toad.is-reacting .toad-mouth-cavity {
+  animation: toad-reveal-mouth 1550ms ease-in-out;
+}
+.meditating-toad.is-reacting .toad-lower-jaw {
+  animation: toad-lower-jaw-chew 1550ms ease-in-out;
+}
+.meditating-toad.is-reacting.mood-lively .toad-lower-jaw {
+  animation-name: toad-lower-jaw-wide-chew;
 }
 .toad-snack-plate {
   @apply pointer-events-none absolute bottom-2 right-0 z-0 h-36 w-44 bg-contain bg-bottom bg-no-repeat drop-shadow-[0_8px_9px_rgba(73,48,28,0.14)];
@@ -325,20 +338,30 @@ html, body {
 @keyframes toad-snack-to-mouth {
   0% { left: 79%; bottom: 4.6rem; opacity: 0; transform: translate(-50%, 0) scale(.72) rotate(0); }
   14% { opacity: 1; transform: translate(-50%, -6px) scale(1) rotate(-8deg); }
-  72% { left: 35%; bottom: 10.3rem; opacity: 1; transform: translate(-50%, 0) scale(.92) rotate(10deg); }
-  86%, 100% { left: 35%; bottom: 10.3rem; opacity: 0; transform: translate(-50%, 0) scale(.28) rotate(14deg); }
+  72% { left: 35%; bottom: 8.25rem; opacity: 1; transform: translate(-50%, 0) scale(.92) rotate(10deg); }
+  86%, 100% { left: 35%; bottom: 8.25rem; opacity: 0; transform: translate(-50%, 0) scale(.28) rotate(14deg); }
 }
-@keyframes toad-open-and-chew {
-  0%, 17%, 100% { opacity: 0; transform: scaleY(.08); }
-  30%, 70% { opacity: 1; transform: scale(.8, .68); }
-  82% { opacity: .75; transform: scale(.72, .2); }
-  90% { opacity: .5; transform: scale(.7, .42); }
+@keyframes toad-reveal-mouth {
+  0%, 18%, 96%, 100% { opacity: 0; transform: scaleY(.12); }
+  30%, 73% { opacity: 1; transform: scaleY(.7); }
+  82% { opacity: .9; transform: scaleY(.22); }
+  89% { opacity: .95; transform: scaleY(.42); }
 }
-@keyframes toad-open-wide-and-chew {
-  0%, 15%, 100% { opacity: 0; transform: scaleY(.08); }
-  26%, 72% { opacity: 1; transform: scale(1.02, 1.05); }
-  82% { opacity: .8; transform: scale(.9, .25); }
-  91% { opacity: .55; transform: scale(.86, .5); }
+@keyframes toad-lower-jaw-chew {
+  0%, 17%, 97%, 100% { opacity: 0; transform: translateY(0); }
+  18% { opacity: 1; transform: translateY(0); }
+  31%, 72% { opacity: 1; transform: translateY(18px); }
+  82% { opacity: 1; transform: translateY(5px); }
+  89% { opacity: 1; transform: translateY(11px); }
+  96% { opacity: 1; transform: translateY(1px); }
+}
+@keyframes toad-lower-jaw-wide-chew {
+  0%, 15%, 97%, 100% { opacity: 0; transform: translateY(0); }
+  16% { opacity: 1; transform: translateY(0); }
+  28%, 72% { opacity: 1; transform: translateY(30px); }
+  82% { opacity: 1; transform: translateY(7px); }
+  89% { opacity: 1; transform: translateY(16px); }
+  96% { opacity: 1; transform: translateY(1px); }
 }
 @keyframes toad-idle-breathe {
   0%, 100% { transform: translate(var(--toad-look-x), var(--toad-look-y)) scale(1); }
