@@ -162,7 +162,7 @@ export default function WoodenToad() {
         <div className="daily-sign-modal" role="presentation" onMouseDown={event => {
           if (event.target === event.currentTarget && !holding) setOpen(false);
         }}>
-          <div role="dialog" aria-modal="true" aria-labelledby="wooden-toad-title" className="daily-sign-dialog">
+          <div role="dialog" aria-modal="true" aria-labelledby="wooden-toad-title" className="daily-sign-dialog wooden-toad-dialog">
             <button
               type="button"
               className="absolute right-4 top-3 text-2xl leading-none text-ink/35 hover:text-ink/70 disabled:opacity-30"
@@ -206,6 +206,7 @@ export default function WoodenToad() {
                   finishHold();
                 }}
                 onPointerCancel={cancelHold}
+                onContextMenu={event => event.preventDefault()}
                 onKeyDown={event => {
                   if ((event.key === " " || event.key === "Enter") && !event.repeat) {
                     event.preventDefault();

@@ -176,11 +176,20 @@ html, body {
 }
 
 /* 静心木蟾：按力度给出沉静、可辨认的动作回应。 */
+.wooden-toad-dialog {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.wooden-toad-dialog input[type="range"] {
+  touch-action: pan-x;
+}
 .wooden-toad-button {
   --wooden-power: 0.22;
   --toad-look-x: 0px;
   --toad-look-y: 0px;
   @apply relative mx-auto mt-4 block h-72 w-full max-w-[25rem] touch-none select-none rounded-2xl bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/50 focus-visible:ring-offset-4 focus-visible:ring-offset-rice;
+  -webkit-touch-callout: none;
 }
 .wooden-toad-sprite {
   @apply absolute bottom-0 left-[35%] z-10 h-56 w-56 -translate-x-1/2;
