@@ -84,7 +84,7 @@ export function normalizeGeneratedReport(
   text: string,
   ruleResult: unknown
 ): string {
-  let normalized = removeModelDisclaimerSections(text);
+  let normalized = removeModelDisclaimerSections(normalizeMarkdownBreaks(text));
 
   if (reportType === "bazi_basic") {
     const profile = normalizePersonalityProfile(
@@ -167,7 +167,7 @@ function removeUnsupportedHomeAssertions(text: string): string {
 
 function removeUnsupportedScheduleAssertions(text: string): string {
   const unsupported = /(?:对方|参与方|相关人员)[^。！？]*(?:忙乱|有空|方便|容易约|在岗)/;
-  const conditional = /如果|若|需确认|需要确认|建议确认|可以确认|先确认/;
+  const conditional = /(?:如果|若|建议|请|需要|先)[^。！？]{0,20}(?:对方|参与方|相关人员)[^。！？]*(?:确认|是否|在岗)/;
   return removeSentences(text, sentence => unsupported.test(sentence) && !conditional.test(sentence));
 }
 
@@ -177,6 +177,29 @@ function removeSentences(text: string, shouldRemove: (sentence: string) => boole
     .filter(sentence => !shouldRemove(sentence))
     .join("")
     .replace(/\n{3,}/g, "\n\n");
+}
+
+function normalizeMarkdownBreaks(text: string): string {
+  let normalized = text
+    .replace(/[ \t]+---[ \t]+(?=#{1,3}\s)/g, "\n\n---\n\n")
+    .replace(/[ \t]+(?=#{1,3}\s)/g, "\n\n")
+    .replace(/[ \t]+(?=(?:[-*]|\d+\.)\s+\*\*)/g, "\n")
+    .replace(/[ \t]+(?=\*\*(?:第一|第二|第三)(?:句|条)[：:]\*\*)/g, "\n- ")
+    .replace(/\n{3,}/g, "\n\n");
+  const knownHeadings = [
+    "先说说整体印象", "看看五行的小提示", "来看看你的性格画像", "有两件事想提醒你", "给你三句小建议",
+    "先说说你们相处的感觉", "看看你们各自的步调", "你们合拍的地方", "有些不同也值得听见", "给你们三句相处建议",
+    "先说说这个家的整体感觉", "我们从门口慢慢走一圈", "逐个看看你在意的空间", "有几处想轻轻提醒你", "不花钱也可以先做这三件事",
+    "先说说这段日子", "这是为你挑出的日子", "日子之外，先准备好这三件事", "留一句话", "留一句温和收尾"
+  ];
+  for (const heading of knownHeadings) {
+    const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    normalized = normalized.replace(
+      new RegExp(`(##\\s+(?:\\d+\\.\\s*)?${escaped})[ \\t]+`, "g"),
+      "$1\n"
+    );
+  }
+  return normalized;
 }
 
 function takeStrings(value: unknown, limit: number): string[] {

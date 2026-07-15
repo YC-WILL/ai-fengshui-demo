@@ -139,4 +139,16 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     expect(date).not.toContain("还没进入忙乱状态");
     expect(date).toContain("建议确认相关人员是否在岗");
   });
+
+  it("restores headings and three suggestions from single-line model markdown", () => {
+    const normalized = normalizeGeneratedReport(
+      "marriage_basic",
+      "# 两位朋友，我们看看彼此相处的步调 --- ## 先说说你们相处的感觉 先听见彼此。 --- ## 给你们三句相处建议 **第一句：**先确认重点。 **第二句：**再交换想法。 **第三句：**最后约定下一步。 --- ## 留一句话 慢慢说就好。",
+      {}
+    );
+
+    expect(normalized).toContain("\n## 先说说你们相处的感觉\n");
+    expect(normalized).toContain("\n## 给你们三句相处建议\n");
+    expect(normalized.match(/^- \*\*第[一二三]句/gm)).toHaveLength(3);
+  });
 });
