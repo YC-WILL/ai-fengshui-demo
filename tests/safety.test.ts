@@ -69,6 +69,12 @@ describe("safetyFilter · 低风险软化", () => {
     expect(r.blocked).toBe(false);
     expect(r.text).toContain("保证金");
   });
+
+  it("keeps the non-absolute phrase 不一定", () => {
+    const r = safetyFilter("关系里的疲惫不一定会自动浮出来。\n\n免责声明：仅供参考。");
+    expect(r.text).toContain("不一定会自动浮出来");
+    expect(r.rewritten).toBe(false);
+  });
 });
 
 describe("safetyFilter · 收尾", () => {

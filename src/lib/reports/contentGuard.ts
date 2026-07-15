@@ -58,10 +58,16 @@ export function prepareRuleResultForReport(
         return { date: item.date, reasons: item.reasons };
       })
       : [];
+    const planningHint = typeof result.personalPlanningHint === "string"
+      ? result.personalPlanningHint
+      : "";
+    const preparationChecklist = takeStrings(result.preparationChecklist, 6)
+      .filter(item => item !== planningHint)
+      .slice(0, 3);
     return {
       ...basic,
       recommended,
-      preparationChecklist: takeStrings(result.preparationChecklist, 3)
+      preparationChecklist
     };
   }
 
@@ -94,6 +100,14 @@ export function normalizeGeneratedReport(
     normalized = scrubRelationshipTerms(normalized);
   }
 
+  if (reportType === "home_fengshui_basic" || reportType === "home_fengshui_deep") {
+    normalized = removeUnsupportedHomeAssertions(normalized);
+  }
+
+  if (reportType === "date_selection_basic" || reportType === "date_selection") {
+    normalized = removeUnsupportedScheduleAssertions(normalized);
+  }
+
   const sectionLimit = BASIC_SECTION_LIMITS[reportType];
   if (sectionLimit) normalized = limitSecondLevelSections(normalized, sectionLimit);
   const totalLimit = BASIC_TOTAL_LIMITS[reportType];
@@ -101,7 +115,7 @@ export function normalizeGeneratedReport(
     normalized = limitWholeReport(normalized, totalLimit);
   }
 
-  return normalized.trim();
+  return normalized.replace(/(?:\n\s*---\s*)+$/g, "").trim();
 }
 
 export function normalizePersonalityProfile(value: unknown): string {
@@ -143,7 +157,26 @@ function scrubRelationshipTerms(text: string): string {
     .replace(/[木火土金水]克[木火土金水]/g, "双方节奏有别")
     .replace(/生克(?:方向|关系)?/g, "互动方式")
     .replace(/(?:合并的?|双方的?)?五行分布/g, "共同的生活节奏")
-    .replace(/\s{2,}/g, " ");
+    .replace(/[ \t]{2,}/g, " ");
+}
+
+function removeUnsupportedHomeAssertions(text: string): string {
+  const unsupported = /(?:格局|骨架|户型本身|空间本身|通风(?:和|与)?采光|采光(?:和|与)?通风|通风条件|采光条件)[^。！？]*(?:踏实|舒展|够用|宽敞|不错|不差|良好|很好)/;
+  return removeSentences(text, sentence => unsupported.test(sentence));
+}
+
+function removeUnsupportedScheduleAssertions(text: string): string {
+  const unsupported = /(?:对方|参与方|相关人员)[^。！？]*(?:忙乱|有空|方便|容易约|在岗)/;
+  const conditional = /如果|若|需确认|需要确认|建议确认|可以确认|先确认/;
+  return removeSentences(text, sentence => unsupported.test(sentence) && !conditional.test(sentence));
+}
+
+function removeSentences(text: string, shouldRemove: (sentence: string) => boolean): string {
+  return text
+    .split(/(?<=[。！？])/)
+    .filter(sentence => !shouldRemove(sentence))
+    .join("")
+    .replace(/\n{3,}/g, "\n\n");
 }
 
 function takeStrings(value: unknown, limit: number): string[] {
@@ -175,7 +208,7 @@ function limitSecondLevelSections(text: string, maxBodyLength: number): string {
     if (newline < 0) return section;
     const heading = section.slice(0, newline);
     const body = section.slice(newline + 1).trim();
-    return `${heading}\n${truncateAtNaturalBoundary(body, maxBodyLength, 80)}`;
+    return `${heading}\n${truncateMarkdownBody(body, maxBodyLength, 80)}`;
   }).join("\n");
 }
 
@@ -190,14 +223,33 @@ function limitWholeReport(text: string, maxLength: number): string {
   return [reportTitle, ...sections.map(section => {
     const newline = section.indexOf("\n");
     if (newline < 0) return section;
-    return `${section.slice(0, newline)}\n${truncateAtNaturalBoundary(section.slice(newline + 1).trim(), bodyBudget, 50)}`;
+    return `${section.slice(0, newline)}\n${truncateMarkdownBody(section.slice(newline + 1).trim(), bodyBudget, 50)}`;
   })].join("\n").trim();
+}
+
+function truncateMarkdownBody(text: string, max: number, min: number): string {
+  if (text.length <= max) return text;
+  const listStart = text.search(/^(?:[-*]|\d+\.)\s/m);
+  if (listStart >= 0) {
+    const intro = text.slice(0, listStart).trim();
+    const items = text.slice(listStart)
+      .split(/(?=^(?:[-*]|\d+\.)\s)/gm)
+      .map(item => item.trim())
+      .filter(Boolean);
+    if (items.length >= 3) {
+      const available = Math.max(max - intro.length - 4, 150);
+      const perItem = Math.max(50, Math.floor(available / items.length));
+      const shortened = items.map(item => truncateAtNaturalBoundary(item, perItem, 35));
+      return [intro, shortened.join("\n")].filter(Boolean).join("\n");
+    }
+  }
+  return truncateAtNaturalBoundary(text, max, min);
 }
 
 function truncateAtNaturalBoundary(text: string, max: number, min: number): string {
   if (text.length <= max) return text;
   const candidate = text.slice(0, max);
-  const boundaries = ["。", "！", "？", "；", "\n"];
+  const boundaries = ["。", "！", "？", "；", "，", "\n"];
   let cut = -1;
   for (const mark of boundaries) cut = Math.max(cut, candidate.lastIndexOf(mark));
   if (cut + 1 >= min) return candidate.slice(0, cut + 1).trim();

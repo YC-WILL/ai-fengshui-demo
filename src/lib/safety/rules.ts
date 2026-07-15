@@ -54,7 +54,7 @@ const MEDIUM_RISK_RULES: InlineRule[] = [
 // ---------- 低风险：软化措辞 ----------
 const LOW_RISK_RULES: InlineRule[] = [
   { name: "absolute_word_biran",      pattern: "必然",                    severity: "low", action: "soften", replacement: "更倾向于" },
-  { name: "absolute_word_yiding",     pattern: "一定(?!程度)",            severity: "low", action: "soften", replacement: "更可能" },
+  { name: "absolute_word_yiding",     pattern: "(?<!不)一定(?!程度)",     severity: "low", action: "soften", replacement: "更可能" },
   { name: "absolute_word_baozheng",   pattern: "保证(?!金)",              severity: "low", action: "soften", replacement: "更有助于" },
   { name: "absolute_word_baifenbai",  pattern: "(百分百|100%)",           severity: "low", action: "soften", replacement: "较大概率" },
   { name: "absolute_word_zhuding",    pattern: "(注定|命中注定|逃不过)",  severity: "low", action: "soften", replacement: "传统文化中倾向认为" },

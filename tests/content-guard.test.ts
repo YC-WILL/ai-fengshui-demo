@@ -61,6 +61,7 @@ describe("report content guard", () => {
     expect(serialized).not.toMatch(/notRecommended|2026-08-08|score|ganzhiDay/);
     expect((prepared as { recommended: unknown[] }).recommended).toHaveLength(2);
     expect((prepared as { preparationChecklist: unknown[] }).preparationChecklist).toHaveLength(3);
+    expect(serialized).toContain("留存版本");
   });
 
   it("replaces an oversized personality section and leaves one system disclaimer", () => {
@@ -104,5 +105,38 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
 
     expect(normalized).not.toMatch(/乙木|辛金|日主|金克木|生克|B→A|五行分布/);
     expect(normalized).toMatch(/回应节奏|双方节奏有别|互动方式|共同的生活节奏/);
+    expect(normalized).toContain("\n\n## 看看步调\n");
+  });
+
+  it("keeps three actions while shortening a mobile report", () => {
+    const longAction = "先把真正需要处理的事情写清楚，再和相关的人确认时间、责任与下一步。";
+    const normalized = normalizeGeneratedReport(
+      "date_selection_basic",
+      `# 这位朋友，先挑个从容的日子\n\n## 日子之外，先准备好这三件事\n1. ${longAction.repeat(5)}\n\n2. ${longAction.repeat(5)}\n\n3. ${longAction.repeat(5)}`,
+      {}
+    );
+
+    expect(normalized).toMatch(/1\./);
+    expect(normalized).toMatch(/2\./);
+    expect(normalized).toMatch(/3\./);
+    expect(normalized.length).toBeLessThanOrEqual(800);
+  });
+
+  it("removes unsupported home and participant-schedule assertions", () => {
+    const home = normalizeGeneratedReport(
+      "home_fengshui_basic",
+      "# 这位朋友，我们一起看看这个家\n\n## 整体感觉\n两室一厅，格局算是踏实的。骨架是够用的。可以观察下午是否西晒。",
+      {}
+    );
+    const date = normalizeGeneratedReport(
+      "date_selection_basic",
+      "# 这位朋友，先挑个从容的日子\n\n## 这段日子\n对方还没进入忙乱状态，约时间相对容易。如果安排在周末，建议确认相关人员是否在岗。",
+      {}
+    );
+
+    expect(home).not.toMatch(/格局算是踏实|骨架是够用/);
+    expect(home).toContain("可以观察下午是否西晒");
+    expect(date).not.toContain("还没进入忙乱状态");
+    expect(date).toContain("建议确认相关人员是否在岗");
   });
 });
