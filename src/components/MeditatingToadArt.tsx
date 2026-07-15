@@ -46,10 +46,12 @@ export function MeditatingToadArt({ mood, struck }: Props) {
       <g className="toad-mouth-opening">
         <path
           className="toad-mouth-cavity"
-          d="M478 421c72-32 226-32 298 0-22 61-75 87-149 87s-127-26-149-87z"
+          d="M492 421C532 404 576 395 627 395C678 395 722 404 762 421C748 449 704 470 627 472C550 470 506 449 492 421Z"
           fill="#51362b"
           stroke="#8c6546"
-          strokeWidth="7"
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <image
           href="/assets/meditating-toad-reference.png"
