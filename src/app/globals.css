@@ -294,13 +294,10 @@ html, body {
   background: radial-gradient(circle at 32% 25%, #f2f4ce, #aebc69 68%, #788a42);
 }
 .toad-flying-snack.is-onigiri {
-  @apply h-10 w-11 border border-[#b99b72]/45 shadow-[0_4px_9px_rgba(74,46,28,0.18)];
-  border-radius: 48% 48% 30% 30%;
-  clip-path: polygon(50% 0, 100% 88%, 88% 100%, 12% 100%, 0 88%);
-  background: radial-gradient(circle at 38% 34%, #fffdf3, #eadfc6 78%);
+  @apply h-10 w-11 drop-shadow-[0_4px_5px_rgba(74,46,28,0.18)];
 }
-.toad-flying-snack.is-onigiri > i {
-  @apply absolute bottom-0 left-1/2 h-4 w-5 -translate-x-1/2 bg-[#26342a];
+.toad-flying-snack.is-onigiri > svg {
+  @apply block h-full w-full overflow-visible;
 }
 
 @keyframes wooden-toad-hit {

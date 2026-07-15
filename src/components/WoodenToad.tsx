@@ -231,7 +231,21 @@ export default function WoodenToad() {
                     className={`toad-flying-snack ${mood === "lively" ? "is-onigiri" : `is-dango snack-tone-${strikeCount % 3}`}`}
                     aria-hidden="true"
                   >
-                    {mood === "lively" && <i />}
+                    {mood === "lively" && (
+                      <svg viewBox="0 0 44 40" role="presentation">
+                        <path
+                          d="M22 2.5c4.2 0 7.4 3.1 10.2 8.1l9 17.1c3.6 6.8-.7 11.1-7.3 11.1H10.1c-6.6 0-10.9-4.3-7.3-11.1l9-17.1C14.6 5.6 17.8 2.5 22 2.5Z"
+                          fill="#f7f1df"
+                          stroke="#b99b72"
+                          strokeWidth="1.1"
+                          strokeLinejoin="round"
+                        />
+                        <path d="M8.7 33.2c0-3.7 2.9-6.6 6.6-6.6h13.4c3.7 0 6.6 2.9 6.6 6.6v5.6H8.7Z" fill="#26342a" />
+                        <circle cx="16" cy="13" r="1" fill="#e4d6bc" />
+                        <circle cx="25" cy="9" r="0.9" fill="#e4d6bc" />
+                        <circle cx="29.5" cy="18" r="1" fill="#e4d6bc" />
+                      </svg>
+                    )}
                   </span>
                 )}
                 {struck && <span key={`echo-${strikeCount}`} className="wooden-toad-echo" aria-hidden="true" />}
