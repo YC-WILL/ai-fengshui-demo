@@ -53,23 +53,21 @@ const FOCUS_ACTIONS: Record<string, { zero: string; low: string; medium: string 
 function chooseFocus(input: FengShuiInput) {
   const text = `${input.primaryConcerns ?? ""} ${input.layout ?? ""} ${input.rooms.map(room => room.note ?? "").join(" ")}`;
   return CONCERN_FOCUS.find(item => item.pattern.test(text)) ?? {
-    key: input.orientation.includes("北") ? "light" : "flow",
-    label: input.orientation.includes("北") ? "光线与精神" : "走动与舒展",
-    summary: input.orientation.includes("北")
-      ? "先不用急着添很多东西，这个家更适合从光线和空气开始照顾。让常待的地方亮一点，生活的节奏也会更舒展。"
-      : "先不用急着给这个家下结论，从每天最常走、最常坐的地方看起。动线顺了、光线柔和了，住起来通常就会更自在。"
+    key: "flow",
+    label: "走动与舒展",
+    summary: "先不用急着给这个家下结论，从每天最常走、最常坐的地方看起。可以观察动线是否顺手、常待的位置是否舒服，再决定要不要调整。"
   };
 }
 
 const ORIENTATION_NOTE: Record<string, string> = {
-  "朝南": "传统上朝南采光、通风良好，适合作主要起居空间；现实上需注意夏季西晒。",
-  "朝北": "传统认为朝北采光稍弱，适合作休息/储物空间；现实上需要提升人工采光与通风。",
-  "朝东": "朝东早间采光良好，适合作早起活动；下午光线偏弱，注意补光。",
-  "朝西": "朝西下午西晒强烈，建议加遮光帘或植物阻挡，避免家具长期暴晒老化。",
-  "朝东南": "朝东南通风良好，传统视角下气流顺畅，适合作主要起居动线。",
-  "朝西南": "朝西南夏季偏热，建议加强遮阳与通风。",
-  "朝东北": "朝东北采光与通风一般，建议补充室内灯光与气流方案。",
-  "朝西北": "朝西北冬季偏冷，建议关注保温与气流方向。"
+  "朝南": "朝南通常有较多日照机会，但实际采光和通风仍要结合楼距、窗户与遮挡现场观察。",
+  "朝北": "朝北可以重点观察白天亮度与空气流动；如果常待位置偏暗或闷，再考虑补光和通风。",
+  "朝东": "朝东可以观察早间光线是否舒适；如果下午常用区域偏暗，再增加柔和辅光。",
+  "朝西": "朝西可以重点观察下午是否有明显西晒；如果室温或眩光受影响，再考虑遮光帘或外遮阳。",
+  "朝东南": "朝东南仍需结合窗户、楼距和遮挡观察实际光线与空气流动，不宜只凭朝向下结论。",
+  "朝西南": "朝西南可以在下午观察室温和眩光；如果确有偏热，再加强遮阳与通风。",
+  "朝东北": "朝东北可以分别在上午和傍晚观察亮度与空气流动，再决定是否需要补光。",
+  "朝西北": "朝西北可以在冬季观察窗边体感与气流；如果确有冷风，再检查密封和保温。"
 };
 
 function describeOrientation(o: string): string {
@@ -80,7 +78,7 @@ const ROOM_RULES: Record<string, { trad: string; practical: string; tips: string
   "客厅": {
     trad: "传统视角下客厅是接气、聚人之所，宜方正、明亮、动线开阔。",
     practical: "现实上注意：进门视线不被正对沙发遮挡；主沙发「背有依靠」（靠墙或屏风）；电视墙避免反光直射。",
-    tips: ["沙发尽量靠墙摆放", "保证主灯 + 辅光的双层照明", "茶几避免尖锐边角朝向常坐位置"]
+    tips: ["沙发尽量靠墙摆放", "用主灯 + 辅光形成两层照明", "茶几避免尖锐边角朝向常坐位置"]
   },
   "卧室": {
     trad: "传统认为卧室宜静、宜暗、宜藏，以利休息与气场沉降。",
@@ -99,8 +97,8 @@ const ROOM_RULES: Record<string, { trad: string; practical: string; tips: string
   },
   "书房": {
     trad: "传统认为书房宜安静、稳定，靠墙而坐为佳。",
-    practical: "现实上：办公位「背有依靠」，避免背对门；屏幕避免正对窗户造成反光；保证桌面整洁。",
-    tips: ["办公椅背靠实墙", "保证桌面光照 ≥ 300lux", "周围少放干扰性物品"]
+    practical: "现实上：办公位「背有依靠」，避免背对门；屏幕避免正对窗户造成反光；桌面尽量保持整洁。",
+    tips: ["办公椅背靠实墙", "让桌面有足够且不刺眼的照明", "周围少放干扰性物品"]
   },
   "玄关": {
     trad: "传统认为玄关是「气口」，宜稍作遮挡，避免一进门一览无余。",
@@ -122,7 +120,7 @@ export function assessFengShui(input: FengShuiInput): FengShuiAssessment {
     const rule = ROOM_RULES[r.name] ?? {
       trad: "传统视角下需结合具体方位与功能综合判断。",
       practical: "现实上请关注：采光、通风、动线、整洁度、噪音、隐私六个维度。",
-      tips: ["保持整洁有序", "保证基本通风与采光", "避免动线交叉拥挤"]
+      tips: ["保持整洁有序", "观察实际通风与采光是否舒适", "避免动线交叉拥挤"]
     };
     return {
       name: r.name,
@@ -150,7 +148,7 @@ export function assessFengShui(input: FengShuiInput): FengShuiAssessment {
     improvementsZeroBudget: [
       focusActions.zero,
       "整理玄关与客厅 30 分钟，丢弃明显冗余物品",
-      "调整沙发/床朝向，保证「背有依靠」",
+      "调整沙发或床的位置，让背后更有依靠",
       ...perRoom.slice(0, 1).flatMap(room => room.suggestions.slice(0, 1))
     ],
     improvementsLowBudget: [

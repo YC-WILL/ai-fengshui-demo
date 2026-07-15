@@ -19,6 +19,7 @@ import { matchMarriage } from "../domain/marriage";
 import { assessFengShui } from "../domain/fengshui";
 import { selectDates } from "../domain/dateSelection";
 import { makePreview } from "./preview";
+import { normalizeGeneratedReport, prepareRuleResultForReport } from "./contentGuard";
 import type {
   ReportType, ReportTier,
   BaziInput, MarriageInput, FengShuiInput, DateSelectionInput,
@@ -55,7 +56,8 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
   const hasAccess = !memberOnly || isMember;
 
   // 1) 规则引擎
-  const ruleResult = runRuleEngine(reportType, input);
+  const fullRuleResult = runRuleEngine(reportType, input);
+  const ruleResult = prepareRuleResultForReport(reportType, fullRuleResult);
 
   // 2) 创建草稿 Report
   const report = await prisma.report.create({
@@ -92,7 +94,8 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
   }
 
   // 5) 安全过滤
-  const safety = safetyFilter(ai.text);
+  const normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
+  const safety = safetyFilter(normalizedText);
 
   // 6) 写日志
   await prisma.modelLog.create({

@@ -183,6 +183,19 @@ describe("conversational report tone", () => {
     expect(noisyText).toContain("安静与休息");
   });
 
+  it("uses conditional language for home conditions the user did not provide", () => {
+    const assessment = assessFengShui({
+      orientation: "朝西",
+      layout: "两室一厅",
+      rooms: [{ name: "卧室", note: "临街" }],
+      primaryConcerns: "晚上有车流噪音"
+    });
+
+    expect(assessment.orientationNote).toMatch(/观察|如果/);
+    expect(assessment.orientationNote).not.toMatch(/采光良好|通风良好|整体不差|格局舒展/);
+    expect(assessment.layoutNote).not.toMatch(/格局本身|舒展|通风不差/);
+  });
+
   it("writes date-selection openings and preparation for the actual event", async () => {
     const moving = selectDates({
       event: "moving",

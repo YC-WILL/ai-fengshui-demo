@@ -55,12 +55,11 @@ function mockMarkdown(input: AIGenerateInput): string {
 
 // ----------------- 八字基础 -----------------
 function mockBaziBasic(r: Record<string, unknown>): string {
-  const core = (r["friendlyCoreConclusion"] as string) ?? "你的这份结果更适合当作一面观察自己的小镜子，不必急着给自己下结论。";
-  const elementNote = (r["friendlyElementNote"] as string) ?? "五行只是传统文化里的观察线索，结合自己的真实经历来看就好。";
+  const core = (r["coreConclusion"] as string) ?? (r["friendlyCoreConclusion"] as string) ?? "你的这份结果更适合当作一面观察自己的小镜子，不必急着给自己下结论。";
+  const elementNote = (r["elementGuidance"] as string) ?? (r["friendlyElementNote"] as string) ?? "五行只是传统文化里的观察线索，结合自己的真实经历来看就好。";
   const profile = (r["personalityProfile"] as string) ?? "暂无足够信息生成性格画像。";
   const reminders = ((r["lifeReminders"] as string[]) ?? []).map(item => `- ${item}`).join("\n");
   const suggestions = ((r["lifeSuggestions"] as string[]) ?? []).map(item => `- ${item}`).join("\n");
-  const pillars = (r["pillars"] as Record<string, string>) ?? {};
   return `
 # 这位朋友，我们聊聊你的性格与步调
 
@@ -68,7 +67,6 @@ function mockBaziBasic(r: Record<string, unknown>): string {
 ${core}
 
 ## 2. 看看五行的小提示
-四柱参考：年 ${pillars.year ?? "—"} · 月 ${pillars.month ?? "—"} · 日 ${pillars.day ?? "—"} · 时 ${pillars.hour ?? "—"}
 ${elementNote}
 
 ## 3. 来看看你的性格画像
@@ -149,19 +147,31 @@ ${lifeSuggestions.slice(0, 3).map(item => `- ${item}`).join("\n") || `- ${strong
 
 // ----------------- 关系基础 -----------------
 function mockMarriageBasic(r: Record<string, unknown>): string {
-  const a = (r["partyA"] as Record<string, string>) ?? {};
-  const b = (r["partyB"] as Record<string, string>) ?? {};
-  const style = (r["communicationStyle"] as string) ?? "";
-  const strengths = ((r["strengths"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
-  const friction = ((r["frictionPoints"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
+  const rhythm = (r["interactionRhythm"] as string) ?? "";
+  const style = ((r["communicationStyle"] as string) ?? "")
+    .replace(/日主(?:组合|上)?[^：。]*[：:]?/g, "")
+    .replace(/[ABＡＢ]\s*[→-]\s*[ABＡＢ]/g, "")
+    .trim();
+  const strengths = ((r["sharedStrengths"] as string[]) ?? (r["strengths"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
+  const friction = ((r["differencesToNotice"] as string[]) ?? (r["frictionPoints"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const suggestions = ((r["suggestions"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const relation = (r["dayMasterRelation"] as { kind?: string }) ?? {};
+  const publicKind = rhythm.includes("步调较接近")
+    ? "similar"
+    : rhythm.includes("主动支持")
+      ? "supportive"
+      : rhythm.includes("回应和决策节奏不同")
+        ? "contrasting"
+        : "";
   const openingByRelation: Record<string, string> = {
     same: "你们像走在相近步速上的两个人，很多时候不用多解释就能跟上彼此。也正因为太熟悉这种节奏，遇到新问题时，不妨有意听听那个不一样的想法。",
+    similar: "你们像走在相近步速上的两个人，很多时候不用多解释就能跟上彼此。也正因为太熟悉这种节奏，遇到新问题时，不妨有意听听那个不一样的想法。",
     sheng: "你们像一场自然的接力，一方常会顺手多扶一把，另一方也容易接住这份好意。走得久了，记得让付出被看见、让回应说出口，关系会更轻松。",
-    ke: "你们像两种不同拍子的音乐，放在一起会有张力，也可能碰出新的办法。不同不等于不好，关键是声音变大之前，能不能先听清彼此真正介意什么。"
+    supportive: "你们像一场自然的接力，一方常会顺手多扶一把，另一方也容易接住这份好意。走得久了，记得让付出被看见、让回应说出口，关系会更轻松。",
+    ke: "你们像两种不同拍子的音乐，放在一起会有张力，也可能碰出新的办法。不同不等于不好，关键是声音变大之前，能不能先听清彼此真正介意什么。",
+    contrasting: "你们像两种不同拍子的音乐，放在一起会有张力，也可能碰出新的办法。不同不等于不好，关键是声音变大之前，能不能先听清彼此真正介意什么。"
   };
-  const opening = openingByRelation[relation.kind ?? ""] ?? "你们像两个并肩走路的人，有时步子自然合在一起，有时也需要停下来问一句。关系没有固定答案，愿意听见彼此、一起调整，比任何标签都重要。";
+  const opening = openingByRelation[publicKind || relation.kind || ""] ?? "你们像两个并肩走路的人，有时步子自然合在一起，有时也需要停下来问一句。关系没有固定答案，愿意听见彼此、一起调整，比任何标签都重要。";
   return `
 # 两位朋友，我们看看彼此相处的步调
 
@@ -169,8 +179,7 @@ function mockMarriageBasic(r: Record<string, unknown>): string {
 ${opening}
 
 ## 2. 看看你们各自的步调
-甲方：日主 ${a.dayMaster ?? "—"}　生肖 ${a.zodiac ?? "—"}
-乙方：日主 ${b.dayMaster ?? "—"}　生肖 ${b.zodiac ?? "—"}
+${rhythm}
 ${style}
 
 ## 3. 你们合拍的地方
@@ -316,7 +325,10 @@ ${title}
 以下为民俗参考，不作为${eventLabel}的唯一决策依据。${eventOpening}${firstDate ? `这段时间里，${firstDate}可以先放进备选；` : "这段时间暂时没有特别突出的选择，"}真正重要的仍是人、事和准备是否妥当。
 
 ## 2. 这是为你挑出的几个日子
-${selectedDates.map(c => `- **${c.date}**（${c.ganzhiDay}日 / ${c.zodiacOfDay}日）：${c.reasons.map(sayNaturally).join("；") || "整体节奏较平稳，可以结合现实安排考虑。"}`).join("\n") || "- 当前区间没有特别突出的选择，可以放宽日期，或优先按人员与现实条件安排。"}
+${selectedDates.map(c => deep
+    ? `- **${c.date}**（${c.ganzhiDay}日 / ${c.zodiacOfDay}日）：${c.reasons.map(sayNaturally).join("；") || "整体节奏较平稳，可以结合现实安排考虑。"}`
+    : `- **${c.date}**：${c.reasons.map(sayNaturally).join("；") || "整体节奏较平稳，可以结合现实安排考虑。"}`
+  ).join("\n") || "- 当前区间没有特别突出的选择，可以放宽日期，或优先按人员与现实条件安排。"}
 `.trim();
 
   if (!deep) {
