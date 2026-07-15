@@ -234,7 +234,7 @@ export default function WoodenToad() {
                     {mood === "lively" && (
                       <svg viewBox="0 0 44 40" role="presentation">
                         <path
-                          d="M22 2.5c4.2 0 7.4 3.1 10.2 8.1l9 17.1c3.6 6.8-.7 11.1-7.3 11.1H10.1c-6.6 0-10.9-4.3-7.3-11.1l9-17.1C14.6 5.6 17.8 2.5 22 2.5Z"
+                          d="M22 3.2c10.4 0 17.4 7.8 18.7 19.1 1.2 10.5-4.8 16.5-18.7 16.5S2.1 32.8 3.3 22.3C4.6 11 11.6 3.2 22 3.2Z"
                           fill="#f7f1df"
                           stroke="#b99b72"
                           strokeWidth="1.1"
