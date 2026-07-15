@@ -22,6 +22,9 @@ interface DayCandidate {
 }
 
 export interface DateSelectionResult {
+  event: DateSelectionEvent;
+  eventLabel: string;
+  dateRange: { start: string; end: string };
   recommended: DayCandidate[];
   notRecommended: DayCandidate[];
   preparationChecklist: string[];
@@ -108,6 +111,9 @@ export function selectDates(input: DateSelectionInput): DateSelectionResult {
   const notRecommended = candidates.filter(c => c.score <= 30).slice(0, 3);
 
   return {
+    event: input.event,
+    eventLabel: EVENT_LABEL[input.event],
+    dateRange: { start: input.dateRangeStart, end: input.dateRangeEnd },
     recommended,
     notRecommended,
     preparationChecklist: EVENT_PREP[input.event] ?? [],

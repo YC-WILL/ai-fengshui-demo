@@ -90,6 +90,20 @@ function mockBaziDeep(r: Record<string, unknown>): string {
   const dm = (r["dayMaster"] as string) ?? "未知";
   const zodiac = (r["zodiac"] as string) ?? "—";
   const ele = (r["elementSummary"] as string) ?? "—";
+  const core = (r["friendlyCoreConclusion"] as string) ?? "这份内容适合当作整理生活节奏的参考。";
+  const profile = (r["personalityProfile"] as string) ?? "你可以结合自己的真实经历，慢慢辨认哪些描述更贴近自己。";
+  const strongest = (r["elementStrongest"] as string) ?? "土";
+  const weakest = (r["elementWeakest"] as string) ?? "水";
+  const lifeSuggestions = (r["lifeSuggestions"] as string[]) ?? [];
+  const sceneByElement: Record<string, { work: string; relation: string; rhythm: string }> = {
+    木: { work: "需要持续生长、能逐步搭建方法的事情", relation: "把尚未成形的想法早点说出来", rhythm: "每月留一次学习或尝试新事物的时间" },
+    火: { work: "需要表达、带动气氛和快速启动的事情", relation: "热情之外也给彼此留一点缓冲", rhythm: "把高投入的日子与安静恢复的日子交替安排" },
+    土: { work: "需要耐心承接、把复杂事情稳稳落地的事情", relation: "别只顾着承担，也要及时说出自己的需要", rhythm: "每周整理一次待办，留下真正重要的三件事" },
+    金: { work: "需要判断、整理边界和提高完成度的事情", relation: "原则说清楚以后，也给变化留一点空间", rhythm: "在重要决定前留出一段不被打扰的复盘时间" },
+    水: { work: "需要观察、连接信息和灵活调整的事情", relation: "感受不必都放在心里，可以从一件小事慢慢说起", rhythm: "在连续忙碌之后安排明确的独处和恢复时间" }
+  };
+  const strongScene = sceneByElement[strongest] ?? sceneByElement.土;
+  const weakScene = sceneByElement[weakest] ?? sceneByElement.水;
   const pillars = (r["pillars"] as Record<string, string>) ?? {};
   return `
 # 这位朋友，我们把你的生活节奏细细看一遍
@@ -99,16 +113,16 @@ function mockBaziDeep(r: Record<string, unknown>): string {
 四柱：年 ${pillars.year}　月 ${pillars.month}　日 ${pillars.day}　时 ${pillars.hour ?? "—"}
 
 ## 2. 四柱与五行结构
-${ele}。整体结构倾向显示出特定的节奏偏好，建议结合现实经历理解，不必拘泥于"格局好坏"的简单标签。
+${ele}。${core}
 
 ## 3. 性格与行为倾向
-日主特性影响处事方式：你可能在沟通中更偏向 _稳健 / 表达克制_ 的方式，遇到压力时倾向先消化、再回应。注意避免长期"自我消化"导致的过度内耗。
+${profile}
 
 ## 4. 事业与学习方向
-适合的方向倾向：需要长期专注、结果有积累效应的领域；不太适合需要频繁短促应酬的角色。
+从你较突出的${strongest}元素来看，你可能更容易在${strongScene.work}里找到自己的步调。相对弱的${weakest}也提醒你：选择不只看“能不能做好”，还要看长期做下去是否有恢复的余地。
 **可执行建议**：
-- 每季度给自己设一个"小成就"目标，控制颗粒度避免烂尾。
-- 主动找一个非同行的"局外人"提供反馈。
+- ${lifeSuggestions[0] ?? strongScene.rhythm}。
+- ${lifeSuggestions[1] ?? `找一位信任的人，从旁给你一次关于${weakest}节奏的反馈`}。
 
 ## 5. 财富习惯与风险偏好
 财富习惯倾向稳健。
@@ -118,16 +132,14 @@ ${ele}。整体结构倾向显示出特定的节奏偏好，建议结合现实�
 - 涉及具体投资请咨询持牌专业人士，本报告不构成任何投资建议。
 
 ## 6. 情感关系模式
-你倾向于在关系中先观察、再投入。这意味着早期可能显得"慢热"，长期信任建立后会更稳定。
-**建议**：在关系初期主动表达自己的节奏偏好，避免对方误读为"冷淡"。
+关系里可以留意${weakScene.relation}。这不是性格定论，而是提醒你：越熟悉的关系，越值得把期待说得具体一些。
+**建议**：${lifeSuggestions[2] ?? "选一件最近的小事，用“我希望……”代替让对方猜测"}。
 
 ## 7. 年度生活节奏参考
 未来 12 个月，建议把重心放在：1) 巩固已有积累；2) 启动 1 个长周期小项目；3) 每季度 1 次健康复盘。
 
 ## 8. 可执行行动建议
-- 建立"每日 30 分钟无干扰时段"。
-- 每月固定 1 次小型聚会，维持人际网络温度。
-- 每年体检 1 次（不替代医疗诊断）。
+${lifeSuggestions.slice(0, 3).map(item => `- ${item}`).join("\n") || `- ${strongScene.rhythm}。\n- ${weakScene.rhythm}。\n- 每月回看一次这些调整是否真的让生活更舒服。`}
 
 ## 9. 注意事项
 - 本报告基于简化版八字结构，不替代严谨命理分析。
@@ -143,11 +155,18 @@ function mockMarriageBasic(r: Record<string, unknown>): string {
   const strengths = ((r["strengths"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const friction = ((r["frictionPoints"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const suggestions = ((r["suggestions"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
+  const relation = (r["dayMasterRelation"] as { kind?: string }) ?? {};
+  const openingByRelation: Record<string, string> = {
+    same: "你们像走在相近步速上的两个人，很多时候不用多解释就能跟上彼此。也正因为太熟悉这种节奏，遇到新问题时，不妨有意听听那个不一样的想法。",
+    sheng: "你们像一场自然的接力，一方常会顺手多扶一把，另一方也容易接住这份好意。走得久了，记得让付出被看见、让回应说出口，关系会更轻松。",
+    ke: "你们像两种不同拍子的音乐，放在一起会有张力，也可能碰出新的办法。不同不等于不好，关键是声音变大之前，能不能先听清彼此真正介意什么。"
+  };
+  const opening = openingByRelation[relation.kind ?? ""] ?? "你们像两个并肩走路的人，有时步子自然合在一起，有时也需要停下来问一句。关系没有固定答案，愿意听见彼此、一起调整，比任何标签都重要。";
   return `
 # 两位朋友，我们看看彼此相处的步调
 
 ## 1. 先说说你们相处的感觉
-你们更像两个并肩走路的人：有些时候步子自然合在一起，有些时候也需要等一等、问一句。关系没有固定答案，真正让人走得长久的，是愿意听见彼此，也愿意一起调整。
+${opening}
 
 ## 2. 看看你们各自的步调
 甲方：日主 ${a.dayMaster ?? "—"}　生肖 ${a.zodiac ?? "—"}
@@ -174,11 +193,17 @@ function mockMarriageDeep(r: Record<string, unknown>): string {
     "# 两位朋友，我们看看彼此相处的步调",
     "# 两位朋友，我们把这段相处慢慢聊开"
   );
+  const relation = (r["dayMasterRelation"] as { kind?: string }) ?? {};
+  const responsibility = relation.kind === "sheng"
+    ? "先说清哪些付出是自愿、哪些事情需要轮流承担，避免照顾久了变成默认责任。"
+    : relation.kind === "ke"
+      ? "先约好哪些支出和家庭安排必须共同决定，别在分歧最热的时候临时定规则。"
+      : "分工时有意交换一次角色，能帮助你们看见彼此平时容易忽略的辛苦。";
   return basic + `
 
 ## 7. 聊聊金钱与家庭责任
 建议在共同账目上引入"3 个篮子"：日常支出 / 储蓄 / 自由额度。
-明确每月家务分工时间表，避免"理所当然"的分配。
+${responsibility}
 
 ## 8. 意见不同时可以这样做
 - 任何一方说出"我需要 30 分钟冷静"时，另一方不追问。
@@ -205,11 +230,12 @@ function mockFengshuiBasic(r: Record<string, unknown>): string {
   const rooms = (r["perRoom"] as Array<{ name: string; traditionalView: string; practicalView: string; suggestions: string[] }>) ?? [];
   const zero = ((r["improvementsZeroBudget"] as string[]) ?? []).slice(0, 3).map(s => `- ${s}`).join("\n");
   const warnings = ((r["warnings"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
+  const focus = (r["focus"] as { label?: string; summary?: string }) ?? {};
   return `
 # 这位朋友，我们一起看看这个家
 
 ## 1. 先说说这个家的整体感觉
-家像一个每天接住你的容器。先让光线、空气和走动的路线舒展开，再谈传统上的讲究，住起来往往会更安稳。
+${focus.summary ?? "家像一个每天接住你的容器。先让光线、空气和走动的路线舒展开，再谈传统上的讲究，住起来往往会更安稳。"}
 
 ## 2. 我们从门口慢慢走一圈
 ${orientation}
@@ -218,7 +244,7 @@ ${layout}
 ## 3. 逐个看看你在意的空间
 ${rooms.map(r2 => `### 先看看${r2.name}\n传统上，${r2.traditionalView}\n回到日常生活，${r2.practicalView}\n你可以先试试：${r2.suggestions.join("；")}`).join("\n\n") || "（未输入房间信息）"}
 
-## 4. 有几处想轻轻提醒你
+## 4. 关于${focus.label ?? "日常居住"}，有几处想轻轻提醒你
 ${warnings || "- 若没有明显的潮湿、霉味、噪音或动线阻挡，不必为了传统说法做大改动。"}
 
 ## 5. 不花钱也可以先做这三件事
@@ -256,6 +282,17 @@ function mockDateSelection(r: Record<string, unknown>, deep: boolean): string {
   const notRec = (r["notRecommended"] as Array<{ date: string; cautions: string[] }>) ?? [];
   const prep = ((r["preparationChecklist"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const firstDate = recommended[0]?.date;
+  const event = (r["event"] as string) ?? "";
+  const eventLabel = (r["eventLabel"] as string) ?? "这件事";
+  const openingByEvent: Record<string, string> = {
+    wedding: "选婚礼日子，先照顾两家人的方便与当天流程是否从容，再把民俗偏好放进来一起权衡。",
+    moving: "搬家的日子不只看日期，也要看搬运、水电、天气和新居是否准备妥当。",
+    opening: "开业更像一场多人配合的开场，人员、手续和设备顺畅，比追求一个“完美日期”更重要。",
+    signing: "签约真正要守住的是条款清楚、双方在场和留有核对时间，日子只帮你把节奏安排得从容些。",
+    travel: "出行先看天气、交通与同行人的状态，选日只是帮你避开太赶、太挤的安排。",
+    renovation_start: "动工前先让施工、材料与邻里沟通都落稳，选一个大家能从容开始的日子就很好。"
+  };
+  const eventOpening = openingByEvent[event] ?? `安排${eventLabel}，先把现实准备放稳，再从民俗角度挑一个更从容的日子。`;
   const sayNaturally = (text: string) => text
     .replace("当日日干与本人日干同元素，节奏相对一致。", "当天与你熟悉的做事节奏比较接近。")
     .replace("本人日干生当日日干，做事相对顺势。", "从传统角度看，当天做事较容易顺着节奏展开。")
@@ -276,7 +313,7 @@ function mockDateSelection(r: Record<string, unknown>, deep: boolean): string {
 ${title}
 
 ## 1. 先说说这段日子
-以下为民俗参考，不作为这件事的唯一决策依据。${firstDate ? `这段时间里，${firstDate}可以先放进备选；` : "这段时间暂时没有特别突出的选择，"}日子只是帮你安排得更从容，真正重要的仍是人、事和准备是否妥当。
+以下为民俗参考，不作为${eventLabel}的唯一决策依据。${eventOpening}${firstDate ? `这段时间里，${firstDate}可以先放进备选；` : "这段时间暂时没有特别突出的选择，"}真正重要的仍是人、事和准备是否妥当。
 
 ## 2. 这是为你挑出的几个日子
 ${selectedDates.map(c => `- **${c.date}**（${c.ganzhiDay}日 / ${c.zodiacOfDay}日）：${c.reasons.map(sayNaturally).join("；") || "整体节奏较平稳，可以结合现实安排考虑。"}`).join("\n") || "- 当前区间没有特别突出的选择，可以放宽日期，或优先按人员与现实条件安排。"}

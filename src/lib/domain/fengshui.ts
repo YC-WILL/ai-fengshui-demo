@@ -11,6 +11,11 @@
 import type { FengShuiInput } from "../types";
 
 export interface FengShuiAssessment {
+  focus: {
+    key: string;
+    label: string;
+    summary: string;
+  };
   orientationNote: string;
   layoutNote: string;
   perRoom: Array<{
@@ -23,6 +28,37 @@ export interface FengShuiAssessment {
   improvementsLowBudget: string[];   // ≤300
   improvementsMediumBudget: string[]; // ≤1000
   warnings: string[];
+}
+
+const CONCERN_FOCUS = [
+  { pattern: /潮|湿|霉|返潮/, key: "dry", label: "干爽与呼吸", summary: "这个家眼下最值得先照顾的，是潮气和空气流动。先让墙角、布艺和卫生间干爽下来，人住在里面也会轻松一些。" },
+  { pattern: /噪|吵|隔音|临街/, key: "quiet", label: "安静与休息", summary: "这个家眼下最值得先照顾的，是声音带来的打扰。把休息区护得安静一点，回到家才更容易慢慢松下来。" },
+  { pattern: /暗|采光|光线|阴/, key: "light", label: "光线与精神", summary: "这个家眼下最值得先照顾的，是光线的层次。白天尽量把自然光请进来，夜里再用柔和的灯接住生活。" },
+  { pattern: /乱|收纳|杂物|拥挤/, key: "order", label: "秩序与留白", summary: "这个家眼下最值得先照顾的，是物品与空间的关系。不是要把家收得像样板间，而是给常走、常坐的地方留一点余地。" },
+  { pattern: /通风|闷|气味|油烟/, key: "air", label: "空气与清爽", summary: "这个家眼下最值得先照顾的，是空气能不能顺畅流动。先处理闷、味道和油烟，比添置装饰更能改变居住感受。" },
+  { pattern: /隐私|正对|对冲|正冲/, key: "privacy", label: "遮挡与安心", summary: "这个家眼下最值得先照顾的，是视线与边界。用轻巧的遮挡留出一点缓冲，空间会更有被安顿好的感觉。" },
+  { pattern: /动线|堵|狭窄|走动/, key: "flow", label: "走动与舒展", summary: "这个家眼下最值得先照顾的，是每天走动是否顺手。把经常经过的路线理清，家会像松开了一口气。" }
+] as const;
+
+const FOCUS_ACTIONS: Record<string, { zero: string; low: string; medium: string }> = {
+  dry: { zero: "每天选两个时段对流通风，并擦干窗边、墙角和卫生间积水", low: "添置湿度计与可重复使用的除湿盒，先找出最潮的位置（约 80–200 元）", medium: "为潮湿空间配置小型除湿机或强化排风（约 500–1000 元）" },
+  quiet: { zero: "把床、书桌等需要安静的位置尽量移离临街墙面，并关掉持续发声的闲置设备", low: "为门缝加密封条，给椅脚和桌脚加软垫（约 50–200 元）", medium: "为主要噪声窗增添厚帘或可拆卸隔音帘（约 400–1000 元）" },
+  light: { zero: "白天拉开厚窗帘，移走挡光物，并把常用座位挪到自然光更舒服的位置", low: "增加一盏可移动的暖色台灯或落地灯（约 100–300 元）", medium: "将主要空间灯具换成可调亮度与色温的灯（约 400–800 元）" },
+  order: { zero: "先清出玄关、餐桌或床边的一块空面，只保留每天真正会用到的东西", low: "用同尺寸收纳盒整理一个最容易堆积的区域（约 100–300 元）", medium: "为高频杂物增加一组带门收纳柜，减少视觉拥挤（约 500–1000 元）" },
+  air: { zero: "做一次十分钟对流通风，并清理挡住风口、门口和窗边的物品", low: "清洁或更换排风扇、空调与油烟机滤网（约 80–300 元）", medium: "为厨房或卫生间改善排风设备，先处理气味来源（约 400–1000 元）" },
+  privacy: { zero: "站在门口和常坐位置看一遍视线，把最让人不自在的直视路线先错开", low: "用纱帘、布帘或一盆中型植物做柔和遮挡（约 100–300 元）", medium: "添置轻薄屏风或半高玄关柜，保留采光同时建立边界（约 500–1000 元）" },
+  flow: { zero: "沿着进门、起居和休息的常用路线走一遍，把绊脚和需要侧身绕过的物品移开", low: "用挂钩、窄架或理线器收起动线上的零碎物品（约 50–250 元）", medium: "用窄边家具替换堵住通道的深柜或大茶几（约 500–1000 元）" }
+};
+
+function chooseFocus(input: FengShuiInput) {
+  const text = `${input.primaryConcerns ?? ""} ${input.layout ?? ""} ${input.rooms.map(room => room.note ?? "").join(" ")}`;
+  return CONCERN_FOCUS.find(item => item.pattern.test(text)) ?? {
+    key: input.orientation.includes("北") ? "light" : "flow",
+    label: input.orientation.includes("北") ? "光线与精神" : "走动与舒展",
+    summary: input.orientation.includes("北")
+      ? "先不用急着添很多东西，这个家更适合从光线和空气开始照顾。让常待的地方亮一点，生活的节奏也会更舒展。"
+      : "先不用急着给这个家下结论，从每天最常走、最常坐的地方看起。动线顺了、光线柔和了，住起来通常就会更自在。"
+  };
 }
 
 const ORIENTATION_NOTE: Record<string, string> = {
@@ -79,6 +115,8 @@ const ROOM_RULES: Record<string, { trad: string; practical: string; tips: string
 };
 
 export function assessFengShui(input: FengShuiInput): FengShuiAssessment {
+  const focus = chooseFocus(input);
+  const focusActions = FOCUS_ACTIONS[focus.key];
   const orientationNote = describeOrientation(input.orientation);
   const perRoom = input.rooms.map(r => {
     const rule = ROOM_RULES[r.name] ?? {
@@ -103,28 +141,29 @@ export function assessFengShui(input: FengShuiInput): FengShuiAssessment {
   }
 
   return {
+    focus,
     orientationNote,
     layoutNote: input.layout
       ? `户型描述：${input.layout}。建议结合上述各空间逐一查验。`
       : "未填写户型描述，建议补充以便进一步分析。",
     perRoom,
     improvementsZeroBudget: [
+      focusActions.zero,
       "整理玄关与客厅 30 分钟，丢弃明显冗余物品",
       "调整沙发/床朝向，保证「背有依靠」",
-      "夜间增加暖色辅光，减少顶灯独立使用",
-      "厨房整理灶台台面，刀具入鞘收纳"
+      ...perRoom.slice(0, 1).flatMap(room => room.suggestions.slice(0, 1))
     ],
     improvementsLowBudget: [
-      "购置一块吸水地垫 + 干湿分离淋浴帘（约 80 元）",
+      focusActions.low,
       "为窗户加遮光/纱帘组合，缓解西晒（约 200 元）",
       "为玄关增设小型置物架与挂衣钩（约 150 元）",
       "卧室增加一只暖色小夜灯（约 80 元）"
     ],
     improvementsMediumBudget: [
+      focusActions.medium,
       "更换主灯为可调色温吸顶灯，提升整体光环境（约 400–800 元）",
       "为客厅或书房添置一组实木屏风/玄关柜（约 600–1000 元）",
-      "增添 1–2 盆易养护绿植（如绿萝、虎皮兰，合计约 200 元）",
-      "更换厨房抽油烟机滤网与排烟管（约 300 元）"
+      "增添 1–2 盆易养护绿植（如绿萝、虎皮兰，合计约 200 元）"
     ],
     warnings
   };

@@ -144,4 +144,64 @@ describe("conversational report tone", () => {
       expect(user).toContain("不要直接使用“分析 / 判断 / 风险点 / 依据”作为标题");
     }
   });
+
+  it("changes relationship advice when the two-person structure changes", async () => {
+    const first = matchMarriage({ partyA: personA, partyB: personB });
+    const second = matchMarriage({
+      partyA: { gender: "female", birthDate: "1988-01-08", birthTime: "06:20", unknownTime: false },
+      partyB: { gender: "male", birthDate: "2001-11-19", birthTime: "21:10", unknownTime: false }
+    });
+    const firstText = await generate("marriage_basic", first);
+    const secondText = await generate("marriage_basic", second);
+
+    expect(first.suggestions).not.toEqual(second.suggestions);
+    expect(firstText).not.toBe(secondText);
+    expect(firstText.match(/两位朋友/g)).toHaveLength(1);
+    expect(secondText.match(/两位朋友/g)).toHaveLength(1);
+  });
+
+  it("changes the home focus and first actions with the lived concern", async () => {
+    const damp = assessFengShui({
+      orientation: "朝北",
+      layout: "卧室靠近卫生间",
+      rooms: [{ name: "卧室", note: "墙角偶有返潮" }],
+      primaryConcerns: "潮湿和霉味"
+    });
+    const noisy = assessFengShui({
+      orientation: "朝西",
+      layout: "客厅与卧室临街",
+      rooms: [{ name: "卧室", note: "晚上能听到车声" }],
+      primaryConcerns: "噪音和隔音"
+    });
+    const dampText = await generate("home_fengshui_basic", damp);
+    const noisyText = await generate("home_fengshui_basic", noisy);
+
+    expect(damp.focus.key).toBe("dry");
+    expect(noisy.focus.key).toBe("quiet");
+    expect(damp.improvementsZeroBudget[0]).not.toBe(noisy.improvementsZeroBudget[0]);
+    expect(dampText).toContain("干爽与呼吸");
+    expect(noisyText).toContain("安静与休息");
+  });
+
+  it("writes date-selection openings and preparation for the actual event", async () => {
+    const moving = selectDates({
+      event: "moving",
+      dateRangeStart: "2026-08-01",
+      dateRangeEnd: "2026-08-20",
+      user: personA
+    });
+    const signing = selectDates({
+      event: "signing",
+      dateRangeStart: "2026-08-01",
+      dateRangeEnd: "2026-08-20",
+      user: personA
+    });
+    const movingText = await generate("date_selection_basic", moving);
+    const signingText = await generate("date_selection_basic", signing);
+
+    expect(movingText).toContain("搬运、水电、天气");
+    expect(signingText).toContain("条款清楚、双方在场");
+    expect(moving.preparationChecklist).not.toEqual(signing.preparationChecklist);
+    expect(movingText).not.toBe(signingText);
+  });
 });

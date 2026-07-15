@@ -149,11 +149,7 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
 
   const strengths: string[] = [];
   const frictionPoints: string[] = [];
-  const suggestions: string[] = [
-    "把每周一次的「两人例会」作为基础沟通节奏，5–15 分钟即可。",
-    "重大支出（含搬家、装修、换工作）至少留 24 小时再决定。",
-    "情绪激烈时不做承诺，也不做决定。"
-  ];
+  const suggestions: string[] = [];
   const notes: string[] = [
     "本结果基于传统命理结构 + 心理学常见沟通模式，仅供参考；",
     "关系是动态的，不存在「绝对相合」或「绝对不合」的判断，关键在于双方对沟通节奏的协商。"
@@ -162,19 +158,37 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
   if (rel.kind === "same") {
     strengths.push("彼此能「懂」，处事节奏相近");
     frictionPoints.push("缺少互补，遇到陌生情境时容易共同盲点");
+    suggestions.push("碰到重要决定时，先各自写下一个不同方案，再一起比较，避免两个人顺着同一个惯性往前走。");
   } else if (rel.kind === "sheng") {
     strengths.push("有自然的「扶持—被扶持」动力");
     frictionPoints.push("付出方长期承担容易耗竭，需要主动表达");
+    suggestions.push("每周找十分钟互相问一句「这周有什么是我能帮你的」，让付出和回应都被看见。");
   } else if (rel.kind === "ke") {
     strengths.push("对彼此有真实的反馈，容易把对方「拽出舒适区」");
     frictionPoints.push("观点冲突时升级较快，需要冷静机制");
+    suggestions.push("意见顶在一起时，先暂停二十分钟，再各自用一句话说清最在意的事，不急着争出输赢。");
   }
 
   if (zod.relationLabel === "六合" || zod.relationLabel === "三合") {
     strengths.push(`生肖关系传统认为${zod.relationLabel}，节奏更易同步`);
+    suggestions.push("你们容易很快达成共识，重要安排仍可以轮流做一次“反方”，把容易忽略的细节补齐。");
   } else if (zod.relationLabel === "相冲") {
     frictionPoints.push("生肖相冲，遇到节奏不同步时易表面冲突，建议先约好「24h 不决定」原则");
+    suggestions.push("行程、支出或家庭安排尽量提前一天确认；若意见不同，先保留两个选择，隔一晚再决定。");
+  } else {
+    suggestions.push("把彼此习以为常的生活习惯说出来，例如作息、花钱和独处时间，别让“我以为你知道”变成误会。");
   }
+
+  const combined = bal.combinedDistribution;
+  const weakest = (Object.keys(combined) as Element[]).reduce((x, y) => combined[x] <= combined[y] ? x : y);
+  const balanceSuggestion: Record<Element, string> = {
+    木: "共同计划不妨留一点成长空间：每月选一件新鲜小事一起尝试，再聊聊各自真实的感受。",
+    火: "日常里可以多给明确回应：一句感谢、一个拥抱或一次及时肯定，都比等对方猜更有效。",
+    土: "遇到变化时先把时间、预算和分工写下来，让两个人都知道下一步该做什么。",
+    金: "重要边界最好说得具体，例如哪些事要共同决定、哪些时间各自保留，清楚反而更轻松。",
+    水: "每周留一次不解决问题的聊天，只听彼此最近在想什么，让情绪有地方慢慢流动。"
+  };
+  suggestions.push(balanceSuggestion[weakest]);
 
   return {
     partyA: a,
