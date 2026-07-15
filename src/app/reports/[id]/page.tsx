@@ -45,7 +45,7 @@ export default async function ReportPage({ params }: { params: { id: string } })
           </span>
         )}
         <span className="text-xs text-ink/50">
-          报告 ID：{report.id.slice(0, 8)} · 生成于 {report.createdAt.toLocaleString("zh-CN")}
+          报告 ID：{report.id.slice(0, 8)} · 生成于 {report.createdAt.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}
         </span>
         <div className="flex-1" />
         <Link href="/me" className="btn-secondary">我的报告</Link>

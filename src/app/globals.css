@@ -344,8 +344,8 @@ html, body {
 @keyframes toad-snack-to-mouth {
   0% { left: 79%; bottom: 4.6rem; opacity: 0; transform: translate(-50%, 0) scale(.72) rotate(0); }
   14% { opacity: 1; transform: translate(-50%, -6px) scale(1) rotate(-8deg); }
-  72% { left: 35%; bottom: 8.25rem; opacity: 1; transform: translate(-50%, 0) scale(.92) rotate(10deg); }
-  86%, 100% { left: 35%; bottom: 8.25rem; opacity: 0; transform: translate(-50%, 0) scale(.28) rotate(14deg); }
+  72% { left: 35%; bottom: 7.25rem; opacity: 1; transform: translate(-50%, 0) scale(.92) rotate(10deg); }
+  86%, 100% { left: 35%; bottom: 7.25rem; opacity: 0; transform: translate(-50%, 0) scale(.28) rotate(14deg); }
 }
 @keyframes toad-reveal-mouth {
   0%, 18%, 96%, 100% { opacity: 0; transform: scaleY(.12); }

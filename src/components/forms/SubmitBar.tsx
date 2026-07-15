@@ -16,7 +16,7 @@ export default function SubmitBar({
     <div className="mt-4 flex flex-wrap items-center gap-3">
       <button
         type="button"
-        className="btn-secondary"
+        className="btn-primary"
         disabled={loading !== null}
         onClick={onBasic}
       >
@@ -25,7 +25,7 @@ export default function SubmitBar({
       {onDeep && (
         <button
           type="button"
-          className="btn-primary"
+          className="btn-secondary"
           disabled={loading !== null}
           onClick={onDeep}
         >

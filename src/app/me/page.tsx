@@ -50,7 +50,7 @@ export default async function MePage() {
         <section className="card border-jade/30 bg-jade/5">
           <h3 className="font-serif text-lg mb-1">卦安常伴会员</h3>
           <p className="text-sm text-ink/70">
-            当前为{membership.plan === "annual" ? "年度" : "月度"}常伴会员，有效期至 {new Date(membership.expiresAt!).toLocaleDateString("zh-CN")}。
+            当前为{membership.plan === "annual" ? "年度" : "月度"}常伴会员，有效期至 {new Date(membership.expiresAt!).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai" })}。
           </p>
         </section>
       ) : <MembershipCard />}
@@ -70,7 +70,7 @@ export default async function MePage() {
                   {statusLabel(r.status)}
                 </span>
                 <span className="text-xs text-ink/50">
-                  {r.createdAt.toLocaleString("zh-CN")}
+                  {r.createdAt.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}
                 </span>
               </li>
             ))}
@@ -100,7 +100,7 @@ export default async function MePage() {
                 </div>
                 <p className="mt-2 text-sm leading-6 text-ink/75">{sign.message}</p>
                 <time className="mt-3 block text-xs text-ink/45" dateTime={sign.createdAt.toISOString()}>
-                  {sign.createdAt.toLocaleString("zh-CN")}
+                  {sign.createdAt.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}
                 </time>
               </li>
             ))}

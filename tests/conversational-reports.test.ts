@@ -39,8 +39,9 @@ describe("conversational report tone", () => {
     });
 
     expect(text).toMatch(/^# 两位朋友，我们看看彼此相处的步调/);
-    expect(text).toContain("两位朋友，先说说你们相处的感觉");
-    expect(text).toContain("两位朋友，最后说一句");
+    expect(text).toContain("## 1. 先说说你们相处的感觉");
+    expect(text).toContain("## 6. 最后说一句");
+    expect(text.match(/两位朋友/g)).toHaveLength(1);
     expect(text).not.toMatch(/沟通风格关键词|关系优势|潜在摩擦点|匹配度/);
     expect(text).not.toMatch(/必合|必分|正缘|孽缘|克夫|克妻/);
   });
@@ -57,6 +58,7 @@ describe("conversational report tone", () => {
     });
 
     expect(text).toMatch(/^# 两位朋友，我们把这段相处慢慢聊开/);
+    expect(text.match(/两位朋友/g)).toHaveLength(1);
     expect(buildSystemPrompt("marriage_deep", "deep")).toContain(
       "一级标题必须是“两位朋友，我们把这段相处慢慢聊开”"
     );
