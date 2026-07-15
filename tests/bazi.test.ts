@@ -3,8 +3,19 @@ import {
   computeBazi, personalityProfile, lifeSuggestions, lifeReminders,
   friendlyCoreConclusion, friendlyElementNote
 } from "@/lib/domain/bazi";
+import { behavioralAccent, relationshipAccent } from "@/lib/domain/behavioralAccent";
 
 describe("computeBazi (simplified)", () => {
+  it("uses twelve hidden birth-date accents without exposing their source", () => {
+    const dates = ["2000-03-21", "2000-04-20", "2000-05-21", "2000-06-22", "2000-07-23", "2000-08-23", "2000-09-23", "2000-10-24", "2000-11-23", "2000-12-22", "2000-01-20", "2000-02-19"];
+    const profiles = dates.map(date => behavioralAccent(date).profile);
+    expect(new Set(profiles).size).toBe(12);
+    expect(JSON.stringify(profiles)).not.toMatch(/星座|白羊|金牛|双子|巨蟹|狮子|处女|天秤|天蝎|射手|摩羯|水瓶|双鱼/);
+
+    const relation = relationshipAccent(dates[0], dates[1]);
+    expect(JSON.stringify(relation)).not.toMatch(/星座|白羊|金牛/);
+    expect(relation.observation).toMatch(/可能|习惯/);
+  });
   it("returns 4 pillars when birth time is known", () => {
     const chart = computeBazi({
       gender: "male",

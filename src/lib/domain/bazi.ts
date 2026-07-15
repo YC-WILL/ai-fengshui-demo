@@ -17,6 +17,7 @@ import {
   type Stem, type Branch, type Element
 } from "./elements";
 import type { BaziInput } from "../types";
+import { behavioralAccent } from "./behavioralAccent";
 
 export interface Pillar {
   stem: Stem;
@@ -221,7 +222,8 @@ export function friendlyElementNote(chart: BaziChart): string {
 export function personalityProfile(chart: BaziChart): string {
   const traits = TRAITS_BY_DAY_MASTER[chart.dayMaster].join("、");
   const { strongest, weakest } = chart.elementDistribution;
-  return `你身上可能有${traits}的一面，像${IMAGE_BY_ELEMENT[STEM_ELEMENT[chart.dayMaster]]}，不喧闹，却有自己的方向。熟悉的事情上，你往往愿意把节奏守稳，也在意事情是否做得妥帖；碰到变化时，可能会先观察，再决定怎样回应。${strongest}较明显，让你容易沿用有效的方法；${weakest}相对少一些，则提醒你多给自己一点调整空间。这不是给你贴标签，只是一面小镜子，不妨对照真实经历，看看哪些地方像你。`;
+  const accent = behavioralAccent(chart.inputSnapshot.birthDate);
+  return `你身上可能有${traits}的一面，像${IMAGE_BY_ELEMENT[STEM_ELEMENT[chart.dayMaster]]}，有自己的方向。从行为节奏看，你${accent.profile}。${strongest}较明显，让你容易沿用有效的方法；${weakest}相对少一些，则提醒你多给自己一点调整空间。这不是给你贴标签，只是一面小镜子，不妨对照真实经历，看看哪些地方像你。`;
 }
 
 const REMINDER_FOR_STRONGEST_ELEMENT: Record<Element, string> = {
@@ -275,8 +277,9 @@ const ACTION_FOR_WEAKEST_ELEMENT: Record<Element, string> = {
 export function lifeSuggestions(chart: BaziChart): string[] {
   const { strongest, weakest } = chart.elementDistribution;
   const dayMasterElement = STEM_ELEMENT[chart.dayMaster];
+  const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   return [
-    ACTION_BY_DAY_MASTER_ELEMENT[dayMasterElement],
+    `${ACTION_BY_DAY_MASTER_ELEMENT[dayMasterElement]}也可以尝试：${accent.action}。`,
     ACTION_FOR_STRONGEST_ELEMENT[strongest],
     ACTION_FOR_WEAKEST_ELEMENT[weakest]
   ];

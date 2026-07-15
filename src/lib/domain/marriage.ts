@@ -10,6 +10,7 @@
 import { computeBazi, type BaziChart } from "./bazi";
 import { SHENG, KE, type Element, BRANCH_ELEMENT } from "./elements";
 import type { MarriageInput } from "../types";
+import { relationshipAccent } from "./behavioralAccent";
 
 export interface MarriageMatch {
   partyA: BaziChart;
@@ -146,6 +147,7 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
   const rel = dayMasterRelation(a, b);
   const zod = zodiacRelation(a, b);
   const bal = elementBalance(a, b);
+  const accent = relationshipAccent(input.partyA.birthDate, input.partyB.birthDate);
 
   const strengths: string[] = [];
   const frictionPoints: string[] = [];
@@ -189,6 +191,7 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
     水: "每周留一次不解决问题的聊天，只听彼此最近在想什么，让情绪有地方慢慢流动。"
   };
   suggestions.push(balanceSuggestion[weakest]);
+  suggestions[2] = `${suggestions[2]} ${accent.suggestion}`;
 
   return {
     partyA: a,
@@ -196,7 +199,7 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
     dayMasterRelation: rel,
     zodiacRelation: zod,
     elementBalance: bal,
-    communicationStyle: communicationStyle(a, b),
+    communicationStyle: `${communicationStyle(a, b)} ${accent.observation}`,
     strengths,
     frictionPoints,
     suggestions,

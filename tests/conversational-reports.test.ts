@@ -203,5 +203,6 @@ describe("conversational report tone", () => {
     expect(signingText).toContain("条款清楚、双方在场");
     expect(moving.preparationChecklist).not.toEqual(signing.preparationChecklist);
     expect(movingText).not.toBe(signingText);
+    expect(movingText).not.toMatch(/星座|白羊|金牛|双子|巨蟹|狮子|处女|天秤|天蝎|射手|摩羯|水瓶|双鱼/);
   });
 });
