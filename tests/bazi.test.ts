@@ -138,6 +138,49 @@ describe("computeBazi (simplified)", () => {
     expect(bigramSimilarity(youngerParts.join(""), olderParts.join(""))).toBeLessThan(0.35);
   });
 
+  it("keeps a full leap-year date matrix varied, concrete and within content boundaries", () => {
+    const samples = Array.from({ length: 366 }, (_, index) => {
+      const birthDate = new Date(Date.UTC(2004, 0, index + 1)).toISOString().slice(0, 10);
+      const chart = computeBazi({
+        gender: "other", birthDate, birthTime: "12:00", unknownTime: false
+      });
+      const core = friendlyCoreConclusion(chart);
+      const profile = personalityProfile(chart);
+      const reminders = lifeReminders(chart);
+      const suggestions = lifeSuggestions(chart);
+      return {
+        birthDate,
+        dayMaster: chart.dayMaster,
+        accent: behavioralAccent(birthDate).response,
+        core,
+        profile,
+        reminders,
+        suggestions,
+        full: [core, friendlyElementNote(chart), profile, ...reminders, ...suggestions].join("|")
+      };
+    });
+
+    for (const sample of samples) {
+      expect(sample.profile.length).toBeGreaterThanOrEqual(100);
+      expect(sample.profile.length).toBeLessThanOrEqual(180);
+      expect(sample.reminders).toHaveLength(2);
+      expect(sample.suggestions).toHaveLength(3);
+      expect(new Set(sample.reminders).size).toBe(2);
+      expect(new Set(sample.suggestions).size).toBe(3);
+      expect(sample.core).not.toMatch(/有自己的步调|站稳脚跟|留一点空间|相信自己/);
+      expect(sample.full).not.toMatch(/星座|白羊|金牛|双子|巨蟹|狮子|处女|天秤|天蝎|射手|摩羯|水瓶|双鱼/);
+      expect(sample.full).not.toMatch(/一定|必然|注定|保证|焦虑症|抑郁症|心理有问题/);
+    }
+
+    expect(new Set(samples.map(sample => sample.accent)).size).toBe(12);
+    expect(new Set(samples.map(sample => sample.dayMaster)).size).toBe(10);
+    expect(new Set(samples.map(sample => sample.core)).size).toBeGreaterThanOrEqual(110);
+    expect(new Set(samples.map(sample => sample.profile)).size).toBeGreaterThanOrEqual(110);
+    expect(new Set(samples.map(sample => JSON.stringify(sample.reminders))).size).toBeGreaterThanOrEqual(110);
+    expect(new Set(samples.map(sample => JSON.stringify(sample.suggestions))).size).toBeGreaterThanOrEqual(200);
+    expect(new Set(samples.map(sample => sample.full)).size).toBeGreaterThanOrEqual(270);
+  });
+
   it("rejects malformed date", () => {
     expect(() => computeBazi({
       gender: "male",
