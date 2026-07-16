@@ -165,15 +165,15 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
   if (rel.kind === "same") {
     strengths.push("彼此能「懂」，处事节奏相近");
     frictionPoints.push("缺少互补，遇到陌生情境时容易共同盲点");
-    suggestions.push("碰到重要决定时，先各自写下一个不同方案，再一起比较，避免两个人顺着同一个惯性往前走。");
+    suggestions.push("遇到重要决定时，先各自用 3 分钟写下一个方案和一个最担心的后果，再用 10 分钟比较；最后留下一个本周可试行的版本。");
   } else if (rel.kind === "sheng") {
     strengths.push("有自然的「扶持—被扶持」动力");
     frictionPoints.push("付出方长期承担容易耗竭，需要主动表达");
-    suggestions.push("每周找十分钟互相问一句「这周有什么是我能帮你的」，让付出和回应都被看见。");
+    suggestions.push("当一方连续承担两件以上具体事务时，另一方先用 5 分钟复述听到的压力，再认领一件有明确截止时间的事，下次只核对是否完成。");
   } else if (rel.kind === "ke") {
     strengths.push("对彼此有真实的反馈，容易把对方「拽出舒适区」");
     frictionPoints.push("观点冲突时升级较快，需要冷静机制");
-    suggestions.push("意见顶在一起时，先暂停二十分钟，再各自用一句话说清最在意的事，不急着争出输赢。");
+    suggestions.push("当声音开始变大时，先约定暂停 20 分钟；回来后每人只能说一句“我最在意的是……”，再各自提出一个下一步。");
   }
 
   if (zod.relationLabel === "六合" || zod.relationLabel === "三合") {
