@@ -131,8 +131,8 @@ describe("computeBazi (simplified)", () => {
 
     expect(younger.elementDistribution.strongest).toBe("土");
     expect(older.elementDistribution.strongest).toBe("土");
-    expect(friendlyCoreConclusion(younger)).toMatch(/不同人的位置|真实选择/);
-    expect(friendlyCoreConclusion(older)).toMatch(/身边人的感受|自己的负担/);
+    expect(friendlyCoreConclusion(younger)).toMatch(/彼此都能接受|关系中的细节/);
+    expect(friendlyCoreConclusion(older)).toMatch(/身边人的感受|熟悉的生活/);
     expect(lifeReminders(younger).filter(item => lifeReminders(older).includes(item))).toHaveLength(0);
     expect(lifeSuggestions(younger).filter(item => lifeSuggestions(older).includes(item))).toHaveLength(0);
     expect(bigramSimilarity(youngerParts.join(""), olderParts.join(""))).toBeLessThan(0.35);
@@ -179,6 +179,15 @@ describe("computeBazi (simplified)", () => {
     expect(new Set(samples.map(sample => JSON.stringify(sample.reminders))).size).toBeGreaterThanOrEqual(110);
     expect(new Set(samples.map(sample => JSON.stringify(sample.suggestions))).size).toBeGreaterThanOrEqual(200);
     expect(new Set(samples.map(sample => sample.full)).size).toBeGreaterThanOrEqual(270);
+
+    const representativeDates = ["2004-02-19", "2004-04-20", "2004-06-30", "2004-08-23", "2004-10-03", "2004-12-22"];
+    const representatives = representativeDates.map(date =>
+      samples.find(sample => sample.birthDate === date)?.full ?? ""
+    );
+    const similarities = representatives.flatMap((first, firstIndex) =>
+      representatives.slice(firstIndex + 1).map(second => bigramSimilarity(first, second))
+    );
+    expect(Math.max(...similarities)).toBeLessThan(0.6);
   });
 
   it("rejects malformed date", () => {

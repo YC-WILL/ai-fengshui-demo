@@ -189,23 +189,28 @@ const GIFT_BY_ELEMENT: Record<Element, string> = {
 
 interface DayMasterPattern {
   strength: string;
-  tradeoff: string;
   decision: string;
+  action: string;
+}
+
+interface DayBranchModifier {
+  tradeoff: string;
   pressure: string;
+  reminder: string;
   action: string;
 }
 
 const DAY_MASTER_PATTERN: Record<Stem, DayMasterPattern> = {
-  甲: { strength: "认准方向后，你通常愿意主动开路，把模糊的想法推到可以行动的位置", tradeoff: "目标同时出现时，也可能把精力铺得太开，难以及时收拢", decision: "你会先判断这件事值不值得长期投入，再决定从哪里开始", pressure: "压力上来时容易继续往前顶，不太愿意中途示弱", action: "同时出现多个目标时，只保留一个本周必须推进的主任务" },
-  乙: { strength: "你善于看见关系中的细节，也较会用柔和方式让事情继续向前", tradeoff: "为了顾全关系，有时会把自己的真实选择说得太晚", decision: "你常先衡量不同人的位置，再寻找既能推进又不伤和气的做法", pressure: "压力上来时可能反复调整表达，希望找到所有人都能接受的版本", action: "讨论超过十分钟仍没有结论时，分别写下一项不可退让和一项可以协商的条件" },
-  丙: { strength: "你较容易把态度和热情传递出去，也能带动身边的人进入状态", tradeoff: "反应很快时，可能还没听完整件事就已经给出方向", decision: "你会先确认自己是否认同，再用行动和表达推动结果", pressure: "压力上来时语速和节奏容易一起变快", action: "重要回应前先复述一次对方的重点，再表达自己的看法" },
-  丁: { strength: "你对细微变化较敏感，愿意在真正重要的事情上持续投入注意力", tradeoff: "在意越深时，越可能把许多判断留在心里反复推敲", decision: "你通常要先确认内心是否认同，才愿意给出明确承诺", pressure: "压力上来时容易缩小交流范围，独自消化很多细节", action: "犹豫超过一天的事情，写下事实、担心和需要分别是什么" },
-  戊: { strength: "你面对复杂局面时较能稳住秩序，也愿意承担看得见的责任", tradeoff: "一旦把自己放在支撑位置，就可能低估调整方向的必要", decision: "你会优先考虑现实条件、责任归属和结果能否落地", pressure: "压力上来时容易继续加码承担，以为多做一点就能把局面稳住", action: "接下新责任前，先明确哪些部分不属于自己，以及何时需要别人接手" },
-  己: { strength: "你较会照顾具体细节和身边人的感受，能让熟悉的生活保持安稳", tradeoff: "习惯先接住别人时，自己的负担可能直到累积后才被看见", decision: "你常从熟悉程度、现实影响和身边人的感受开始判断", pressure: "压力上来时容易继续处理琐事，却不急着说明自己已经疲惫", action: "答应帮忙前，先说清自己能做到的范围和需要对方承担的部分" },
-  庚: { strength: "你面对问题时较容易抓住关键，也愿意把标准和边界说清楚", tradeoff: "判断明确是优势，但信息不足时也可能过早把选择关掉", decision: "你倾向先确定原则和底线，再比较哪种方案最有效", pressure: "压力上来时表达可能更直接，让他人只听见结论而没听见理由", action: "给出明确结论时，同时补充一条依据和一个仍可商量的部分" },
-  辛: { strength: "你对分寸、品质和细节有较清楚的感受，也善于发现需要修整之处", tradeoff: "标准放得很近时，容易先看到不足，晚一点才承认已经做得不错", decision: "你通常会比较细节与长期影响，不愿只凭一时冲动决定", pressure: "压力上来时可能反复检查，担心一个小疏漏影响整体", action: "每次复盘同时写下一项需调整之处和一项已经有效的做法" },
-  壬: { strength: "你能较快吸收新信息，也常能在变化中找到新的连接和路径", tradeoff: "可能性太多时，注意力容易不断转向，难以稳定在一个选择上", decision: "你会先搜集不同信息，再寻找弹性最大、可继续调整的方案", pressure: "压力上来时容易继续增加信息，希望用更多比较换来确定感", action: "资料搜集前先写下两个决策条件，满足后就停止继续扩展选项" },
-  癸: { strength: "你对环境和他人的细微反应较敏锐，安静观察时常能看见被忽略的部分", tradeoff: "接收到的信息太多时，自己的需要可能被放到最后才辨认", decision: "你倾向先观察变化和后果，确认内心感受后再表态", pressure: "压力上来时可能把真实想法藏得更深，让外界误以为你没有意见", action: "重要讨论前先写下一句自己的判断，交流时不要等到最后才说" }
+  甲: { strength: "认准方向后，你通常愿意主动开路，把模糊的想法推到可以行动的位置", decision: "你会先判断这件事值不值得长期投入，再决定从哪里开始", action: "同时出现多个目标时，只保留一个本周必须推进的主任务" },
+  乙: { strength: "你善于看见关系中的细节，也较会用柔和方式让事情继续向前", decision: "你常先衡量不同人的位置，再寻找既能推进又不伤和气的做法", action: "讨论超过十分钟仍没有结论时，分别写下一项不可退让和一项可以协商的条件" },
+  丙: { strength: "你较容易把态度和热情传递出去，也能带动身边的人进入状态", decision: "你会先确认自己是否认同，再用行动和表达推动结果", action: "重要回应前先复述一次对方的重点，再表达自己的看法" },
+  丁: { strength: "你对细微变化较敏感，愿意在真正重要的事情上持续投入注意力", decision: "你通常要先确认内心是否认同，才愿意给出明确承诺", action: "犹豫超过一天的事情，写下事实、担心和需要分别是什么" },
+  戊: { strength: "你面对复杂局面时较能稳住秩序，也愿意承担看得见的责任", decision: "你会优先考虑现实条件、责任归属和结果能否落地", action: "接下新责任前，先明确哪些部分不属于自己，以及何时需要别人接手" },
+  己: { strength: "你较会照顾具体细节和身边人的感受，能让熟悉的生活保持安稳", decision: "你常从熟悉程度、现实影响和身边人的感受开始判断", action: "答应帮忙前，先说清自己能做到的范围和需要对方承担的部分" },
+  庚: { strength: "你面对问题时较容易抓住关键，也愿意把标准和边界说清楚", decision: "你倾向先确定原则和底线，再比较哪种方案最有效", action: "给出明确结论时，同时补充一条依据和一个仍可商量的部分" },
+  辛: { strength: "你对分寸、品质和细节有较清楚的感受，也善于发现需要修整之处", decision: "你通常会比较细节与长期影响，不愿只凭一时冲动决定", action: "每次复盘同时写下一项需调整之处和一项已经有效的做法" },
+  壬: { strength: "你能较快吸收新信息，也常能在变化中找到新的连接和路径", decision: "你会先搜集不同信息，再寻找弹性最大、可继续调整的方案", action: "资料搜集前先写下两个决策条件，满足后就停止继续扩展选项" },
+  癸: { strength: "你对环境和他人的细微反应较敏锐，安静观察时常能看见被忽略的部分", decision: "你倾向先观察变化和后果，确认内心感受后再表态", action: "重要讨论前先写下一句自己的判断，交流时不要等到最后才说" }
 };
 
 const REMINDER_BY_DAY_MASTER: Record<Stem, string> = {
@@ -221,10 +226,44 @@ const REMINDER_BY_DAY_MASTER: Record<Stem, string> = {
   癸: "当你已经察觉气氛变化却一直没有表态时，别人可能会把安静误解为同意或不在意"
 };
 
+const DAY_BRANCH_MODIFIER: Record<Element, DayBranchModifier> = {
+  木: {
+    tradeoff: "新方向出现时，你可能同时伸出几条线索，主次需要稍后才能收拢",
+    pressure: "压力上来时容易继续寻找新的突破口，手上的事情反而更难结束",
+    reminder: "如果新想法不断出现却没有一个进入验证，先区分真正的机会和暂时的兴奋",
+    action: "新方向先用一次小实验验证，完成后再决定是否增加投入"
+  },
+  火: {
+    tradeoff: "回应速度往往不慢，有时立场先出来，细节和余地要到后面才补上",
+    pressure: "压力上来时反应和表达会一起变快，容易让别人只听见态度",
+    reminder: "重要对话结束后，如果只记得彼此的态度却说不清问题本身，说明节奏可能太快",
+    action: "重要回应前先复述事实和对方诉求，再说自己的结论"
+  },
+  土: {
+    tradeoff: "你会把现实影响考虑得较周全，但也可能为了稳妥而延后明确取舍",
+    pressure: "压力上来时更容易回到熟悉做法，即使新的条件已经需要不同处理",
+    reminder: "同一个方案反复微调却迟迟不决定时，先检查自己是在完善，还是在回避取舍",
+    action: "为当前选择设一个确认时间，到点只根据最重要的两项条件决定"
+  },
+  金: {
+    tradeoff: "判断标准通常较清楚，但标准一旦先入为主，新的信息可能较难进入",
+    pressure: "压力上来时容易收紧规则和边界，希望用确定标准减少变化",
+    reminder: "当一个方案只因不符合原先标准就被排除时，先确认标准本身是否仍然适用",
+    action: "做决定时保留一项可调整条件，让新信息仍有进入判断的位置"
+  },
+  水: {
+    tradeoff: "你能根据环境转弯，但选择保留得太多时，别人可能不知道你最终站在哪里",
+    pressure: "压力上来时容易继续观察和比较，把明确表态往后推",
+    reminder: "当你已经看见多种可能却没有说出倾向时，沟通对象可能只能靠猜测推进",
+    action: "列完不同可能后，明确标出目前最倾向的一项和改变它所需的新信息"
+  }
+};
+
 export function friendlyCoreConclusion(chart: BaziChart): string {
   const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
-  return `遇到重要事情时，你可能会${accent.response}。${pattern.strength}；不过，${pattern.tradeoff}。`;
+  const modifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
+  return `遇到重要事情时，你可能会${accent.response}。${pattern.strength}；不过，${modifier.tradeoff}。`;
 }
 
 export function friendlyElementNote(chart: BaziChart): string {
@@ -235,33 +274,27 @@ export function friendlyElementNote(chart: BaziChart): string {
 export function personalityProfile(chart: BaziChart): string {
   const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
-  return `从日常互动看，你可能${accent.profile}。做决定时，${pattern.decision}。${pattern.pressure}。这些线索更适合用来观察你在真实选择中的反应，而不是给性格下一个固定结论。`;
+  const modifier = DAY_BRANCH_MODIFIER[chart.month.branchElement];
+  return `从日常互动看，你可能${accent.profile}。做决定时，${pattern.decision}；准备落实时，你更适合${accent.planning}。${modifier.pressure}。这些表现只适合用来对照真实经历，不是固定结论。`;
 }
 
 export function lifeReminders(chart: BaziChart): string[] {
   const accent = behavioralAccent(chart.inputSnapshot.birthDate);
+  const modifier = DAY_BRANCH_MODIFIER[chart.month.branchElement];
   return [
-    `${REMINDER_BY_DAY_MASTER[chart.dayMaster]}。`,
-    `${accent.watchFor}。`
+    `${accent.watchFor}；${REMINDER_BY_DAY_MASTER[chart.dayMaster]}。`,
+    `${accent.planning}，再观察：${modifier.reminder}。`
   ];
 }
 
-const ACTION_FOR_WEAKEST_ELEMENT: Record<Element, string> = {
-  木: "每周安排一次不超过三十分钟的小尝试，例如学习新工具或调整工作方法，逐步增加面对变化的主动性。",
-  火: "在安全的关系中练习直接表达感受和需要，可以从一句具体事实开始，不必等到想法完全整理好。",
-  土: "为睡眠、饮食或工作收尾设置一个可重复的小仪式，用稳定线索帮助自己从忙乱切换到休整。",
-  金: "遇到边界模糊的任务时，先写清完成标准和截止时间，再与相关人确认，减少后续反复修改。",
-  水: "日程中保留一段不安排具体产出的空白时间，用散步、记录或安静独处观察自己的真实需要。"
-};
-
 export function lifeSuggestions(chart: BaziChart): string[] {
-  const { weakest } = chart.elementDistribution;
   const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
+  const modifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
   return [
     `${accent.action}。`,
     `${pattern.action}。`,
-    ACTION_FOR_WEAKEST_ELEMENT[weakest]
+    `可以${accent.planning}；随后${modifier.action}。`
   ];
 }
 
