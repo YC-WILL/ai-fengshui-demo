@@ -87,10 +87,21 @@ export function normalizeGeneratedReport(
   let normalized = removeModelDisclaimerSections(normalizeMarkdownBreaks(text));
 
   if (reportType === "bazi_basic") {
-    const profile = normalizePersonalityProfile(
-      (ruleResult as UnknownRecord).personalityProfile
-    );
+    const result = ruleResult as UnknownRecord;
+    const profile = normalizePersonalityProfile(result.personalityProfile);
+    normalized = replaceSectionBodyIfContent(normalized, /整体印象/, stringValue(result.coreConclusion));
+    normalized = replaceSectionBodyIfContent(normalized, /五行/, stringValue(result.elementGuidance));
     normalized = replaceSectionBody(normalized, /性格画像/, profile);
+    normalized = replaceSectionBodyIfContent(
+      normalized,
+      /提醒/,
+      markdownList(result.lifeReminders, 2)
+    );
+    normalized = replaceSectionBodyIfContent(
+      normalized,
+      /建议/,
+      markdownList(result.lifeSuggestions, 3)
+    );
     normalized = normalized
       .replace(/完全缺席|完全缺少/g, "相对不显眼")
       .replace(/日主(?:为|是)?[甲乙丙丁戊己庚辛壬癸]?[木火土金水]?/g, "自身节奏");
@@ -238,6 +249,14 @@ function takeStrings(value: unknown, limit: number): string[] {
     : [];
 }
 
+function stringValue(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function markdownList(value: unknown, limit: number): string {
+  return takeStrings(value, limit).map(item => `- ${item}`).join("\n");
+}
+
 function removeModelDisclaimerSections(text: string): string {
   const sections = text.split(/\n(?=##\s)/);
   return sections
@@ -252,6 +271,10 @@ function replaceSectionBody(text: string, heading: RegExp, body: string): string
     if (newline < 0 || !heading.test(section.slice(0, newline))) return section;
     return `${section.slice(0, newline)}\n${body}`;
   }).join("\n");
+}
+
+function replaceSectionBodyIfContent(text: string, heading: RegExp, body: string): string {
+  return body.trim() ? replaceSectionBody(text, heading, body) : text;
 }
 
 function limitSecondLevelSections(text: string, maxBodyLength: number): string {

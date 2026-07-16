@@ -65,7 +65,7 @@ describe("computeBazi (simplified)", () => {
       expect(profile.length).toBeGreaterThanOrEqual(100);
       expect(profile.length).toBeLessThanOrEqual(180);
       expect(profile).not.toContain("这位朋友");
-      expect(profile).toMatch(/像|小镜子/);
+      expect(profile).toMatch(/互动|决定|压力/);
       expect(profile).toMatch(/可能|倾向|建议|从行为模式看/);
       expect(profile).not.toMatch(/一定|必然|注定|保证|焦虑症|抑郁症|心理有问题/);
     });
@@ -105,11 +105,37 @@ describe("computeBazi (simplified)", () => {
     });
 
     expect(friendlyCoreConclusion(first)).not.toContain("这位朋友");
-    expect(friendlyCoreConclusion(first)).toMatch(/像/);
+    expect(friendlyCoreConclusion(first)).toMatch(/遇到重要事情|通常|可能/);
+    expect(friendlyCoreConclusion(first)).not.toMatch(/有自己的步调|站稳脚跟|留一点空间/);
     expect(friendlyElementNote(first)).not.toContain("这位朋友");
     expect(friendlyElementNote(first).length).toBeLessThan(100);
     expect(lifeReminders(first)).toHaveLength(2);
     expect(lifeReminders(first)).not.toEqual(lifeReminders(second));
+  });
+
+  it("keeps the reported customer pair meaningfully distinct even with the same strongest element", () => {
+    const younger = computeBazi({
+      gender: "male", birthDate: "2006-10-03", birthTime: "", unknownTime: true
+    });
+    const older = computeBazi({
+      gender: "male", birthDate: "2000-06-30", birthTime: "", unknownTime: true
+    });
+    const youngerParts = [
+      friendlyCoreConclusion(younger), personalityProfile(younger),
+      ...lifeReminders(younger), ...lifeSuggestions(younger)
+    ];
+    const olderParts = [
+      friendlyCoreConclusion(older), personalityProfile(older),
+      ...lifeReminders(older), ...lifeSuggestions(older)
+    ];
+
+    expect(younger.elementDistribution.strongest).toBe("土");
+    expect(older.elementDistribution.strongest).toBe("土");
+    expect(friendlyCoreConclusion(younger)).toMatch(/不同人的位置|真实选择/);
+    expect(friendlyCoreConclusion(older)).toMatch(/身边人的感受|自己的负担/);
+    expect(lifeReminders(younger).filter(item => lifeReminders(older).includes(item))).toHaveLength(0);
+    expect(lifeSuggestions(younger).filter(item => lifeSuggestions(older).includes(item))).toHaveLength(0);
+    expect(bigramSimilarity(youngerParts.join(""), olderParts.join(""))).toBeLessThan(0.35);
   });
 
   it("rejects malformed date", () => {
@@ -121,3 +147,13 @@ describe("computeBazi (simplified)", () => {
     })).toThrow();
   });
 });
+
+function bigramSimilarity(first: string, second: string): number {
+  const grams = (value: string) => new Set(
+    Array.from({ length: Math.max(value.length - 1, 0) }, (_, index) => value.slice(index, index + 2))
+  );
+  const a = grams(first);
+  const b = grams(second);
+  const intersection = [...a].filter(item => b.has(item)).length;
+  return intersection / new Set([...a, ...b]).size;
+}

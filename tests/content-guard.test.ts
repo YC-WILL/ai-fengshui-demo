@@ -96,6 +96,41 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     expect(safe.text.match(/免责声明/g)).toHaveLength(1);
   });
 
+  it("keeps the personal bazi spine instead of generic model rewrites", () => {
+    const normalized = normalizeGeneratedReport(
+      "bazi_basic",
+      `# 这位朋友，我们聊聊你的性格与步调
+
+## 先说说整体印象
+你有自己的步调，慢慢来就好。
+
+## 看看五行的小提示
+给自己多留一点空间。
+
+## 来看看你的性格画像
+这是一段模型写的通用画像。
+
+## 有两件事想提醒你
+- 相信自己。
+
+## 给你三句小建议
+- 慢慢调整。`,
+      {
+        coreConclusion: "讨论重要决定时，你会先听完不同意见，再说明自己的选择。",
+        elementGuidance: "传统五行只提示你留意取舍和边界，不替代现实判断。",
+        personalityProfile: normalizePersonalityProfile(undefined),
+        lifeReminders: ["别让协调盖过真实表达。", "留意自己是否太晚说出偏好。"],
+        lifeSuggestions: ["先写下第一选择。", "列出不可退让条件。", "确认责任和截止时间。"]
+      }
+    );
+
+    expect(normalized).toContain("先听完不同意见");
+    expect(normalized).toContain("取舍和边界");
+    expect(normalized).toContain("别让协调盖过真实表达");
+    expect(normalized).toContain("确认责任和截止时间");
+    expect(normalized).not.toMatch(/有自己的步调|给自己多留一点空间|相信自己|慢慢调整/);
+  });
+
   it("scrubs internal relationship terminology if a model still echoes it", () => {
     const normalized = normalizeGeneratedReport(
       "marriage_basic",
