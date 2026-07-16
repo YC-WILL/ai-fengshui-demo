@@ -9,6 +9,7 @@
 
 import { prisma } from "../db";
 import { getAIProvider } from "../ai/client";
+import { MockProvider } from "../ai/mock";
 import { buildSystemPrompt, buildUserPrompt } from "../ai/prompts";
 import { safetyFilter } from "../safety/filter";
 import {
@@ -28,7 +29,7 @@ import {
 import type {
   ReportType, ReportTier,
   BaziInput, MarriageInput, FengShuiInput, DateSelectionInput,
-  AIGenerateOutput
+  AIGenerateInput, AIGenerateOutput
 } from "../types";
 import { isMemberReportType } from "../types";
 
@@ -96,19 +97,13 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
 
   // 4) 调 AI
   const provider = getAIProvider();
-  let ai: AIGenerateOutput;
-  try {
-    ai = await provider.generateReport({
-      reportType, tier, systemPrompt, userPrompt, ruleResult,
-      userId, reportId: report.id
-    });
-  } catch (err) {
-    await prisma.report.update({
-      where: { id: report.id },
-      data: { status: "failed" }
-    });
-    throw err;
-  }
+  const generateInput = {
+    reportType, tier, systemPrompt, userPrompt, ruleResult,
+    userId, reportId: report.id
+  };
+  // 外部模型偶发超时/限流时重试一次；仍失败则用本地规则兜底，
+  // 保证用户拿到报告，同时在日志中明确标记 fallbackUsed。
+  let ai = await generateWithFallback(provider, generateInput);
 
   // 5) 非模板化质量检查：四类基础报告不直接交付空泛或重复草稿。
   let normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
@@ -116,22 +111,16 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
   if (NOVELTY_GATED_REPORTS.includes(reportType)) {
     narrativeQuality = assessReportNarrativeQuality(reportType, normalizedText, recentReports);
     if (!narrativeQuality.ok) {
-      try {
-        ai = await provider.generateReport({
-          reportType,
-          tier,
-          systemPrompt,
-          userPrompt: buildNarrativeRepairPrompt(userPrompt, ai.text, narrativeQuality.issues),
-          ruleResult,
-          userId,
-          reportId: report.id
-        });
-      } catch (err) {
-        await prisma.report.update({ where: { id: report.id }, data: { status: "failed" } });
-        throw err;
+      const repaired = await generateWithFallback(provider, {
+        ...generateInput,
+        userPrompt: buildNarrativeRepairPrompt(userPrompt, ai.text, narrativeQuality.issues)
+      });
+      // 兜底模型可能只是恢复可读性，不要用失败的修复草稿覆盖原稿。
+      if (!repaired.fallbackUsed) {
+        ai = repaired;
+        normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
+        narrativeQuality = assessReportNarrativeQuality(reportType, normalizedText, recentReports);
       }
-      normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
-      narrativeQuality = assessReportNarrativeQuality(reportType, normalizedText, recentReports);
     }
     // 质量检查只负责触发一次修复和记录质量信号，不再把报告变成用户侧错误。
     // 即使模型第二次仍未完全满足格式，也交给 safetyFilter 做最后一道安全处理。
@@ -200,6 +189,29 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
     ai: { provider: ai.provider, model: ai.model, reasoningEffort: ai.reasoningEffort },
     hasAccess,
     needsMembership
+  };
+}
+
+async function generateWithFallback(
+  provider: { generateReport: (input: AIGenerateInput) => Promise<AIGenerateOutput> },
+  input: AIGenerateInput
+): Promise<AIGenerateOutput> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      return await provider.generateReport(input);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  const fallback = await new MockProvider().generateReport(input);
+  return {
+    ...fallback,
+    fallbackUsed: true,
+    metadata: {
+      ...(fallback.metadata ?? {}),
+      fallbackReason: lastError instanceof Error ? lastError.message.slice(0, 240) : "provider_error"
+    }
   };
 }
 
