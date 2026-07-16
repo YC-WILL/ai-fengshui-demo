@@ -210,7 +210,8 @@ function runRuleEngine(reportType: ReportType, input: AnyInput): unknown {
   switch (reportType) {
     case "bazi_basic":
     case "bazi_deep": {
-      const chart = computeBazi(input as BaziInput);
+      const baziInput = input as BaziInput;
+      const chart = computeBazi(baziInput);
       return {
         dayMaster: chart.dayMaster,
         zodiac: chart.zodiac,
@@ -228,7 +229,8 @@ function runRuleEngine(reportType: ReportType, input: AnyInput): unknown {
         dayMasterDescription: dayMasterDescription(chart),
         friendlyCoreConclusion: friendlyCoreConclusion(chart),
         friendlyElementNote: friendlyElementNote(chart),
-        personalNarrativeFacts: personalNarrativeFacts(chart),
+        personalNarrativeFacts: personalNarrativeFacts(chart, baziInput.userContext),
+        userSituation: baziInput.userContext?.trim().slice(0, 500) || undefined,
         personalityProfile: personalityProfile(chart),
         lifeReminders: lifeReminders(chart),
         lifeSuggestions: lifeSuggestions(chart),
@@ -250,14 +252,15 @@ function runRuleEngine(reportType: ReportType, input: AnyInput): unknown {
         frictionPoints: m.frictionPoints,
         suggestions: m.suggestions,
         notes: m.notes
+        ,userSituation: (input as MarriageInput).notes?.trim().slice(0, 500) || undefined
       };
     }
     case "home_fengshui_basic":
     case "home_fengshui_deep":
-      return assessFengShui(input as FengShuiInput);
+      return { ...assessFengShui(input as FengShuiInput), userSituation: (input as FengShuiInput).primaryConcerns?.trim().slice(0, 500) || undefined };
     case "date_selection_basic":
     case "date_selection":
-      return selectDates(input as DateSelectionInput);
+      return { ...selectDates(input as DateSelectionInput), userSituation: (input as DateSelectionInput).notes?.trim().slice(0, 300) || undefined };
     default:
       return {};
   }

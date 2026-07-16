@@ -87,13 +87,13 @@ export default function DateSelectionPage() {
         </div>
 
         <div>
-          <label className="field-label">备注（可选）</label>
-          <input
-            className="field-input"
+          <label className="field-label">这件事的困扰与现实想法（可选）</label>
+          <textarea
+            className="field-input min-h-[90px]"
             value={notes}
             onChange={e => setNotes(e.target.value)}
-            placeholder="如：希望避开父母忌日 / 排除某段时间出差 等"
-            maxLength={200}
+            placeholder="如：家人只能在周末到场、签约前总担心遗漏条款、搬家时最怕天气和时间来不及。"
+            maxLength={300}
           />
         </div>
 

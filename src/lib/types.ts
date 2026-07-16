@@ -26,6 +26,8 @@ export interface BaziInput {
   birthTime: string; // HH:mm
   birthLocation?: string;
   unknownTime?: boolean;
+  /** 用户希望报告回应的当前困境、想法或具体场景。 */
+  userContext?: string;
 }
 
 // ----------------- 婚姻匹配输入 -----------------

@@ -210,6 +210,7 @@ export interface PersonalNarrativeFacts {
   cautionSignals: [string, string];
   actionSeeds: [string, string, string];
   elementContext: { prominentGift: string; quieterGift: string };
+  userContext?: string;
 }
 
 const DAY_MASTER_PATTERN: Record<Stem, DayMasterPattern> = {
@@ -278,7 +279,7 @@ export function friendlyCoreConclusion(chart: BaziChart): string {
   return `遇到重要事情时，你可能会${accent.response}。${pattern.strength}；不过，${modifier.tradeoff}。`;
 }
 
-export function personalNarrativeFacts(chart: BaziChart): PersonalNarrativeFacts {
+export function personalNarrativeFacts(chart: BaziChart, userContext?: string): PersonalNarrativeFacts {
   const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
   const dayModifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
@@ -296,7 +297,8 @@ export function personalNarrativeFacts(chart: BaziChart): PersonalNarrativeFacts
     elementContext: {
       prominentGift: GIFT_BY_ELEMENT[strongest],
       quieterGift: GIFT_BY_ELEMENT[weakest]
-    }
+    },
+    userContext: userContext?.trim().slice(0, 500) || undefined
   };
 }
 

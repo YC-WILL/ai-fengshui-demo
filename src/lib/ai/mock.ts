@@ -64,6 +64,10 @@ function mockBaziBasic(r: Record<string, unknown>): string {
   const element = (facts["elementContext"] ?? {}) as Record<string, unknown>;
   const core = (r["coreConclusion"] as string) ?? (r["friendlyCoreConclusion"] as string)
     ?? `面对重要事情时，你可能会${facts["firstResponse"] ?? "先确认真正的问题"}。${facts["coreStrength"] ?? "你会结合现实条件推进事情"}。`;
+  const userSituation = typeof facts["userContext"] === "string" ? facts["userContext"].trim() : "";
+  const contextReply = userSituation
+    ? "你补充了一件眼下真实困扰的事，下面会先回应这个场景，再把观察放回你的经历里核对。"
+    : "";
   const elementNote = (r["elementGuidance"] as string) ?? (r["friendlyElementNote"] as string)
     ?? `传统五行提示你较常先使用${element["prominentGift"] ?? "熟悉的能力"}，${element["quieterGift"] ?? "另一种能力"}则可以在需要时主动补上。`;
   const profile = (facts["profile"] as string) ?? (r["personalityProfile"] as string)
@@ -75,6 +79,7 @@ function mockBaziBasic(r: Record<string, unknown>): string {
 
 ## 1. 先说说整体印象
 ${core}
+${contextReply}
 
 ## 2. 看看五行的小提示
 ${elementNote}
@@ -171,6 +176,7 @@ function mockMarriageBasic(r: Record<string, unknown>): string {
   const distinctSteps = first.response && second.response
     ? `第一位更可能${first.response}，而第二位更可能${second.response}。准备事情时，第一位倾向${first.planning ?? "先抓住要点"}，第二位倾向${second.planning ?? "先确认条件"}；如果一方已经开始推进、另一方还在确认感受，就容易把“还没回应”误读成“不在乎”。`
     : "把你们在具体事情中的先后顺序说清楚，比给彼此贴标签更有帮助。";
+  const situation = typeof r["userSituation"] === "string" ? r["userSituation"].trim() : "";
   const relation = (r["dayMasterRelation"] as { kind?: string }) ?? {};
   const publicKind = rhythm.includes("步调较接近")
     ? "similar"
@@ -198,6 +204,7 @@ ${opening}
 ${rhythm}
 ${style}
 ${distinctSteps}
+${situation ? "你们还补充了一件正在发生的具体事情，下面的建议会优先围绕它安排沟通，而不是替你们下关系结论。" : ""}
 
 ## 3. 你们合拍的地方
 ${strengths || "- 共同价值观可后续观察补充"}
@@ -257,11 +264,13 @@ function mockFengshuiBasic(r: Record<string, unknown>): string {
   const zero = ((r["improvementsZeroBudget"] as string[]) ?? []).slice(0, 3).map(s => `- ${s}`).join("\n");
   const warnings = ((r["warnings"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const focus = (r["focus"] as { label?: string; summary?: string }) ?? {};
+  const situation = typeof r["userSituation"] === "string" ? r["userSituation"].trim() : "";
   return `
 # 这位朋友，我们一起看看这个家
 
 ## 1. 先说说这个家的整体感觉
 ${focus.summary ?? "家像一个每天接住你的容器。先让光线、空气和走动的路线舒展开，再谈传统上的讲究，住起来往往会更安稳。"}
+${situation ? "你描述了一处具体困扰，我们先围绕这一处看，不把没有提供的条件当成事实。" : ""}
 
 ## 2. 我们从门口慢慢走一圈
 ${orientation}
@@ -310,6 +319,7 @@ function mockDateSelection(r: Record<string, unknown>, deep: boolean): string {
   const firstDate = recommended[0]?.date;
   const event = (r["event"] as string) ?? "";
   const eventLabel = (r["eventLabel"] as string) ?? "这件事";
+  const situation = typeof r["userSituation"] === "string" ? r["userSituation"].trim() : "";
   const openingByEvent: Record<string, string> = {
     wedding: "选婚礼日子，先照顾两家人的方便与当天流程是否从容，再把民俗偏好放进来一起权衡。",
     moving: "搬家的日子不只看日期，也要看搬运、水电、天气和新居是否准备妥当。",
@@ -340,6 +350,7 @@ ${title}
 
 ## 1. 先说说这段日子
 以下为民俗参考，不作为${eventLabel}的唯一决策依据。${eventOpening}${firstDate ? `这段时间里，${firstDate}可以先放进备选；` : "这段时间暂时没有特别突出的选择，"}真正重要的仍是人、事和准备是否妥当。
+${situation ? "你补充了一个现实顾虑，因此先把这项顾虑纳入准备，再看日期。" : ""}
 
 ## 2. 这是为你挑出的几个日子
 ${selectedDates.map(c => deep

@@ -36,7 +36,8 @@ export function prepareRuleResultForReport(
         profile: normalizePersonalityProfile(result.personalityProfile),
         elementNote: typeof result.friendlyElementNote === "string"
           ? result.friendlyElementNote
-          : ""
+          : "",
+        userSituation: typeof result.userSituation === "string" ? result.userSituation : undefined
       },
       notes: takeStrings(result.notes, 2)
     };
@@ -52,7 +53,8 @@ export function prepareRuleResultForReport(
       differencesToNotice: takeStrings(result.frictionPoints, 3).map(cleanRelationshipText),
       suggestions: takeStrings(result.suggestions, reportType === "marriage_basic" ? 3 : 6)
         .map(cleanRelationshipText),
-      notes: ["传统结构仅作为弱参考，最终内容应落到双方真实的沟通与协商。"]
+      notes: ["传统结构仅作为弱参考，最终内容应落到双方真实的沟通与协商。"],
+      userSituation: typeof result.userSituation === "string" ? result.userSituation : undefined
     };
   }
 
@@ -73,7 +75,8 @@ export function prepareRuleResultForReport(
     return {
       ...basic,
       recommended,
-      preparationChecklist
+      preparationChecklist,
+      userSituation: typeof result.userSituation === "string" ? result.userSituation : undefined
     };
   }
 

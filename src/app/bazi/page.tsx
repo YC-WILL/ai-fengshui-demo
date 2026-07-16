@@ -42,6 +42,18 @@ export default function BaziPage() {
 
       <section className="card">
         <BaziFields value={input} onChange={setInput} />
+        <div className="mt-4">
+          <label className="field-label" htmlFor="bazi-user-context">你最近正被什么困扰？（可选）</label>
+          <textarea
+            id="bazi-user-context"
+            className="field-input min-h-[100px]"
+            maxLength={500}
+            value={input.userContext ?? ""}
+            onChange={e => setInput(s => ({ ...s, userContext: e.target.value }))}
+            placeholder="可以写一件具体的事：最近总在犹豫要不要换方向、和人沟通时容易卡住，或只是想知道为什么总是拖到最后才行动。"
+          />
+          <div className="field-help">这段话会帮助报告回应你的真实处境，不会把它当成诊断或给出宿命判断。</div>
+        </div>
         <SubmitBar
           loading={loading}
           error={err}

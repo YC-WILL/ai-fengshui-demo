@@ -74,13 +74,13 @@ export default function MarriagePage() {
             </select>
           </div>
           <div>
-            <label className="field-label">想重点关注（可选）</label>
-            <input
-              className="field-input"
-              maxLength={100}
+            <label className="field-label">你们最近的困扰与想法（可选）</label>
+            <textarea
+              className="field-input min-h-[90px]"
+              maxLength={500}
               value={notes}
               onChange={e => setNotes(e.target.value)}
-              placeholder="如：沟通方式、家务分工、财务观"
+              placeholder="如：一方觉得对方不回应，另一方觉得自己一直在解释；最近也在讨论家务或财务分工。"
             />
           </div>
         </div>

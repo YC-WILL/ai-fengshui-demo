@@ -126,13 +126,14 @@ export default function FengShuiPage() {
         </div>
 
         <div>
-          <label className="field-label">主要关注的问题（可选）</label>
+          <label className="field-label">你在这个家里最困扰的事（可选）</label>
           <textarea
             className="field-input min-h-[60px]"
             value={input.primaryConcerns}
             onChange={e => setInput(s => ({ ...s, primaryConcerns: e.target.value }))}
-            placeholder="如：客厅噪音、卧室潮湿、入户门正对洗手间等"
+            placeholder="可以写具体感受和场景：晚上临街太吵、客厅西晒让人烦躁、回家总觉得东西没地方放。"
           />
+          <div className="field-help">写得越具体，建议越会围绕你的实际困境，而不是套用整屋清单。</div>
         </div>
 
         <SubmitBar

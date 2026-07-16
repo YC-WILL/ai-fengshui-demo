@@ -9,7 +9,8 @@ export const baziInputSchema = z.object({
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "出生日期格式应为 YYYY-MM-DD"),
   birthTime: z.string().regex(/^\d{2}:\d{2}$/, "出生时间格式应为 HH:mm").optional().or(z.literal("")),
   birthLocation: z.string().max(120).optional(),
-  unknownTime: z.boolean().optional()
+  unknownTime: z.boolean().optional(),
+  userContext: z.string().max(500).optional()
 });
 
 export const baziGenerateSchema = z.object({
