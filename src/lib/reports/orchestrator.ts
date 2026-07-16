@@ -23,7 +23,6 @@ import { normalizeGeneratedReport, prepareRuleResultForReport } from "./contentG
 import {
   assessReportNarrativeQuality,
   buildNarrativeRepairPrompt,
-  hasBlockingNarrativeIssues,
   type NarrativeQualityResult
 } from "./narrativeQuality";
 import type {
@@ -134,10 +133,8 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
       normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
       narrativeQuality = assessReportNarrativeQuality(reportType, normalizedText, recentReports);
     }
-    if (!narrativeQuality.ok && hasBlockingNarrativeIssues(narrativeQuality)) {
-      await prisma.report.update({ where: { id: report.id }, data: { status: "failed" } });
-      throw new Error("报告个性化质量未通过，请重新生成");
-    }
+    // 质量检查只负责触发一次修复和记录质量信号，不再把报告变成用户侧错误。
+    // 即使模型第二次仍未完全满足格式，也交给 safetyFilter 做最后一道安全处理。
   }
 
   // 6) 安全过滤
