@@ -108,6 +108,8 @@ export function normalizeGeneratedReport(
     normalized = removeUnsupportedScheduleAssertions(normalized);
   }
 
+  normalized = ensureThreeBasicActions(reportType, normalized, ruleResult);
+
   const sectionLimit = BASIC_SECTION_LIMITS[reportType];
   if (sectionLimit) normalized = limitSecondLevelSections(normalized, sectionLimit);
   const totalLimit = BASIC_TOTAL_LIMITS[reportType];
@@ -169,6 +171,34 @@ function removeUnsupportedScheduleAssertions(text: string): string {
   const unsupported = /(?:对方|参与方|相关人员)[^。！？]*(?:忙乱|有空|方便|容易约|在岗)/;
   const conditional = /(?:如果|若|建议|请|需要|先)[^。！？]{0,20}(?:对方|参与方|相关人员)[^。！？]*(?:确认|是否|在岗)/;
   return removeSentences(text, sentence => unsupported.test(sentence) && !conditional.test(sentence));
+}
+
+function ensureThreeBasicActions(
+  reportType: ReportType,
+  text: string,
+  ruleResult: unknown
+): string {
+  const result = ruleResult as UnknownRecord;
+  const config: Partial<Record<ReportType, { heading: RegExp; items: unknown }>> = {
+    bazi_basic: { heading: /三句小建议/, items: result.lifeSuggestions },
+    marriage_basic: { heading: /三句相处建议/, items: result.suggestions },
+    home_fengshui_basic: { heading: /三件事/, items: result.improvementsZeroBudget },
+    date_selection_basic: { heading: /三件事/, items: result.preparationChecklist }
+  };
+  const selected = config[reportType];
+  const items = takeStrings(selected?.items, 3);
+  if (!selected || items.length < 3) return text;
+
+  const sections = text.split(/\n(?=##\s)/);
+  return sections.map(section => {
+    const newline = section.indexOf("\n");
+    if (newline < 0 || !selected.heading.test(section.slice(0, newline))) return section;
+    const body = section.slice(newline + 1);
+    const actionCount = (body.match(/^(?:[-*]|\d+\.)\s/gm) ?? []).length
+      + (body.match(/^\*\*\d+\./gm) ?? []).length;
+    if (actionCount >= 3) return section;
+    return `${section.slice(0, newline)}\n${items.map(item => `- ${item}`).join("\n")}`;
+  }).join("\n");
 }
 
 function removeSentences(text: string, shouldRemove: (sentence: string) => boolean): string {

@@ -122,6 +122,20 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     expect(normalized.length).toBeLessThanOrEqual(800);
   });
 
+  it("fills a missing third basic action from the prepared rule result", () => {
+    const normalized = normalizeGeneratedReport(
+      "bazi_basic",
+      "# 这位朋友，我们聊聊你的性格与步调\n\n## 给你三句小建议\n**1. 先做一件事。**\n\n**2. 再确认一次。**",
+      {
+        personalityProfile: normalizePersonalityProfile(undefined),
+        lifeSuggestions: ["先做一件事", "再确认一次", "最后留一点余地"]
+      }
+    );
+
+    expect(normalized.match(/^- /gm)).toHaveLength(3);
+    expect(normalized).toContain("最后留一点余地");
+  });
+
   it("removes unsupported home and participant-schedule assertions", () => {
     const home = normalizeGeneratedReport(
       "home_fengshui_basic",
