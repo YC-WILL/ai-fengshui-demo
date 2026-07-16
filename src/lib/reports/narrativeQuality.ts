@@ -7,6 +7,21 @@ export interface NarrativeQualityResult {
   maxSectionSimilarity: number;
 }
 
+/**
+ * 相似度是质量信号，不应把用户挡在报告门外：章节骨架、免责声明和
+ * 常见建议天然会产生相似文本。只有内容安全/结构性问题才阻断交付。
+ */
+export function hasBlockingNarrativeIssues(result: NarrativeQualityResult): boolean {
+  return result.issues.some(issue =>
+    issue.startsWith("缺少章节") ||
+    issue.startsWith("性格画像长度") ||
+    issue === "行动建议不足 3 条" ||
+    issue === "报告章节不完整" ||
+    issue === "出现空泛通用话术" ||
+    issue === "出现不应展示的内部术语或星座名称"
+  );
+}
+
 const GENERIC_COPY = /有自己的步调|有自己的方向|站稳脚跟|留一点空间|慢慢调整|相信自己|做更好的自己|一切都会好起来/;
 const INTERNAL_TERMS = /日主|四柱|五行分布|生克方向|星座|白羊座|金牛座|双子座|巨蟹座|狮子座|处女座|天秤座|天蝎座|射手座|摩羯座|水瓶座|双鱼座/;
 

@@ -23,6 +23,7 @@ import { normalizeGeneratedReport, prepareRuleResultForReport } from "./contentG
 import {
   assessReportNarrativeQuality,
   buildNarrativeRepairPrompt,
+  hasBlockingNarrativeIssues,
   type NarrativeQualityResult
 } from "./narrativeQuality";
 import type {
@@ -133,7 +134,7 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
       normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
       narrativeQuality = assessReportNarrativeQuality(reportType, normalizedText, recentReports);
     }
-    if (!narrativeQuality.ok) {
+    if (!narrativeQuality.ok && hasBlockingNarrativeIssues(narrativeQuality)) {
       await prisma.report.update({ where: { id: report.id }, data: { status: "failed" } });
       throw new Error("报告个性化质量未通过，请重新生成");
     }
