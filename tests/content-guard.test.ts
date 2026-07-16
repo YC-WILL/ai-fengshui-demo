@@ -120,6 +120,7 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     expect(normalized).toMatch(/2\./);
     expect(normalized).toMatch(/3\./);
     expect(normalized.length).toBeLessThanOrEqual(800);
+    expect(normalized).not.toMatch(/，\n(?:2\.|3\.)/);
   });
 
   it("fills a missing third basic action from the prepared rule result", () => {
