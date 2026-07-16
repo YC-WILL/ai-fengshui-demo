@@ -173,8 +173,11 @@ function mockMarriageBasic(r: Record<string, unknown>): string {
   const behaviorFacts = (r["behaviorFacts"] ?? {}) as Record<string, any>;
   const first = (behaviorFacts.firstPerson ?? {}) as Record<string, string>;
   const second = (behaviorFacts.secondPerson ?? {}) as Record<string, string>;
+  const distinctness = (r["personalDistinctness"] ?? {}) as Record<string, Record<string, string>>;
+  const firstDistinct = distinctness.first ?? {};
+  const secondDistinct = distinctness.second ?? {};
   const distinctSteps = first.response && second.response
-    ? `第一位更可能${first.response}，而第二位更可能${second.response}。准备事情时，第一位倾向${first.planning ?? "先抓住要点"}，第二位倾向${second.planning ?? "先确认条件"}；如果一方已经开始推进、另一方还在确认感受，就容易把“还没回应”误读成“不在乎”。`
+    ? `第一位更可能${first.response}，而第二位更可能${second.response}。准备事情时，第一位倾向${first.planning ?? "先抓住要点"}，第二位倾向${second.planning ?? "先确认条件"}；${firstDistinct.timeRhythm ?? "一方会先进入自己的节奏"}，${secondDistinct.timeRhythm ?? "另一方则需要一点整理时间"}。放到同一件事里，前者可能把后者的安静读成“不在乎”，后者则可能把前者的推进读成“不给空间”。`
     : "把你们在具体事情中的先后顺序说清楚，比给彼此贴标签更有帮助。";
   const situation = typeof r["userSituation"] === "string" ? r["userSituation"].trim() : "";
   const relation = (r["dayMasterRelation"] as { kind?: string }) ?? {};

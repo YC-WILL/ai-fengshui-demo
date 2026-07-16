@@ -48,6 +48,7 @@ export function prepareRuleResultForReport(
     return {
       interactionRhythm: relationKindToRhythm(relation.kind),
       behaviorFacts: result.behaviorFacts,
+      personalDistinctness: result.personalDistinctness,
       communicationStyle: cleanRelationshipText(result.communicationStyle),
       sharedStrengths: takeStrings(result.strengths, 3).map(cleanRelationshipText),
       differencesToNotice: takeStrings(result.frictionPoints, 3).map(cleanRelationshipText),

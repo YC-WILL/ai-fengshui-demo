@@ -211,6 +211,17 @@ export interface PersonalNarrativeFacts {
   actionSeeds: [string, string, string];
   elementContext: { prominentGift: string; quieterGift: string };
   userContext?: string;
+  timeRhythm: string;
+  birthPlaceContext?: string;
+}
+
+function timeRhythm(chart: BaziChart): string {
+  if (!chart.hour) return "出生时间未提供，先不对一天中的反应节奏下结论";
+  const branch = chart.hour.branch;
+  if (["子", "丑", "寅"].includes(branch)) return "更容易在安静、少打扰的时段整理想法，再决定是否开口";
+  if (["卯", "辰", "巳"].includes(branch)) return "更容易在事情刚启动时迅速进入状态，边做边校准方向";
+  if (["午", "未", "申"].includes(branch)) return "在互动和任务交错时反应较快，需要把优先顺序说清";
+  return "更容易先观察一天的变化，等信息齐一点再给出明确回应";
 }
 
 const DAY_MASTER_PATTERN: Record<Stem, DayMasterPattern> = {
@@ -299,6 +310,10 @@ export function personalNarrativeFacts(chart: BaziChart, userContext?: string): 
       quieterGift: GIFT_BY_ELEMENT[weakest]
     },
     userContext: userContext?.trim().slice(0, 500) || undefined
+    ,timeRhythm: timeRhythm(chart),
+    birthPlaceContext: chart.inputSnapshot.birthLocation?.trim()
+      ? "出生地只作为生活背景线索，不能单独决定性格；可结合用户自述观察成长环境对习惯的影响。"
+      : undefined
   };
 }
 

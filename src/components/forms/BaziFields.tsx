@@ -66,7 +66,7 @@ export default function BaziFields({
           className="field-input"
           value={value.birthLocation ?? ""}
           onChange={e => set({ birthLocation: e.target.value })}
-          placeholder="如：浙江杭州"
+          placeholder="如：浙江杭州（填写城市即可，不必写详细地址）"
         />
       </div>
     </div>

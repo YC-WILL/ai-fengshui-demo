@@ -71,7 +71,7 @@ const PER_REPORT_SYSTEM: Record<ReportType, string> = {
 5. 给你三句小建议（根据 actionSeeds 独立组织 3 个具体动作，每一条都必须对应前文的个人行为倾向）
 6. 留一句温和收尾（不写免责声明或“仅供参考”，不超过 30 字）
 personalFacts 是个人事实线索，不是可以逐句复制的文案。除章节标题外，不得套用固定句式，也不要按 JSON 字段顺序逐项翻译。每次都要重新选择叙述起点、生活情境与句子结构；不要写“有自己的步调、慢慢调整、给自己空间、相信自己”等任何人都适用的套话。即使两个人的部分传统线索相同，也必须以各自不同的沟通、决策、执行和压力反应作为报告主线。
-性格画像必须优先使用 personalFacts.profile 与 personalFacts 的 traitKeywords、firstResponse、decisionPattern、planningPreference、pressurePattern；不得自行发明一套与这些线索无关的通用人格。五行小提示只写 2–3 句，使用 personalFacts.elementNote 的生活化翻译，不展示数量、缺失项、日主或四柱。
+性格画像必须优先使用 personalFacts.profile 与 personalFacts 的 traitKeywords、firstResponse、decisionPattern、planningPreference、pressurePattern、timeRhythm；出生地只可作为背景线索，不能据此给地域贴性格标签。不得自行发明一套与这些线索无关的通用人格。五行小提示只写 2–3 句，使用 personalFacts.elementNote 的生活化翻译，不展示数量、缺失项、日主或四柱。
 基础版给用户完整但精简的整体认识，不展开十神、用神、大运、事业、财富、关系和年度节奏的分场景分析（这些属于深度版）。
 心理行为表述只使用“可能 / 倾向 / 建议 / 可以尝试 / 从行为模式看”等观察性语言；禁止心理诊断或暗示用户心理有问题。
   `,
@@ -107,6 +107,7 @@ personalFacts 是个人事实线索，不是可以逐句复制的文案。除章
 5. 给你们三句相处建议（3 条具体、平等、可执行的沟通动作）
 6. 留一句温和收尾（不写免责声明或“仅供参考”，不超过 30 字）
 behaviorFacts 中 firstPerson 与 secondPerson 是两位当事人不同的生日行为侧重：必须同时使用两边的线索，写清两人各自遇事的第一反应、准备习惯，以及一种可能互相误读的具体情境；不得只写双方共有的空泛优点，也不得复制 profile、response、planning、watchFor 的原句。它们只用于形成个性化生活描述，正文不得说明推导来源，不得出现“星座”或任何星座名称。
+如果提供 personalDistinctness，必须分别写出两人的独特侧重、至少一处相似性，以及这种相似/不同在一个具体生活场景中如何互相影响；出生时间只是辅助线索，出生地只能谨慎地作为背景，不得编造地域性格。
 开场比喻、温和提醒和三条建议必须随 behaviorFacts、interactionRhythm、communicationStyle、sharedStrengths 与 differencesToNotice 改变；不要每次都使用“每周例会 / 24 小时再决定 / 情绪激烈时暂停”的固定组合。
 禁用"必合 / 必分 / 正缘 / 孽缘 / 克夫 / 克妻"等绝对化或情绪化标签。
 正文不得出现日主、天干、地支、生克、五行分布、A / B、甲方 / 乙方或箭头方向；这些内部计算不会提供给你，也不得自行补写。传统依据最多轻描淡写一句，不能展示推导过程。

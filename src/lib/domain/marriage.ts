@@ -7,7 +7,7 @@
 //   · 不使用"正缘 / 孽缘 / 烂桃花"等情绪化标签
 // ============================================================
 
-import { computeBazi, type BaziChart } from "./bazi";
+import { computeBazi, personalNarrativeFacts, type BaziChart } from "./bazi";
 import { SHENG, KE, type Element, BRANCH_ELEMENT } from "./elements";
 import type { MarriageInput } from "../types";
 import { relationshipAccent, type RelationshipBehaviorFacts } from "./behavioralAccent";
@@ -24,6 +24,10 @@ export interface MarriageMatch {
   frictionPoints: string[];
   suggestions: string[];
   notes: string[];
+  personalDistinctness: {
+    first: ReturnType<typeof personalNarrativeFacts>;
+    second: ReturnType<typeof personalNarrativeFacts>;
+  };
 }
 
 type ElementRelation =
@@ -201,6 +205,10 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
     zodiacRelation: zod,
     elementBalance: bal,
     behaviorFacts: accent.behaviorFacts,
+    personalDistinctness: {
+      first: personalNarrativeFacts(a, input.partyA.userContext),
+      second: personalNarrativeFacts(b, input.partyB.userContext)
+    },
     communicationStyle: `${communicationStyle(a, b)} ${accent.observation}`,
     strengths,
     frictionPoints,

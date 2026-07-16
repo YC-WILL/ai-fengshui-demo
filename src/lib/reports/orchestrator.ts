@@ -247,12 +247,17 @@ function runRuleEngine(reportType: ReportType, input: AnyInput): unknown {
         zodiacRelation: m.zodiacRelation,
         elementBalance: m.elementBalance,
         behaviorFacts: m.behaviorFacts,
+        personalDistinctness: m.personalDistinctness,
         communicationStyle: m.communicationStyle,
         strengths: m.strengths,
         frictionPoints: m.frictionPoints,
         suggestions: m.suggestions,
         notes: m.notes
-        ,userSituation: (input as MarriageInput).notes?.trim().slice(0, 500) || undefined
+        ,userSituation: [
+          (input as MarriageInput).notes,
+          (input as MarriageInput).partyA.userContext,
+          (input as MarriageInput).partyB.userContext
+        ].filter(Boolean).join("；").trim().slice(0, 500) || undefined
       };
     }
     case "home_fengshui_basic":
