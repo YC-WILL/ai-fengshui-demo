@@ -145,24 +145,9 @@ export function assessFengShui(input: FengShuiInput): FengShuiAssessment {
       ? `户型描述：${input.layout}。建议结合上述各空间逐一查验。`
       : "未填写户型描述，建议补充以便进一步分析。",
     perRoom,
-    improvementsZeroBudget: [
-      focusActions.zero,
-      "整理玄关与客厅 30 分钟，丢弃明显冗余物品",
-      "调整沙发或床的位置，让背后更有依靠",
-      ...perRoom.slice(0, 1).flatMap(room => room.suggestions.slice(0, 1))
-    ],
-    improvementsLowBudget: [
-      focusActions.low,
-      "为窗户加遮光/纱帘组合，缓解西晒（约 200 元）",
-      "为玄关增设小型置物架与挂衣钩（约 150 元）",
-      "卧室增加一只暖色小夜灯（约 80 元）"
-    ],
-    improvementsMediumBudget: [
-      focusActions.medium,
-      "更换主灯为可调色温吸顶灯，提升整体光环境（约 400–800 元）",
-      "为客厅或书房添置一组实木屏风/玄关柜（约 600–1000 元）",
-      "增添 1–2 盆易养护绿植（如绿萝、虎皮兰，合计约 200 元）"
-    ],
+    improvementsZeroBudget: [focusActions.zero, ...perRoom.slice(0, 2).flatMap(room => room.suggestions.slice(0, 1))],
+    improvementsLowBudget: [focusActions.low, ...perRoom.slice(0, 2).flatMap(room => room.suggestions.slice(1, 2))],
+    improvementsMediumBudget: [focusActions.medium, ...perRoom.slice(0, 2).flatMap(room => room.suggestions.slice(2, 3))],
     warnings
   };
 }

@@ -70,6 +70,7 @@ const PER_REPORT_SYSTEM: Record<ReportType, string> = {
 5. 给你三句小建议（根据 actionSeeds 独立组织 3 个具体动作，每一条都必须对应前文的个人行为倾向）
 6. 留一句温和收尾（不写免责声明或“仅供参考”，不超过 30 字）
 personalFacts 是个人事实线索，不是可以逐句复制的文案。除章节标题外，不得套用固定句式，也不要按 JSON 字段顺序逐项翻译。每次都要重新选择叙述起点、生活情境与句子结构；不要写“有自己的步调、慢慢调整、给自己空间、相信自己”等任何人都适用的套话。即使两个人的部分传统线索相同，也必须以各自不同的沟通、决策、执行和压力反应作为报告主线。
+性格画像必须优先使用 personalFacts.profile 与 personalFacts 的 traitKeywords、firstResponse、decisionPattern、planningPreference、pressurePattern；不得自行发明一套与这些线索无关的通用人格。五行小提示只写 2–3 句，使用 personalFacts.elementNote 的生活化翻译，不展示数量、缺失项、日主或四柱。
 基础版给用户完整但精简的整体认识，不展开十神、用神、大运、事业、财富、关系和年度节奏的分场景分析（这些属于深度版）。
 心理行为表述只使用“可能 / 倾向 / 建议 / 可以尝试 / 从行为模式看”等观察性语言；禁止心理诊断或暗示用户心理有问题。
   `,

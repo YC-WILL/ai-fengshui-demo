@@ -32,20 +32,33 @@ const ACCENTS: BehavioralAccent[] = [
   { traitKeywords: ["感受敏锐", "富有共情", "想象丰富"], profile: "容易感受到气氛里的细微变化，安静下来时判断更清楚", response: "先感受气氛，再慢慢把真实想法说出来", action: "感受复杂时先记录事实、感受和需要各一句", planning: "在重要安排前留一段安静时间，确认自己真正担心什么", watchFor: "气氛复杂时，容易先吸收周围人的情绪，反而晚一点才辨认自己的判断" }
 ];
 
-// 内部日期区间按常见西方占星划分；只输出安全的人格侧重，不输出星座名称。
-const ACCENT_RANGES = [
-  { start: 321, end: 419, accent: ACCENTS[0] },
-  { start: 420, end: 520, accent: ACCENTS[1] },
-  { start: 521, end: 621, accent: ACCENTS[2] },
-  { start: 622, end: 722, accent: ACCENTS[3] },
-  { start: 723, end: 822, accent: ACCENTS[4] },
-  { start: 823, end: 922, accent: ACCENTS[5] },
-  { start: 923, end: 1023, accent: ACCENTS[6] },
-  { start: 1024, end: 1122, accent: ACCENTS[7] },
-  { start: 1123, end: 1221, accent: ACCENTS[8] },
-  { start: 1222, end: 119, accent: ACCENTS[9], wrapsYear: true },
-  { start: 120, end: 218, accent: ACCENTS[10] },
-  { start: 219, end: 320, accent: ACCENTS[11] }
+// 生日区间只在规则层使用。报告永远只拿到行为侧重，不输出星座名称。
+// 日期采用 MMDD，跨年区间（1222–0119）由 wrapsYear 标记。
+export interface ZodiacBehaviorProfile {
+  name: string;
+  start: number;
+  end: number;
+  accent: BehavioralAccent;
+  wrapsYear?: boolean;
+}
+
+/**
+ * 12 个生日区间的行为侧重索引。
+ * name 仅供规则、测试和内容运营定位使用，禁止传入报告 prompt。
+ */
+export const ZODIAC_BEHAVIOR_PROFILES: readonly ZodiacBehaviorProfile[] = [
+  { name: "白羊座", start: 321, end: 419, accent: ACCENTS[0] },
+  { name: "金牛座", start: 420, end: 520, accent: ACCENTS[1] },
+  { name: "双子座", start: 521, end: 621, accent: ACCENTS[2] },
+  { name: "巨蟹座", start: 622, end: 722, accent: ACCENTS[3] },
+  { name: "狮子座", start: 723, end: 822, accent: ACCENTS[4] },
+  { name: "处女座", start: 823, end: 922, accent: ACCENTS[5] },
+  { name: "天秤座", start: 923, end: 1023, accent: ACCENTS[6] },
+  { name: "天蝎座", start: 1024, end: 1122, accent: ACCENTS[7] },
+  { name: "射手座", start: 1123, end: 1221, accent: ACCENTS[8] },
+  { name: "摩羯座", start: 1222, end: 119, accent: ACCENTS[9], wrapsYear: true },
+  { name: "水瓶座", start: 120, end: 218, accent: ACCENTS[10] },
+  { name: "双鱼座", start: 219, end: 320, accent: ACCENTS[11] }
 ] as const;
 
 export function behavioralAccent(birthDate: string): BehavioralAccent {
@@ -53,7 +66,7 @@ export function behavioralAccent(birthDate: string): BehavioralAccent {
   const monthDay = Number(monthText) * 100 + Number(dayText);
   if (!Number.isFinite(monthDay)) return ACCENTS[9];
 
-  return ACCENT_RANGES.find(range =>
+  return ZODIAC_BEHAVIOR_PROFILES.find(range =>
     "wrapsYear" in range
       ? monthDay >= range.start || monthDay <= range.end
       : monthDay >= range.start && monthDay <= range.end

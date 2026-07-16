@@ -27,8 +27,17 @@ export function prepareRuleResultForReport(
   const result = ruleResult as UnknownRecord;
 
   if (reportType === "bazi_basic") {
+    const facts = (result.personalNarrativeFacts ?? {}) as UnknownRecord;
     return {
-      personalFacts: result.personalNarrativeFacts,
+      personalFacts: {
+        ...facts,
+        // 将底层已计算的个人画像作为“可核对素材”传给模型，避免模型
+        // 退回到泛泛的人格模板；仍不暴露四柱、日主或数量。
+        profile: normalizePersonalityProfile(result.personalityProfile),
+        elementNote: typeof result.friendlyElementNote === "string"
+          ? result.friendlyElementNote
+          : ""
+      },
       notes: takeStrings(result.notes, 2)
     };
   }
@@ -87,6 +96,7 @@ export function normalizeGeneratedReport(
     normalized = normalized
       .replace(/完全缺席|完全缺少/g, "相对不显眼")
       .replace(/日主(?:为|是)?[甲乙丙丁戊己庚辛壬癸]?[木火土金水]?/g, "自身节奏");
+    normalized = normalizeBaziProfileSection(normalized);
   }
 
   if (reportType === "marriage_basic" || reportType === "marriage_deep") {
@@ -216,6 +226,18 @@ function limitSecondLevelSections(text: string, maxBodyLength: number): string {
     const heading = section.slice(0, newline);
     const body = section.slice(newline + 1).trim();
     return `${heading}\n${truncateMarkdownBody(body, maxBodyLength, 80)}`;
+  }).join("\n");
+}
+
+function normalizeBaziProfileSection(text: string): string {
+  const sections = text.split(/\n(?=##\s)/);
+  return sections.map(section => {
+    if (!/性格画像/.test(section)) return section;
+    const newline = section.indexOf("\n");
+    if (newline < 0) return section;
+    const heading = section.slice(0, newline);
+    const body = section.slice(newline + 1).trim();
+    return `${heading}\n${truncateAtNaturalBoundary(body, 180, 100)}`;
   }).join("\n");
 }
 

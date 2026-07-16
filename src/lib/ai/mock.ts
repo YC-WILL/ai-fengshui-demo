@@ -66,7 +66,7 @@ function mockBaziBasic(r: Record<string, unknown>): string {
     ?? `面对重要事情时，你可能会${facts["firstResponse"] ?? "先确认真正的问题"}。${facts["coreStrength"] ?? "你会结合现实条件推进事情"}。`;
   const elementNote = (r["elementGuidance"] as string) ?? (r["friendlyElementNote"] as string)
     ?? `传统五行提示你较常先使用${element["prominentGift"] ?? "熟悉的能力"}，${element["quieterGift"] ?? "另一种能力"}则可以在需要时主动补上。`;
-  const profile = (r["personalityProfile"] as string)
+  const profile = (facts["profile"] as string) ?? (r["personalityProfile"] as string)
     ?? `从日常互动看，${traits.join("、") || "观察、判断和行动"}可能是较明显的侧重。沟通时，你常会${facts["firstResponse"] ?? "先听清重点"}；做决定时，${facts["decisionPattern"] ?? "会结合现实条件再表态"}。准备落实时，${facts["planningPreference"] ?? "会先整理关键事项"}。${facts["pressurePattern"] ?? "压力增加时，也要留意自己的真实需要是否被看见"}。这些内容适合拿来对照实际经历，不是固定结论。`;
   const reminders = cautions.map(item => `- ${item}`).join("\n");
   const suggestions = actions.map(item => `- ${item}`).join("\n");
@@ -88,8 +88,8 @@ ${reminders || "- 忙的时候也给自己留一点停顿，先看清真正重�
 ## 5. 给你三句小建议
 ${suggestions || "- 结合近期真实经历，选择一个最想调整的行为，从小步骤开始观察。"}
 
-## 6. 最后说一句
-> 本报告为基础版，仅供传统文化体验、自我观察与生活规划参考，不构成医疗、心理、法律或投资等专业建议。
+## 6. 留一句温和收尾
+先照顾眼前最具体的一步，答案会在行动里变得清楚。
 `.trim();
 }
 
@@ -165,6 +165,12 @@ function mockMarriageBasic(r: Record<string, unknown>): string {
   const strengths = ((r["sharedStrengths"] as string[]) ?? (r["strengths"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const friction = ((r["differencesToNotice"] as string[]) ?? (r["frictionPoints"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
   const suggestions = ((r["suggestions"] as string[]) ?? []).map(s => `- ${s}`).join("\n");
+  const behaviorFacts = (r["behaviorFacts"] ?? {}) as Record<string, any>;
+  const first = (behaviorFacts.firstPerson ?? {}) as Record<string, string>;
+  const second = (behaviorFacts.secondPerson ?? {}) as Record<string, string>;
+  const distinctSteps = first.response && second.response
+    ? `第一位更可能${first.response}，而第二位更可能${second.response}。准备事情时，第一位倾向${first.planning ?? "先抓住要点"}，第二位倾向${second.planning ?? "先确认条件"}；如果一方已经开始推进、另一方还在确认感受，就容易把“还没回应”误读成“不在乎”。`
+    : "把你们在具体事情中的先后顺序说清楚，比给彼此贴标签更有帮助。";
   const relation = (r["dayMasterRelation"] as { kind?: string }) ?? {};
   const publicKind = rhythm.includes("步调较接近")
     ? "similar"
@@ -191,6 +197,7 @@ ${opening}
 ## 2. 看看你们各自的步调
 ${rhythm}
 ${style}
+${distinctSteps}
 
 ## 3. 你们合拍的地方
 ${strengths || "- 共同价值观可后续观察补充"}
@@ -202,7 +209,7 @@ ${friction || "- 暂未发现明显结构性张力"}
 ${suggestions || "- 每周留十分钟，只聊近来的感受，不急着解决问题。\n- 重要决定先听完彼此的顾虑，再一起定时间。\n- 情绪上来时先暂停，约好什么时候继续谈。"}
 
 ## 6. 最后说一句
-> 这份内容只提供传统文化与沟通视角的参考，不判断你们是否适合，也不能替代专业的伴侣或心理咨询。
+把不同的先后顺序说出来，很多误会就有了可调整的入口。
 `.trim();
 }
 
@@ -270,7 +277,7 @@ ${warnings || "- 若没有明显的潮湿、霉味、噪音或动线阻挡，不
 ${zero || "- 整理玄关与客厅 30 分钟\n- 调整沙发/床朝向使其「背有依靠」\n- 夜间增加暖色辅光"}
 
 ## 6. 最后说一句
-> 这份内容只提供传统文化与居住体验参考，不承诺发财、转运或化煞效果；涉及漏水、电路、燃气和结构安全，请咨询专业人员。
+先从你已经察觉到的那一处开始观察，住起来的变化最诚实。不承诺发财、转运或化煞效果。
 `.trim();
 }
 
@@ -348,7 +355,7 @@ ${selectedDates.map(c => deep
 ${selectedPrep || "- 确认同行或参与人员的时间\n- 留意天气与交通\n- 给临时变化留一点余地"}
 
 ## 4. 最后说一句
-> 这是每天都可以使用的免费民俗参考，不作为这件事的唯一决策依据。准备周全、彼此方便，往往比追求一个“完美日期”更重要。`;
+这是每天都可以使用的免费民俗参考。先把人员、天气和材料核对好，再让日期服务于这件事本身。`;
   }
 
   return `${common}
