@@ -5,9 +5,10 @@ import {
   prepareRuleResultForReport
 } from "@/lib/reports/contentGuard";
 import { safetyFilter } from "@/lib/safety/filter";
+import { assessBaziNarrativeQuality } from "@/lib/reports/narrativeQuality";
 
 describe("report content guard", () => {
-  it("keeps basic bazi inputs conversational and enforces a 100-180 character profile", () => {
+  it("passes structured personal facts without raw calculations or prewritten report copy", () => {
     const prepared = prepareRuleResultForReport("bazi_basic", {
       dayMaster: "甲",
       pillars: { year: "甲子" },
@@ -17,15 +18,21 @@ describe("report content guard", () => {
       friendlyElementNote: "你更熟悉稳稳落实的节奏，也可以为表达和尝试多留一点空间。",
       personalityProfile: "这是一段太短的画像。",
       lifeReminders: ["提醒一", "提醒二"],
-      lifeSuggestions: ["建议一", "建议二", "建议三"]
+      lifeSuggestions: ["建议一", "建议二", "建议三"],
+      personalNarrativeFacts: {
+        traitKeywords: ["重视公平", "善于协调", "顾及立场"],
+        firstResponse: "先听完不同意见",
+        actionSeeds: ["先写选择", "列出条件", "确认责任"]
+      }
     }) as Record<string, unknown>;
 
     expect(prepared).not.toHaveProperty("dayMaster");
     expect(prepared).not.toHaveProperty("pillars");
     expect(prepared).not.toHaveProperty("elementCounts");
     expect(prepared).not.toHaveProperty("elementMissing");
-    expect(String(prepared.personalityProfile).length).toBeGreaterThanOrEqual(100);
-    expect(String(prepared.personalityProfile).length).toBeLessThanOrEqual(180);
+    expect(prepared).not.toHaveProperty("personalityProfile");
+    expect(prepared).not.toHaveProperty("coreConclusion");
+    expect(JSON.stringify(prepared)).toContain("重视公平");
   });
 
   it("does not expose relationship calculations to the model", () => {
@@ -35,6 +42,11 @@ describe("report content guard", () => {
       dayMasterRelation: { kind: "ke", direction: "B→A" },
       elementBalance: { combinedDistribution: { 木: 3, 金: 4 } },
       communicationStyle: "日主组合 乙/辛：建议先听完再回应。",
+      behaviorFacts: {
+        firstPerson: { traitKeywords: ["重视公平", "善于协调", "顾及立场"], response: "先听双方说法" },
+        secondPerson: { traitKeywords: ["重视安全", "照顾感受", "依赖熟悉"], response: "先确认彼此感受" },
+        responsePattern: "different"
+      },
       strengths: ["彼此愿意给出真实反馈"],
       frictionPoints: ["回应顺序不同"],
       suggestions: ["先确认彼此真正介意的重点"]
@@ -43,6 +55,8 @@ describe("report content guard", () => {
 
     expect(serialized).not.toMatch(/dayMaster|elementBalance|combinedDistribution|B→A|日主组合/);
     expect(serialized).toContain("回应和决策节奏不同");
+    expect(serialized).toContain("重视公平");
+    expect(serialized).toContain("照顾感受");
   });
 
   it("removes member-only dates and calculation fields from free date selection", () => {
@@ -88,7 +102,8 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     const safe = safetyFilter(normalized);
     const profileSection = normalized.match(/## 3[^\n]*\n([\s\S]*?)(?=\n##|$)/)?.[1].trim() ?? "";
 
-    expect(profileSection).toBe(profile);
+    expect(profileSection).not.toBe(profile);
+    expect(profileSection).toContain("模型自行扩写");
     expect(profileSection.length).toBeGreaterThanOrEqual(100);
     expect(profileSection.length).toBeLessThanOrEqual(180);
     expect(normalized).not.toContain("免责声明");
@@ -96,7 +111,7 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     expect(safe.text.match(/免责声明/g)).toHaveLength(1);
   });
 
-  it("keeps the personal bazi spine instead of generic model rewrites", () => {
+  it("leaves model prose intact for the non-template quality gate to reject", () => {
     const normalized = normalizeGeneratedReport(
       "bazi_basic",
       `# 这位朋友，我们聊聊你的性格与步调
@@ -124,11 +139,10 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
       }
     );
 
-    expect(normalized).toContain("先听完不同意见");
-    expect(normalized).toContain("取舍和边界");
-    expect(normalized).toContain("别让协调盖过真实表达");
-    expect(normalized).toContain("确认责任和截止时间");
-    expect(normalized).not.toMatch(/有自己的步调|给自己多留一点空间|相信自己|慢慢调整/);
+    const quality = assessBaziNarrativeQuality(normalized);
+    expect(normalized).toContain("有自己的步调");
+    expect(quality.ok).toBe(false);
+    expect(quality.issues).toContain("出现空泛通用话术");
   });
 
   it("scrubs internal relationship terminology if a model still echoes it", () => {
@@ -170,7 +184,7 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     expect(normalized.match(/。$/gm)).toHaveLength(3);
   });
 
-  it("fills a missing third basic action from the prepared rule result", () => {
+  it("does not inject a template when the model misses the third action", () => {
     const normalized = normalizeGeneratedReport(
       "bazi_basic",
       "# 这位朋友，我们聊聊你的性格与步调\n\n## 给你三句小建议\n**1. 先做一件事。**\n\n**2. 再确认一次。**",
@@ -180,8 +194,8 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
       }
     );
 
-    expect(normalized.match(/^- /gm)).toHaveLength(3);
-    expect(normalized).toContain("最后留一点余地");
+    expect(normalized).not.toContain("最后留一点余地");
+    expect(assessBaziNarrativeQuality(normalized).ok).toBe(false);
   });
 
   it("removes unsupported home and participant-schedule assertions", () => {

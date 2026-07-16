@@ -33,6 +33,7 @@ describe("conversational report tone", () => {
       partyA: { dayMaster: match.partyA.dayMaster, zodiac: match.partyA.zodiac },
       partyB: { dayMaster: match.partyB.dayMaster, zodiac: match.partyB.zodiac },
       communicationStyle: match.communicationStyle,
+      behaviorFacts: match.behaviorFacts,
       strengths: match.strengths,
       frictionPoints: match.frictionPoints,
       suggestions: match.suggestions
@@ -52,6 +53,7 @@ describe("conversational report tone", () => {
       partyA: { dayMaster: match.partyA.dayMaster, zodiac: match.partyA.zodiac },
       partyB: { dayMaster: match.partyB.dayMaster, zodiac: match.partyB.zodiac },
       communicationStyle: match.communicationStyle,
+      behaviorFacts: match.behaviorFacts,
       strengths: match.strengths,
       frictionPoints: match.frictionPoints,
       suggestions: match.suggestions
@@ -158,6 +160,19 @@ describe("conversational report tone", () => {
     expect(firstText).not.toBe(secondText);
     expect(firstText.match(/两位朋友/g)).toHaveLength(1);
     expect(secondText.match(/两位朋友/g)).toHaveLength(1);
+  });
+
+  it("carries both parties' hidden birth-date behavior facts into relationship generation", () => {
+    const match = matchMarriage({
+      partyA: { gender: "male", birthDate: "2006-10-03", birthTime: "", unknownTime: true },
+      partyB: { gender: "male", birthDate: "2000-06-30", birthTime: "", unknownTime: true }
+    });
+    const serialized = JSON.stringify(match.behaviorFacts);
+
+    expect(match.behaviorFacts.firstPerson.traitKeywords).toEqual(["重视公平", "善于协调", "顾及立场"]);
+    expect(match.behaviorFacts.secondPerson.traitKeywords).toEqual(["重视安全", "照顾感受", "依赖熟悉"]);
+    expect(match.behaviorFacts.responsePattern).toBe("different");
+    expect(serialized).not.toMatch(/星座|白羊|金牛|双子|巨蟹|狮子|处女|天秤|天蝎|射手|摩羯|水瓶|双鱼/);
   });
 
   it("changes the home focus and first actions with the lived concern", async () => {

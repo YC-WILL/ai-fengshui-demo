@@ -13,13 +13,18 @@ import { buildSystemPrompt, buildUserPrompt } from "../ai/prompts";
 import { safetyFilter } from "../safety/filter";
 import {
   computeBazi, personalityProfile, lifeSuggestions, lifeReminders, elementSummary,
-  dayMasterDescription, friendlyCoreConclusion, friendlyElementNote
+  dayMasterDescription, friendlyCoreConclusion, friendlyElementNote, personalNarrativeFacts
 } from "../domain/bazi";
 import { matchMarriage } from "../domain/marriage";
 import { assessFengShui } from "../domain/fengshui";
 import { selectDates } from "../domain/dateSelection";
 import { makePreview } from "./preview";
 import { normalizeGeneratedReport, prepareRuleResultForReport } from "./contentGuard";
+import {
+  assessReportNarrativeQuality,
+  buildNarrativeRepairPrompt,
+  type NarrativeQualityResult
+} from "./narrativeQuality";
 import type {
   ReportType, ReportTier,
   BaziInput, MarriageInput, FengShuiInput, DateSelectionInput,
@@ -29,6 +34,10 @@ import { isMemberReportType } from "../types";
 
 // ---- 不同报告输入类型联合 ----
 type AnyInput = BaziInput | MarriageInput | FengShuiInput | DateSelectionInput;
+
+const NOVELTY_GATED_REPORTS: ReportType[] = [
+  "bazi_basic", "marriage_basic", "home_fengshui_basic", "date_selection_basic"
+];
 
 interface OrchestrateArgs {
   userId: string;
@@ -76,6 +85,14 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
   // 3) 构造 prompt
   const systemPrompt = buildSystemPrompt(reportType, tier);
   const userPrompt = buildUserPrompt(reportType, tier, ruleResult);
+  const recentReports = NOVELTY_GATED_REPORTS.includes(reportType)
+    ? await prisma.report.findMany({
+        where: { reportType, status: "generated", aiResult: { not: null } },
+        orderBy: { createdAt: "desc" },
+        take: 12,
+        select: { aiResult: true }
+      }).then(rows => rows.flatMap(row => row.aiResult ? [row.aiResult] : []))
+    : [];
 
   // 4) 调 AI
   const provider = getAIProvider();
@@ -93,11 +110,39 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
     throw err;
   }
 
-  // 5) 安全过滤
-  const normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
+  // 5) 非模板化质量检查：四类基础报告不直接交付空泛或重复草稿。
+  let normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
+  let narrativeQuality: NarrativeQualityResult | undefined;
+  if (NOVELTY_GATED_REPORTS.includes(reportType)) {
+    narrativeQuality = assessReportNarrativeQuality(reportType, normalizedText, recentReports);
+    if (!narrativeQuality.ok) {
+      try {
+        ai = await provider.generateReport({
+          reportType,
+          tier,
+          systemPrompt,
+          userPrompt: buildNarrativeRepairPrompt(userPrompt, ai.text, narrativeQuality.issues),
+          ruleResult,
+          userId,
+          reportId: report.id
+        });
+      } catch (err) {
+        await prisma.report.update({ where: { id: report.id }, data: { status: "failed" } });
+        throw err;
+      }
+      normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
+      narrativeQuality = assessReportNarrativeQuality(reportType, normalizedText, recentReports);
+    }
+    if (!narrativeQuality.ok) {
+      await prisma.report.update({ where: { id: report.id }, data: { status: "failed" } });
+      throw new Error("报告个性化质量未通过，请重新生成");
+    }
+  }
+
+  // 6) 安全过滤
   const safety = safetyFilter(normalizedText);
 
-  // 6) 写日志
+  // 7) 写日志
   await prisma.modelLog.create({
     data: {
       userId,
@@ -117,12 +162,18 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
       safetyFlags: JSON.stringify({
         blocked: safety.blocked,
         rewritten: safety.rewritten,
-        matchCount: safety.matches.length
+        matchCount: safety.matches.length,
+        narrativeQuality: narrativeQuality
+          ? {
+              maxRecentSimilarity: narrativeQuality.maxRecentSimilarity,
+              maxSectionSimilarity: narrativeQuality.maxSectionSimilarity
+            }
+          : undefined
       })
     }
   });
 
-  // 7) 更新 Report 状态
+  // 8) 更新 Report 状态
   const finalStatus: "generated" | "blocked" = safety.blocked ? "blocked" : "generated";
   await prisma.report.update({
     where: { id: report.id },
@@ -137,7 +188,7 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
     }
   });
 
-  // 8) 构造返回（非会员访问深度报告时先返回 preview）
+  // 9) 构造返回（非会员访问深度报告时先返回 preview）
   const needsMembership = memberOnly && !isMember;
   const preview = needsMembership ? makePreview(safety.text) : undefined;
 
@@ -177,6 +228,7 @@ function runRuleEngine(reportType: ReportType, input: AnyInput): unknown {
         dayMasterDescription: dayMasterDescription(chart),
         friendlyCoreConclusion: friendlyCoreConclusion(chart),
         friendlyElementNote: friendlyElementNote(chart),
+        personalNarrativeFacts: personalNarrativeFacts(chart),
         personalityProfile: personalityProfile(chart),
         lifeReminders: lifeReminders(chart),
         lifeSuggestions: lifeSuggestions(chart),
@@ -192,6 +244,7 @@ function runRuleEngine(reportType: ReportType, input: AnyInput): unknown {
         dayMasterRelation: m.dayMasterRelation,
         zodiacRelation: m.zodiacRelation,
         elementBalance: m.elementBalance,
+        behaviorFacts: m.behaviorFacts,
         communicationStyle: m.communicationStyle,
         strengths: m.strengths,
         frictionPoints: m.frictionPoints,

@@ -28,11 +28,7 @@ export function prepareRuleResultForReport(
 
   if (reportType === "bazi_basic") {
     return {
-      coreConclusion: result.friendlyCoreConclusion,
-      elementGuidance: result.friendlyElementNote,
-      personalityProfile: normalizePersonalityProfile(result.personalityProfile),
-      lifeReminders: takeStrings(result.lifeReminders, 2),
-      lifeSuggestions: takeStrings(result.lifeSuggestions, 3),
+      personalFacts: result.personalNarrativeFacts,
       notes: takeStrings(result.notes, 2)
     };
   }
@@ -41,6 +37,7 @@ export function prepareRuleResultForReport(
     const relation = (result.dayMasterRelation ?? {}) as UnknownRecord;
     return {
       interactionRhythm: relationKindToRhythm(relation.kind),
+      behaviorFacts: result.behaviorFacts,
       communicationStyle: cleanRelationshipText(result.communicationStyle),
       sharedStrengths: takeStrings(result.strengths, 3).map(cleanRelationshipText),
       differencesToNotice: takeStrings(result.frictionPoints, 3).map(cleanRelationshipText),
@@ -82,26 +79,11 @@ export function prepareRuleResultForReport(
 export function normalizeGeneratedReport(
   reportType: ReportType,
   text: string,
-  ruleResult: unknown
+  _ruleResult: unknown
 ): string {
   let normalized = removeModelDisclaimerSections(normalizeMarkdownBreaks(text));
 
   if (reportType === "bazi_basic") {
-    const result = ruleResult as UnknownRecord;
-    const profile = normalizePersonalityProfile(result.personalityProfile);
-    normalized = replaceSectionBodyIfContent(normalized, /整体印象/, stringValue(result.coreConclusion));
-    normalized = replaceSectionBodyIfContent(normalized, /五行/, stringValue(result.elementGuidance));
-    normalized = replaceSectionBody(normalized, /性格画像/, profile);
-    normalized = replaceSectionBodyIfContent(
-      normalized,
-      /提醒/,
-      markdownList(result.lifeReminders, 2)
-    );
-    normalized = replaceSectionBodyIfContent(
-      normalized,
-      /建议/,
-      markdownList(result.lifeSuggestions, 3)
-    );
     normalized = normalized
       .replace(/完全缺席|完全缺少/g, "相对不显眼")
       .replace(/日主(?:为|是)?[甲乙丙丁戊己庚辛壬癸]?[木火土金水]?/g, "自身节奏");
@@ -118,8 +100,6 @@ export function normalizeGeneratedReport(
   if (reportType === "date_selection_basic" || reportType === "date_selection") {
     normalized = removeUnsupportedScheduleAssertions(normalized);
   }
-
-  normalized = ensureThreeBasicActions(reportType, normalized, ruleResult);
 
   const sectionLimit = BASIC_SECTION_LIMITS[reportType];
   if (sectionLimit) normalized = limitSecondLevelSections(normalized, sectionLimit);
@@ -184,34 +164,6 @@ function removeUnsupportedScheduleAssertions(text: string): string {
   return removeSentences(text, sentence => unsupported.test(sentence) && !conditional.test(sentence));
 }
 
-function ensureThreeBasicActions(
-  reportType: ReportType,
-  text: string,
-  ruleResult: unknown
-): string {
-  const result = ruleResult as UnknownRecord;
-  const config: Partial<Record<ReportType, { heading: RegExp; items: unknown }>> = {
-    bazi_basic: { heading: /三句小建议/, items: result.lifeSuggestions },
-    marriage_basic: { heading: /三句相处建议/, items: result.suggestions },
-    home_fengshui_basic: { heading: /三件事/, items: result.improvementsZeroBudget },
-    date_selection_basic: { heading: /三件事/, items: result.preparationChecklist }
-  };
-  const selected = config[reportType];
-  const items = takeStrings(selected?.items, 3);
-  if (!selected || items.length < 3) return text;
-
-  const sections = text.split(/\n(?=##\s)/);
-  return sections.map(section => {
-    const newline = section.indexOf("\n");
-    if (newline < 0 || !selected.heading.test(section.slice(0, newline))) return section;
-    const body = section.slice(newline + 1);
-    const actionCount = (body.match(/^(?:[-*]|\d+\.)\s/gm) ?? []).length
-      + (body.match(/^\*\*\d+\./gm) ?? []).length;
-    if (actionCount >= 3) return section;
-    return `${section.slice(0, newline)}\n${items.map(item => `- ${item}`).join("\n")}`;
-  }).join("\n");
-}
-
 function removeSentences(text: string, shouldRemove: (sentence: string) => boolean): string {
   return text
     .split(/(?<=[。！？])/)
@@ -249,32 +201,11 @@ function takeStrings(value: unknown, limit: number): string[] {
     : [];
 }
 
-function stringValue(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-function markdownList(value: unknown, limit: number): string {
-  return takeStrings(value, limit).map(item => `- ${item}`).join("\n");
-}
-
 function removeModelDisclaimerSections(text: string): string {
   const sections = text.split(/\n(?=##\s)/);
   return sections
     .filter(section => !/^##\s+.*(?:免责声明|最后说一句|最后再叮嘱一句)/m.test(section))
     .join("\n");
-}
-
-function replaceSectionBody(text: string, heading: RegExp, body: string): string {
-  const sections = text.split(/\n(?=##\s)/);
-  return sections.map(section => {
-    const newline = section.indexOf("\n");
-    if (newline < 0 || !heading.test(section.slice(0, newline))) return section;
-    return `${section.slice(0, newline)}\n${body}`;
-  }).join("\n");
-}
-
-function replaceSectionBodyIfContent(text: string, heading: RegExp, body: string): string {
-  return body.trim() ? replaceSectionBody(text, heading, body) : text;
 }
 
 function limitSecondLevelSections(text: string, maxBodyLength: number): string {

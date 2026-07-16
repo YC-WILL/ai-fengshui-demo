@@ -10,7 +10,7 @@
 import { computeBazi, type BaziChart } from "./bazi";
 import { SHENG, KE, type Element, BRANCH_ELEMENT } from "./elements";
 import type { MarriageInput } from "../types";
-import { relationshipAccent } from "./behavioralAccent";
+import { relationshipAccent, type RelationshipBehaviorFacts } from "./behavioralAccent";
 
 export interface MarriageMatch {
   partyA: BaziChart;
@@ -18,6 +18,7 @@ export interface MarriageMatch {
   dayMasterRelation: ElementRelation;
   zodiacRelation: ZodiacRelation;
   elementBalance: ElementBalanceComment;
+  behaviorFacts: RelationshipBehaviorFacts;
   communicationStyle: string;
   strengths: string[];
   frictionPoints: string[];
@@ -199,6 +200,7 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
     dayMasterRelation: rel,
     zodiacRelation: zod,
     elementBalance: bal,
+    behaviorFacts: accent.behaviorFacts,
     communicationStyle: `${communicationStyle(a, b)} ${accent.observation}`,
     strengths,
     frictionPoints,

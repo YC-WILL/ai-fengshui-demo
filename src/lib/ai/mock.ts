@@ -55,11 +55,21 @@ function mockMarkdown(input: AIGenerateInput): string {
 
 // ----------------- 八字基础 -----------------
 function mockBaziBasic(r: Record<string, unknown>): string {
-  const core = (r["coreConclusion"] as string) ?? (r["friendlyCoreConclusion"] as string) ?? "你的这份结果更适合当作一面观察自己的小镜子，不必急着给自己下结论。";
-  const elementNote = (r["elementGuidance"] as string) ?? (r["friendlyElementNote"] as string) ?? "五行只是传统文化里的观察线索，结合自己的真实经历来看就好。";
-  const profile = (r["personalityProfile"] as string) ?? "暂无足够信息生成性格画像。";
-  const reminders = ((r["lifeReminders"] as string[]) ?? []).map(item => `- ${item}`).join("\n");
-  const suggestions = ((r["lifeSuggestions"] as string[]) ?? []).map(item => `- ${item}`).join("\n");
+  const facts = (r["personalFacts"] ?? {}) as Record<string, unknown>;
+  const traits = (facts["traitKeywords"] as string[] | undefined) ?? [];
+  const cautions = (facts["cautionSignals"] as string[] | undefined)
+    ?? (r["lifeReminders"] as string[] | undefined) ?? [];
+  const actions = (facts["actionSeeds"] as string[] | undefined)
+    ?? (r["lifeSuggestions"] as string[] | undefined) ?? [];
+  const element = (facts["elementContext"] ?? {}) as Record<string, unknown>;
+  const core = (r["coreConclusion"] as string) ?? (r["friendlyCoreConclusion"] as string)
+    ?? `面对重要事情时，你可能会${facts["firstResponse"] ?? "先确认真正的问题"}。${facts["coreStrength"] ?? "你会结合现实条件推进事情"}。`;
+  const elementNote = (r["elementGuidance"] as string) ?? (r["friendlyElementNote"] as string)
+    ?? `传统五行提示你较常先使用${element["prominentGift"] ?? "熟悉的能力"}，${element["quieterGift"] ?? "另一种能力"}则可以在需要时主动补上。`;
+  const profile = (r["personalityProfile"] as string)
+    ?? `从日常互动看，${traits.join("、") || "观察、判断和行动"}可能是较明显的侧重。沟通时，你常会${facts["firstResponse"] ?? "先听清重点"}；做决定时，${facts["decisionPattern"] ?? "会结合现实条件再表态"}。准备落实时，${facts["planningPreference"] ?? "会先整理关键事项"}。${facts["pressurePattern"] ?? "压力增加时，也要留意自己的真实需要是否被看见"}。这些内容适合拿来对照实际经历，不是固定结论。`;
+  const reminders = cautions.map(item => `- ${item}`).join("\n");
+  const suggestions = actions.map(item => `- ${item}`).join("\n");
   return `
 # 这位朋友，我们聊聊你的性格与步调
 

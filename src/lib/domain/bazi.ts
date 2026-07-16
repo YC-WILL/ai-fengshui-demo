@@ -200,6 +200,18 @@ interface DayBranchModifier {
   action: string;
 }
 
+export interface PersonalNarrativeFacts {
+  traitKeywords: [string, string, string];
+  firstResponse: string;
+  coreStrength: string;
+  decisionPattern: string;
+  planningPreference: string;
+  pressurePattern: string;
+  cautionSignals: [string, string];
+  actionSeeds: [string, string, string];
+  elementContext: { prominentGift: string; quieterGift: string };
+}
+
 const DAY_MASTER_PATTERN: Record<Stem, DayMasterPattern> = {
   甲: { strength: "认准方向后，你通常愿意主动开路，把模糊的想法推到可以行动的位置", decision: "你会先判断这件事值不值得长期投入，再决定从哪里开始", action: "同时出现多个目标时，只保留一个本周必须推进的主任务" },
   乙: { strength: "你善于看见关系中的细节，也较会用柔和方式让事情继续向前", decision: "你常先衡量不同人的位置，再寻找既能推进又不伤和气的做法", action: "讨论超过十分钟仍没有结论时，分别写下一项不可退让和一项可以协商的条件" },
@@ -264,6 +276,28 @@ export function friendlyCoreConclusion(chart: BaziChart): string {
   const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
   const modifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
   return `遇到重要事情时，你可能会${accent.response}。${pattern.strength}；不过，${modifier.tradeoff}。`;
+}
+
+export function personalNarrativeFacts(chart: BaziChart): PersonalNarrativeFacts {
+  const accent = behavioralAccent(chart.inputSnapshot.birthDate);
+  const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
+  const dayModifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
+  const monthModifier = DAY_BRANCH_MODIFIER[chart.month.branchElement];
+  const { strongest, weakest } = chart.elementDistribution;
+  return {
+    traitKeywords: accent.traitKeywords,
+    firstResponse: accent.response,
+    coreStrength: pattern.strength,
+    decisionPattern: pattern.decision,
+    planningPreference: accent.planning,
+    pressurePattern: monthModifier.pressure,
+    cautionSignals: [accent.watchFor, dayModifier.reminder],
+    actionSeeds: [accent.action, pattern.action, dayModifier.action],
+    elementContext: {
+      prominentGift: GIFT_BY_ELEMENT[strongest],
+      quieterGift: GIFT_BY_ELEMENT[weakest]
+    }
+  };
 }
 
 export function friendlyElementNote(chart: BaziChart): string {
