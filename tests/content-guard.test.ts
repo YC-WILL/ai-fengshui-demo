@@ -123,6 +123,18 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     expect(normalized).not.toMatch(/，\n(?:2\.|3\.)/);
   });
 
+  it("closes a comma-only truncation with a full stop", () => {
+    const action = "先确认真正要处理的重点，再和相关的人核对时间、责任、材料和下一步，";
+    const normalized = normalizeGeneratedReport(
+      "date_selection_basic",
+      `# 这位朋友，先挑个从容的日子\n\n## 日子之外，先准备好这三件事\n1. ${action.repeat(8)}\n2. ${action.repeat(8)}\n3. ${action.repeat(8)}`,
+      {}
+    );
+
+    expect(normalized).not.toMatch(/，$/m);
+    expect(normalized.match(/。$/gm)).toHaveLength(3);
+  });
+
   it("fills a missing third basic action from the prepared rule result", () => {
     const normalized = normalizeGeneratedReport(
       "bazi_basic",

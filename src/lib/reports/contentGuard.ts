@@ -302,9 +302,11 @@ function truncateMarkdownBody(text: string, max: number, min: number): string {
 function truncateAtNaturalBoundary(text: string, max: number, min: number): string {
   if (text.length <= max) return text;
   const candidate = text.slice(0, max);
-  for (const boundaries of [["。", "！", "？", "；"], ["，", "\n"]]) {
-    const cut = Math.max(...boundaries.map(mark => candidate.lastIndexOf(mark)));
-    if (cut + 1 >= min) return candidate.slice(0, cut + 1).trim();
+  const strongCut = Math.max(...["。", "！", "？", "；"].map(mark => candidate.lastIndexOf(mark)));
+  if (strongCut + 1 >= min) return candidate.slice(0, strongCut + 1).trim();
+  const weakCut = Math.max(candidate.lastIndexOf("，"), candidate.lastIndexOf("\n"));
+  if (weakCut + 1 >= min) {
+    return `${candidate.slice(0, weakCut).trim()}。`;
   }
   return candidate.trim();
 }
