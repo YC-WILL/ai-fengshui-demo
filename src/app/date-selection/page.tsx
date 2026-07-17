@@ -9,6 +9,7 @@ import PageIntro from "@/components/PageIntro";
 import { type BaziInput, type DateSelectionEvent } from "@/lib/types";
 import { fetchReport, readReportResponse } from "@/lib/reports/client";
 import { useFormDraft } from "@/lib/hooks/useFormDraft";
+import { addDaysToDateKey, dateKeyInTimeZone } from "@/lib/time";
 
 const EVENT_OPTIONS: { value: DateSelectionEvent; label: string }[] = [
   { value: "wedding", label: "结婚" },
@@ -21,12 +22,11 @@ const EVENT_OPTIONS: { value: DateSelectionEvent; label: string }[] = [
 
 export default function DateSelectionPage() {
   const router = useRouter();
-  const today = new Date();
-  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  const todayKey = dateKeyInTimeZone();
   const [draft, setDraft, clearDraft, hasDraft] = useFormDraft("guaan:draft:date-selection", () => ({
     event: "wedding" as DateSelectionEvent,
-    start: fmt(today),
-    end: fmt(new Date(today.getTime() + 30 * 86400000)),
+    start: todayKey,
+    end: addDaysToDateKey(todayKey, 30),
     user: EMPTY_BAZI,
     notes: ""
   }));

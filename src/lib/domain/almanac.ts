@@ -12,6 +12,7 @@
 import { ZODIAC_BY_BRANCH } from "./elements";
 import { computeBazi } from "./bazi";
 import { ALMANAC_POOL } from "@/data/almanac";
+import { dateKeyInTimeZone } from "@/lib/time";
 
 export interface AlmanacToday {
   gregorian: string;       // 2026-05-06
@@ -65,10 +66,7 @@ const HOUR_SLOTS = [
 ];
 
 export function buildAlmanac(date: Date = new Date()): AlmanacToday {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  const dateStr = `${yyyy}-${mm}-${dd}`;
+  const dateStr = dateKeyInTimeZone(date);
   const seed = hashDateInt(dateStr);
 
   const chart = computeBazi({
@@ -87,7 +85,7 @@ export function buildAlmanac(date: Date = new Date()): AlmanacToday {
 
   return {
     gregorian: dateStr,
-    weekday: WEEKDAY_CN[date.getDay()],
+    weekday: WEEKDAY_CN[new Date(`${dateStr}T12:00:00+08:00`).getUTCDay()],
     lunar: `（农历占位，正式上线请接入农历数据源）`,
     ganzhiDay: `${chart.day.pillarLabel}日`,
     solarTerm,

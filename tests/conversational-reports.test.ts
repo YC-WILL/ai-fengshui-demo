@@ -4,6 +4,7 @@ import { buildSystemPrompt, buildUserPrompt } from "@/lib/ai/prompts";
 import { matchMarriage } from "@/lib/domain/marriage";
 import { assessFengShui } from "@/lib/domain/fengshui";
 import { selectDates } from "@/lib/domain/dateSelection";
+import { addDaysToDateKey, dateKeyInTimeZone } from "@/lib/time";
 import {
   MEMBERSHIP_PRICING, isMemberReportType,
   type AIGenerateInput, type ReportType
@@ -27,6 +28,12 @@ async function generate(reportType: ReportType, ruleResult: unknown) {
 }
 
 describe("conversational report tone", () => {
+  it("uses China local date at the UTC day boundary", () => {
+    const justAfterChinaMidnight = new Date("2026-07-17T16:05:00.000Z");
+    expect(dateKeyInTimeZone(justAfterChinaMidnight)).toBe("2026-07-18");
+    expect(addDaysToDateKey("2026-07-18", 30)).toBe("2026-08-17");
+  });
+
   it("speaks to both people in the relationship report", async () => {
     const match = matchMarriage({ partyA: personA, partyB: personB });
     const text = await generate("marriage_basic", {
