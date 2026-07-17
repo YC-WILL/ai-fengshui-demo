@@ -4,18 +4,24 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
+import DraftNotice from "@/components/forms/DraftNotice";
 import PageIntro from "@/components/PageIntro";
 import { type BaziInput, type ReportType } from "@/lib/types";
 import { fetchReport, readReportResponse } from "@/lib/reports/client";
+import { useFormDraft } from "@/lib/hooks/useFormDraft";
 
 type Stage = "dating" | "engaged" | "married" | "considering";
+type MarriageDraft = { a: BaziInput; b: BaziInput; stage: Stage; notes: string };
 
 export default function MarriagePage() {
   const router = useRouter();
-  const [a, setA] = useState<BaziInput>({ ...EMPTY_BAZI, gender: "male" });
-  const [b, setB] = useState<BaziInput>({ ...EMPTY_BAZI, gender: "female" });
-  const [stage, setStage] = useState<Stage>("dating");
-  const [notes, setNotes] = useState("");
+  const [draft, setDraft, clearDraft, hasDraft] = useFormDraft<MarriageDraft>("guaan:draft:marriage", () => ({
+    a: { ...EMPTY_BAZI, gender: "male" as const },
+    b: { ...EMPTY_BAZI, gender: "female" as const },
+    stage: "dating" as Stage,
+    notes: ""
+  }));
+  const { a, b, stage, notes } = draft;
   const [loading, setLoading] = useState<"basic" | "deep" | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -49,13 +55,14 @@ export default function MarriagePage() {
       />
 
       <section className="card">
+        <DraftNotice hasDraft={hasDraft} onClear={clearDraft} />
         <h3 className="font-serif text-lg mb-2">甲方信息（出生资料可选）</h3>
-        <BaziFields value={a} onChange={setA} prefix="a-" />
+        <BaziFields value={a} onChange={value => setDraft(s => ({ ...s, a: typeof value === "function" ? value(s.a) : value }))} prefix="a-" />
       </section>
 
       <section className="card">
         <h3 className="font-serif text-lg mb-2">乙方信息（出生资料可选）</h3>
-        <BaziFields value={b} onChange={setB} prefix="b-" />
+        <BaziFields value={b} onChange={value => setDraft(s => ({ ...s, b: typeof value === "function" ? value(s.b) : value }))} prefix="b-" />
       </section>
 
       <section className="card">
@@ -65,7 +72,7 @@ export default function MarriagePage() {
             <select
               className="field-input"
               value={stage}
-              onChange={e => setStage(e.target.value as Stage)}
+              onChange={e => setDraft(s => ({ ...s, stage: e.target.value as Stage }))}
             >
               <option value="considering">还在考虑要不要在一起</option>
               <option value="dating">恋爱中</option>
@@ -79,7 +86,7 @@ export default function MarriagePage() {
               className="field-input min-h-[90px]"
               maxLength={500}
               value={notes}
-              onChange={e => setNotes(e.target.value)}
+              onChange={e => setDraft(s => ({ ...s, notes: e.target.value }))}
               placeholder="如：一方觉得对方不回应，另一方觉得自己一直在解释；最近也在讨论家务或财务分工。"
             />
             <div className="field-help">不方便填写出生资料也没关系，尽量写清一件最近发生的具体矛盾，我们会先从沟通场景给建议。</div>

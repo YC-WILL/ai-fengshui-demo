@@ -3,16 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import SubmitBar from "@/components/forms/SubmitBar";
+import DraftNotice from "@/components/forms/DraftNotice";
 import PageIntro from "@/components/PageIntro";
 import { type FengShuiInput, type ReportType } from "@/lib/types";
 import { fetchReport, readReportResponse } from "@/lib/reports/client";
+import { useFormDraft } from "@/lib/hooks/useFormDraft";
 
 const ROOM_OPTIONS = ["玄关", "客厅", "餐厅", "卧室", "厨房", "卫生间", "书房", "阳台"];
 const ORIENTATIONS = ["朝南", "朝北", "朝东", "朝西", "朝东南", "朝西南", "朝东北", "朝西北"];
 
 export default function FengShuiPage() {
   const router = useRouter();
-  const [input, setInput] = useState<FengShuiInput>({
+  const [input, setInput, clearDraft, hasDraft] = useFormDraft<FengShuiInput>("guaan:draft:fengshui", {
     orientation: "朝南",
     layout: "",
     rooms: [{ name: "客厅" }, { name: "卧室" }],
@@ -70,6 +72,7 @@ export default function FengShuiPage() {
       />
 
       <section className="card space-y-3">
+        <DraftNotice hasDraft={hasDraft} onClear={clearDraft} />
         <div>
           <label className="field-label">房屋主朝向</label>
           <select

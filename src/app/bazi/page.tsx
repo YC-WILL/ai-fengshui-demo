@@ -4,13 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
+import DraftNotice from "@/components/forms/DraftNotice";
 import PageIntro from "@/components/PageIntro";
 import { type BaziInput, type ReportType } from "@/lib/types";
 import { fetchReport, readReportResponse } from "@/lib/reports/client";
+import { useFormDraft } from "@/lib/hooks/useFormDraft";
 
 export default function BaziPage() {
   const router = useRouter();
-  const [input, setInput] = useState<BaziInput>(EMPTY_BAZI);
+  const [input, setInput, clearDraft, hasDraft] = useFormDraft<BaziInput>("guaan:draft:bazi", EMPTY_BAZI);
   const [loading, setLoading] = useState<"basic" | "deep" | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -42,6 +44,7 @@ export default function BaziPage() {
       />
 
       <section className="card">
+        <DraftNotice hasDraft={hasDraft} onClear={clearDraft} />
         <BaziFields value={input} onChange={setInput} />
         <div className="mt-4">
           <label className="field-label" htmlFor="bazi-user-context">你最近正被什么困扰？（可选）</label>

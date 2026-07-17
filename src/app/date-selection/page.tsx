@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
+import DraftNotice from "@/components/forms/DraftNotice";
 import PageIntro from "@/components/PageIntro";
 import { type BaziInput, type DateSelectionEvent } from "@/lib/types";
 import { fetchReport, readReportResponse } from "@/lib/reports/client";
+import { useFormDraft } from "@/lib/hooks/useFormDraft";
 
 const EVENT_OPTIONS: { value: DateSelectionEvent; label: string }[] = [
   { value: "wedding", label: "结婚" },
@@ -21,11 +23,14 @@ export default function DateSelectionPage() {
   const router = useRouter();
   const today = new Date();
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
-  const [event, setEvent] = useState<DateSelectionEvent>("wedding");
-  const [start, setStart] = useState(fmt(today));
-  const [end, setEnd] = useState(fmt(new Date(today.getTime() + 30 * 86400000)));
-  const [user, setUser] = useState<BaziInput>(EMPTY_BAZI);
-  const [notes, setNotes] = useState("");
+  const [draft, setDraft, clearDraft, hasDraft] = useFormDraft("guaan:draft:date-selection", () => ({
+    event: "wedding" as DateSelectionEvent,
+    start: fmt(today),
+    end: fmt(new Date(today.getTime() + 30 * 86400000)),
+    user: EMPTY_BAZI,
+    notes: ""
+  }));
+  const { event, start, end, user, notes } = draft;
   const [loading, setLoading] = useState<"basic" | "deep" | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -61,30 +66,31 @@ export default function DateSelectionPage() {
       />
 
       <section className="card space-y-3">
+        <DraftNotice hasDraft={hasDraft} onClear={clearDraft} />
         <div className="grid md:grid-cols-3 gap-3">
           <div>
             <label className="field-label">事项</label>
             <select
               className="field-input"
               value={event}
-              onChange={e => setEvent(e.target.value as DateSelectionEvent)}
+              onChange={e => setDraft(s => ({ ...s, event: e.target.value as DateSelectionEvent }))}
             >
               {EVENT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </div>
           <div>
             <label className="field-label">区间起</label>
-            <input type="date" className="field-input" value={start} onChange={e => setStart(e.target.value)} />
+            <input type="date" className="field-input" value={start} onChange={e => setDraft(s => ({ ...s, start: e.target.value }))} />
           </div>
           <div>
             <label className="field-label">区间止（最长 90 天）</label>
-            <input type="date" className="field-input" value={end} onChange={e => setEnd(e.target.value)} />
+            <input type="date" className="field-input" value={end} onChange={e => setDraft(s => ({ ...s, end: e.target.value }))} />
           </div>
         </div>
 
         <div className="border-t border-mist pt-3">
           <div className="text-sm font-medium mb-2">本人信息</div>
-          <BaziFields value={user} onChange={setUser} />
+          <BaziFields value={user} onChange={value => setDraft(s => ({ ...s, user: typeof value === "function" ? value(s.user) : value }))} />
         </div>
 
         <div>
@@ -92,7 +98,7 @@ export default function DateSelectionPage() {
           <textarea
             className="field-input min-h-[90px]"
             value={notes}
-            onChange={e => setNotes(e.target.value)}
+            onChange={e => setDraft(s => ({ ...s, notes: e.target.value }))}
             placeholder="如：家人只能在周末到场、签约前总担心遗漏条款、搬家时最怕天气和时间来不及。"
             maxLength={300}
           />
