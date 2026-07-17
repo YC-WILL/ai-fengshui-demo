@@ -118,3 +118,29 @@ model ContentSafetyRule {
   action    String   // soften | rewrite | block
   createdAt DateTime @default(now())
 }
+
+// ----------------- 理论知识卡 -----------------
+// 心理学用于行为与行动参考，风水用于传统文化视角；不作为诊断或结果保证。
+model TheoryCard {
+  id           String   @id
+  version      String
+  module       String   // self | relationship | home | date
+  psychology   String
+  fengshui     String
+  mechanism    String
+  whenToUse    String   // JSON array
+  allowed      String
+  forbidden    String
+  action       String
+  review       String
+  sourceType   String   @default("自主整理")
+  sourceNote   String?
+  license      String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([module])
+  @@index([version])
+  @@index([isActive])
+}
