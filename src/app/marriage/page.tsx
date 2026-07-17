@@ -6,6 +6,7 @@ import BaziFields, { EMPTY_BAZI } from "@/components/forms/BaziFields";
 import SubmitBar from "@/components/forms/SubmitBar";
 import PageIntro from "@/components/PageIntro";
 import { type BaziInput, type ReportType } from "@/lib/types";
+import { fetchReport, readReportResponse } from "@/lib/reports/client";
 
 type Stage = "dating" | "engaged" | "married" | "considering";
 
@@ -23,7 +24,7 @@ export default function MarriagePage() {
     if (!a.birthDate || !b.birthDate) { setErr("请填写双方出生日期"); return; }
     setLoading(tier);
     try {
-      const r = await fetch("/api/reports/generate", {
+      const r = await fetchReport("/api/reports/generate", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -31,8 +32,8 @@ export default function MarriagePage() {
           input: { partyA: a, partyB: b, relationshipStage: stage, notes }
         })
       });
-      const j = await r.json();
-      if (!r.ok || !j.ok) throw new Error(j.error ?? "生成失败");
+      const j = await readReportResponse(r);
+      if (!r.ok || !j.ok || !j.data?.reportId) throw new Error(j.error ?? "生成失败");
       router.push(`/reports/${j.data.reportId}`);
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "生成失败");

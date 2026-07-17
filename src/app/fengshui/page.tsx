@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import SubmitBar from "@/components/forms/SubmitBar";
 import PageIntro from "@/components/PageIntro";
 import { type FengShuiInput, type ReportType } from "@/lib/types";
+import { fetchReport, readReportResponse } from "@/lib/reports/client";
 
 const ROOM_OPTIONS = ["玄关", "客厅", "餐厅", "卧室", "厨房", "卫生间", "书房", "阳台"];
 const ORIENTATIONS = ["朝南", "朝北", "朝东", "朝西", "朝东南", "朝西南", "朝东北", "朝西北"];
@@ -27,13 +28,13 @@ export default function FengShuiPage() {
     }
     setLoading(tier);
     try {
-      const r = await fetch("/api/reports/generate", {
+      const r = await fetchReport("/api/reports/generate", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ reportType, tier, input })
       });
-      const j = await r.json();
-      if (!r.ok || !j.ok) throw new Error(j.error ?? "生成失败");
+      const j = await readReportResponse(r);
+      if (!r.ok || !j.ok || !j.data?.reportId) throw new Error(j.error ?? "生成失败");
       router.push(`/reports/${j.data.reportId}`);
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "生成失败");

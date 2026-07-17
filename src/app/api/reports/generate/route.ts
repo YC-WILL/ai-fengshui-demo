@@ -46,9 +46,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const user = await getOrCreateUser();
-  const membership = getMembershipStatus();
+  // 数据库初始化/连接失败时也必须返回 JSON。此前这里位于 try 外，
+  // Prisma 在本地缺少连接配置时会让 Route Handler 直接返回空 500，
+  // 浏览器端随后只能报 "Unexpected end of JSON input"。
   try {
+    const user = await getOrCreateUser();
+    const membership = getMembershipStatus();
     const result = await orchestrateReport({
       userId: user.id,
       reportType: reportType as ReportType,
@@ -59,7 +62,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, data: result });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "服务器错误";
-    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+    // 不把连接串、驱动细节或堆栈返回给用户；服务端日志保留简短原因便于排查。
+    console.error("[reports/generate] generation failed", {
+      name: err instanceof Error ? err.name : "UnknownError",
+      message: msg.slice(0, 240)
+    });
+    const isDatabaseError = /prisma|database|datasource|DATABASE_URL|connect|P1001|P1003|P1011/i.test(msg);
+    return NextResponse.json(
+      {
+        ok: false,
+        error: isDatabaseError
+          ? "本地数据服务暂未配置或暂时不可用，请先配置数据库连接后再生成。"
+          : "报告生成暂时失败，请稍后重试。"
+      },
+      { status: isDatabaseError ? 503 : 500 }
+    );
   }
 }
 

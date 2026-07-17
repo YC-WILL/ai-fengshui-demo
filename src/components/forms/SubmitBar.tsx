@@ -20,7 +20,7 @@ export default function SubmitBar({
         disabled={loading !== null}
         onClick={onBasic}
       >
-        {loading === "basic" ? "生成中…" : basicLabel ?? "生成基础参考（免费）"}
+        {loading === "basic" ? "正在整理你的描述…" : basicLabel ?? "生成基础参考（免费）"}
       </button>
       {onDeep && (
         <button
@@ -30,10 +30,11 @@ export default function SubmitBar({
           onClick={onDeep}
         >
           {loading === "deep"
-            ? "生成中…"
+          ? "正在整理你的描述…"
             : `${deepLabel ?? "生成深度参考"}（会员）`}
         </button>
       )}
+      {loading && <span className="w-full text-xs text-ink/55">通常需要几秒；超过 60 秒会提示你重试，不会无限等待。</span>}
       {error && <span className="text-sm text-cinnabar">{error}</span>}
     </div>
   );

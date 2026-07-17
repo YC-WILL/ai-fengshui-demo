@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   computeBazi, personalityProfile, lifeSuggestions, lifeReminders,
   friendlyCoreConclusion, friendlyElementNote
+  ,personalNarrativeFacts
 } from "@/lib/domain/bazi";
 import { behavioralAccent, relationshipAccent } from "@/lib/domain/behavioralAccent";
 
@@ -117,6 +118,36 @@ describe("computeBazi (simplified)", () => {
     expect(lifeSuggestions(first)).toHaveLength(3);
     expect(lifeSuggestions(second)).toHaveLength(3);
     expect(lifeSuggestions(first)).not.toEqual(lifeSuggestions(second));
+  });
+
+  it("turns a concrete work setback into a grounded seven-day response", () => {
+    const chart = computeBazi({
+      gender: "female",
+      birthDate: "1977-06-06",
+      birthTime: "",
+      unknownTime: true
+    });
+    const facts = personalNarrativeFacts(chart, "我是保险中介人，最近连续谈单失败，情绪低落并怀疑自己");
+    expect(facts.situationResponse).toMatch(/被拒绝|能力评价|适合这份工作/);
+    expect(facts.situationActionPlan).toHaveLength(5);
+    expect(facts.situationActionPlan?.join(" ")).toMatch(/需求、信任、时机、预算/);
+    expect(facts.situationActionPlan?.join(" ")).toMatch(/七天|第 7 天/);
+    expect(facts.supportReminder).toMatch(/信任的人|专业/);
+    expect(JSON.stringify(facts)).not.toMatch(/诊断|抑郁症/);
+  });
+
+  it("turns a student's study and social困扰 into small next-day actions", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "2006-10-03",
+      birthTime: "09:00",
+      unknownTime: false
+    });
+    const facts = personalNarrativeFacts(chart, "大学生活很无味，焦虑找不到出口，不擅长交朋友，学业压力很大");
+    expect(facts.situationResponse).toMatch(/大学生活|学业压力|社交/);
+    expect(facts.situationActionPlan).toHaveLength(5);
+    expect(facts.situationActionPlan?.join(" ")).toMatch(/明天|3 分钟|25 分钟/);
+    expect(facts.supportReminder).toMatch(/学校心理中心|专业支持/);
   });
 
   it("builds concise, friendly and chart-specific free report copy", () => {

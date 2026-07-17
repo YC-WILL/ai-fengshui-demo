@@ -1,15 +1,20 @@
 "use client";
 
 import type { BaziInput, Gender } from "@/lib/types";
+import type { Dispatch, SetStateAction } from "react";
 
 export default function BaziFields({
   value, onChange, prefix = ""
 }: {
   value: BaziInput;
-  onChange: (v: BaziInput) => void;
+  /**
+   * 接受 React 的函数式更新，避免日期、时间和“不知道”复选框快速
+   * 连续操作时，闭包里的旧 value 把刚填写的出生日期覆盖掉。
+   */
+  onChange: Dispatch<SetStateAction<BaziInput>>;
   prefix?: string;
 }) {
-  const set = (patch: Partial<BaziInput>) => onChange({ ...value, ...patch });
+  const set = (patch: Partial<BaziInput>) => onChange(previous => ({ ...previous, ...patch }));
   const id = (k: string) => `${prefix}${k}`;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -51,7 +56,12 @@ export default function BaziFields({
             <input
               type="checkbox"
               checked={!!value.unknownTime}
-              onChange={e => set({ unknownTime: e.target.checked, birthTime: e.target.checked ? "" : value.birthTime })}
+              onChange={e => onChange(previous => ({
+                ...previous,
+                unknownTime: e.target.checked,
+                // 只改出生时间相关字段；使用最新 state，避免快速操作覆盖生日。
+                birthTime: e.target.checked ? "" : previous.birthTime
+              }))}
             />
             不知道
           </label>

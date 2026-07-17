@@ -92,7 +92,7 @@ export function prepareRuleResultForReport(
 export function normalizeGeneratedReport(
   reportType: ReportType,
   text: string,
-  _ruleResult: unknown
+  ruleResult: unknown
 ): string {
   let normalized = removeModelDisclaimerSections(normalizeMarkdownBreaks(text));
 
@@ -115,6 +115,8 @@ export function normalizeGeneratedReport(
     normalized = removeUnsupportedScheduleAssertions(normalized);
   }
 
+  normalized = ensureMinimumActionItems(reportType, normalized, ruleResult);
+
   const sectionLimit = BASIC_SECTION_LIMITS[reportType];
   if (sectionLimit) normalized = limitSecondLevelSections(normalized, sectionLimit);
   const totalLimit = BASIC_TOTAL_LIMITS[reportType];
@@ -123,6 +125,29 @@ export function normalizeGeneratedReport(
   }
 
   return normalized.replace(/(?:\n\s*---\s*)+$/g, "").trim();
+}
+
+function ensureMinimumActionItems(reportType: ReportType, text: string, ruleResult: unknown): string {
+  const basicTypes: ReportType[] = ["bazi_basic", "marriage_basic", "home_fengshui_basic", "date_selection_basic"];
+  if (!basicTypes.includes(reportType)) return text;
+  const sources = ruleResult as UnknownRecord;
+  const facts = (sources.personalNarrativeFacts ?? {}) as UnknownRecord;
+  const candidates = reportType === "bazi_basic"
+    ? takeStrings(facts.situationActionPlan, 5)
+    : reportType === "marriage_basic"
+      ? takeStrings(sources.suggestions, 5)
+      : reportType === "home_fengshui_basic"
+        ? takeStrings(sources.improvementsZeroBudget, 5)
+        : takeStrings(sources.preparationChecklist, 5);
+  if (candidates.length === 0) return text;
+  const sections = text.split(/\n(?=##\s)/);
+  return sections.map(section => {
+    if (!/建议|三件事/.test(section.slice(0, section.indexOf("\n")))) return section;
+    const count = (section.match(/^(?:[-*]|\d+\.)\s/gm) ?? []).length;
+    if (count >= 3) return section;
+    const additions = candidates.slice(0, 3 - count).map(item => `- ${item}`);
+    return `${section.trimEnd()}\n${additions.join("\n")}`;
+  }).join("\n");
 }
 
 export function normalizePersonalityProfile(value: unknown): string {

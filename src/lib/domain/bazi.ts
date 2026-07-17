@@ -213,6 +213,70 @@ export interface PersonalNarrativeFacts {
   userContext?: string;
   timeRhythm: string;
   birthPlaceContext?: string;
+  /** 针对用户自述困境的场景化回应，供 Prompt/本地兜底使用。 */
+  situationResponse?: string;
+  /** 以现实行为为主的短期行动计划，避免只给性格化套话。 */
+  situationActionPlan?: string[];
+  supportReminder?: string;
+}
+
+function situationGuidance(userContext?: string): Pick<PersonalNarrativeFacts, "situationResponse" | "situationActionPlan" | "supportReminder"> {
+  const text = (userContext ?? "").trim();
+  if (!text) return {};
+  const career = /(保险|中介|销售|客户|谈单|成交|业绩|工作|职业|求职|生意)/.test(text);
+  const rejection = /(失败|被拒|拒绝|没谈成|连续|业绩下滑|没有成交)/.test(text);
+  const lowMood = /(低落|抑郁|怀疑自己|自我否定|失眠|撑不住|情绪不好|难受|焦虑|无味|找不到出口)/.test(text);
+  if (career && (rejection || lowMood)) {
+    return {
+      situationResponse: "连续被拒绝很容易让人把结果误认为能力评价，但一段时间的谈单结果不能单独证明你是否适合这份工作。先把一次谈单拆成需求、信任、时机、预算四类线索，再决定下一步，而不是直接给自己下结论。",
+      situationActionPlan: [
+        "第 1 天：挑最近一场未成交谈单，分别写下需求、信任、时机、预算各一条事实；只记录可观察内容，不写“客户不喜欢我”。",
+        "第 2–3 天：每天只复盘一场，记一个做得好的提问和一个下次要调整的动作；把目标改为完成一次高质量需求确认，而不是当场成交。",
+        "第 4 天：把开场或需求确认改成三问小脚本，找同事演练 10 分钟，再用于一位新客户并记录客户的原话反馈。",
+        "第 5–6 天：给每次跟进设置一个明确下一步（补资料、约时间或暂缓），当天完成不超过 3 个高质量跟进，避免用堆数量惩罚自己。",
+        "第 7 天：回看一周记录，比较四类原因各出现几次；选出现最多的一类做下周唯一改进主题，并保留一项已经有效的做法。"
+      ],
+      supportReminder: lowMood
+        ? "如果低落、失眠或无法工作持续数日，可以先告诉信任的人并联系专业心理/医疗支持；求助不是对工作的否定。"
+        : undefined
+    };
+  }
+  const student = /(大学|大一|大二|大三|大四|学生|学业|课程|考试|论文|宿舍|同学|社交|交朋友)/.test(text);
+  const socialOrStudy = /(交朋友|社交|孤独|没朋友|学业|成绩|考试|拖延|方向|专业|焦虑|无味|出口)/.test(text);
+  if (student && socialOrStudy) {
+    return {
+      situationResponse: "大学生活觉得无味、又找不到情绪出口时，问题不一定是你不够努力，也可能是每天缺少能带来反馈的具体连接。先把学业压力、社交困难和情绪状态分开处理，不用一次解决整段大学生活。",
+      situationActionPlan: [
+        "今天：用 5 分钟把压力分成学业、社交、生活三栏，每栏只写一件最具体的事；再选一件 20 分钟内能完成的小任务。",
+        "明天：在课堂或社团里向一个相对熟悉的人问一个具体问题，聊 3 分钟即可；目标是完成一次真实互动，不要求马上交到朋友。",
+        "第 3–4 天：把一项作业拆成‘打开资料、写 100 字、提交一个问题’三步，每次只做 25 分钟，结束时记录完成了哪一步。",
+        "第 5 天：安排一次能产生感官反馈的活动，例如去操场走 15 分钟、吃一顿热饭或到图书馆换座位；观察情绪有没有从 2 分变成 3 分。",
+        "第 7 天：回看一周记录，分别留下一个有效学习动作和一个让你感觉被连接的时刻，再决定下周只延续哪两件事。"
+      ],
+      supportReminder: lowMood
+        ? "如果焦虑或低落持续数日，已经明显影响睡眠、上课或完成作业，可以告诉信任的人，并联系学校心理中心或专业支持；这不是给自己贴标签。"
+        : undefined
+    };
+  }
+  if (lowMood) {
+    return {
+      situationResponse: "你描述的低落值得被认真接住。先把‘我是不是不行’和眼前发生的事实分开，今天只处理一个可完成的小步骤，不急着用一时状态给自己定性。",
+      situationActionPlan: [
+        "今天：写下一个具体事实、一个感受和一个需要，控制在 5 分钟内；完成后只选一件 20 分钟内能做完的事。",
+        "接下来三天：每天固定一个 20 分钟行动时段，结束时记录完成了什么，不用评价整天表现。",
+        "第 7 天：和信任的人聊 15 分钟，说明你希望对方提供的是倾听、陪伴还是一起找专业支持。"
+      ],
+      supportReminder: "如果低落、失眠或无法工作持续数日，可以先告诉信任的人并联系专业心理/医疗支持；求助不是软弱。"
+    };
+  }
+  return {
+    situationResponse: "你写下的这件具体事情，比任何抽象标签都更值得先看。可以把它拆成已经发生的事实、你在意的部分和下一步想验证的一个小问题。",
+    situationActionPlan: [
+      "今天用 5 分钟写下三列：事实、在意、可验证的问题，各写一条。",
+      "本周挑一个最小行动，在 20 分钟内完成，并记录结果而不是先评价自己。",
+      "一周后回看记录，保留一个有效做法，调整一个仍卡住的环节。"
+    ]
+  };
 }
 
 function timeRhythm(chart: BaziChart): string {
@@ -296,6 +360,7 @@ export function personalNarrativeFacts(chart: BaziChart, userContext?: string): 
   const dayModifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
   const monthModifier = DAY_BRANCH_MODIFIER[chart.month.branchElement];
   const { strongest, weakest } = chart.elementDistribution;
+  const situation = situationGuidance(userContext);
   return {
     traitKeywords: accent.traitKeywords,
     firstResponse: accent.response,
@@ -313,7 +378,8 @@ export function personalNarrativeFacts(chart: BaziChart, userContext?: string): 
     ,timeRhythm: timeRhythm(chart),
     birthPlaceContext: chart.inputSnapshot.birthLocation?.trim()
       ? "出生地只作为生活背景线索，不能单独决定性格；可结合用户自述观察成长环境对习惯的影响。"
-      : undefined
+      : undefined,
+    ...situation
   };
 }
 

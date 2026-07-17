@@ -65,9 +65,14 @@ function mockBaziBasic(r: Record<string, unknown>): string {
   const core = (r["coreConclusion"] as string) ?? (r["friendlyCoreConclusion"] as string)
     ?? `面对重要事情时，你可能会${facts["firstResponse"] ?? "先确认真正的问题"}。${facts["coreStrength"] ?? "你会结合现实条件推进事情"}。`;
   const userSituation = typeof facts["userContext"] === "string" ? facts["userContext"].trim() : "";
-  const contextReply = userSituation
+  const situationResponse = typeof facts["situationResponse"] === "string" ? facts["situationResponse"] : "";
+  const situationPlan = Array.isArray(facts["situationActionPlan"])
+    ? (facts["situationActionPlan"] as unknown[]).filter((item): item is string => typeof item === "string")
+    : [];
+  const supportReminder = typeof facts["supportReminder"] === "string" ? facts["supportReminder"] : "";
+  const contextReply = situationResponse || (userSituation
     ? "你补充了一件眼下真实困扰的事，下面会先回应这个场景，再把观察放回你的经历里核对。"
-    : "";
+    : "");
   const elementNote = (r["elementGuidance"] as string) ?? (r["friendlyElementNote"] as string)
     ?? `传统五行提示你较常先使用${element["prominentGift"] ?? "熟悉的能力"}，${element["quieterGift"] ?? "另一种能力"}则可以在需要时主动补上。`;
   const profile = (facts["profile"] as string) ?? (r["personalityProfile"] as string)
@@ -81,19 +86,21 @@ function mockBaziBasic(r: Record<string, unknown>): string {
 ${core}
 ${contextReply}
 
-## 2. 看看五行的小提示
+${situationPlan.length ? `## 2. 先照看眼前这件事\n${situationPlan.slice(0, 5).map((item, index) => `${index + 1}. ${item}`).join("\n")}${supportReminder ? `\n\n${supportReminder}` : ""}` : ""}
+
+## ${situationPlan.length ? "3" : "2"}. 看看五行的小提示
 ${elementNote}
 
-## 3. 来看看你的性格画像
+## ${situationPlan.length ? "4" : "3"}. 来看看你的性格画像
 ${profile}
 
-## 4. 有两件事想提醒你
+## ${situationPlan.length ? "5" : "4"}. 有两件事想提醒你
 ${reminders || "- 忙的时候也给自己留一点停顿，先看清真正重要的事。\n- 这些描述只是参考，请以自己的真实感受和经历为准。"}
 
-## 5. 给你三句小建议
+## ${situationPlan.length ? "6" : "5"}. 给你三句小建议
 ${suggestions || "- 结合近期真实经历，选择一个最想调整的行为，从小步骤开始观察。"}
 
-## 6. 留一句温和收尾
+## ${situationPlan.length ? "7" : "6"}. 留一句温和收尾
 先照顾眼前最具体的一步，答案会在行动里变得清楚。
 `.trim();
 }
