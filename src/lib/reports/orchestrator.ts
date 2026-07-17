@@ -23,7 +23,6 @@ import { makePreview } from "./preview";
 import { normalizeGeneratedReport, prepareRuleResultForReport } from "./contentGuard";
 import {
   assessReportNarrativeQuality,
-  buildNarrativeRepairPrompt,
   type NarrativeQualityResult
 } from "./narrativeQuality";
 import type {
@@ -101,7 +100,7 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
     reportType, tier, systemPrompt, userPrompt, ruleResult,
     userId, reportId: report.id
   };
-  // 外部模型偶发超时/限流时重试一次；仍失败则用本地规则兜底，
+  // 外部模型偶发超时/限流时立即用本地规则兜底，
   // 保证用户拿到报告，同时在日志中明确标记 fallbackUsed。
   let ai = await generateWithFallback(provider, generateInput);
 
@@ -110,28 +109,28 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
   let narrativeQuality: NarrativeQualityResult | undefined;
   if (NOVELTY_GATED_REPORTS.includes(reportType)) {
     narrativeQuality = assessReportNarrativeQuality(reportType, normalizedText, recentReports);
-    if (!narrativeQuality.ok) {
-      const repaired = await generateWithFallback(provider, {
-        ...generateInput,
-        userPrompt: buildNarrativeRepairPrompt(userPrompt, ai.text, narrativeQuality.issues)
-      });
-      // 兜底模型可能只是恢复可读性，不要用失败的修复草稿覆盖原稿。
-      if (!repaired.fallbackUsed) {
-        ai = repaired;
-        normalizedText = normalizeGeneratedReport(reportType, ai.text, ruleResult);
-        narrativeQuality = assessReportNarrativeQuality(reportType, normalizedText, recentReports);
-      }
-    }
-    // 质量检查只负责触发一次修复和记录质量信号，不再把报告变成用户侧错误。
-    // 即使模型第二次仍未完全满足格式，也交给 safetyFilter 做最后一道安全处理。
+    // 质量检查只记录质量信号，不再为了修复再发起第二次模型请求。
+    // 第二次请求会显著增加等待时间，也会让偶发限流变成用户侧失败；
+    // normalizeGeneratedReport 已经负责长度、结构和免责声明的本地兜底。
   }
 
   // 6) 安全过滤
-  const safety = safetyFilter(normalizedText);
+  let safety = safetyFilter(normalizedText);
+  if (safety.blocked) {
+    // 极少数情况下模型原文触发安全拦截；用本地内容再走一次同样过滤，
+    // 保证用户拿到安全、可读的报告，而不是停在“生成失败”。
+    const fallback = await new MockProvider().generateReport(generateInput);
+    const fallbackSafety = safetyFilter(normalizeGeneratedReport(reportType, fallback.text, ruleResult));
+    if (!fallbackSafety.blocked) {
+      ai = { ...fallback, fallbackUsed: true, metadata: { ...(fallback.metadata ?? {}), fallbackReason: "safety_blocked" } };
+      safety = fallbackSafety;
+    }
+  }
 
   // 7) 写日志
-  await prisma.modelLog.create({
-    data: {
+  try {
+    await prisma.modelLog.create({
+      data: {
       userId,
       reportId: report.id,
       provider: ai.provider,
@@ -157,8 +156,12 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
             }
           : undefined
       })
-    }
-  });
+      }
+    });
+  } catch (error) {
+    // 日志写入失败不应抹掉已经生成好的报告。
+    console.warn("[reports] model log write failed", error instanceof Error ? error.message.slice(0, 160) : "unknown");
+  }
 
   // 8) 更新 Report 状态
   const finalStatus: "generated" | "blocked" = safety.blocked ? "blocked" : "generated";
@@ -197,12 +200,14 @@ async function generateWithFallback(
   input: AIGenerateInput
 ): Promise<AIGenerateOutput> {
   let lastError: unknown;
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    try {
-      return await provider.generateReport(input);
-    } catch (error) {
-      lastError = error;
-    }
+  try {
+    // 给外部模型一个明确上限；超时后立即走本地兜底，避免前端一直等待。
+    const timeout = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error("AI generation timeout")), 30_000);
+    });
+    return await Promise.race([provider.generateReport(input), timeout]);
+  } catch (error) {
+    lastError = error;
   }
   const fallback = await new MockProvider().generateReport(input);
   return {
