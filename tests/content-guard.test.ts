@@ -184,7 +184,7 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     expect(normalized.match(/。$/gm)).toHaveLength(3);
   });
 
-  it("does not inject a template when the model misses the third action", () => {
+  it("fills missing actions and removes broken emphasis markers", () => {
     const normalized = normalizeGeneratedReport(
       "bazi_basic",
       "# 这位朋友，我们聊聊你的性格与步调\n\n## 给你三句小建议\n**1. 先做一件事。**\n\n**2. 再确认一次。**",
@@ -194,8 +194,9 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
       }
     );
 
-    expect(normalized).not.toContain("最后留一点余地");
-    expect(assessBaziNarrativeQuality(normalized).ok).toBe(false);
+    expect(normalized).toContain("最后留一点余地");
+    expect(normalized).not.toContain("**");
+    expect(normalized.match(/^- /gm)).toHaveLength(3);
   });
 
   it("removes unsupported home and participant-schedule assertions", () => {
@@ -225,6 +226,6 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
 
     expect(normalized).toContain("\n## 先说说你们相处的感觉\n");
     expect(normalized).toContain("\n## 给你们三句相处建议\n");
-    expect(normalized.match(/^- \*\*第[一二三]句/gm)).toHaveLength(3);
+    expect(normalized.match(/^- 第[一二三]句/gm)).toHaveLength(3);
   });
 });

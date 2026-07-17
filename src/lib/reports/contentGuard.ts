@@ -124,7 +124,13 @@ export function normalizeGeneratedReport(
     normalized = limitWholeReport(normalized, totalLimit);
   }
 
+  normalized = removeUnbalancedStrongMarkers(normalized);
   return normalized.replace(/(?:\n\s*---\s*)+$/g, "").trim();
+}
+
+function removeUnbalancedStrongMarkers(text: string): string {
+  // 报告正文不依赖粗体标记；直接去掉标记，避免截断或模型转义后把 ** 原样展示给用户。
+  return text.replace(/\*\*/g, "");
 }
 
 function ensureMinimumActionItems(reportType: ReportType, text: string, ruleResult: unknown): string {
@@ -133,21 +139,54 @@ function ensureMinimumActionItems(reportType: ReportType, text: string, ruleResu
   const sources = ruleResult as UnknownRecord;
   const facts = (sources.personalNarrativeFacts ?? {}) as UnknownRecord;
   const candidates = reportType === "bazi_basic"
-    ? takeStrings(facts.situationActionPlan, 5)
+    ? takeStrings(facts.situationActionPlan, 5).concat(
+        takeStrings(sources.lifeSuggestions, 5), takeStrings(sources.lifeReminders, 5)
+      )
     : reportType === "marriage_basic"
       ? takeStrings(sources.suggestions, 5)
       : reportType === "home_fengshui_basic"
         ? takeStrings(sources.improvementsZeroBudget, 5)
         : takeStrings(sources.preparationChecklist, 5);
-  if (candidates.length === 0) return text;
+  const fallbackCandidates = reportType === "bazi_basic"
+    ? ["先写下一个已经发生的事实，再写下你真正想解决的一个问题。", "本周只选一件 20 分钟内能完成的小行动，完成后记录结果。", "一周后回看记录，保留一个有效做法，再调整一个卡住的环节。"]
+    : reportType === "marriage_basic"
+      ? ["先说清各自最在意的一件事，再约定下一步。", "一次只讨论一个问题，给双方各 5 分钟完整表达。", "一周后回看约定是否执行，再一起调整。"]
+      : ["先选一件最具体、最容易开始的事情。", "完成后记录实际变化，不急着评价结果。", "一周后回看记录，再决定是否继续调整。"];
+  const actionCandidates = [...candidates, ...fallbackCandidates];
   const sections = text.split(/\n(?=##\s)/);
   return sections.map(section => {
-    if (!/建议|三件事/.test(section.slice(0, section.indexOf("\n")))) return section;
-    const count = (section.match(/^(?:[-*]|\d+\.)\s/gm) ?? []).length;
-    if (count >= 3) return section;
-    const additions = candidates.slice(0, 3 - count).map(item => `- ${item}`);
-    return `${section.trimEnd()}\n${additions.join("\n")}`;
+    const newline = section.indexOf("\n");
+    const heading = newline < 0 ? section : section.slice(0, newline);
+    if (!/建议|提醒|三件事/.test(heading)) return section;
+    const declaredMatch = heading.match(/([一二三四五六七八九十\d]+)\s*(?:件|句|条|个)/);
+    const declared = declaredMatch ? chineseNumber(declaredMatch[1]) : 3;
+    const count = countActionItems(section);
+    const additions = actionCandidates.slice(count, Math.max(count, declared)).map(item => `- ${item}`);
+    const updated = additions.length ? `${section.trimEnd()}\n${additions.join("\n")}` : section;
+    return replaceDeclaredCount(updated, countActionItems(updated));
   }).join("\n");
+}
+
+function countActionItems(section: string): number {
+  return section.split("\n").filter(line => {
+    const trimmed = line.trim();
+    return /^(?:[-*]|\d+\.)\s/.test(trimmed)
+      || /^\*\*(?:第)?[一二三四五六七八九十\d]+(?:句|条)?[：:.)、]?\*\*/.test(trimmed);
+  }).length;
+}
+
+function chineseNumber(value: string): number {
+  if (/^\d+$/.test(value)) return Number(value);
+  return ({ 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 } as Record<string, number>)[value] ?? 3;
+}
+
+function replaceDeclaredCount(section: string, count: number): string {
+  if (!count) return section;
+  const number = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"][Math.min(count, 10)] ?? String(count);
+  const firstLineEnd = section.indexOf("\n");
+  const heading = firstLineEnd < 0 ? section : section.slice(0, firstLineEnd);
+  const updatedHeading = heading.replace(/([一二三四五六七八九十\d]+)\s*(件|句|条|个)/, `${number}$2`);
+  return firstLineEnd < 0 ? updatedHeading : `${updatedHeading}${section.slice(firstLineEnd)}`;
 }
 
 export function normalizePersonalityProfile(value: unknown): string {
