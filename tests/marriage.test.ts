@@ -26,4 +26,16 @@ describe("matchMarriage", () => {
     expect(m.notes.length).toBeGreaterThan(0);
     expect(m.notes.join(" ")).toMatch(/参考|没有/);
   });
+
+  it("allows a scene-first report when birth dates are omitted", () => {
+    const m = matchMarriage({
+      partyA: { userContext: "我希望先把婚期和储蓄安排说清楚" },
+      partyB: { userContext: "一谈到钱就觉得被催促，不知道怎么回应" },
+      relationshipStage: "engaged",
+      notes: "最近因为婚期、收入稳定标准和父母边界反复争执。"
+    });
+    expect(m.suggestions.length).toBeGreaterThanOrEqual(3);
+    expect(m.notes.join(" ")).toMatch(/出生资料未完整/);
+    expect(m.personalDistinctness.first).toBeTruthy();
+  });
 });

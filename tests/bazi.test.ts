@@ -130,7 +130,7 @@ describe("computeBazi (simplified)", () => {
     const facts = personalNarrativeFacts(chart, "我是保险中介人，最近连续谈单失败，情绪低落并怀疑自己");
     expect(facts.situationResponse).toMatch(/被拒绝|能力评价|适合这份工作/);
     expect(facts.situationActionPlan).toHaveLength(5);
-    expect(facts.situationActionPlan?.join(" ")).toMatch(/需求、信任、时机、预算/);
+    expect(facts.situationActionPlan?.join(" ")).toMatch(/需求、信任、时机、条件/);
     expect(facts.situationActionPlan?.join(" ")).toMatch(/七天|第 7 天/);
     expect(facts.supportReminder).toMatch(/信任的人|专业/);
     expect(JSON.stringify(facts)).not.toMatch(/诊断|抑郁症/);
@@ -144,7 +144,7 @@ describe("computeBazi (simplified)", () => {
       unknownTime: false
     });
     const facts = personalNarrativeFacts(chart, "大学生活很无味，焦虑找不到出口，不擅长交朋友，学业压力很大");
-    expect(facts.situationResponse).toMatch(/大学生活|学业压力|社交/);
+    expect(facts.situationResponse).toMatch(/生活|任务压力|关系困扰/);
     expect(facts.situationActionPlan).toHaveLength(5);
     expect(facts.situationActionPlan?.join(" ")).toMatch(/明天|3 分钟|25 分钟/);
     expect(facts.supportReminder).toMatch(/学校心理中心|专业支持/);

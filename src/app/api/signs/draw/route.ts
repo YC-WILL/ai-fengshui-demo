@@ -19,27 +19,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "当前时段信息不正确" }, { status: 400 });
   }
 
-  const user = await getOrCreateUser();
-  const period = parsed.data.period as SignPeriod;
-  const recent = await prisma.report.findMany({
+  try {
+    const user = await getOrCreateUser();
+    const period = parsed.data.period as SignPeriod;
+    const recent = await prisma.report.findMany({
     where: { userId: user.id, reportType: "daily_sign" },
     orderBy: { createdAt: "desc" },
     take: 24,
     select: { ruleResult: true }
-  });
-  const recentIds = recent.flatMap(item => {
+    });
+    const recentIds = recent.flatMap(item => {
     try {
       const parsedResult = JSON.parse(item.ruleResult ?? "{}") as { signId?: unknown };
       return typeof parsedResult.signId === "string" ? [parsedResult.signId] : [];
     } catch {
       return [];
     }
-  });
-  const sign = pickSignCandidate(period, recentIds);
-  const periodLabel = SIGN_PERIOD_LABEL[period];
-  const snapshot = { word: sign.word, message: sign.message, period, periodLabel };
+    });
+    const sign = pickSignCandidate(period, recentIds);
+    const periodLabel = SIGN_PERIOD_LABEL[period];
+    const snapshot = { word: sign.word, message: sign.message, period, periodLabel };
 
-  const record = await prisma.report.create({
+    const record = await prisma.report.create({
     data: {
       userId: user.id,
       reportType: "daily_sign",
@@ -50,10 +51,18 @@ export async function POST(req: NextRequest) {
       status: "generated",
       isPaid: true
     }
-  });
+    });
 
-  return NextResponse.json({
-    ok: true,
-    data: { id: record.id, ...snapshot, createdAt: record.createdAt.toISOString() }
-  });
+    return NextResponse.json({
+      ok: true,
+      data: { id: record.id, ...snapshot, createdAt: record.createdAt.toISOString() }
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "服务暂时不可用";
+    const databaseError = /prisma|database|datasource|DATABASE_URL|connect|P100/i.test(message);
+    return NextResponse.json({
+      ok: false,
+      error: databaseError ? "安签保存服务暂时不可用，请稍后再试。" : "安签暂时没有摇出结果，请稍后再试。"
+    }, { status: databaseError ? 503 : 500 });
+  }
 }

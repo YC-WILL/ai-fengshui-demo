@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MEMBERSHIP_PRICING, type MembershipPlan } from "@/lib/types";
+import { fetchReport, readJsonResponse } from "@/lib/reports/client";
 
 const BENEFITS = [
   "所有八字、关系、住宅与择日深度内容",
@@ -20,12 +21,12 @@ export default function MembershipCard() {
     setLoading(plan);
     setErr(null);
     try {
-      const response = await fetch("/api/membership/mock", {
+      const response = await fetchReport("/api/membership/mock", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ plan })
       });
-      const json = await response.json();
+      const json = await readJsonResponse(response);
       if (!response.ok || !json.ok) throw new Error(json.error ?? "开通失败");
       router.refresh();
     } catch (error: unknown) {

@@ -12,6 +12,22 @@ import { SHENG, KE, type Element, BRANCH_ELEMENT } from "./elements";
 import type { MarriageInput } from "../types";
 import { relationshipAccent, type RelationshipBehaviorFacts } from "./behavioralAccent";
 
+/**
+ * 出生资料是关系报告的增强线索，不是沟通建议的必要条件。
+ * 缺少生日时用中性占位盘完成规则结构，并在 notes 中明确说明，避免
+ * computeBazi 因空字符串抛错；AI 会优先使用双方的现实困扰与 notes。
+ */
+function normalizeParty(party: Partial<import("../types").BaziInput>): import("../types").BaziInput {
+  return {
+    gender: party.gender ?? "other",
+    birthDate: party.birthDate && /^\d{4}-\d{2}-\d{2}$/.test(party.birthDate) ? party.birthDate : "2000-01-01",
+    birthTime: party.birthTime ?? "",
+    birthLocation: party.birthLocation,
+    unknownTime: party.unknownTime ?? true,
+    userContext: party.userContext
+  };
+}
+
 export interface MarriageMatch {
   partyA: BaziChart;
   partyB: BaziChart;
@@ -147,12 +163,16 @@ function communicationStyle(a: BaziChart, b: BaziChart): string {
 }
 
 export function matchMarriage(input: MarriageInput): MarriageMatch {
-  const a = computeBazi(input.partyA);
-  const b = computeBazi(input.partyB);
+  const aHasBirthDate = !!input.partyA.birthDate;
+  const bHasBirthDate = !!input.partyB.birthDate;
+  const aInput = normalizeParty(input.partyA);
+  const bInput = normalizeParty(input.partyB);
+  const a = computeBazi(aInput);
+  const b = computeBazi(bInput);
   const rel = dayMasterRelation(a, b);
   const zod = zodiacRelation(a, b);
   const bal = elementBalance(a, b);
-  const accent = relationshipAccent(input.partyA.birthDate, input.partyB.birthDate);
+  const accent = relationshipAccent(aInput.birthDate, bInput.birthDate);
 
   const strengths: string[] = [];
   const frictionPoints: string[] = [];
@@ -161,6 +181,9 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
     "本结果基于传统命理结构 + 心理学常见沟通模式，仅供参考；",
     "关系是动态的，不存在「绝对相合」或「绝对不合」的判断，关键在于双方对沟通节奏的协商。"
   ];
+  if (!aHasBirthDate || !bHasBirthDate) {
+    notes.push("出生资料未完整提供，本次先以你们描述的具体相处场景为主；传统结构只作轻量参考，补充生日后可进一步细化。" );
+  }
 
   if (rel.kind === "same") {
     strengths.push("彼此能「懂」，处事节奏相近");
@@ -206,8 +229,8 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
     elementBalance: bal,
     behaviorFacts: accent.behaviorFacts,
     personalDistinctness: {
-      first: personalNarrativeFacts(a, input.partyA.userContext),
-      second: personalNarrativeFacts(b, input.partyB.userContext)
+      first: personalNarrativeFacts(a, aInput.userContext),
+      second: personalNarrativeFacts(b, bInput.userContext)
     },
     communicationStyle: `${communicationStyle(a, b)} ${accent.observation}`,
     strengths,

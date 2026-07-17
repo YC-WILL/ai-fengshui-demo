@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { fetchReport, readJsonResponse } from "@/lib/reports/client";
 
 export default function DeleteAccountButton() {
   const [busy, setBusy] = useState(false);
@@ -10,8 +11,8 @@ export default function DeleteAccountButton() {
   async function destroy() {
     setBusy(true); setMsg(null);
     try {
-      const r = await fetch("/api/me", { method: "DELETE" });
-      const j = await r.json();
+      const r = await fetchReport("/api/me", { method: "DELETE" });
+      const j = await readJsonResponse(r);
       if (!r.ok || !j.ok) throw new Error(j.error ?? "删除失败");
       setMsg("已删除您的账户和所有数据，正在跳转首页…");
       setTimeout(() => { window.location.href = "/"; }, 800);

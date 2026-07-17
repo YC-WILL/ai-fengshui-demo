@@ -32,8 +32,9 @@ export interface BaziInput {
 
 // ----------------- 婚姻匹配输入 -----------------
 export interface MarriageInput {
-  partyA: BaziInput;
-  partyB: BaziInput;
+  /** 出生资料是关系增强项；只描述矛盾场景也可以先获得沟通建议。 */
+  partyA: Partial<BaziInput>;
+  partyB: Partial<BaziInput>;
   relationshipStage?: "dating" | "engaged" | "married" | "considering";
   notes?: string;
 }

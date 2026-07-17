@@ -6,6 +6,7 @@ import {
   SIGN_PERIOD_LABEL,
   type SignPeriod
 } from "@/lib/domain/dailySign";
+import { fetchReport, readJsonResponse } from "@/lib/reports/client";
 
 type DrawPhase = "ready" | "shaking" | "revealed";
 
@@ -71,16 +72,19 @@ export default function DailySignDraw() {
 
     try {
       const [response] = await Promise.all([
-        fetch("/api/signs/draw", {
+        fetchReport("/api/signs/draw", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ period: currentPeriod })
         }),
         new Promise(resolve => window.setTimeout(resolve, 1400))
       ]);
-      const payload = await response.json();
+      const payload = await readJsonResponse<{ ok?: boolean; error?: string; data?: SavedSign }>(response, "安签服务");
       if (!response.ok || !payload.ok) throw new Error(payload.error ?? "这次没有摇出签，请再试一次");
-      setSign(payload.data as SavedSign);
+      if (!payload.data?.id || !payload.data.word || !payload.data.message || !payload.data.periodLabel) {
+        throw new Error("安签结果不完整，请再试一次");
+      }
+      setSign(payload.data);
       setPhase("revealed");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "这次没有摇出签，请再试一次");

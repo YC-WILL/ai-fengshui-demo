@@ -21,8 +21,10 @@ export const baziGenerateSchema = z.object({
 export const marriageGenerateSchema = z.object({
   tier: z.enum(["basic", "deep"]),
   input: z.object({
-    partyA: baziInputSchema,
-    partyB: baziInputSchema,
+    // 关系沟通建议不应被出生资料卡住；生日/时间/地点均为增强线索。
+    // 至少填写一段 notes，或任一方 userContext，即可走场景优先路径。
+    partyA: baziInputSchema.partial(),
+    partyB: baziInputSchema.partial(),
     relationshipStage: z.enum(["dating", "engaged", "married", "considering"]).optional(),
     notes: z.string().max(500).optional()
   })

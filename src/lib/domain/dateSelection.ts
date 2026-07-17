@@ -20,6 +20,18 @@ interface DayCandidate {
   score: number;          // 越高越推荐
   reasons: string[];
   cautions: string[];
+  /** 现实硬限制是否允许；民俗评分不得覆盖它。 */
+  realityEligible?: boolean;
+}
+
+interface RealityConstraints {
+  weekendsOnly: boolean;
+  weekdaysOnly: boolean;
+  weekendsPreferred: boolean;
+  weekdaysPreferred: boolean;
+  unavailable: Set<string>;
+  latestDate?: string;
+  summary: string[];
 }
 
 export interface DateSelectionResult {
@@ -31,6 +43,7 @@ export interface DateSelectionResult {
   notRecommended: DayCandidate[];
   preparationChecklist: string[];
   warnings: string[];
+  realityConstraints?: string[];
 }
 
 const EVENT_LABEL: Record<DateSelectionEvent, string> = {
@@ -84,6 +97,7 @@ const EVENT_PREP: Record<DateSelectionEvent, string[]> = {
 export function selectDates(input: DateSelectionInput): DateSelectionResult {
   const userChart = computeBazi(input.user);
   const accent = behavioralAccent(input.user.birthDate);
+  const constraints = parseRealityConstraints(input.notes);
   const start = new Date(input.dateRangeStart);
   const end = new Date(input.dateRangeEnd);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
@@ -106,12 +120,17 @@ export function selectDates(input: DateSelectionInput): DateSelectionResult {
     const dd = String(d.getDate()).padStart(2, "0");
     const dateStr = `${yyyy}-${mm}-${dd}`;
     const c = scoreDay(dateStr, userChart.day.stem, userChart.year.branch, input.event);
+    c.realityEligible = isRealityEligible(dateStr, constraints);
     candidates.push(c);
   }
 
-  candidates.sort((a, b) => b.score - a.score);
-  const recommended = candidates.filter(c => c.score >= 60).slice(0, 5);
-  const notRecommended = candidates.filter(c => c.score <= 30).slice(0, 3);
+  // 现实条件是硬限制：先过滤/排序可执行日期，再参考民俗评分。
+  candidates.sort((a, b) => Number(b.realityEligible) - Number(a.realityEligible)
+    || realityPreferenceScore(b.date, constraints) - realityPreferenceScore(a.date, constraints)
+    || b.score - a.score);
+  const recommended = candidates.filter(c => c.realityEligible && c.score >= 60).slice(0, 5);
+  // 已被现实硬限制排除的日期不再展示为“绕开日期”，避免让用户误以为仍需二次筛选。
+  const notRecommended = candidates.filter(c => c.realityEligible && c.score <= 30).slice(0, 3);
 
   return {
     event: input.event,
@@ -123,9 +142,69 @@ export function selectDates(input: DateSelectionInput): DateSelectionResult {
     preparationChecklist: [accent.planning, ...(EVENT_PREP[input.event] ?? [])],
     warnings: [
       `本结果为「民俗参考」，不作为${EVENT_LABEL[input.event]}的唯一决策依据。`,
-      "实际选定日期请综合考虑家庭、合同、签证、天气、节假日等现实条件。"
-    ]
+      "实际选定日期请综合考虑家庭、合同、签证、天气、节假日等现实条件。",
+      ...(recommended.length === 0 && constraints.summary.length > 0
+        ? ["在你写下的现实限制内暂时没有达到民俗参考阈值的日期；可以优先从可执行日期中选择，或适度放宽偏好。"]
+        : [])
+    ],
+    realityConstraints: constraints.summary
   };
+}
+
+/**
+ * 从用户的自然语言备注提取少量明确的硬限制。
+ * 这些只用于现实可执行性排序，不会把用户的偏好伪装成民俗结论。
+ */
+function parseRealityConstraints(notes?: string): RealityConstraints {
+  const text = notes?.trim() ?? "";
+  const weekends = /(周末|周六日|星期六日|礼拜六日)/.test(text);
+  const weekdays = /(工作日|周一到周五|星期一至五)/.test(text);
+  const hardMarker = /只能|仅限|必须|不得|不能/.test(text);
+  const preferenceMarker = /优先|尽量|最好|方便/.test(text);
+  const weekendsOnly = hardMarker && weekends;
+  const weekdaysOnly = hardMarker && weekdays;
+  const weekendsPreferred = weekends && preferenceMarker;
+  const weekdaysPreferred = weekdays && preferenceMarker;
+  const unavailable = new Set<string>();
+  const dateMatches = text.match(/\b\d{4}[-/]\d{1,2}[-/]\d{1,2}\b/g) ?? [];
+  const latestMatch = text.match(/(?:截止|最晚|不晚于|之前|前完成|前办完)[^\d]{0,8}(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
+  const latestDate = latestMatch ? normalizeDate(latestMatch[1]) : undefined;
+  // “避开/不能/不方便”等语句中的明确日期视为不可用；普通日期仅作为截止日期候选。
+  if (/(避开|不能|不行|不方便|不可用|排除)/.test(text)) {
+    for (const value of dateMatches) unavailable.add(normalizeDate(value));
+  } else if (latestDate) {
+    unavailable.delete(latestDate);
+  }
+  const summary: string[] = [];
+  if (weekendsOnly) summary.push("已按备注限制为周末");
+  if (weekdaysOnly) summary.push("已按备注限制为工作日");
+  if (!weekendsOnly && weekendsPreferred) summary.push("已将周末作为偏好优先排序");
+  if (!weekdaysOnly && weekdaysPreferred) summary.push("已将工作日作为偏好优先排序");
+  if (latestDate) summary.push(`已按备注限制在 ${latestDate} 前完成`);
+  if (unavailable.size) summary.push(`已排除备注中不可用日期（${[...unavailable].join("、")}）`);
+  return { weekendsOnly, weekdaysOnly, weekendsPreferred, weekdaysPreferred, unavailable, latestDate, summary };
+}
+
+function normalizeDate(value: string): string {
+  const [year, month, day] = value.replaceAll("/", "-").split("-");
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
+
+function isRealityEligible(date: string, constraints: RealityConstraints): boolean {
+  if (constraints.unavailable.has(date)) return false;
+  if (constraints.latestDate && date > constraints.latestDate) return false;
+  const day = new Date(`${date}T12:00:00`).getDay();
+  if (constraints.weekendsOnly && day !== 0 && day !== 6) return false;
+  if (constraints.weekdaysOnly && (day === 0 || day === 6)) return false;
+  return true;
+}
+
+function realityPreferenceScore(date: string, constraints: RealityConstraints): number {
+  const day = new Date(`${date}T12:00:00`).getDay();
+  const weekend = day === 0 || day === 6;
+  if (constraints.weekendsPreferred && weekend) return 1;
+  if (constraints.weekdaysPreferred && !weekend) return 1;
+  return 0;
 }
 
 function scoreDay(date: string, userDayStem: string, userYearBranch: string, event: DateSelectionEvent): DayCandidate {

@@ -25,6 +25,8 @@ export default async function ReportPage({ params }: { params: { id: string } })
   const membership = getMembershipStatus();
   const needsMembership = isMemberReportType(reportType) && !membership.active && !report.isPaid;
   const blocked = report.status === "blocked";
+  const pending = report.status === "draft";
+  const failed = report.status === "failed";
   const fullText = report.aiResult ?? "";
   const display = blocked
     ? fullText // safety filter 已经替换为安全提示文本
@@ -57,9 +59,22 @@ export default async function ReportPage({ params }: { params: { id: string } })
         </div>
       )}
 
-      <article className="card">
-        <ReportRenderer markdown={display} />
-      </article>
+      {(pending || failed) && (
+        <section className="card border-gold/40 bg-gold/5">
+          <h2 className="font-serif text-lg">{pending ? "报告还在整理中" : "这次没有完成生成"}</h2>
+          <p className="mt-2 text-sm leading-6 text-ink/70">
+            {pending
+              ? "后台可能仍在处理。请稍等片刻后刷新；如果超过 60 秒，请回到首页重试，已填写的内容不会因为这次等待而改变。"
+              : "这次生成没有完成。你可以回到入口重新提交，或先去‘我的’查看是否已经留下可读版本。"}
+          </p>
+          <div className="mt-3 flex gap-2">
+            <Link href={`/reports/${report.id}`} className="btn-secondary">刷新本页</Link>
+            <Link href="/" className="btn-primary">回到入口</Link>
+          </div>
+        </section>
+      )}
+
+      {!pending && !failed && <article className="card"><ReportRenderer markdown={display} /></article>}
 
       {needsMembership && !blocked && (
         <MembershipCard />

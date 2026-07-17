@@ -21,7 +21,6 @@ export default function MarriagePage() {
 
   async function go(reportType: ReportType, tier: "basic" | "deep") {
     setErr(null);
-    if (!a.birthDate || !b.birthDate) { setErr("请填写双方出生日期"); return; }
     setLoading(tier);
     try {
       const r = await fetchReport("/api/reports/generate", {
@@ -50,12 +49,12 @@ export default function MarriagePage() {
       />
 
       <section className="card">
-        <h3 className="font-serif text-lg mb-2">甲方信息</h3>
+        <h3 className="font-serif text-lg mb-2">甲方信息（出生资料可选）</h3>
         <BaziFields value={a} onChange={setA} prefix="a-" />
       </section>
 
       <section className="card">
-        <h3 className="font-serif text-lg mb-2">乙方信息</h3>
+        <h3 className="font-serif text-lg mb-2">乙方信息（出生资料可选）</h3>
         <BaziFields value={b} onChange={setB} prefix="b-" />
       </section>
 
@@ -83,6 +82,7 @@ export default function MarriagePage() {
               onChange={e => setNotes(e.target.value)}
               placeholder="如：一方觉得对方不回应，另一方觉得自己一直在解释；最近也在讨论家务或财务分工。"
             />
+            <div className="field-help">不方便填写出生资料也没关系，尽量写清一件最近发生的具体矛盾，我们会先从沟通场景给建议。</div>
           </div>
         </div>
         <SubmitBar

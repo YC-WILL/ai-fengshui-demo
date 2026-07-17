@@ -233,4 +233,30 @@ describe("conversational report tone", () => {
     expect(movingText).not.toBe(signingText);
     expect(movingText).not.toMatch(/星座|白羊|金牛|双子|巨蟹|狮子|处女|天秤|天蝎|射手|摩羯|水瓶|双鱼/);
   });
+
+  it("treats real scheduling limits as hard constraints and preferences as ordering hints", () => {
+    const weekendsOnly = selectDates({
+      event: "moving",
+      dateRangeStart: "2026-08-01",
+      dateRangeEnd: "2026-08-10",
+      user: personA,
+      notes: "搬家公司只能周末，最晚 2026-08-10 前完成"
+    });
+    expect(weekendsOnly.realityConstraints).toContain("已按备注限制为周末");
+    expect(weekendsOnly.recommended.every(candidate => {
+      const day = new Date(`${candidate.date}T12:00:00`).getDay();
+      return day === 0 || day === 6;
+    })).toBe(true);
+
+    const weekendsPreferred = selectDates({
+      event: "moving",
+      dateRangeStart: "2026-08-01",
+      dateRangeEnd: "2026-08-10",
+      user: personA,
+      notes: "尽量安排在周末"
+    });
+    expect(weekendsPreferred.realityConstraints).toContain("已将周末作为偏好优先排序");
+    const firstDay = new Date(`${weekendsPreferred.recommended[0]?.date}T12:00:00`).getDay();
+    expect([0, 6]).toContain(firstDay);
+  });
 });

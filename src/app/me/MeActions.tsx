@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { fetchReport, readJsonResponse } from "@/lib/reports/client";
 
 export default function MeActions({
   email, nickname
@@ -18,7 +19,7 @@ export default function MeActions({
   async function save() {
     setBusy(true); setMsg(null);
     try {
-      const r = await fetch("/api/me", {
+      const r = await fetchReport("/api/me", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -26,7 +27,7 @@ export default function MeActions({
           nickname: nick || undefined
         })
       });
-      const j = await r.json();
+      const j = await readJsonResponse(r);
       if (!r.ok || !j.ok) throw new Error(j.error ?? "保存失败");
       setMsg("已保存");
       router.refresh();
