@@ -157,6 +157,25 @@ ${"这是一段模型自行扩写的超长性格画像。".repeat(30)}
     expect(normalized).toContain("\n\n## 看看步调\n");
   });
 
+  it("keeps deep bazi reports conversational and hides technical calculations", () => {
+    const normalized = normalizeGeneratedReport(
+      "bazi_deep",
+      `# 这位朋友，我们把你的生活节奏细细看一遍
+
+## 3. 四柱与五行结构
+四柱：年 甲子 月 乙丑 日 丙寅 时 丁卯。五行分布：木 3 火 2 土 1。
+
+## 4. 财富习惯与风险偏好
+免责声明
+
+## 5. 可执行行动建议
+**第一步：**先做一个小实验。`,
+      {}
+    );
+    expect(normalized).not.toMatch(/四柱|五行分布|甲子|木 3|免责声明|\*\*/);
+    expect(normalized).toContain("这份判断从哪里来");
+  });
+
   it("keeps three actions while shortening a mobile report", () => {
     const longAction = "先把真正需要处理的事情写清楚，再和相关的人确认时间、责任与下一步。";
     const normalized = normalizeGeneratedReport(

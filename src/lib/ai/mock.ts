@@ -107,63 +107,37 @@ ${suggestions || "- 结合近期真实经历，选择一个最想调整的行为
 
 // ----------------- 八字深度 -----------------
 function mockBaziDeep(r: Record<string, unknown>): string {
-  const dm = (r["dayMaster"] as string) ?? "未知";
-  const zodiac = (r["zodiac"] as string) ?? "—";
-  const ele = (r["elementSummary"] as string) ?? "—";
   const core = (r["friendlyCoreConclusion"] as string) ?? "这份内容适合当作整理生活节奏的参考。";
   const profile = (r["personalityProfile"] as string) ?? "你可以结合自己的真实经历，慢慢辨认哪些描述更贴近自己。";
-  const strongest = (r["elementStrongest"] as string) ?? "土";
-  const weakest = (r["elementWeakest"] as string) ?? "水";
+  const facts = (r["personalNarrativeFacts"] ?? {}) as Record<string, unknown>;
+  const situation = (r["userSituation"] as string) ?? "";
   const lifeSuggestions = (r["lifeSuggestions"] as string[]) ?? [];
-  const sceneByElement: Record<string, { work: string; relation: string; rhythm: string }> = {
-    木: { work: "需要持续生长、能逐步搭建方法的事情", relation: "把尚未成形的想法早点说出来", rhythm: "每月留一次学习或尝试新事物的时间" },
-    火: { work: "需要表达、带动气氛和快速启动的事情", relation: "热情之外也给彼此留一点缓冲", rhythm: "把高投入的日子与安静恢复的日子交替安排" },
-    土: { work: "需要耐心承接、把复杂事情稳稳落地的事情", relation: "别只顾着承担，也要及时说出自己的需要", rhythm: "每周整理一次待办，留下真正重要的三件事" },
-    金: { work: "需要判断、整理边界和提高完成度的事情", relation: "原则说清楚以后，也给变化留一点空间", rhythm: "在重要决定前留出一段不被打扰的复盘时间" },
-    水: { work: "需要观察、连接信息和灵活调整的事情", relation: "感受不必都放在心里，可以从一件小事慢慢说起", rhythm: "在连续忙碌之后安排明确的独处和恢复时间" }
-  };
-  const strongScene = sceneByElement[strongest] ?? sceneByElement.土;
-  const weakScene = sceneByElement[weakest] ?? sceneByElement.水;
-  const pillars = (r["pillars"] as Record<string, string>) ?? {};
+  const situationPlan = (facts.situationActionPlan as string[]) ?? [];
+  const actions = [...situationPlan, ...lifeSuggestions].slice(0, 4);
   return `
 # 这位朋友，我们把你的生活节奏细细看一遍
 
-## 1. 用户信息摘要
-日主：**${dm}**　生肖：**${zodiac}**
-四柱：年 ${pillars.year}　月 ${pillars.month}　日 ${pillars.day}　时 ${pillars.hour ?? "—"}
+## 1. 先回应你现在最在意的事
+${situation ? `你写下的“${situation}”值得先被认真看见。` : "先把眼前最在意的一件事说清楚，比给自己贴标签更有帮助。"} ${core}
 
-## 2. 四柱与五行结构
-${ele}。${core}
+## 2. 这份判断从哪里来
+${profile} 传统文化只提供一个观察角度，真正有用的部分要回到你的实际经历。
 
-## 3. 性格与行为倾向
-${profile}
+## 3. 三个容易卡住的具体场景
+- 事情变复杂时：先写下一个事实和一个待确认的问题，再决定是否继续投入。
+- 需要回应别人时：先复述对方重点，再说自己的选择，避免让对方靠猜。
+- 反复犹豫时：给当前选择设一个 20 分钟小实验，完成后再决定是否加码。
 
-## 4. 事业与学习方向
-从你较突出的${strongest}元素来看，你可能更容易在${strongScene.work}里找到自己的步调。相对弱的${weakest}也提醒你：选择不只看“能不能做好”，还要看长期做下去是否有恢复的余地。
-**可执行建议**：
-- ${lifeSuggestions[0] ?? strongScene.rhythm}。
-- ${lifeSuggestions[1] ?? `找一位信任的人，从旁给你一次关于${weakest}节奏的反馈`}。
+## 4. 一份 7 天小实验
+${actions.map((item, index) => `- 第 ${Math.min(index + 1, 7)} 天：${item}`).join("\n") || "- 第 1 天：写下事实、感受和需要各一条。\n- 第 2 天：完成一件 20 分钟小行动。\n- 第 7 天：回看记录，保留一个有效做法。"}
 
-## 5. 财富习惯与风险偏好
-财富习惯倾向稳健。
-**注意**：
-- 不要把所有积蓄放进单一品类。
-- 在大额支出（>3 个月生活费）前与至少一位信任的朋友/家人讨论。
-- 涉及具体投资请咨询持牌专业人士，本报告不构成任何投资建议。
+## 5. 到第 7 天怎样判断下一步
+- 如果小行动让事情更清楚，就保留这个节奏再做一周。
+- 如果一直卡在同一个环节，找一个可信任的人一起复盘一次。
+- 如果低落、失眠或无法工作持续，应先寻求现实支持与专业帮助。
 
-## 6. 情感关系模式
-关系里可以留意${weakScene.relation}。这不是性格定论，而是提醒你：越熟悉的关系，越值得把期待说得具体一些。
-**建议**：${lifeSuggestions[2] ?? "选一件最近的小事，用“我希望……”代替让对方猜测"}。
-
-## 7. 年度生活节奏参考
-未来 12 个月，建议把重心放在：1) 巩固已有积累；2) 启动 1 个长周期小项目；3) 每季度 1 次健康复盘。
-
-## 8. 可执行行动建议
-${lifeSuggestions.slice(0, 3).map(item => `- ${item}`).join("\n") || `- ${strongScene.rhythm}。\n- ${weakScene.rhythm}。\n- 每月回看一次这些调整是否真的让生活更舒服。`}
-
-## 9. 注意事项
-- 本报告基于简化版八字结构，不替代严谨命理分析。
-- 涉及健康、法律、投资、婚姻请咨询对应专业人士。
+## 6. 留一句温和收尾
+先完成眼前这一小步，再决定远处的方向。
 `.trim();
 }
 

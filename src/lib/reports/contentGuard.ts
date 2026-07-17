@@ -96,11 +96,11 @@ export function normalizeGeneratedReport(
 ): string {
   let normalized = removeModelDisclaimerSections(normalizeMarkdownBreaks(text));
 
-  if (reportType === "bazi_basic") {
+  if (reportType === "bazi_basic" || reportType === "bazi_deep") {
     normalized = normalized
       .replace(/完全缺席|完全缺少/g, "相对不显眼")
       .replace(/日主(?:为|是)?[甲乙丙丁戊己庚辛壬癸]?[木火土金水]?/g, "自身节奏");
-    normalized = normalizeBaziProfileSection(normalized);
+    normalized = normalizeBaziProfileSection(scrubBaziTechnicalTerms(normalized));
   }
 
   if (reportType === "marriage_basic" || reportType === "marriage_deep") {
@@ -231,6 +231,16 @@ function scrubRelationshipTerms(text: string): string {
     .replace(/[ \t]{2,}/g, " ");
 }
 
+function scrubBaziTechnicalTerms(text: string): string {
+  return text
+    .replace(/^(##\s+\d+\.\s*)四柱与五行结构.*$/gm, "$1这份判断从哪里来")
+    .replace(/^.*(?:四柱|年柱|月柱|日柱|时柱)[：:].*$/gm, "")
+    .replace(/^.*五行(?:分布|结构|统计|数量|比例)[：:].*$/gm, "")
+    .replace(/(?:木|火|土|金|水)\s*[=:：]?\s*\d+(?:\s*[%％])?/g, "")
+    .replace(/日主|天干|地支/g, "自身节奏")
+    .replace(/\n{3,}/g, "\n\n");
+}
+
 function removeUnsupportedHomeAssertions(text: string): string {
   const unsupported = /(?:格局|骨架|户型本身|空间本身|通风(?:和|与)?采光|采光(?:和|与)?通风|通风条件|采光条件)[^。！？]*(?:踏实|舒展|够用|宽敞|不错|不差|良好|很好)/;
   return removeSentences(text, sentence => unsupported.test(sentence));
@@ -283,7 +293,11 @@ function removeModelDisclaimerSections(text: string): string {
   const sections = text.split(/\n(?=##\s)/);
   return sections
     .filter(section => !/^##\s+.*(?:免责声明|最后说一句|最后再叮嘱一句)/m.test(section))
-    .join("\n");
+    .join("\n")
+    .replace(/^\s*(?:\*\*)?免责声明(?:\*\*)?\s*$/gim, "")
+    .replace(/仅供(?:文化参考、)?生活规划启发与娱乐参考[^\n。]*。?/g, "")
+    .replace(/本报告由[「"]?卦安[^\n。]*自动生成[^\n。]*。?/g, "")
+    .replace(/\n{3,}/g, "\n\n");
 }
 
 function limitSecondLevelSections(text: string, maxBodyLength: number): string {

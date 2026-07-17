@@ -81,9 +81,7 @@ export default async function ReportPage({ params }: { params: { id: string } })
       )}
 
       <div className="text-xs text-ink/50 leading-5">
-        {brand.brandDisclaimerShort}
-        {" "}本报告由 AI 自动生成，已通过 {brand.brandFullName} 内容安全规则审查；
-        如涉及健康、法律、投资、婚姻等重要事项，请咨询相应专业人士。
+        本报告已通过 {brand.brandFullName} 内容安全规则审查；如涉及健康、法律、投资、婚姻等重要事项，请咨询相应专业人士。
       </div>
     </div>
   );
