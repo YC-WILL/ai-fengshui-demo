@@ -21,6 +21,7 @@ import { assessFengShui } from "../domain/fengshui";
 import { selectDates } from "../domain/dateSelection";
 import { makePreview } from "./preview";
 import { normalizeGeneratedReport, prepareRuleResultForReport } from "./contentGuard";
+import { buildTheoryGuidanceFromDatabase } from "../knowledge/theoryRepository";
 import {
   assessReportNarrativeQuality,
   type NarrativeQualityResult
@@ -84,7 +85,8 @@ export async function orchestrateReport(args: OrchestrateArgs): Promise<Orchestr
 
   // 3) 构造 prompt
   const systemPrompt = buildSystemPrompt(reportType, tier);
-  const userPrompt = buildUserPrompt(reportType, tier, ruleResult);
+  const theoryGuidance = await buildTheoryGuidanceFromDatabase(reportType, ruleResult);
+  const userPrompt = buildUserPrompt(reportType, tier, ruleResult, theoryGuidance);
   const recentReports = NOVELTY_GATED_REPORTS.includes(reportType)
     ? await prisma.report.findMany({
         where: { reportType, status: "generated", aiResult: { not: null } },

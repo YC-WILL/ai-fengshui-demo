@@ -202,7 +202,8 @@ export function buildSystemPrompt(reportType: ReportType, _tier: ReportTier): st
 export function buildUserPrompt(
   reportType: ReportType,
   tier: ReportTier,
-  ruleResult: unknown
+  ruleResult: unknown,
+  theoryGuidance = buildTheoryGuidance(reportType, ruleResult)
 ): string {
   const tierLabel = tier === "deep" ? "深度版" : "基础版";
   const conversationalTypes: ReportType[] = [
@@ -223,7 +224,7 @@ export function buildUserPrompt(
     "【结构化输入结束】",
     "",
     "【理论对应参考开始】",
-    buildTheoryGuidance(reportType, ruleResult),
+    theoryGuidance,
     "【理论对应参考结束】",
     "",
     "若结构化输入中包含 userSituation 或 personalFacts.userContext，请先识别其中的具体困扰、限制和期待；建议必须直接回应至少一个明确场景，不能只给通用清单。每条建议都要落到‘何时、对谁/哪个空间、做哪一步、做到什么算完成’。对于职业受挫、连续被拒等输入，优先采用‘事实拆解 → 小步验证 → 复盘’的顺序，并明确一次失败不等于职业适配结论。",

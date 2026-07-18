@@ -176,12 +176,17 @@ function moduleForReport(reportType: ReportType): TheoryCard["module"] | null {
   return null;
 }
 
-export function selectTheoryCards(reportType: ReportType, ruleResult: unknown, limit = 3): TheoryCard[] {
+export function selectTheoryCardsFrom(
+  cards: readonly TheoryCard[],
+  reportType: ReportType,
+  ruleResult: unknown,
+  limit = 3
+): TheoryCard[] {
   const module = moduleForReport(reportType);
   if (!module) return [];
   const text = JSON.stringify(ruleResult ?? "");
-  const cards = THEORY_CATALOG.filter(card => card.module === module);
-  const scored = cards.map(card => ({
+  const moduleCards = cards.filter(card => card.module === module);
+  const scored = moduleCards.map(card => ({
     card,
     score: card.whenToUse.reduce((score, keyword) => score + (text.includes(keyword) ? 1 : 0), 0)
   }));
@@ -191,14 +196,27 @@ export function selectTheoryCards(reportType: ReportType, ruleResult: unknown, l
     .map(item => item.card);
 }
 
-export function buildTheoryGuidance(reportType: ReportType, ruleResult: unknown): string {
-  const cards = selectTheoryCards(reportType, ruleResult);
-  if (cards.length === 0) return "";
+export function selectTheoryCards(reportType: ReportType, ruleResult: unknown, limit = 3): TheoryCard[] {
+  return selectTheoryCardsFrom(THEORY_CATALOG, reportType, ruleResult, limit);
+}
+
+export function buildTheoryGuidanceFromCards(
+  cards: readonly TheoryCard[],
+  reportType: ReportType,
+  ruleResult: unknown,
+  version = THEORY_CATALOG_VERSION
+): string {
+  const selected = selectTheoryCardsFrom(cards, reportType, ruleResult);
+  if (selected.length === 0) return "";
   return JSON.stringify({
-    version: THEORY_CATALOG_VERSION,
+    version,
     instruction: "心理学是行为行动参考，风水是传统文化视角；不得互相冒充科学证据。优先回应用户事实，未知信息使用条件式表达。",
-    cards: cards.map(({ id, psychology, fengshui, mechanism, allowed, forbidden, action, review }) => ({
+    cards: selected.map(({ id, psychology, fengshui, mechanism, allowed, forbidden, action, review }) => ({
       id, psychology, fengshui, mechanism, allowed, forbidden, action, review
     }))
   }, null, 2);
+}
+
+export function buildTheoryGuidance(reportType: ReportType, ruleResult: unknown): string {
+  return buildTheoryGuidanceFromCards(THEORY_CATALOG, reportType, ruleResult);
 }

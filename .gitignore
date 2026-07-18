@@ -19,3 +19,4 @@ prisma/dev.db-journal
 coverage
 *.tsbuildinfo
 next-env.d.ts
+.env*
