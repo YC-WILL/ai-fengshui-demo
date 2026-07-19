@@ -10,7 +10,7 @@ export default function FooterDisclaimer() {
           <span className="text-ink/40">· {brand.taglineZh}</span>
         </div>
         <p>
-          本站所有报告基于传统历法、民俗文化与心理学框架由 AI 自动生成，
+          本站对话与生活参考会使用 AI，并结合传统历法、民俗文化与现实生活视角，
           <strong>{brand.brandDisclaimerShort}</strong>
         </p>
         <div className="mt-3 flex flex-wrap gap-4 text-ink/70">

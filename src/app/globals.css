@@ -49,6 +49,23 @@ html, body {
   @apply bg-white/80 border border-mist rounded-xl shadow-scroll p-5;
 }
 
+/* 卦安陪伴入口：保持米纸感，不做通用 AI 工具式的冷白聊天框。 */
+.companion-shell {
+  @apply rounded-2xl border border-mist bg-white/75 shadow-scroll;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(201, 163, 92, 0.12), transparent 28%),
+    radial-gradient(circle at 5% 95%, rgba(181, 59, 42, 0.06), transparent 32%),
+    rgba(255, 255, 255, 0.78);
+}
+.companion-onboarding {
+  @apply min-h-[34rem] px-5 py-10 md:px-10 md:py-14;
+}
+.companion-thread {
+  background:
+    linear-gradient(rgba(247, 243, 236, 0.55), rgba(255, 255, 255, 0.4)),
+    repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(201, 163, 92, 0.055) 32px);
+}
+
 /* 首页安抚短句：从下方轻轻出现，再向上淡出。 */
 .hero-comfort {
   @apply relative overflow-hidden text-sm md:text-base text-ink/70;

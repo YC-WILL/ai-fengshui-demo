@@ -17,9 +17,16 @@ import type { SafetyMatch, SafetyResult } from "../types";
 const REWRITE_NOTICE =
   "（本段含绝对化判断，已替换为克制表达：我们建议从沟通、行动与现实条件出发审视该问题，避免单一结论。）";
 
-export function safetyFilter(input: string): SafetyResult {
+export type SafetyFilterOptions = {
+  appendDisclaimer?: boolean;
+  context?: "report" | "conversation";
+};
+
+export function safetyFilter(input: string, options: SafetyFilterOptions = {}): SafetyResult {
   let text = input ?? "";
   const matches: SafetyMatch[] = [];
+  const appendDisclaimer = options.appendDisclaimer ?? true;
+  const context = options.context ?? "report";
 
   // ---- 高风险扫描 ----
   for (const rule of INLINE_RULES.filter(r => r.severity === "high")) {
@@ -35,11 +42,12 @@ export function safetyFilter(input: string): SafetyResult {
       blocked: true,
       rewritten: false,
       matches,
-      text:
-        "出于内容安全考虑，本次报告未通过我们的合规检查，已停止输出。\n\n" +
-        "我们不会就生死、灾祸、医疗诊断、彩票股票、绝对婚姻判断等做出预测或承诺。\n" +
-        "请尝试调整问题描述，或更换报告类型。\n\n" +
-        DISCLAIMER_BLOCK
+      text: context === "conversation"
+        ? "这部分我不能替你作出生死、灾祸、医疗诊断、投资结果或关系结局的预测。如果这件事正在影响你的安全或生活，我们可以先一起整理现实中能够确认的情况，并考虑联系可信任的人或相应专业人士。"
+        : "出于内容安全考虑，本次报告未通过我们的合规检查，已停止输出。\n\n" +
+          "我们不会就生死、灾祸、医疗诊断、彩票股票、绝对婚姻判断等做出预测或承诺。\n" +
+          "请尝试调整问题描述，或更换报告类型。\n\n" +
+          DISCLAIMER_BLOCK
     };
   }
 
@@ -87,7 +95,7 @@ export function safetyFilter(input: string): SafetyResult {
   }
 
   // ---- 追加固定免责声明（避免重复） ----
-  if (!text.includes("免责声明")) {
+  if (appendDisclaimer && !text.includes("免责声明")) {
     text = text.trimEnd() + "\n\n" + DISCLAIMER_BLOCK;
   }
 

@@ -5,17 +5,23 @@ import { type ReportType } from "@/lib/types";
 import { PAGE_TITLE, brand } from "@/lib/config/brand";
 import MeActions from "./MeActions";
 import DeleteAccountButton from "./DeleteAccountButton";
-import MembershipCard from "@/components/MembershipCard";
-import { getMembershipStatus } from "@/lib/membership";
+import CompanionPurposeCard from "@/components/CompanionPurposeCard";
+import {
+  COMPANION_PROFILE_REPORT_TYPE,
+  COMPANION_TURN_REPORT_TYPE
+} from "@/lib/companion/core";
+import { getCompanionPurpose, getRecentCompanionTurns } from "@/lib/companion/repository";
 
 export const dynamic = "force-dynamic";
 
 export default async function MePage() {
   const user = await getOrCreateUser();
-  const membership = getMembershipStatus();
-  const [reports, signRecords] = await Promise.all([
+  const [reports, signRecords, purpose, companionTurns] = await Promise.all([
     prisma.report.findMany({
-      where: { userId: user.id, NOT: { reportType: "daily_sign" } },
+      where: {
+        userId: user.id,
+        reportType: { notIn: ["daily_sign", COMPANION_PROFILE_REPORT_TYPE, COMPANION_TURN_REPORT_TYPE] }
+      },
       orderBy: { createdAt: "desc" },
       take: 50
     }),
@@ -23,7 +29,9 @@ export default async function MePage() {
       where: { userId: user.id, reportType: "daily_sign" },
       orderBy: { createdAt: "desc" },
       select: { id: true, aiResult: true, createdAt: true }
-    })
+    }),
+    getCompanionPurpose(user.id),
+    getRecentCompanionTurns(user.id, 12)
   ]);
   const signs = signRecords.flatMap(record => {
     const snapshot = parseSignSnapshot(record.aiResult);
@@ -40,43 +48,57 @@ export default async function MePage() {
       </header>
 
       <nav className="flex flex-wrap gap-2" aria-label="我的内容">
-        <Link href="#reports" className="btn-secondary">我的报告</Link>
+        <Link href="#purpose" className="btn-secondary">我的初心</Link>
+        <Link href="#companion-records" className="btn-secondary">陪伴记录</Link>
         <Link href="#signs" className="btn-secondary">我的求签</Link>
       </nav>
 
+      <CompanionPurposeCard initialPurpose={purpose} />
+
       <MeActions email={user.email} nickname={user.nickname} />
 
-      {membership.active ? (
-        <section className="card border-jade/30 bg-jade/5">
-          <h3 className="font-serif text-lg mb-1">卦安常伴会员</h3>
-          <p className="text-sm text-ink/70">
-            当前为{membership.plan === "annual" ? "年度" : "月度"}常伴会员，有效期至 {new Date(membership.expiresAt!).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai" })}。
-          </p>
-        </section>
-      ) : <MembershipCard />}
-
-      <section id="reports" className="card scroll-mt-24">
-        <h3 className="font-serif text-lg mb-2">我的报告</h3>
-        {reports.length === 0 ? (
-          <div className="text-sm text-ink/60">还没有生成报告。<Link href="/" className="text-cinnabar">回首页</Link>。</div>
+      <section id="companion-records" className="card scroll-mt-24">
+        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+          <div>
+            <h3 className="font-serif text-lg">陪伴记录</h3>
+            <p className="mt-1 text-xs text-ink/50">保留最近的交流，方便下次从真实进展继续。</p>
+          </div>
+          <Link href="/#companion" className="text-sm text-cinnabar hover:underline">回去聊聊 →</Link>
+        </div>
+        {companionTurns.length === 0 ? (
+          <div className="text-sm text-ink/60">还没有留下对话。<Link href="/#companion" className="text-cinnabar">从一句近况开始</Link>。</div>
         ) : (
           <ul className="divide-y divide-mist">
-            {reports.map(r => (
-              <li key={r.id} className="py-2 flex items-center gap-3">
-                <Link href={`/reports/${r.id}`} className="font-medium hover:underline">
-                  {PAGE_TITLE[r.reportType as ReportType] ?? r.reportType}
-                </Link>
-                <span className={`text-xs px-2 py-0.5 rounded ${badgeColor(r.status)}`}>
-                  {statusLabel(r.status)}
-                </span>
-                <span className="text-xs text-ink/50">
-                  {r.createdAt.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}
-                </span>
+            {[...companionTurns].reverse().map(turn => (
+              <li key={turn.id} className="py-3">
+                <div className="text-sm text-ink/80">“{shorten(turn.message, 72)}”</div>
+                <div className="mt-1 text-xs leading-5 text-ink/50">卦安：{shorten(turn.reply, 110)}</div>
+                <time className="mt-1 block text-xs text-ink/40" dateTime={turn.createdAt}>
+                  {new Date(turn.createdAt).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}
+                </time>
               </li>
             ))}
           </ul>
         )}
       </section>
+
+      {reports.length > 0 && (
+        <details className="card">
+          <summary className="cursor-pointer font-serif text-lg">过往报告（旧版）</summary>
+          <p className="mt-2 text-xs leading-5 text-ink/50">旧内容继续保留供你查看，卦安已不再从这里开始新的报告。</p>
+          <ul className="mt-3 divide-y divide-mist">
+            {reports.map(r => (
+              <li key={r.id} className="flex flex-wrap items-center gap-3 py-2">
+                <Link href={`/reports/${r.id}`} className="font-medium hover:underline">
+                  {PAGE_TITLE[r.reportType as ReportType] ?? r.reportType}
+                </Link>
+                <span className={`rounded px-2 py-0.5 text-xs ${badgeColor(r.status)}`}>{statusLabel(r.status)}</span>
+                <span className="text-xs text-ink/50">{r.createdAt.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}</span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
 
       <section id="signs" className="card scroll-mt-24">
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
@@ -111,12 +133,16 @@ export default async function MePage() {
       <section className="card border-cinnabar/30">
         <h3 className="font-serif text-lg mb-2 text-cinnabar">数据与隐私</h3>
         <p className="text-sm text-ink/70 mb-3">
-          您可以随时删除您的所有报告、求签记录、订单与个人信息。删除后账户与数据将无法恢复。
+          您可以随时删除您的陪伴记录、过往报告、求签记录、订单与个人信息。删除后账户与数据将无法恢复。
         </p>
         <DeleteAccountButton />
       </section>
     </div>
   );
+}
+
+function shorten(value: string, max: number): string {
+  return value.length <= max ? value : `${value.slice(0, max)}……`;
 }
 
 function parseSignSnapshot(value: string | null): {

@@ -3,10 +3,8 @@ import { brand } from "@/lib/config/brand";
 
 const NAV_ITEMS = [
   { href: "/", label: "今日" },
-  { href: "/bazi", label: "八字" },
-  { href: "/marriage", label: "关系" },
-  { href: "/fengshui", label: "住宅" },
-  { href: "/date-selection", label: "择日" },
+  { href: "/#companion", label: "陪伴" },
+  { href: "/#daily-sign", label: "求签与静心" },
   { href: "/me", label: "我的" }
 ];
 

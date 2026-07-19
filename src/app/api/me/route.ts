@@ -3,13 +3,17 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getOrCreateUser, bindEmail } from "@/lib/auth";
 import { getMembershipStatus, MEMBERSHIP_COOKIE_NAME } from "@/lib/membership";
+import { COMPANION_PROFILE_REPORT_TYPE, COMPANION_TURN_REPORT_TYPE } from "@/lib/companion/core";
 
 export async function GET() {
   try {
     const user = await getOrCreateUser();
     const [reports, signs] = await Promise.all([
       prisma.report.findMany({
-        where: { userId: user.id, NOT: { reportType: "daily_sign" } },
+        where: {
+          userId: user.id,
+          reportType: { notIn: ["daily_sign", COMPANION_PROFILE_REPORT_TYPE, COMPANION_TURN_REPORT_TYPE] }
+        },
         orderBy: { createdAt: "desc" },
         take: 50,
         select: {
