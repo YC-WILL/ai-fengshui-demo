@@ -7,7 +7,8 @@
 
 import { PrismaClient } from "@prisma/client";
 import { INLINE_RULES } from "../src/lib/safety/rules";
-import { THEORY_CATALOG, THEORY_CATALOG_VERSION } from "../src/lib/knowledge/theoryCatalog";
+import { THEORY_CATALOG_VERSION } from "../src/lib/knowledge/theoryCatalog";
+import { syncTheoryCards } from "../src/lib/knowledge/theorySync";
 
 const prisma = new PrismaClient();
 
@@ -28,45 +29,8 @@ async function main() {
   console.log(`[seed] ${INLINE_RULES.length} rules written.`);
 
   console.log(`[seed] syncing theory cards ${THEORY_CATALOG_VERSION}...`);
-  for (const card of THEORY_CATALOG) {
-    await prisma.theoryCard.upsert({
-      where: { id: card.id },
-      create: {
-        id: card.id,
-        version: THEORY_CATALOG_VERSION,
-        module: card.module,
-        psychology: card.psychology,
-        fengshui: card.fengshui,
-        mechanism: card.mechanism,
-        whenToUse: JSON.stringify(card.whenToUse),
-        allowed: card.allowed,
-        forbidden: card.forbidden,
-        action: card.action,
-        review: card.review,
-        sourceType: "自主整理",
-        sourceNote: "卦安内部整理；心理学与风水概念分别作为行为参考和传统文化视角。",
-        license: "内部原创整理",
-        isActive: true
-      },
-      update: {
-        version: THEORY_CATALOG_VERSION,
-        module: card.module,
-        psychology: card.psychology,
-        fengshui: card.fengshui,
-        mechanism: card.mechanism,
-        whenToUse: JSON.stringify(card.whenToUse),
-        allowed: card.allowed,
-        forbidden: card.forbidden,
-        action: card.action,
-        review: card.review,
-        sourceType: "自主整理",
-        sourceNote: "卦安内部整理；心理学与风水概念分别作为行为参考和传统文化视角。",
-        license: "内部原创整理",
-        isActive: true
-      }
-    });
-  }
-  console.log(`[seed] ${THEORY_CATALOG.length} theory cards written.`);
+  const theoryCardCount = await syncTheoryCards(prisma);
+  console.log(`[seed] ${theoryCardCount} theory cards written.`);
 }
 
 main()
