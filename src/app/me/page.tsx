@@ -1,30 +1,17 @@
 import Link from "next/link";
 import { getOrCreateUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { type ReportType } from "@/lib/types";
-import { PAGE_TITLE, brand } from "@/lib/config/brand";
+import { brand } from "@/lib/config/brand";
 import MeActions from "./MeActions";
 import DeleteAccountButton from "./DeleteAccountButton";
 import CompanionPurposeCard from "@/components/CompanionPurposeCard";
-import {
-  COMPANION_PROFILE_REPORT_TYPE,
-  COMPANION_TURN_REPORT_TYPE
-} from "@/lib/companion/core";
 import { getCompanionPurpose, getRecentCompanionTurns } from "@/lib/companion/repository";
 
 export const dynamic = "force-dynamic";
 
 export default async function MePage() {
   const user = await getOrCreateUser();
-  const [reports, signRecords, purpose, companionTurns] = await Promise.all([
-    prisma.report.findMany({
-      where: {
-        userId: user.id,
-        reportType: { notIn: ["daily_sign", COMPANION_PROFILE_REPORT_TYPE, COMPANION_TURN_REPORT_TYPE] }
-      },
-      orderBy: { createdAt: "desc" },
-      take: 50
-    }),
+  const [signRecords, purpose, companionTurns] = await Promise.all([
     prisma.report.findMany({
       where: { userId: user.id, reportType: "daily_sign" },
       orderBy: { createdAt: "desc" },
@@ -82,24 +69,6 @@ export default async function MePage() {
         )}
       </section>
 
-      {reports.length > 0 && (
-        <details className="card">
-          <summary className="cursor-pointer font-serif text-lg">过往报告（旧版）</summary>
-          <p className="mt-2 text-xs leading-5 text-ink/50">旧内容继续保留供你查看，卦安已不再从这里开始新的报告。</p>
-          <ul className="mt-3 divide-y divide-mist">
-            {reports.map(r => (
-              <li key={r.id} className="flex flex-wrap items-center gap-3 py-2">
-                <Link href={`/reports/${r.id}`} className="font-medium hover:underline">
-                  {PAGE_TITLE[r.reportType as ReportType] ?? r.reportType}
-                </Link>
-                <span className={`rounded px-2 py-0.5 text-xs ${badgeColor(r.status)}`}>{statusLabel(r.status)}</span>
-                <span className="text-xs text-ink/50">{r.createdAt.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}</span>
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
-
       <section id="signs" className="card scroll-mt-24">
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
           <div>
@@ -133,7 +102,7 @@ export default async function MePage() {
       <section className="card border-cinnabar/30">
         <h3 className="font-serif text-lg mb-2 text-cinnabar">数据与隐私</h3>
         <p className="text-sm text-ink/70 mb-3">
-          您可以随时删除您的陪伴记录、过往报告、求签记录、订单与个人信息。删除后账户与数据将无法恢复。
+          您可以随时删除账户资料、陪伴记录、求签记录及其他关联数据。删除后账户与数据将无法恢复。
         </p>
         <DeleteAccountButton />
       </section>
@@ -164,23 +133,4 @@ function parseSignSnapshot(value: string | null): {
     return null;
   }
   return null;
-}
-
-function statusLabel(s: string) {
-  return ({
-    draft: "草稿",
-    generated: "已生成",
-    blocked: "已拦截",
-    paid: "已解锁",
-    failed: "失败"
-  } as Record<string, string>)[s] ?? s;
-}
-function badgeColor(s: string) {
-  return ({
-    draft: "bg-mist text-ink/60",
-    generated: "bg-jade/20 text-jade",
-    blocked: "bg-cinnabar/15 text-cinnabar",
-    paid: "bg-gold/20 text-ink",
-    failed: "bg-cinnabar/15 text-cinnabar"
-  } as Record<string, string>)[s] ?? "bg-mist";
 }
