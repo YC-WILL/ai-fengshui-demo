@@ -11,6 +11,8 @@ import { THEORY_CATALOG_VERSION } from "../src/lib/knowledge/theoryCatalog";
 import { syncTheoryCards } from "../src/lib/knowledge/theorySync";
 import { ZHOUYI_CATALOG_VERSION } from "../src/lib/knowledge/zhouyiCatalog";
 import { syncZhouyiCanon } from "../src/lib/knowledge/zhouyiSync";
+import { TRADITIONAL_CALENDAR_VERSION } from "../src/lib/knowledge/traditionalCalendarCatalog";
+import { syncTraditionalCalendarKnowledge } from "../src/lib/knowledge/traditionalCalendarSync";
 
 const prisma = new PrismaClient();
 
@@ -37,6 +39,10 @@ async function main() {
   console.log(`[seed] syncing Zhouyi canon ${ZHOUYI_CATALOG_VERSION}...`);
   const zhouyiCount = await syncZhouyiCanon(prisma);
   console.log(`[seed] ${zhouyiCount.trigrams} trigrams, ${zhouyiCount.hexagrams} hexagrams, ${zhouyiCount.lines} lines written.`);
+
+  console.log(`[seed] syncing traditional calendar ${TRADITIONAL_CALENDAR_VERSION}...`);
+  const traditionalCount = await syncTraditionalCalendarKnowledge(prisma);
+  console.log(`[seed] ${traditionalCount.entities} entities, ${traditionalCount.relations} relations, ${traditionalCount.methodRules} method rules, ${traditionalCount.interpretations} interpretations written.`);
 }
 
 main()

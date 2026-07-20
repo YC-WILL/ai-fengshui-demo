@@ -232,3 +232,91 @@ model ZhouyiLine {
   @@index([version])
   @@index([isActive])
 }
+
+// ----------------- 生辰与每日传统历法知识 -----------------
+// 基础实体、关系、方法和释义分层保存，避免把流派规则混为一谈。
+model TraditionalEntity {
+  id          String   @id
+  version     String
+  system      String
+  category    String
+  code        String
+  name        String
+  sequence    Int?
+  attributes  Json
+  sourceTitle String
+  sourceUrl   String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([category, code, version])
+  @@index([system])
+  @@index([category])
+  @@index([version])
+  @@index([isActive])
+}
+
+model TraditionalRelation {
+  id           String   @id
+  version      String
+  system       String
+  relationType String
+  subjectCodes Json
+  objectCodes  Json
+  resultCode   String?
+  attributes   Json
+  sourceTitle  String
+  sourceUrl    String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([system])
+  @@index([relationType])
+  @@index([version])
+  @@index([isActive])
+}
+
+model TraditionalMethodRule {
+  id          String   @id
+  version     String
+  method      String
+  step        Int
+  code        String
+  title       String
+  rule        Json
+  explanation String
+  sourceTitle String
+  sourceUrl   String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([method, code, version])
+  @@index([method, step])
+  @@index([version])
+  @@index([isActive])
+}
+
+model TraditionalInterpretationCard {
+  id           String   @id
+  version      String
+  category     String
+  code         String
+  title        String
+  summary      String
+  detail       String
+  allowedUse   String
+  forbiddenUse String
+  sourceTitle  String
+  sourceUrl    String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([category, code, version])
+  @@index([category])
+  @@index([version])
+  @@index([isActive])
+}
