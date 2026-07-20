@@ -20,7 +20,12 @@ export default function BirthProfileCard({ profile }: {
 
   return (
     <div id="birth-profile" className="scroll-mt-24">
-      <BirthProfileForm initial={initial} context="profile" onSaved={() => router.refresh()} />
+      <BirthProfileForm
+        initial={initial}
+        context="profile"
+        onSaved={() => router.refresh()}
+        onRemoved={() => router.refresh()}
+      />
     </div>
   );
 }

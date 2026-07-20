@@ -61,6 +61,16 @@ export async function PUT(request: NextRequest) {
   }
 }
 
+export async function DELETE() {
+  try {
+    const user = await getOrCreateUser();
+    await prisma.userProfile.deleteMany({ where: { userId: user.id } });
+    return NextResponse.json({ ok: true, data: { profile: null, correspondence: null, sources: [] } });
+  } catch {
+    return NextResponse.json({ ok: false, error: "生辰资料暂时无法清除，请稍后再试。" }, { status: 503 });
+  }
+}
+
 async function responseForUser(userId: string) {
   const profile = await prisma.userProfile.findUnique({ where: { userId } });
   if (!profile?.birthDate) {

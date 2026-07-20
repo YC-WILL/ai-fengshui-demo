@@ -65,10 +65,12 @@ export default function TodayCorrespondence() {
 export function BirthProfileForm({
   initial,
   onSaved,
+  onRemoved,
   context = "onboarding"
 }: {
   initial?: ProfileValue | null;
   onSaved?: (payload: Payload) => void;
+  onRemoved?: () => void;
   context?: "onboarding" | "profile";
 }) {
   const initialDateParts = (initial?.birthDate ?? "").split("-");
@@ -120,6 +122,29 @@ export function BirthProfileForm({
       onSaved?.(body.data);
     } catch (reason) {
       setMessage(reason instanceof Error ? reason.message : "保存失败");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove() {
+    if (!window.confirm("只清除已保存的生辰资料？求签记录和账户信息会保留。")) return;
+    setBusy(true);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/today-correspondence", { method: "DELETE" });
+      const body = await response.json();
+      if (!response.ok || !body.ok) throw new Error(body.error ?? "清除失败");
+      setBirthYear("");
+      setBirthMonth("");
+      setBirthDay("");
+      setBirthTime("");
+      setUnknownTime(false);
+      setBirthLocation("");
+      setMessage("生辰资料已清除，其他记录未受影响");
+      onRemoved?.();
+    } catch (reason) {
+      setMessage(reason instanceof Error ? reason.message : "清除失败");
     } finally {
       setBusy(false);
     }
@@ -179,6 +204,11 @@ export function BirthProfileForm({
         <button className="btn-primary" disabled={busy || !birthDate || (!unknownTime && !birthTime)} onClick={save}>
           {busy ? "正在保存…" : context === "profile" ? "保存生辰资料" : "保存并看今日"}
         </button>
+        {context === "profile" && initial && (
+          <button className="btn-secondary border-cinnabar/30 text-cinnabar" disabled={busy} onClick={remove}>
+            只清除生辰资料
+          </button>
+        )}
         {message && <span className="text-sm text-ink/60" role="status">{message}</span>}
       </div>
     </section>
