@@ -69,6 +69,23 @@ html, body {
 .phase-metal { color: #6f604d; background-color: #f1e9d9; border-color: #a99778; }
 .phase-water { color: #26383f; background-color: #e2e9eb; border-color: #71848a; }
 
+/* “我的”中的紧凑生辰图谱。卦爻统一用黑，五行只使用属性本色。 */
+.birth-visual-card { @apply rounded-xl border border-mist bg-white/80 p-4 shadow-scroll; }
+.birth-gua-panel,
+.birth-elements-panel { @apply rounded-lg border border-mist bg-rice/55 px-4 py-3; }
+.hexagram-lines { @apply flex w-16 shrink-0 flex-col gap-1.5; }
+.hexagram-line-yang { @apply block h-1.5 w-full rounded-sm bg-black; }
+.hexagram-line-yin { @apply flex h-1.5 w-full justify-between; }
+.hexagram-line-yin > i { @apply block h-1.5 w-[43%] rounded-sm bg-black; }
+.element-dot { @apply mx-auto block h-3 w-3 rounded-full border; }
+.element-bar-wood, .element-dot-wood { background: #4f7d52; border-color: #365d3a; }
+.element-bar-fire, .element-dot-fire { background: #c54532; border-color: #9f3024; }
+.element-bar-earth, .element-dot-earth { background: #c69a45; border-color: #8c6a29; }
+.element-bar-metal, .element-dot-metal { background: #f4efe4; border-color: #9b8b72; }
+.element-bar-water, .element-dot-water { background: #222b32; border-color: #111820; }
+.birth-profile-editor { @apply relative; }
+.birth-profile-editor[open] > div { @apply sm:absolute sm:right-0 sm:z-20 sm:w-[42rem] sm:max-w-[85vw] sm:rounded-2xl sm:bg-rice sm:p-2 sm:shadow-2xl; }
+
 /* 卦安陪伴入口：保持米纸感，不做通用 AI 工具式的冷白聊天框。 */
 .companion-shell {
   @apply rounded-2xl border border-mist bg-white/75 shadow-scroll;

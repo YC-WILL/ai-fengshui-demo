@@ -5,16 +5,38 @@ import { brand } from "@/lib/config/brand";
 import MeActions from "./MeActions";
 import DeleteAccountButton from "./DeleteAccountButton";
 import BirthProfileCard from "./BirthProfileCard";
+import { buildBirthVisual } from "@/lib/domain/birthVisual";
+import { dateKeyInTimeZone } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
 export default async function MePage() {
   const user = await getOrCreateUser();
-  const signRecords = await prisma.report.findMany({
-    where: { userId: user.id, reportType: "daily_sign" },
-    orderBy: { createdAt: "desc" },
-    select: { id: true, aiResult: true, createdAt: true }
-  });
+  const birthVisual = user.profile?.birthDate
+    ? buildBirthVisual({
+        birthDate: user.profile.birthDate,
+        birthTime: user.profile.birthTime,
+        birthLocation: user.profile.birthLocation,
+        timezone: user.profile.timezone
+      }, dateKeyInTimeZone())
+    : null;
+  const [signRecords, hexagram] = await Promise.all([
+    prisma.report.findMany({
+      where: { userId: user.id, reportType: "daily_sign" },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, aiResult: true, createdAt: true }
+    }),
+    birthVisual
+      ? prisma.zhouyiHexagram.findFirst({
+          where: {
+            lowerTrigramId: birthVisual.bodyTrigram.id,
+            upperTrigramId: birthVisual.useTrigram.id,
+            isActive: true
+          },
+          select: { number: true, name: true, symbol: true, binary: true }
+        })
+      : Promise.resolve(null)
+  ]);
   const signs = signRecords.flatMap(record => {
     const snapshot = parseSignSnapshot(record.aiResult);
     return snapshot ? [{ ...record, ...snapshot }] : [];
@@ -38,7 +60,7 @@ export default async function MePage() {
         birthDate: user.profile.birthDate,
         birthTime: user.profile.birthTime,
         birthLocation: user.profile.birthLocation
-      } : null} />
+      } : null} visual={birthVisual && hexagram ? { ...birthVisual, hexagram } : null} />
 
       <MeActions email={user.email} nickname={user.nickname} />
 
