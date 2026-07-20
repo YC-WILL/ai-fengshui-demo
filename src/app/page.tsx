@@ -1,15 +1,25 @@
+import CoreMethodGrid from "@/components/CoreMethodGrid";
 import DailySignDraw from "@/components/DailySignDraw";
+import SolarTermTimeline from "@/components/SolarTermTimeline";
 import TodayCorrespondence from "@/components/TodayCorrespondence";
 import WoodenToad from "@/components/WoodenToad";
 import { brand } from "@/lib/config/brand";
+import { solarTermTimeline } from "@/lib/domain/dailyCorrespondence";
+import { dateKeyInTimeZone } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
 export default function HomePage() {
+  const solarTerms = solarTermTimeline(dateKeyInTimeZone());
   return (
     <div className="space-y-8">
+      <SolarTermTimeline data={solarTerms} />
+
       <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
-        <TodayCorrespondence />
+        <div className="space-y-5">
+          <TodayCorrespondence />
+          <CoreMethodGrid today={solarTerms.date} />
+        </div>
         <aside id="daily-sign" className="space-y-4 scroll-mt-24">
           <DailySignDraw />
           <WoodenToad />

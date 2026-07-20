@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   buildDailyCorrespondence,
   currentSolarTerm,
-  phaseRelation
+  phaseRelation,
+  solarTermTimeline
 } from "@/lib/domain/dailyCorrespondence";
 
 describe("daily correspondence", () => {
@@ -17,6 +18,24 @@ describe("daily correspondence", () => {
   it("uses the active solar term and its month branch", () => {
     expect(currentSolarTerm("2026-07-20")).toMatchObject({ name: "小暑", monthBranch: "未" });
     expect(currentSolarTerm("2026-02-10")).toMatchObject({ name: "立春", monthBranch: "寅" });
+  });
+
+  it("builds a complete, ordered solar-term timeline", () => {
+    const timeline = solarTermTimeline("2026-07-20");
+    expect(timeline.current.name).toBe("小暑");
+    expect(timeline.next.name).toBe("大暑");
+    expect(timeline.yearTerms).toHaveLength(24);
+    expect(timeline.yearTerms[0].name).toBe("小寒");
+    expect(timeline.yearTerms[23].name).toBe("冬至");
+    expect(timeline.progress).toBeGreaterThanOrEqual(0);
+    expect(timeline.progress).toBeLessThan(1);
+  });
+
+  it("rolls the next solar term into the following year", () => {
+    const timeline = solarTermTimeline("2026-12-31");
+    expect(timeline.current.name).toBe("冬至");
+    expect(timeline.next.name).toBe("小寒");
+    expect(timeline.next.date.startsWith("2027-")).toBe(true);
   });
 
   it("derives all five phase directions from the birth element perspective", () => {

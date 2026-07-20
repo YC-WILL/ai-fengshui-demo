@@ -49,6 +49,26 @@ html, body {
   @apply bg-white/80 border border-mist rounded-xl shadow-scroll p-5;
 }
 
+/* 二十四节气是首页的时间骨架；默认紧凑，全年信息按需展开。 */
+.solar-term-card {
+  @apply rounded-xl border border-gold/30 bg-white/75 px-5 py-4 shadow-scroll;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(181, 59, 42, 0.06), transparent 28%),
+    rgba(255, 255, 255, 0.78);
+}
+.solar-term-progress { @apply h-1.5 overflow-hidden rounded-full bg-mist; }
+.solar-term-progress > span { @apply block h-full rounded-full bg-cinnabar/75; }
+.solar-term-grid { @apply grid grid-cols-3 gap-1.5 sm:grid-cols-6 md:grid-cols-8; }
+.solar-term-grid li { @apply flex min-w-0 items-center gap-1.5 rounded-md border border-transparent bg-rice/60 px-2 py-1.5; }
+.solar-term-grid li.is-current { @apply border-cinnabar/35 bg-cinnabar/5 text-cinnabar; }
+.solar-term-season { @apply inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-gold/35 text-[9px] text-ink/45; }
+
+.core-method-button { @apply flex min-h-24 flex-col items-start justify-between rounded-xl border border-mist bg-white/75 px-4 py-3 text-left text-xs text-ink/50 shadow-sm transition hover:border-gold/50 hover:bg-white; }
+.core-method-button.is-active { @apply border-cinnabar/35 bg-cinnabar/5 text-cinnabar; }
+.core-method-panel { @apply mt-3 rounded-xl border border-gold/30 bg-white/75 p-4 shadow-scroll; }
+.method-chip { @apply rounded-full border border-mist bg-white px-3 py-1.5 text-xs text-ink/65 transition hover:border-gold/50; }
+.method-chip.is-active { @apply border-cinnabar/40 bg-cinnabar/5 text-cinnabar; }
+
 /* 今日相应：以米纸和细金线呈现可核验的传统历法结构。 */
 .today-correspondence-shell {
   @apply rounded-2xl border border-mist bg-white/80 shadow-scroll;
@@ -58,7 +78,7 @@ html, body {
     rgba(255, 255, 255, 0.82);
 }
 .phase-glyph {
-  @apply mx-auto mt-2 inline-flex h-16 w-16 items-center justify-center rounded-full border font-serif text-3xl shadow-sm;
+  @apply inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full border font-serif text-3xl shadow-sm;
 }
 .phase-glyph-large {
   @apply h-24 w-24 text-5xl;

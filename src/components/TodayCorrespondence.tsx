@@ -54,7 +54,7 @@ export default function TodayCorrespondence() {
     return <section className="today-correspondence-shell p-6 text-sm text-cinnabar">{error}</section>;
   }
   if (!payload) {
-    return <section className="today-correspondence-shell min-h-[34rem] animate-pulse p-6" aria-label="正在读取今日相应" />;
+    return <section className="today-correspondence-shell min-h-64 animate-pulse p-6" aria-label="正在读取今日相应" />;
   }
   if (!payload.profile || !payload.correspondence) {
     return <BirthProfileForm onSaved={setPayload} />;
@@ -219,10 +219,10 @@ function CorrespondenceCard({ payload }: { payload: Payload }) {
   const data = payload.correspondence!;
   return (
     <section id="today-correspondence" className="today-correspondence-shell overflow-hidden scroll-mt-24">
-      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-gold/25 px-5 py-5 md:px-8">
+      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-gold/25 px-5 py-4 md:px-6">
         <div>
           <div className="text-xs tracking-[0.24em] text-cinnabar">今日相应</div>
-          <h1 className="mt-1 font-serif text-2xl">生辰为体，今日为用</h1>
+          <h1 className="mt-1 font-serif text-xl">生辰为体，今日为用</h1>
         </div>
         <div className="text-right text-xs leading-5 text-ink/55">
           <div>{data.date} · {data.weekday}</div>
@@ -230,32 +230,22 @@ function CorrespondenceCard({ payload }: { payload: Payload }) {
         </div>
       </header>
 
-      <div className="px-5 py-7 md:px-8 md:py-9">
-        <div className="text-center">
-          <div className="text-xs tracking-[0.25em] text-ink/45">今日主气</div>
-          <PhaseGlyph value={data.today.element} element={data.today.element} large />
-          <div className="mt-2 font-serif text-lg">{data.today.dayPillar}日</div>
-        </div>
-
-        <div className="mx-auto mt-8 grid max-w-2xl grid-cols-[1fr_auto_1fr] items-center gap-3 md:gap-7">
-          <PillarSide label="你的日主" stem={data.birth.dayStem} element={data.birth.element} pillar={data.birth.dayPillar} />
-          <div className="flex flex-col items-center">
-            <span className="h-px w-12 bg-gold/55 md:w-24" />
-            <span className="my-2 inline-flex h-11 w-11 items-center justify-center rounded-full border border-gold/60 bg-rice font-serif text-xl text-ink">
-              {data.phaseRelation.title}
-            </span>
-            <span className="h-px w-12 bg-gold/55 md:w-24" />
+      <div className="px-5 py-5 md:px-6">
+        <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+          <CompactPillar label="你的日主" stem={data.birth.dayStem} element={data.birth.element} pillar={data.birth.dayPillar} />
+          <div className="flex items-center justify-center gap-2 rounded-lg border border-gold/35 bg-rice/70 px-3 py-3 text-center sm:flex-col sm:gap-0">
+            <span className="font-serif text-xl">{data.phaseRelation.title}</span>
+            <span className="text-xs font-medium">{data.phaseRelation.direction} · {data.tenGod.name}</span>
           </div>
-          <PillarSide label="今日天干" stem={data.today.dayStem} element={data.today.element} pillar={data.today.dayPillar} />
+          <CompactPillar label="今日天干" stem={data.today.dayStem} element={data.today.element} pillar={data.today.dayPillar} />
         </div>
 
-        <div className="mx-auto mt-7 max-w-2xl rounded-xl border border-mist bg-rice/65 px-4 py-4 text-center">
-          <div className="text-sm font-medium">{data.phaseRelation.direction} · {data.tenGod.name}</div>
-          <p className="mt-1 text-sm leading-6 text-ink/65">{data.phaseRelation.explanation}</p>
-          {data.branchRelation && <p className="mt-2 text-xs leading-5 text-ink/55">日支另有：{data.branchRelation.explanation}</p>}
-        </div>
+        <p className="mt-3 text-center text-xs leading-5 text-ink/55">
+          {data.phaseRelation.explanation}
+          {data.branchRelation ? ` 日支另见“${data.branchRelation.name}”，只表示结构关系。` : ""}
+        </p>
 
-        <details className="mx-auto mt-5 max-w-2xl rounded-xl border border-mist bg-white/60 px-4 py-3">
+        <details className="mx-auto mt-3 max-w-2xl rounded-xl border border-mist bg-white/60 px-4 py-3">
           <summary className="cursor-pointer text-sm font-medium text-cinnabar">展开依据与算法</summary>
           <div className="mt-4 space-y-5 text-sm leading-6 text-ink/70">
             <div>
@@ -291,23 +281,26 @@ function CorrespondenceCard({ payload }: { payload: Payload }) {
   );
 }
 
-function PillarSide({ label, stem, element, pillar }: { label: string; stem: string; element: Element; pillar: string }) {
+function CompactPillar({ label, stem, element, pillar }: { label: string; stem: string; element: Element; pillar: string }) {
   return (
-    <div className="text-center">
-      <div className="text-xs text-ink/45">{label}</div>
+    <div className="flex items-center justify-center gap-3 rounded-lg bg-white/45 px-3 py-2 sm:justify-start">
       <PhaseGlyph value={stem} element={element} />
-      <div className="mt-1 text-xs text-ink/50">日柱 {pillar}</div>
+      <div>
+        <div className="text-xs text-ink/45">{label}</div>
+        <div className="mt-0.5 font-serif text-base">{pillar}</div>
+        <div className="text-[11px] text-ink/45">五行属{element}</div>
+      </div>
     </div>
   );
 }
 
-function PhaseGlyph({ value, element, large = false }: { value: string; element: Element; large?: boolean }) {
+function PhaseGlyph({ value, element }: { value: string; element: Element }) {
   const phaseClass: Record<Element, string> = {
     木: "phase-wood", 火: "phase-fire", 土: "phase-earth", 金: "phase-metal", 水: "phase-water"
   };
   return (
     <span
-      className={`phase-glyph ${phaseClass[element]} ${large ? "phase-glyph-large" : ""}`}
+      className={`phase-glyph ${phaseClass[element]}`}
       aria-label={`${value}，五行属${element}`}
     >
       {value}

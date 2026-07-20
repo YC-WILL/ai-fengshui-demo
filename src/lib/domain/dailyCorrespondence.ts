@@ -77,6 +77,23 @@ const TERM_MONTH_BRANCHES: Branch[] = [
   "未", "未", "申", "申", "酉", "酉", "戌", "戌", "亥", "亥", "子", "子"
 ];
 
+export interface SolarTermPoint {
+  name: typeof SOLAR_TERMS[number];
+  date: string;
+  monthBranch: Branch;
+  season: "春" | "夏" | "秋" | "冬";
+}
+
+export interface SolarTermTimeline {
+  date: string;
+  current: SolarTermPoint;
+  next: SolarTermPoint;
+  progress: number;
+  elapsedDays: number;
+  totalDays: number;
+  yearTerms: SolarTermPoint[];
+}
+
 const TEN_GOD_CODES: Record<string, { code: string; name: string }> = {
   same_same: { code: "bijian", name: "比肩" },
   same_opposite: { code: "jiecai", name: "劫财" },
@@ -170,18 +187,53 @@ export function phaseRelation(subject: Element, object: Element): FivePhaseRelat
 }
 
 export function currentSolarTerm(dateKey: string): { name: string; monthBranch: Branch; date: string } {
+  const current = solarTermTimeline(dateKey).current;
+  return { name: current.name, monthBranch: current.monthBranch, date: current.date };
+}
+
+export function solarTermTimeline(dateKey: string): SolarTermTimeline {
   assertDateKey(dateKey, "日期");
   const year = Number(dateKey.slice(0, 4));
   if (year < 1900 || year > 2100) throw new Error("节气计算支持 1900–2100 年");
 
-  const candidates = [year - 1, year].flatMap(termYear =>
-    SOLAR_TERMS.map((name, index) => ({
-      name,
-      monthBranch: TERM_MONTH_BRANCHES[index],
-      date: solarTermDate(termYear, index)
-    }))
-  ).filter(term => term.date <= dateKey);
-  return candidates[candidates.length - 1];
+  const allTerms = [year - 1, year, year + 1]
+    .flatMap(termYear => termsForYear(termYear))
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const current = [...allTerms].reverse().find(term => term.date <= dateKey);
+  const next = allTerms.find(term => term.date > dateKey);
+  if (!current || !next) throw new Error("无法确定当前节气");
+  const totalDays = daysBetween(current.date, next.date);
+  const elapsedDays = daysBetween(current.date, dateKey);
+
+  return {
+    date: dateKey,
+    current,
+    next,
+    progress: totalDays > 0 ? Math.min(1, Math.max(0, elapsedDays / totalDays)) : 0,
+    elapsedDays,
+    totalDays,
+    yearTerms: termsForYear(year)
+  };
+}
+
+function termsForYear(year: number): SolarTermPoint[] {
+  return SOLAR_TERMS.map((name, index) => ({
+    name,
+    monthBranch: TERM_MONTH_BRANCHES[index],
+    date: solarTermDate(year, index),
+    season: seasonForTerm(index)
+  }));
+}
+
+function seasonForTerm(index: number): SolarTermPoint["season"] {
+  if (index >= 2 && index <= 7) return "春";
+  if (index >= 8 && index <= 13) return "夏";
+  if (index >= 14 && index <= 19) return "秋";
+  return "冬";
+}
+
+function daysBetween(start: string, end: string): number {
+  return Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86400000);
 }
 
 function solarTermDate(year: number, index: number): string {
