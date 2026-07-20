@@ -18,6 +18,10 @@ export async function syncTraditionalCalendarKnowledge(client: TraditionalCalend
   methodRules: number;
   interpretations: number;
 }> {
+  const entitySystems = [...new Set(TRADITIONAL_ENTITIES.map(item => item.system))];
+  const relationSystems = [...new Set(TRADITIONAL_RELATIONS.map(item => item.system))];
+  const methods = [...new Set(TRADITIONAL_METHOD_RULES.map(item => item.method))];
+  const interpretationCategories = [...new Set(TRADITIONAL_INTERPRETATIONS.map(item => item.category))];
   for (const item of TRADITIONAL_ENTITIES) {
     const data = {
       version: TRADITIONAL_CALENDAR_VERSION,
@@ -84,16 +88,16 @@ export async function syncTraditionalCalendarKnowledge(client: TraditionalCalend
   }
 
   await client.traditionalEntity.updateMany({
-    where: { id: { notIn: TRADITIONAL_ENTITIES.map(item => item.id) } }, data: { isActive: false }
+    where: { system: { in: entitySystems }, id: { notIn: TRADITIONAL_ENTITIES.map(item => item.id) } }, data: { isActive: false }
   });
   await client.traditionalRelation.updateMany({
-    where: { id: { notIn: TRADITIONAL_RELATIONS.map(item => item.id) } }, data: { isActive: false }
+    where: { system: { in: relationSystems }, id: { notIn: TRADITIONAL_RELATIONS.map(item => item.id) } }, data: { isActive: false }
   });
   await client.traditionalMethodRule.updateMany({
-    where: { id: { notIn: TRADITIONAL_METHOD_RULES.map(item => item.id) } }, data: { isActive: false }
+    where: { method: { in: methods }, id: { notIn: TRADITIONAL_METHOD_RULES.map(item => item.id) } }, data: { isActive: false }
   });
   await client.traditionalInterpretationCard.updateMany({
-    where: { id: { notIn: TRADITIONAL_INTERPRETATIONS.map(item => item.id) } }, data: { isActive: false }
+    where: { category: { in: interpretationCategories }, id: { notIn: TRADITIONAL_INTERPRETATIONS.map(item => item.id) } }, data: { isActive: false }
   });
 
   return {

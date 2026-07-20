@@ -1,0 +1,2516 @@
+{
+  "version": "2026-07-20.qimen-foundation-v1",
+  "scope": "Qimen Dunjia foundational entities, relations, method boundaries and interpretations",
+  "sources": [
+    {
+      "title": "《奇门遁甲统宗》",
+      "url": "https://zh.wikisource.org/zh/奇門遁甲統宗"
+    },
+    {
+      "title": "《奇门遁甲统宗》卷一",
+      "url": "https://ctext.org/wiki.pl?chapter=666094&if=gb"
+    },
+    {
+      "title": "《奇门遁甲统宗》卷二",
+      "url": "https://ctext.org/wiki.pl?chapter=491157&if=gb"
+    },
+    {
+      "title": "《奇门宝鉴御定》",
+      "url": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定"
+    }
+  ],
+  "entities": [
+    {
+      "id": "qimen-palace-kan-1",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_palace",
+      "code": "kan-1",
+      "name": "坎一宫",
+      "sequence": 1,
+      "attributes": {
+        "number": 1,
+        "trigram": "坎",
+        "direction": "北",
+        "phase": "水",
+        "grid": {
+          "row": 2,
+          "column": 1
+        }
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-kun-2",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_palace",
+      "code": "kun-2",
+      "name": "坤二宫",
+      "sequence": 2,
+      "attributes": {
+        "number": 2,
+        "trigram": "坤",
+        "direction": "西南",
+        "phase": "土",
+        "grid": {
+          "row": 0,
+          "column": 0
+        }
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-zhen-3",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_palace",
+      "code": "zhen-3",
+      "name": "震三宫",
+      "sequence": 3,
+      "attributes": {
+        "number": 3,
+        "trigram": "震",
+        "direction": "东",
+        "phase": "木",
+        "grid": {
+          "row": 1,
+          "column": 0
+        }
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-xun-4",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_palace",
+      "code": "xun-4",
+      "name": "巽四宫",
+      "sequence": 4,
+      "attributes": {
+        "number": 4,
+        "trigram": "巽",
+        "direction": "东南",
+        "phase": "木",
+        "grid": {
+          "row": 0,
+          "column": 2
+        }
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-center-5",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_palace",
+      "code": "center-5",
+      "name": "中五宫",
+      "sequence": 5,
+      "attributes": {
+        "number": 5,
+        "trigram": null,
+        "direction": "中",
+        "phase": "土",
+        "grid": {
+          "row": 1,
+          "column": 1
+        }
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-qian-6",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_palace",
+      "code": "qian-6",
+      "name": "乾六宫",
+      "sequence": 6,
+      "attributes": {
+        "number": 6,
+        "trigram": "乾",
+        "direction": "西北",
+        "phase": "金",
+        "grid": {
+          "row": 2,
+          "column": 2
+        }
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-dui-7",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_palace",
+      "code": "dui-7",
+      "name": "兑七宫",
+      "sequence": 7,
+      "attributes": {
+        "number": 7,
+        "trigram": "兑",
+        "direction": "西",
+        "phase": "金",
+        "grid": {
+          "row": 1,
+          "column": 2
+        }
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-gen-8",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_palace",
+      "code": "gen-8",
+      "name": "艮八宫",
+      "sequence": 8,
+      "attributes": {
+        "number": 8,
+        "trigram": "艮",
+        "direction": "东北",
+        "phase": "土",
+        "grid": {
+          "row": 2,
+          "column": 0
+        }
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-li-9",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_palace",
+      "code": "li-9",
+      "name": "离九宫",
+      "sequence": 9,
+      "attributes": {
+        "number": 9,
+        "trigram": "离",
+        "direction": "南",
+        "phase": "火",
+        "grid": {
+          "row": 0,
+          "column": 1
+        }
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-rest",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_gate",
+      "code": "rest",
+      "name": "休门",
+      "sequence": 1,
+      "attributes": {
+        "basePalace": "kan-1",
+        "phase": "水",
+        "classicalGroup": "三吉门"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-death",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_gate",
+      "code": "death",
+      "name": "死门",
+      "sequence": 2,
+      "attributes": {
+        "basePalace": "kun-2",
+        "phase": "土",
+        "classicalGroup": "其余五门"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-injury",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_gate",
+      "code": "injury",
+      "name": "伤门",
+      "sequence": 3,
+      "attributes": {
+        "basePalace": "zhen-3",
+        "phase": "木",
+        "classicalGroup": "其余五门"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-delusion",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_gate",
+      "code": "delusion",
+      "name": "杜门",
+      "sequence": 4,
+      "attributes": {
+        "basePalace": "xun-4",
+        "phase": "木",
+        "classicalGroup": "其余五门"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-open",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_gate",
+      "code": "open",
+      "name": "开门",
+      "sequence": 6,
+      "attributes": {
+        "basePalace": "qian-6",
+        "phase": "金",
+        "classicalGroup": "三吉门"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-fear",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_gate",
+      "code": "fear",
+      "name": "惊门",
+      "sequence": 7,
+      "attributes": {
+        "basePalace": "dui-7",
+        "phase": "金",
+        "classicalGroup": "其余五门"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-life",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_gate",
+      "code": "life",
+      "name": "生门",
+      "sequence": 8,
+      "attributes": {
+        "basePalace": "gen-8",
+        "phase": "土",
+        "classicalGroup": "三吉门"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-scenery",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_gate",
+      "code": "scenery",
+      "name": "景门",
+      "sequence": 9,
+      "attributes": {
+        "basePalace": "li-9",
+        "phase": "火",
+        "classicalGroup": "其余五门"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-peng",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_star",
+      "code": "peng",
+      "name": "天蓬星",
+      "sequence": 1,
+      "attributes": {
+        "basePalace": "kan-1",
+        "phase": "水"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-rui",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_star",
+      "code": "rui",
+      "name": "天芮星",
+      "sequence": 2,
+      "attributes": {
+        "basePalace": "kun-2",
+        "phase": "土"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-chong",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_star",
+      "code": "chong",
+      "name": "天冲星",
+      "sequence": 3,
+      "attributes": {
+        "basePalace": "zhen-3",
+        "phase": "木"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-fu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_star",
+      "code": "fu",
+      "name": "天辅星",
+      "sequence": 4,
+      "attributes": {
+        "basePalace": "xun-4",
+        "phase": "木"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-qin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_star",
+      "code": "qin",
+      "name": "天禽星",
+      "sequence": 5,
+      "attributes": {
+        "basePalace": "center-5",
+        "phase": "土"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-xin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_star",
+      "code": "xin",
+      "name": "天心星",
+      "sequence": 6,
+      "attributes": {
+        "basePalace": "qian-6",
+        "phase": "金"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-zhu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_star",
+      "code": "zhu",
+      "name": "天柱星",
+      "sequence": 7,
+      "attributes": {
+        "basePalace": "dui-7",
+        "phase": "金"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-ren",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_star",
+      "code": "ren",
+      "name": "天任星",
+      "sequence": 8,
+      "attributes": {
+        "basePalace": "gen-8",
+        "phase": "土"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-ying",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_star",
+      "code": "ying",
+      "name": "天英星",
+      "sequence": 9,
+      "attributes": {
+        "basePalace": "li-9",
+        "phase": "火"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-deity-chief",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_deity",
+      "code": "chief",
+      "name": "值符",
+      "sequence": 1,
+      "attributes": {
+        "yangDunOrder": 1,
+        "yinDunOrder": 8
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-deity-snake",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_deity",
+      "code": "snake",
+      "name": "腾蛇",
+      "sequence": 2,
+      "attributes": {
+        "yangDunOrder": 2,
+        "yinDunOrder": 7
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-deity-great-yin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_deity",
+      "code": "great-yin",
+      "name": "太阴",
+      "sequence": 3,
+      "attributes": {
+        "yangDunOrder": 3,
+        "yinDunOrder": 6
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-deity-harmony",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_deity",
+      "code": "harmony",
+      "name": "六合",
+      "sequence": 4,
+      "attributes": {
+        "yangDunOrder": 4,
+        "yinDunOrder": 5
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-deity-white-tiger",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_deity",
+      "code": "white-tiger",
+      "name": "白虎",
+      "sequence": 5,
+      "attributes": {
+        "yangDunOrder": 5,
+        "yinDunOrder": 4
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-deity-black-tortoise",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_deity",
+      "code": "black-tortoise",
+      "name": "玄武",
+      "sequence": 6,
+      "attributes": {
+        "yangDunOrder": 6,
+        "yinDunOrder": 3
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-deity-nine-earth",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_deity",
+      "code": "nine-earth",
+      "name": "九地",
+      "sequence": 7,
+      "attributes": {
+        "yangDunOrder": 7,
+        "yinDunOrder": 2
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-deity-nine-heaven",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_deity",
+      "code": "nine-heaven",
+      "name": "九天",
+      "sequence": 8,
+      "attributes": {
+        "yangDunOrder": 8,
+        "yinDunOrder": 1
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-stem-yi",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_stem_role",
+      "code": "yi",
+      "name": "乙",
+      "sequence": 1,
+      "attributes": {
+        "role": "three_wonders",
+        "roleName": "三奇"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-stem-bing",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_stem_role",
+      "code": "bing",
+      "name": "丙",
+      "sequence": 2,
+      "attributes": {
+        "role": "three_wonders",
+        "roleName": "三奇"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-stem-ding",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_stem_role",
+      "code": "ding",
+      "name": "丁",
+      "sequence": 3,
+      "attributes": {
+        "role": "three_wonders",
+        "roleName": "三奇"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-stem-wu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_stem_role",
+      "code": "wu",
+      "name": "戊",
+      "sequence": 4,
+      "attributes": {
+        "role": "six_instruments",
+        "roleName": "六仪"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-stem-ji",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_stem_role",
+      "code": "ji",
+      "name": "己",
+      "sequence": 5,
+      "attributes": {
+        "role": "six_instruments",
+        "roleName": "六仪"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-stem-geng",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_stem_role",
+      "code": "geng",
+      "name": "庚",
+      "sequence": 6,
+      "attributes": {
+        "role": "six_instruments",
+        "roleName": "六仪"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-stem-xin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_stem_role",
+      "code": "xin",
+      "name": "辛",
+      "sequence": 7,
+      "attributes": {
+        "role": "six_instruments",
+        "roleName": "六仪"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-stem-ren",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_stem_role",
+      "code": "ren",
+      "name": "壬",
+      "sequence": 8,
+      "attributes": {
+        "role": "six_instruments",
+        "roleName": "六仪"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-stem-gui",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_stem_role",
+      "code": "gui",
+      "name": "癸",
+      "sequence": 9,
+      "attributes": {
+        "role": "six_instruments",
+        "roleName": "六仪"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-leader-jia-zi",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_jia_leader",
+      "code": "jia-zi",
+      "name": "甲子",
+      "sequence": 1,
+      "attributes": {
+        "concealedBy": "wu"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-leader-jia-xu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_jia_leader",
+      "code": "jia-xu",
+      "name": "甲戌",
+      "sequence": 2,
+      "attributes": {
+        "concealedBy": "ji"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-leader-jia-shen",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_jia_leader",
+      "code": "jia-shen",
+      "name": "甲申",
+      "sequence": 3,
+      "attributes": {
+        "concealedBy": "geng"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-leader-jia-wu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_jia_leader",
+      "code": "jia-wu",
+      "name": "甲午",
+      "sequence": 4,
+      "attributes": {
+        "concealedBy": "xin"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-leader-jia-chen",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_jia_leader",
+      "code": "jia-chen",
+      "name": "甲辰",
+      "sequence": 5,
+      "attributes": {
+        "concealedBy": "ren"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-leader-jia-yin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_jia_leader",
+      "code": "jia-yin",
+      "name": "甲寅",
+      "sequence": 6,
+      "attributes": {
+        "concealedBy": "gui"
+      },
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-dun-yang",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_dun",
+      "code": "yang",
+      "name": "阳遁",
+      "sequence": 1,
+      "attributes": {
+        "instrumentOrder": "forward",
+        "wonderOrder": "reverse"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-dun-yin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_dun",
+      "code": "yin",
+      "name": "阴遁",
+      "sequence": 2,
+      "attributes": {
+        "instrumentOrder": "reverse",
+        "wonderOrder": "forward"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yang-1",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yang-1",
+      "name": "阳遁1局",
+      "sequence": 1,
+      "attributes": {
+        "dun": "yang",
+        "bureau": 1
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yang-2",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yang-2",
+      "name": "阳遁2局",
+      "sequence": 2,
+      "attributes": {
+        "dun": "yang",
+        "bureau": 2
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yang-3",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yang-3",
+      "name": "阳遁3局",
+      "sequence": 3,
+      "attributes": {
+        "dun": "yang",
+        "bureau": 3
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yang-4",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yang-4",
+      "name": "阳遁4局",
+      "sequence": 4,
+      "attributes": {
+        "dun": "yang",
+        "bureau": 4
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yang-5",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yang-5",
+      "name": "阳遁5局",
+      "sequence": 5,
+      "attributes": {
+        "dun": "yang",
+        "bureau": 5
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yang-6",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yang-6",
+      "name": "阳遁6局",
+      "sequence": 6,
+      "attributes": {
+        "dun": "yang",
+        "bureau": 6
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yang-7",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yang-7",
+      "name": "阳遁7局",
+      "sequence": 7,
+      "attributes": {
+        "dun": "yang",
+        "bureau": 7
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yang-8",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yang-8",
+      "name": "阳遁8局",
+      "sequence": 8,
+      "attributes": {
+        "dun": "yang",
+        "bureau": 8
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yang-9",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yang-9",
+      "name": "阳遁9局",
+      "sequence": 9,
+      "attributes": {
+        "dun": "yang",
+        "bureau": 9
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yin-1",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yin-1",
+      "name": "阴遁1局",
+      "sequence": 1,
+      "attributes": {
+        "dun": "yin",
+        "bureau": 1
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yin-2",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yin-2",
+      "name": "阴遁2局",
+      "sequence": 2,
+      "attributes": {
+        "dun": "yin",
+        "bureau": 2
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yin-3",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yin-3",
+      "name": "阴遁3局",
+      "sequence": 3,
+      "attributes": {
+        "dun": "yin",
+        "bureau": 3
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yin-4",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yin-4",
+      "name": "阴遁4局",
+      "sequence": 4,
+      "attributes": {
+        "dun": "yin",
+        "bureau": 4
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yin-5",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yin-5",
+      "name": "阴遁5局",
+      "sequence": 5,
+      "attributes": {
+        "dun": "yin",
+        "bureau": 5
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yin-6",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yin-6",
+      "name": "阴遁6局",
+      "sequence": 6,
+      "attributes": {
+        "dun": "yin",
+        "bureau": 6
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yin-7",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yin-7",
+      "name": "阴遁7局",
+      "sequence": 7,
+      "attributes": {
+        "dun": "yin",
+        "bureau": 7
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yin-8",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yin-8",
+      "name": "阴遁8局",
+      "sequence": 8,
+      "attributes": {
+        "dun": "yin",
+        "bureau": 8
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau-yin-9",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "category": "qimen_bureau",
+      "code": "yin-9",
+      "name": "阴遁9局",
+      "sequence": 9,
+      "attributes": {
+        "dun": "yin",
+        "bureau": 9
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    }
+  ],
+  "relations": [
+    {
+      "id": "qimen-palace-trigram-kan-1",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "palace_trigram",
+      "subjectCodes": [
+        "qimenPalace:kan-1"
+      ],
+      "objectCodes": [
+        "zhouyiTrigram:kan"
+      ],
+      "resultCode": null,
+      "attributes": {
+        "direction": "北",
+        "phase": "水"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-trigram-kun-2",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "palace_trigram",
+      "subjectCodes": [
+        "qimenPalace:kun-2"
+      ],
+      "objectCodes": [
+        "zhouyiTrigram:kun"
+      ],
+      "resultCode": null,
+      "attributes": {
+        "direction": "西南",
+        "phase": "土"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-trigram-zhen-3",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "palace_trigram",
+      "subjectCodes": [
+        "qimenPalace:zhen-3"
+      ],
+      "objectCodes": [
+        "zhouyiTrigram:zhen"
+      ],
+      "resultCode": null,
+      "attributes": {
+        "direction": "东",
+        "phase": "木"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-trigram-xun-4",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "palace_trigram",
+      "subjectCodes": [
+        "qimenPalace:xun-4"
+      ],
+      "objectCodes": [
+        "zhouyiTrigram:xun"
+      ],
+      "resultCode": null,
+      "attributes": {
+        "direction": "东南",
+        "phase": "木"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-trigram-qian-6",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "palace_trigram",
+      "subjectCodes": [
+        "qimenPalace:qian-6"
+      ],
+      "objectCodes": [
+        "zhouyiTrigram:qian"
+      ],
+      "resultCode": null,
+      "attributes": {
+        "direction": "西北",
+        "phase": "金"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-trigram-dui-7",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "palace_trigram",
+      "subjectCodes": [
+        "qimenPalace:dui-7"
+      ],
+      "objectCodes": [
+        "zhouyiTrigram:dui"
+      ],
+      "resultCode": null,
+      "attributes": {
+        "direction": "西",
+        "phase": "金"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-trigram-gen-8",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "palace_trigram",
+      "subjectCodes": [
+        "qimenPalace:gen-8"
+      ],
+      "objectCodes": [
+        "zhouyiTrigram:gen"
+      ],
+      "resultCode": null,
+      "attributes": {
+        "direction": "东北",
+        "phase": "土"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-trigram-li-9",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "palace_trigram",
+      "subjectCodes": [
+        "qimenPalace:li-9"
+      ],
+      "objectCodes": [
+        "zhouyiTrigram:li"
+      ],
+      "resultCode": null,
+      "attributes": {
+        "direction": "南",
+        "phase": "火"
+      },
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-base-rest",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "gate_base_palace",
+      "subjectCodes": [
+        "qimenGate:rest"
+      ],
+      "objectCodes": [
+        "qimenPalace:kan-1"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-base-death",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "gate_base_palace",
+      "subjectCodes": [
+        "qimenGate:death"
+      ],
+      "objectCodes": [
+        "qimenPalace:kun-2"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-base-injury",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "gate_base_palace",
+      "subjectCodes": [
+        "qimenGate:injury"
+      ],
+      "objectCodes": [
+        "qimenPalace:zhen-3"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-base-delusion",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "gate_base_palace",
+      "subjectCodes": [
+        "qimenGate:delusion"
+      ],
+      "objectCodes": [
+        "qimenPalace:xun-4"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-base-open",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "gate_base_palace",
+      "subjectCodes": [
+        "qimenGate:open"
+      ],
+      "objectCodes": [
+        "qimenPalace:qian-6"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-base-fear",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "gate_base_palace",
+      "subjectCodes": [
+        "qimenGate:fear"
+      ],
+      "objectCodes": [
+        "qimenPalace:dui-7"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-base-life",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "gate_base_palace",
+      "subjectCodes": [
+        "qimenGate:life"
+      ],
+      "objectCodes": [
+        "qimenPalace:gen-8"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-gate-base-scenery",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "gate_base_palace",
+      "subjectCodes": [
+        "qimenGate:scenery"
+      ],
+      "objectCodes": [
+        "qimenPalace:li-9"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-base-peng",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "star_base_palace",
+      "subjectCodes": [
+        "qimenStar:peng"
+      ],
+      "objectCodes": [
+        "qimenPalace:kan-1"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-base-rui",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "star_base_palace",
+      "subjectCodes": [
+        "qimenStar:rui"
+      ],
+      "objectCodes": [
+        "qimenPalace:kun-2"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-base-chong",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "star_base_palace",
+      "subjectCodes": [
+        "qimenStar:chong"
+      ],
+      "objectCodes": [
+        "qimenPalace:zhen-3"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-base-fu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "star_base_palace",
+      "subjectCodes": [
+        "qimenStar:fu"
+      ],
+      "objectCodes": [
+        "qimenPalace:xun-4"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-base-qin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "star_base_palace",
+      "subjectCodes": [
+        "qimenStar:qin"
+      ],
+      "objectCodes": [
+        "qimenPalace:center-5"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-base-xin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "star_base_palace",
+      "subjectCodes": [
+        "qimenStar:xin"
+      ],
+      "objectCodes": [
+        "qimenPalace:qian-6"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-base-zhu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "star_base_palace",
+      "subjectCodes": [
+        "qimenStar:zhu"
+      ],
+      "objectCodes": [
+        "qimenPalace:dui-7"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-base-ren",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "star_base_palace",
+      "subjectCodes": [
+        "qimenStar:ren"
+      ],
+      "objectCodes": [
+        "qimenPalace:gen-8"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-star-base-ying",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "star_base_palace",
+      "subjectCodes": [
+        "qimenStar:ying"
+      ],
+      "objectCodes": [
+        "qimenPalace:li-9"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-conceal-jia-zi",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "jia_concealment",
+      "subjectCodes": [
+        "qimenJia:jia-zi"
+      ],
+      "objectCodes": [
+        "qimenStem:wu"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-conceal-jia-xu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "jia_concealment",
+      "subjectCodes": [
+        "qimenJia:jia-xu"
+      ],
+      "objectCodes": [
+        "qimenStem:ji"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-conceal-jia-shen",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "jia_concealment",
+      "subjectCodes": [
+        "qimenJia:jia-shen"
+      ],
+      "objectCodes": [
+        "qimenStem:geng"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-conceal-jia-wu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "jia_concealment",
+      "subjectCodes": [
+        "qimenJia:jia-wu"
+      ],
+      "objectCodes": [
+        "qimenStem:xin"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-conceal-jia-chen",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "jia_concealment",
+      "subjectCodes": [
+        "qimenJia:jia-chen"
+      ],
+      "objectCodes": [
+        "qimenStem:ren"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-conceal-jia-yin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "system": "qimen",
+      "relationType": "jia_concealment",
+      "subjectCodes": [
+        "qimenJia:jia-yin"
+      ],
+      "objectCodes": [
+        "qimenStem:gui"
+      ],
+      "resultCode": null,
+      "attributes": {},
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    }
+  ],
+  "methodRules": [
+    {
+      "id": "qimen-method-scope",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 1,
+      "code": "method_scope",
+      "title": "固定排盘口径",
+      "rule": {
+        "required": true,
+        "engineMayChooseSilently": false,
+        "proposedMethod": "hourly_rotating_qimen"
+      },
+      "explanation": "同一时刻必须使用同一套时家奇门口径；拆补、置闰等方法不得混算，方法与版本必须随盘保存。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-time-input",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 2,
+      "code": "time_input",
+      "title": "确定时间与时区",
+      "rule": {
+        "requiredFields": [
+          "localDateTime",
+          "timezone"
+        ],
+        "defaultTimezone": "Asia/Shanghai",
+        "rejectUnknownTime": true
+      },
+      "explanation": "时家奇门以具体时辰排盘；时间不确定时不能自动补猜，也不能输出伪精确盘。",
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-solar-term",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 3,
+      "code": "solar_term",
+      "title": "确定节气",
+      "rule": {
+        "useExactInstant": true,
+        "nearBoundaryRequiresReview": true
+      },
+      "explanation": "节气交接影响阴阳遁和局数。交节附近须按北京时间的具体时刻复核。",
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-yin-yang-dun",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 4,
+      "code": "yin_yang_dun",
+      "title": "区分阴遁与阳遁",
+      "rule": {
+        "yangFrom": "winter_solstice",
+        "yinFrom": "summer_solstice",
+        "detailedBoundaryDependsOnMethod": true
+      },
+      "explanation": "冬至、夏至是阴阳遁转换的基本界线；实际起局仍须服从已选定的方法版本。",
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-three-yuan",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 5,
+      "code": "three_yuan",
+      "title": "确定上中下元",
+      "rule": {
+        "values": [
+          "upper",
+          "middle",
+          "lower"
+        ],
+        "requiresVerifiedAlgorithm": true
+      },
+      "explanation": "上、中、下元与局数相连。第一版知识库只保存结构，不在算法未核验前自动推盘。",
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-bureau",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 6,
+      "code": "bureau",
+      "title": "确定遁局",
+      "rule": {
+        "values": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "requires": [
+          "methodVersion",
+          "solarTerm",
+          "yuan",
+          "dun"
+        ]
+      },
+      "explanation": "阴遁九局、阳遁九局共十八局；局数必须能回溯到节气、元和排盘方法。",
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-earth-plate",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 7,
+      "code": "earth_plate",
+      "title": "布地盘三奇六仪",
+      "rule": {
+        "layers": [
+          "three_wonders",
+          "six_instruments"
+        ],
+        "centerHandlingMustBeVersioned": true
+      },
+      "explanation": "依阴阳遁、局数布三奇六仪；中五宫寄宫方式存在口径差异，必须显式记录。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-chief-envoy",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 8,
+      "code": "chief_and_envoy",
+      "title": "取值符值使",
+      "rule": {
+        "chief": "star_of_xun_leader",
+        "envoy": "gate_of_xun_leader",
+        "rotateByHour": true
+      },
+      "explanation": "以旬首确定值符和值使，再随时干、时支定位；不可只凭名称直接判断结果。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-heaven-plate",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 9,
+      "code": "heaven_plate",
+      "title": "布九星天盘",
+      "rule": {
+        "entities": "qimen_star",
+        "requires": [
+          "chief",
+          "hourStem"
+        ]
+      },
+      "explanation": "九星为盘面天时层，须结合所落宫、旺衰及其他层共同阅读。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-human-plate",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 10,
+      "code": "human_plate",
+      "title": "布八门人盘",
+      "rule": {
+        "entities": "qimen_gate",
+        "requires": [
+          "envoy",
+          "hourBranch"
+        ]
+      },
+      "explanation": "八门为用事层；门的传统分类不能脱离所落宫和事项直接变成现实吉凶。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-deity-plate",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 11,
+      "code": "deity_plate",
+      "title": "布八神",
+      "rule": {
+        "entities": "qimen_deity",
+        "orderDependsOnDun": true
+      },
+      "explanation": "八神依值符起布并区分阴阳顺逆，只作为盘面象义层，不作神秘力量的事实声明。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-layer-reading",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 12,
+      "code": "layer_reading",
+      "title": "分层合参",
+      "rule": {
+        "order": [
+          "palace",
+          "gate",
+          "star",
+          "deity",
+          "heavenStem",
+          "earthStem"
+        ],
+        "includeFivePhaseRelations": true
+      },
+      "explanation": "解释必须展示宫、门、星、神和干的组合依据；禁止只给一个好坏标签。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-safety-boundary",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "method": "qimen_hourly_rotating",
+      "step": 13,
+      "code": "safety_boundary",
+      "title": "产品解释边界",
+      "rule": {
+        "forbiddenDomains": [
+          "medicalDiagnosis",
+          "legalOutcome",
+          "investmentReturn",
+          "disaster",
+          "death",
+          "marriageOutcome"
+        ],
+        "noFearMarketing": true
+      },
+      "explanation": "奇门内容只作传统文化的时空结构参考，不预测疾病、灾难、死亡、投资收益或关系结局。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    }
+  ],
+  "interpretations": [
+    {
+      "id": "qimen-interpretation-qimen_gate-rest",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_gate",
+      "code": "rest",
+      "title": "休门",
+      "summary": "传统象义偏向休整、会合与从容安排。",
+      "detail": "传统象义偏向休整、会合与从容安排。解释时须同时查看所落宫、五行关系和具体事项，不能把门名直接翻译成结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_gate-death",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_gate",
+      "code": "death",
+      "title": "死门",
+      "summary": "传统象义偏向终止、收束与静止状态。",
+      "detail": "传统象义偏向终止、收束与静止状态。解释时须同时查看所落宫、五行关系和具体事项，不能把门名直接翻译成结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_gate-injury",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_gate",
+      "code": "injury",
+      "title": "伤门",
+      "summary": "传统象义偏向竞争、损耗与外在冲击。",
+      "detail": "传统象义偏向竞争、损耗与外在冲击。解释时须同时查看所落宫、五行关系和具体事项，不能把门名直接翻译成结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_gate-delusion",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_gate",
+      "code": "delusion",
+      "title": "杜门",
+      "summary": "传统象义偏向闭藏、保密与阻隔。",
+      "detail": "传统象义偏向闭藏、保密与阻隔。解释时须同时查看所落宫、五行关系和具体事项，不能把门名直接翻译成结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_gate-open",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_gate",
+      "code": "open",
+      "title": "开门",
+      "summary": "传统象义偏向开启、公开与通达。",
+      "detail": "传统象义偏向开启、公开与通达。解释时须同时查看所落宫、五行关系和具体事项，不能把门名直接翻译成结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_gate-fear",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_gate",
+      "code": "fear",
+      "title": "惊门",
+      "summary": "传统象义偏向声息、警觉与突发扰动。",
+      "detail": "传统象义偏向声息、警觉与突发扰动。解释时须同时查看所落宫、五行关系和具体事项，不能把门名直接翻译成结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_gate-life",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_gate",
+      "code": "life",
+      "title": "生门",
+      "summary": "传统象义偏向生发、经营与资源增长。",
+      "detail": "传统象义偏向生发、经营与资源增长。解释时须同时查看所落宫、五行关系和具体事项，不能把门名直接翻译成结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_gate-scenery",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_gate",
+      "code": "scenery",
+      "title": "景门",
+      "summary": "传统象义偏向呈现、文书与可见度。",
+      "detail": "传统象义偏向呈现、文书与可见度。解释时须同时查看所落宫、五行关系和具体事项，不能把门名直接翻译成结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_star-peng",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_star",
+      "code": "peng",
+      "title": "天蓬星",
+      "summary": "传统象义偏向流动、冒险与水势。",
+      "detail": "传统象义偏向流动、冒险与水势。九星属于盘面天时层，单独出现不足以判断现实事件。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_star-rui",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_star",
+      "code": "rui",
+      "title": "天芮星",
+      "summary": "传统象义偏向承载、问题与修整。",
+      "detail": "传统象义偏向承载、问题与修整。九星属于盘面天时层，单独出现不足以判断现实事件。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_star-chong",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_star",
+      "code": "chong",
+      "title": "天冲星",
+      "summary": "传统象义偏向启动、速度与冲击。",
+      "detail": "传统象义偏向启动、速度与冲击。九星属于盘面天时层，单独出现不足以判断现实事件。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_star-fu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_star",
+      "code": "fu",
+      "title": "天辅星",
+      "summary": "传统象义偏向辅佐、学习与条理。",
+      "detail": "传统象义偏向辅佐、学习与条理。九星属于盘面天时层，单独出现不足以判断现实事件。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_star-qin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_star",
+      "code": "qin",
+      "title": "天禽星",
+      "summary": "传统象义偏向中正、统摄与承接。",
+      "detail": "传统象义偏向中正、统摄与承接。九星属于盘面天时层，单独出现不足以判断现实事件。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_star-xin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_star",
+      "code": "xin",
+      "title": "天心星",
+      "summary": "传统象义偏向判断、治理与精密。",
+      "detail": "传统象义偏向判断、治理与精密。九星属于盘面天时层，单独出现不足以判断现实事件。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_star-zhu",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_star",
+      "code": "zhu",
+      "title": "天柱星",
+      "summary": "传统象义偏向言说、阻隔与支撑。",
+      "detail": "传统象义偏向言说、阻隔与支撑。九星属于盘面天时层，单独出现不足以判断现实事件。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_star-ren",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_star",
+      "code": "ren",
+      "title": "天任星",
+      "summary": "传统象义偏向承担、稳定与持续。",
+      "detail": "传统象义偏向承担、稳定与持续。九星属于盘面天时层，单独出现不足以判断现实事件。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_star-ying",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_star",
+      "code": "ying",
+      "title": "天英星",
+      "summary": "传统象义偏向光显、名声与表现。",
+      "detail": "传统象义偏向光显、名声与表现。九星属于盘面天时层，单独出现不足以判断现实事件。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_deity-chief",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_deity",
+      "code": "chief",
+      "title": "值符",
+      "summary": "作为八神之首，传统象义偏向主导、权柄与核心位置。",
+      "detail": "作为八神之首，传统象义偏向主导、权柄与核心位置。八神只作传统象义标记，不应描述成可验证的超自然力量。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_deity-snake",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_deity",
+      "code": "snake",
+      "title": "腾蛇",
+      "summary": "传统象义偏向缠绕、反复与虚实难辨。",
+      "detail": "传统象义偏向缠绕、反复与虚实难辨。八神只作传统象义标记，不应描述成可验证的超自然力量。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_deity-great-yin",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_deity",
+      "code": "great-yin",
+      "title": "太阴",
+      "summary": "传统象义偏向隐密、细致与内在助力。",
+      "detail": "传统象义偏向隐密、细致与内在助力。八神只作传统象义标记，不应描述成可验证的超自然力量。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_deity-harmony",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_deity",
+      "code": "harmony",
+      "title": "六合",
+      "summary": "传统象义偏向连接、协同与关系往来。",
+      "detail": "传统象义偏向连接、协同与关系往来。八神只作传统象义标记，不应描述成可验证的超自然力量。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_deity-white-tiger",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_deity",
+      "code": "white-tiger",
+      "title": "白虎",
+      "summary": "传统象义偏向刚烈、压力与损伤信号。",
+      "detail": "传统象义偏向刚烈、压力与损伤信号。八神只作传统象义标记，不应描述成可验证的超自然力量。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_deity-black-tortoise",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_deity",
+      "code": "black-tortoise",
+      "title": "玄武",
+      "summary": "传统象义偏向隐伏、流动与信息不明。",
+      "detail": "传统象义偏向隐伏、流动与信息不明。八神只作传统象义标记，不应描述成可验证的超自然力量。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_deity-nine-earth",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_deity",
+      "code": "nine-earth",
+      "title": "九地",
+      "summary": "传统象义偏向下沉、稳守与落地。",
+      "detail": "传统象义偏向下沉、稳守与落地。八神只作传统象义标记，不应描述成可验证的超自然力量。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_deity-nine-heaven",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_deity",
+      "code": "nine-heaven",
+      "title": "九天",
+      "summary": "传统象义偏向上扬、扩展与远行。",
+      "detail": "传统象义偏向上扬、扩展与远行。八神只作传统象义标记，不应描述成可验证的超自然力量。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_palace-kan-1",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_palace",
+      "code": "kan-1",
+      "title": "坎一宫",
+      "summary": "坎一宫位于北方，五行属水，配坎卦。",
+      "detail": "九宫是定位盘面各层的空间骨架；宫位本身不等同于现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_palace-kun-2",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_palace",
+      "code": "kun-2",
+      "title": "坤二宫",
+      "summary": "坤二宫位于西南方，五行属土，配坤卦。",
+      "detail": "九宫是定位盘面各层的空间骨架；宫位本身不等同于现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_palace-zhen-3",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_palace",
+      "code": "zhen-3",
+      "title": "震三宫",
+      "summary": "震三宫位于东方，五行属木，配震卦。",
+      "detail": "九宫是定位盘面各层的空间骨架；宫位本身不等同于现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_palace-xun-4",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_palace",
+      "code": "xun-4",
+      "title": "巽四宫",
+      "summary": "巽四宫位于东南方，五行属木，配巽卦。",
+      "detail": "九宫是定位盘面各层的空间骨架；宫位本身不等同于现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_palace-center-5",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_palace",
+      "code": "center-5",
+      "title": "中五宫",
+      "summary": "中五宫位于中方，五行属土。",
+      "detail": "九宫是定位盘面各层的空间骨架；宫位本身不等同于现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_palace-qian-6",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_palace",
+      "code": "qian-6",
+      "title": "乾六宫",
+      "summary": "乾六宫位于西北方，五行属金，配乾卦。",
+      "detail": "九宫是定位盘面各层的空间骨架；宫位本身不等同于现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_palace-dui-7",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_palace",
+      "code": "dui-7",
+      "title": "兑七宫",
+      "summary": "兑七宫位于西方，五行属金，配兑卦。",
+      "detail": "九宫是定位盘面各层的空间骨架；宫位本身不等同于现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_palace-gen-8",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_palace",
+      "code": "gen-8",
+      "title": "艮八宫",
+      "summary": "艮八宫位于东北方，五行属土，配艮卦。",
+      "detail": "九宫是定位盘面各层的空间骨架；宫位本身不等同于现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_palace-li-9",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_palace",
+      "code": "li-9",
+      "title": "离九宫",
+      "summary": "离九宫位于南方，五行属火，配离卦。",
+      "detail": "九宫是定位盘面各层的空间骨架；宫位本身不等同于现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷二",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=491157&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_boundary-method_version",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_boundary",
+      "code": "method_version",
+      "title": "排盘口径",
+      "summary": "每张盘必须展示方法与版本。",
+      "detail": "拆补、置闰、转盘、飞盘等口径不可混用；算法未核验时只展示知识结构，不生成盘局。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_boundary-time_precision",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_boundary",
+      "code": "time_precision",
+      "title": "时间精度",
+      "summary": "时家奇门需要明确日期、时辰与时区。",
+      "detail": "时间不确定或位于交节附近时，应提示补充或复核，不得自动猜测。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_boundary-safe_use",
+      "version": "2026-07-20.qimen-foundation-v1",
+      "category": "qimen_boundary",
+      "code": "safe_use",
+      "title": "使用边界",
+      "summary": "用于比较传统时空结构，不保证现实结果。",
+      "detail": "不得用于医疗诊断、法律结论、投资收益、死亡灾难或婚姻结果预测，也不得以恐惧推动付费。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    }
+  ]
+}

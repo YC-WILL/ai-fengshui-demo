@@ -17,8 +17,10 @@
     "db:seed:theory": "tsx prisma/seed-theory.ts",
     "db:seed:zhouyi": "tsx prisma/seed-zhouyi.ts",
     "db:seed:traditional-calendar": "tsx prisma/seed-traditional-calendar.ts",
+    "db:seed:qimen": "tsx prisma/seed-qimen.ts",
     "data:zhouyi": "node scripts/fetch-zhouyi-canon.mjs",
     "data:traditional-calendar": "node scripts/build-traditional-calendar-catalog.mjs",
+    "data:qimen": "node scripts/build-qimen-catalog.mjs",
     "setup": "npm install && npm run db:generate && npm run db:push && npm run db:seed"
   },
   "prisma": {
