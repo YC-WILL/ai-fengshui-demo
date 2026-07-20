@@ -71,12 +71,39 @@ export function BirthProfileForm({
   onSaved?: (payload: Payload) => void;
   context?: "onboarding" | "profile";
 }) {
-  const [birthDate, setBirthDate] = useState(initial?.birthDate ?? "");
+  const initialDateParts = (initial?.birthDate ?? "").split("-");
+  const [birthYear, setBirthYear] = useState(initialDateParts[0] ?? "");
+  const [birthMonth, setBirthMonth] = useState(initialDateParts[1] ?? "");
+  const [birthDay, setBirthDay] = useState(initialDateParts[2] ?? "");
   const [birthTime, setBirthTime] = useState(initial?.birthTime ?? "");
   const [unknownTime, setUnknownTime] = useState(initial?.unknownTime ?? false);
   const [birthLocation, setBirthLocation] = useState(initial?.birthLocation ?? "");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const birthDate = birthYear && birthMonth && birthDay ? `${birthYear}-${birthMonth}-${birthDay}` : "";
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1899 }, (_, index) => String(currentYear - index));
+  const months = Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, "0"));
+  const maximumDay = birthYear && birthMonth
+    ? new Date(Number(birthYear), Number(birthMonth), 0).getDate()
+    : 31;
+  const days = Array.from({ length: maximumDay }, (_, index) => String(index + 1).padStart(2, "0"));
+
+  function changeYear(value: string) {
+    setBirthYear(value);
+    clampDay(value, birthMonth);
+  }
+
+  function changeMonth(value: string) {
+    setBirthMonth(value);
+    clampDay(birthYear, value);
+  }
+
+  function clampDay(year: string, month: string) {
+    if (!year || !month || !birthDay) return;
+    const lastDay = new Date(Number(year), Number(month), 0).getDate();
+    if (Number(birthDay) > lastDay) setBirthDay(String(lastDay).padStart(2, "0"));
+  }
 
   async function save() {
     setBusy(true);
@@ -110,10 +137,23 @@ export function BirthProfileForm({
         </p>
       </div>
       <div className="grid gap-5 px-6 py-6 md:grid-cols-2 md:px-8">
-        <label>
-          <span className="field-label">出生日期（公历）</span>
-          <input className="field-input" type="date" value={birthDate} max={new Date().toISOString().slice(0, 10)} onChange={event => setBirthDate(event.target.value)} />
-        </label>
+        <fieldset>
+          <legend className="field-label">出生日期（公历）</legend>
+          <div className="grid grid-cols-[1.35fr_1fr_1fr] gap-2">
+            <select className="field-input" aria-label="出生年份" value={birthYear} onChange={event => changeYear(event.target.value)}>
+              <option value="">年</option>
+              {years.map(year => <option key={year} value={year}>{year} 年</option>)}
+            </select>
+            <select className="field-input" aria-label="出生月份" value={birthMonth} onChange={event => changeMonth(event.target.value)}>
+              <option value="">月</option>
+              {months.map(month => <option key={month} value={month}>{Number(month)} 月</option>)}
+            </select>
+            <select className="field-input" aria-label="出生日期" value={birthDay} onChange={event => setBirthDay(event.target.value)}>
+              <option value="">日</option>
+              {days.map(day => <option key={day} value={day}>{Number(day)} 日</option>)}
+            </select>
+          </div>
+        </fieldset>
         <div>
           <label className="field-label" htmlFor="correspondence-birth-time">出生时间</label>
           <div className="flex items-center gap-3">
