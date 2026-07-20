@@ -20,11 +20,23 @@ export default function CoreMethodGrid({ today }: { today: string }) {
   const [range, setRange] = useState<7 | 30>(30);
 
   useEffect(() => {
+    void refreshBirthDate();
+  }, []);
+
+  function refreshBirthDate() {
+    return (
     fetch("/api/today-correspondence", { cache: "no-store" })
       .then(response => response.json())
       .then(body => setBirthDate(body?.data?.profile?.birthDate ?? null))
-      .catch(() => setBirthDate(null));
-  }, []);
+      .catch(() => setBirthDate(null))
+    );
+  }
+
+  function toggleTool(tool: Tool) {
+    const next = active === tool ? null : tool;
+    setActive(next);
+    if (next) void refreshBirthDate();
+  }
 
   const pair = useMemo(() => birthDate && otherBirthDate
     ? buildPairStructure(birthDate, otherBirthDate)
@@ -41,9 +53,9 @@ export default function CoreMethodGrid({ today }: { today: string }) {
         <span className="text-[11px] text-ink/45">选择后在本页展开</span>
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
-        <MethodButton active={active === "pair"} title="两人合参" subtitle="日柱 · 五行 · 合冲" onClick={() => setActive(active === "pair" ? null : "pair")} />
-        <MethodButton active={active === "home"} title="宅居方位" subtitle="八方 · 八卦 · 五行" onClick={() => setActive(active === "home" ? null : "home")} />
-        <MethodButton active={active === "date"} title="近事择时" subtitle="事项 · 日期 · 生辰" onClick={() => setActive(active === "date" ? null : "date")} />
+        <MethodButton active={active === "pair"} title="两人合参" subtitle="日柱 · 五行 · 合冲" onClick={() => toggleTool("pair")} />
+        <MethodButton active={active === "home"} title="宅居方位" subtitle="八方 · 八卦 · 五行" onClick={() => toggleTool("home")} />
+        <MethodButton active={active === "date"} title="近事择时" subtitle="事项 · 日期 · 生辰" onClick={() => toggleTool("date")} />
       </div>
 
       {active && (
