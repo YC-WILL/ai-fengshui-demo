@@ -1,6 +1,6 @@
 {
-  "version": "2026-07-20.qimen-foundation-v1",
-  "scope": "Qimen Dunjia foundational entities, relations, method boundaries and interpretations",
+  "version": "2026-07-20.qimen-foundation-v2",
+  "scope": "Qimen Dunjia foundational entities, solar-term bureau mappings, structural patterns, method boundaries and interpretations",
   "sources": [
     {
       "title": "《奇门遁甲统宗》",
@@ -15,6 +15,10 @@
       "url": "https://ctext.org/wiki.pl?chapter=491157&if=gb"
     },
     {
+      "title": "《奇门旨归》卷一",
+      "url": "https://ctext.org/wiki.pl?chapter=360446&if=gb"
+    },
+    {
       "title": "《奇门宝鉴御定》",
       "url": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定"
     }
@@ -22,7 +26,7 @@
   "entities": [
     {
       "id": "qimen-palace-kan-1",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_palace",
       "code": "kan-1",
@@ -44,7 +48,7 @@
     },
     {
       "id": "qimen-palace-kun-2",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_palace",
       "code": "kun-2",
@@ -66,7 +70,7 @@
     },
     {
       "id": "qimen-palace-zhen-3",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_palace",
       "code": "zhen-3",
@@ -88,7 +92,7 @@
     },
     {
       "id": "qimen-palace-xun-4",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_palace",
       "code": "xun-4",
@@ -110,7 +114,7 @@
     },
     {
       "id": "qimen-palace-center-5",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_palace",
       "code": "center-5",
@@ -132,7 +136,7 @@
     },
     {
       "id": "qimen-palace-qian-6",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_palace",
       "code": "qian-6",
@@ -154,7 +158,7 @@
     },
     {
       "id": "qimen-palace-dui-7",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_palace",
       "code": "dui-7",
@@ -176,7 +180,7 @@
     },
     {
       "id": "qimen-palace-gen-8",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_palace",
       "code": "gen-8",
@@ -198,7 +202,7 @@
     },
     {
       "id": "qimen-palace-li-9",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_palace",
       "code": "li-9",
@@ -220,7 +224,7 @@
     },
     {
       "id": "qimen-gate-rest",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_gate",
       "code": "rest",
@@ -237,7 +241,7 @@
     },
     {
       "id": "qimen-gate-death",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_gate",
       "code": "death",
@@ -254,7 +258,7 @@
     },
     {
       "id": "qimen-gate-injury",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_gate",
       "code": "injury",
@@ -271,7 +275,7 @@
     },
     {
       "id": "qimen-gate-delusion",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_gate",
       "code": "delusion",
@@ -288,7 +292,7 @@
     },
     {
       "id": "qimen-gate-open",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_gate",
       "code": "open",
@@ -305,7 +309,7 @@
     },
     {
       "id": "qimen-gate-fear",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_gate",
       "code": "fear",
@@ -322,7 +326,7 @@
     },
     {
       "id": "qimen-gate-life",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_gate",
       "code": "life",
@@ -339,7 +343,7 @@
     },
     {
       "id": "qimen-gate-scenery",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_gate",
       "code": "scenery",
@@ -356,7 +360,7 @@
     },
     {
       "id": "qimen-star-peng",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_star",
       "code": "peng",
@@ -372,7 +376,7 @@
     },
     {
       "id": "qimen-star-rui",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_star",
       "code": "rui",
@@ -388,7 +392,7 @@
     },
     {
       "id": "qimen-star-chong",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_star",
       "code": "chong",
@@ -404,7 +408,7 @@
     },
     {
       "id": "qimen-star-fu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_star",
       "code": "fu",
@@ -420,7 +424,7 @@
     },
     {
       "id": "qimen-star-qin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_star",
       "code": "qin",
@@ -436,7 +440,7 @@
     },
     {
       "id": "qimen-star-xin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_star",
       "code": "xin",
@@ -452,7 +456,7 @@
     },
     {
       "id": "qimen-star-zhu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_star",
       "code": "zhu",
@@ -468,7 +472,7 @@
     },
     {
       "id": "qimen-star-ren",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_star",
       "code": "ren",
@@ -484,7 +488,7 @@
     },
     {
       "id": "qimen-star-ying",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_star",
       "code": "ying",
@@ -500,7 +504,7 @@
     },
     {
       "id": "qimen-deity-chief",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_deity",
       "code": "chief",
@@ -516,7 +520,7 @@
     },
     {
       "id": "qimen-deity-snake",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_deity",
       "code": "snake",
@@ -532,7 +536,7 @@
     },
     {
       "id": "qimen-deity-great-yin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_deity",
       "code": "great-yin",
@@ -548,7 +552,7 @@
     },
     {
       "id": "qimen-deity-harmony",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_deity",
       "code": "harmony",
@@ -564,7 +568,7 @@
     },
     {
       "id": "qimen-deity-white-tiger",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_deity",
       "code": "white-tiger",
@@ -580,7 +584,7 @@
     },
     {
       "id": "qimen-deity-black-tortoise",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_deity",
       "code": "black-tortoise",
@@ -596,7 +600,7 @@
     },
     {
       "id": "qimen-deity-nine-earth",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_deity",
       "code": "nine-earth",
@@ -612,7 +616,7 @@
     },
     {
       "id": "qimen-deity-nine-heaven",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_deity",
       "code": "nine-heaven",
@@ -628,7 +632,7 @@
     },
     {
       "id": "qimen-stem-yi",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_stem_role",
       "code": "yi",
@@ -644,7 +648,7 @@
     },
     {
       "id": "qimen-stem-bing",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_stem_role",
       "code": "bing",
@@ -660,7 +664,7 @@
     },
     {
       "id": "qimen-stem-ding",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_stem_role",
       "code": "ding",
@@ -676,7 +680,7 @@
     },
     {
       "id": "qimen-stem-wu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_stem_role",
       "code": "wu",
@@ -692,7 +696,7 @@
     },
     {
       "id": "qimen-stem-ji",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_stem_role",
       "code": "ji",
@@ -708,7 +712,7 @@
     },
     {
       "id": "qimen-stem-geng",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_stem_role",
       "code": "geng",
@@ -724,7 +728,7 @@
     },
     {
       "id": "qimen-stem-xin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_stem_role",
       "code": "xin",
@@ -740,7 +744,7 @@
     },
     {
       "id": "qimen-stem-ren",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_stem_role",
       "code": "ren",
@@ -756,7 +760,7 @@
     },
     {
       "id": "qimen-stem-gui",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_stem_role",
       "code": "gui",
@@ -772,7 +776,7 @@
     },
     {
       "id": "qimen-leader-jia-zi",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_jia_leader",
       "code": "jia-zi",
@@ -787,7 +791,7 @@
     },
     {
       "id": "qimen-leader-jia-xu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_jia_leader",
       "code": "jia-xu",
@@ -802,7 +806,7 @@
     },
     {
       "id": "qimen-leader-jia-shen",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_jia_leader",
       "code": "jia-shen",
@@ -817,7 +821,7 @@
     },
     {
       "id": "qimen-leader-jia-wu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_jia_leader",
       "code": "jia-wu",
@@ -832,7 +836,7 @@
     },
     {
       "id": "qimen-leader-jia-chen",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_jia_leader",
       "code": "jia-chen",
@@ -847,7 +851,7 @@
     },
     {
       "id": "qimen-leader-jia-yin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_jia_leader",
       "code": "jia-yin",
@@ -861,8 +865,56 @@
       "isActive": true
     },
     {
+      "id": "qimen-yuan-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "category": "qimen_yuan",
+      "code": "upper",
+      "name": "上元",
+      "sequence": 1,
+      "attributes": {
+        "order": 1,
+        "durationDays": 5
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-yuan-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "category": "qimen_yuan",
+      "code": "middle",
+      "name": "中元",
+      "sequence": 2,
+      "attributes": {
+        "order": 2,
+        "durationDays": 5
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-yuan-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "category": "qimen_yuan",
+      "code": "lower",
+      "name": "下元",
+      "sequence": 3,
+      "attributes": {
+        "order": 3,
+        "durationDays": 5
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
       "id": "qimen-dun-yang",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_dun",
       "code": "yang",
@@ -878,7 +930,7 @@
     },
     {
       "id": "qimen-dun-yin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_dun",
       "code": "yin",
@@ -894,7 +946,7 @@
     },
     {
       "id": "qimen-bureau-yang-1",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yang-1",
@@ -910,7 +962,7 @@
     },
     {
       "id": "qimen-bureau-yang-2",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yang-2",
@@ -926,7 +978,7 @@
     },
     {
       "id": "qimen-bureau-yang-3",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yang-3",
@@ -942,7 +994,7 @@
     },
     {
       "id": "qimen-bureau-yang-4",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yang-4",
@@ -958,7 +1010,7 @@
     },
     {
       "id": "qimen-bureau-yang-5",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yang-5",
@@ -974,7 +1026,7 @@
     },
     {
       "id": "qimen-bureau-yang-6",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yang-6",
@@ -990,7 +1042,7 @@
     },
     {
       "id": "qimen-bureau-yang-7",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yang-7",
@@ -1006,7 +1058,7 @@
     },
     {
       "id": "qimen-bureau-yang-8",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yang-8",
@@ -1022,7 +1074,7 @@
     },
     {
       "id": "qimen-bureau-yang-9",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yang-9",
@@ -1038,7 +1090,7 @@
     },
     {
       "id": "qimen-bureau-yin-1",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yin-1",
@@ -1054,7 +1106,7 @@
     },
     {
       "id": "qimen-bureau-yin-2",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yin-2",
@@ -1070,7 +1122,7 @@
     },
     {
       "id": "qimen-bureau-yin-3",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yin-3",
@@ -1086,7 +1138,7 @@
     },
     {
       "id": "qimen-bureau-yin-4",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yin-4",
@@ -1102,7 +1154,7 @@
     },
     {
       "id": "qimen-bureau-yin-5",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yin-5",
@@ -1118,7 +1170,7 @@
     },
     {
       "id": "qimen-bureau-yin-6",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yin-6",
@@ -1134,7 +1186,7 @@
     },
     {
       "id": "qimen-bureau-yin-7",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yin-7",
@@ -1150,7 +1202,7 @@
     },
     {
       "id": "qimen-bureau-yin-8",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yin-8",
@@ -1166,7 +1218,7 @@
     },
     {
       "id": "qimen-bureau-yin-9",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "category": "qimen_bureau",
       "code": "yin-9",
@@ -1179,12 +1231,112 @@
       "sourceTitle": "《奇门遁甲统宗》卷一",
       "sourceUrl": "https://ctext.org/wiki.pl?chapter=666094&if=gb",
       "isActive": true
+    },
+    {
+      "id": "qimen-pattern-gate-fuyin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "category": "qimen_pattern",
+      "code": "gate-fuyin",
+      "name": "八门伏吟",
+      "sequence": 1,
+      "attributes": {
+        "detection": {
+          "layer": "gate",
+          "condition": "destinationPalaceEqualsBasePalace"
+        },
+        "requiresCompletePlate": true,
+        "standaloneVerdictForbidden": true
+      },
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-pattern-gate-fanyin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "category": "qimen_pattern",
+      "code": "gate-fanyin",
+      "name": "八门反吟",
+      "sequence": 2,
+      "attributes": {
+        "detection": {
+          "layer": "gate",
+          "condition": "destinationPalaceEqualsOppositeOfBasePalace"
+        },
+        "requiresCompletePlate": true,
+        "standaloneVerdictForbidden": true
+      },
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-pattern-star-fuyin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "category": "qimen_pattern",
+      "code": "star-fuyin",
+      "name": "九星伏吟",
+      "sequence": 3,
+      "attributes": {
+        "detection": {
+          "layer": "star",
+          "condition": "destinationPalaceEqualsBasePalace"
+        },
+        "requiresCompletePlate": true,
+        "standaloneVerdictForbidden": true
+      },
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-pattern-star-fanyin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "category": "qimen_pattern",
+      "code": "star-fanyin",
+      "name": "九星反吟",
+      "sequence": 4,
+      "attributes": {
+        "detection": {
+          "layer": "star",
+          "condition": "destinationPalaceEqualsOppositeOfBasePalace"
+        },
+        "requiresCompletePlate": true,
+        "standaloneVerdictForbidden": true
+      },
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-pattern-gate-pressure",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "category": "qimen_pattern",
+      "code": "gate-pressure",
+      "name": "门迫",
+      "sequence": 5,
+      "attributes": {
+        "detection": {
+          "layer": "gate_palace",
+          "condition": "gatePhaseControlsPalacePhase"
+        },
+        "requiresCompletePlate": true,
+        "standaloneVerdictForbidden": true
+      },
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
     }
   ],
   "relations": [
     {
       "id": "qimen-palace-trigram-kan-1",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "palace_trigram",
       "subjectCodes": [
@@ -1204,7 +1356,7 @@
     },
     {
       "id": "qimen-palace-trigram-kun-2",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "palace_trigram",
       "subjectCodes": [
@@ -1224,7 +1376,7 @@
     },
     {
       "id": "qimen-palace-trigram-zhen-3",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "palace_trigram",
       "subjectCodes": [
@@ -1244,7 +1396,7 @@
     },
     {
       "id": "qimen-palace-trigram-xun-4",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "palace_trigram",
       "subjectCodes": [
@@ -1264,7 +1416,7 @@
     },
     {
       "id": "qimen-palace-trigram-qian-6",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "palace_trigram",
       "subjectCodes": [
@@ -1284,7 +1436,7 @@
     },
     {
       "id": "qimen-palace-trigram-dui-7",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "palace_trigram",
       "subjectCodes": [
@@ -1304,7 +1456,7 @@
     },
     {
       "id": "qimen-palace-trigram-gen-8",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "palace_trigram",
       "subjectCodes": [
@@ -1324,7 +1476,7 @@
     },
     {
       "id": "qimen-palace-trigram-li-9",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "palace_trigram",
       "subjectCodes": [
@@ -1344,7 +1496,7 @@
     },
     {
       "id": "qimen-gate-base-rest",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "gate_base_palace",
       "subjectCodes": [
@@ -1361,7 +1513,7 @@
     },
     {
       "id": "qimen-gate-base-death",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "gate_base_palace",
       "subjectCodes": [
@@ -1378,7 +1530,7 @@
     },
     {
       "id": "qimen-gate-base-injury",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "gate_base_palace",
       "subjectCodes": [
@@ -1395,7 +1547,7 @@
     },
     {
       "id": "qimen-gate-base-delusion",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "gate_base_palace",
       "subjectCodes": [
@@ -1412,7 +1564,7 @@
     },
     {
       "id": "qimen-gate-base-open",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "gate_base_palace",
       "subjectCodes": [
@@ -1429,7 +1581,7 @@
     },
     {
       "id": "qimen-gate-base-fear",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "gate_base_palace",
       "subjectCodes": [
@@ -1446,7 +1598,7 @@
     },
     {
       "id": "qimen-gate-base-life",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "gate_base_palace",
       "subjectCodes": [
@@ -1463,7 +1615,7 @@
     },
     {
       "id": "qimen-gate-base-scenery",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "gate_base_palace",
       "subjectCodes": [
@@ -1480,7 +1632,7 @@
     },
     {
       "id": "qimen-star-base-peng",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "star_base_palace",
       "subjectCodes": [
@@ -1497,7 +1649,7 @@
     },
     {
       "id": "qimen-star-base-rui",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "star_base_palace",
       "subjectCodes": [
@@ -1514,7 +1666,7 @@
     },
     {
       "id": "qimen-star-base-chong",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "star_base_palace",
       "subjectCodes": [
@@ -1531,7 +1683,7 @@
     },
     {
       "id": "qimen-star-base-fu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "star_base_palace",
       "subjectCodes": [
@@ -1548,7 +1700,7 @@
     },
     {
       "id": "qimen-star-base-qin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "star_base_palace",
       "subjectCodes": [
@@ -1565,7 +1717,7 @@
     },
     {
       "id": "qimen-star-base-xin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "star_base_palace",
       "subjectCodes": [
@@ -1582,7 +1734,7 @@
     },
     {
       "id": "qimen-star-base-zhu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "star_base_palace",
       "subjectCodes": [
@@ -1599,7 +1751,7 @@
     },
     {
       "id": "qimen-star-base-ren",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "star_base_palace",
       "subjectCodes": [
@@ -1616,7 +1768,7 @@
     },
     {
       "id": "qimen-star-base-ying",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "star_base_palace",
       "subjectCodes": [
@@ -1633,7 +1785,7 @@
     },
     {
       "id": "qimen-conceal-jia-zi",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "jia_concealment",
       "subjectCodes": [
@@ -1650,7 +1802,7 @@
     },
     {
       "id": "qimen-conceal-jia-xu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "jia_concealment",
       "subjectCodes": [
@@ -1667,7 +1819,7 @@
     },
     {
       "id": "qimen-conceal-jia-shen",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "jia_concealment",
       "subjectCodes": [
@@ -1684,7 +1836,7 @@
     },
     {
       "id": "qimen-conceal-jia-wu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "jia_concealment",
       "subjectCodes": [
@@ -1701,7 +1853,7 @@
     },
     {
       "id": "qimen-conceal-jia-chen",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "jia_concealment",
       "subjectCodes": [
@@ -1718,7 +1870,7 @@
     },
     {
       "id": "qimen-conceal-jia-yin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "system": "qimen",
       "relationType": "jia_concealment",
       "subjectCodes": [
@@ -1732,12 +1884,2020 @@
       "sourceTitle": "《奇门遁甲统宗》",
       "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
       "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-lichun-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:lichun",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-8"
+      ],
+      "resultCode": "yang-8",
+      "attributes": {
+        "solarTerm": "lichun",
+        "solarTermName": "立春",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 8,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-lichun-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:lichun",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-5"
+      ],
+      "resultCode": "yang-5",
+      "attributes": {
+        "solarTerm": "lichun",
+        "solarTermName": "立春",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 5,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-lichun-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:lichun",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-2"
+      ],
+      "resultCode": "yang-2",
+      "attributes": {
+        "solarTerm": "lichun",
+        "solarTermName": "立春",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 2,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-yushui-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:yushui",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-9"
+      ],
+      "resultCode": "yang-9",
+      "attributes": {
+        "solarTerm": "yushui",
+        "solarTermName": "雨水",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 9,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-yushui-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:yushui",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-6"
+      ],
+      "resultCode": "yang-6",
+      "attributes": {
+        "solarTerm": "yushui",
+        "solarTermName": "雨水",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 6,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-yushui-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:yushui",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-3"
+      ],
+      "resultCode": "yang-3",
+      "attributes": {
+        "solarTerm": "yushui",
+        "solarTermName": "雨水",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 3,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-jingzhe-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:jingzhe",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-1"
+      ],
+      "resultCode": "yang-1",
+      "attributes": {
+        "solarTerm": "jingzhe",
+        "solarTermName": "惊蛰",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 1,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-jingzhe-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:jingzhe",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-7"
+      ],
+      "resultCode": "yang-7",
+      "attributes": {
+        "solarTerm": "jingzhe",
+        "solarTermName": "惊蛰",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 7,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-jingzhe-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:jingzhe",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-4"
+      ],
+      "resultCode": "yang-4",
+      "attributes": {
+        "solarTerm": "jingzhe",
+        "solarTermName": "惊蛰",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 4,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-chunfen-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:chunfen",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-3"
+      ],
+      "resultCode": "yang-3",
+      "attributes": {
+        "solarTerm": "chunfen",
+        "solarTermName": "春分",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 3,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-chunfen-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:chunfen",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-9"
+      ],
+      "resultCode": "yang-9",
+      "attributes": {
+        "solarTerm": "chunfen",
+        "solarTermName": "春分",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 9,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-chunfen-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:chunfen",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-6"
+      ],
+      "resultCode": "yang-6",
+      "attributes": {
+        "solarTerm": "chunfen",
+        "solarTermName": "春分",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 6,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-qingming-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:qingming",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-4"
+      ],
+      "resultCode": "yang-4",
+      "attributes": {
+        "solarTerm": "qingming",
+        "solarTermName": "清明",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 4,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-qingming-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:qingming",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-1"
+      ],
+      "resultCode": "yang-1",
+      "attributes": {
+        "solarTerm": "qingming",
+        "solarTermName": "清明",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 1,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-qingming-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:qingming",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-7"
+      ],
+      "resultCode": "yang-7",
+      "attributes": {
+        "solarTerm": "qingming",
+        "solarTermName": "清明",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 7,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-guyu-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:guyu",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-5"
+      ],
+      "resultCode": "yang-5",
+      "attributes": {
+        "solarTerm": "guyu",
+        "solarTermName": "谷雨",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 5,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-guyu-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:guyu",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-2"
+      ],
+      "resultCode": "yang-2",
+      "attributes": {
+        "solarTerm": "guyu",
+        "solarTermName": "谷雨",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 2,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-guyu-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:guyu",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-8"
+      ],
+      "resultCode": "yang-8",
+      "attributes": {
+        "solarTerm": "guyu",
+        "solarTermName": "谷雨",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 8,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-lixia-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:lixia",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-4"
+      ],
+      "resultCode": "yang-4",
+      "attributes": {
+        "solarTerm": "lixia",
+        "solarTermName": "立夏",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 4,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-lixia-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:lixia",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-1"
+      ],
+      "resultCode": "yang-1",
+      "attributes": {
+        "solarTerm": "lixia",
+        "solarTermName": "立夏",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 1,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-lixia-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:lixia",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-7"
+      ],
+      "resultCode": "yang-7",
+      "attributes": {
+        "solarTerm": "lixia",
+        "solarTermName": "立夏",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 7,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaoman-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaoman",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-5"
+      ],
+      "resultCode": "yang-5",
+      "attributes": {
+        "solarTerm": "xiaoman",
+        "solarTermName": "小满",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 5,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaoman-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaoman",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-2"
+      ],
+      "resultCode": "yang-2",
+      "attributes": {
+        "solarTerm": "xiaoman",
+        "solarTermName": "小满",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 2,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaoman-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaoman",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-8"
+      ],
+      "resultCode": "yang-8",
+      "attributes": {
+        "solarTerm": "xiaoman",
+        "solarTermName": "小满",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 8,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-mangzhong-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:mangzhong",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-6"
+      ],
+      "resultCode": "yang-6",
+      "attributes": {
+        "solarTerm": "mangzhong",
+        "solarTermName": "芒种",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 6,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-mangzhong-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:mangzhong",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-3"
+      ],
+      "resultCode": "yang-3",
+      "attributes": {
+        "solarTerm": "mangzhong",
+        "solarTermName": "芒种",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 3,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-mangzhong-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:mangzhong",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-9"
+      ],
+      "resultCode": "yang-9",
+      "attributes": {
+        "solarTerm": "mangzhong",
+        "solarTermName": "芒种",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 9,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiazhi-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiazhi",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-9"
+      ],
+      "resultCode": "yin-9",
+      "attributes": {
+        "solarTerm": "xiazhi",
+        "solarTermName": "夏至",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 9,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiazhi-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiazhi",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-3"
+      ],
+      "resultCode": "yin-3",
+      "attributes": {
+        "solarTerm": "xiazhi",
+        "solarTermName": "夏至",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 3,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiazhi-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiazhi",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-6"
+      ],
+      "resultCode": "yin-6",
+      "attributes": {
+        "solarTerm": "xiazhi",
+        "solarTermName": "夏至",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 6,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaoshu-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaoshu",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-8"
+      ],
+      "resultCode": "yin-8",
+      "attributes": {
+        "solarTerm": "xiaoshu",
+        "solarTermName": "小暑",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 8,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaoshu-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaoshu",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-2"
+      ],
+      "resultCode": "yin-2",
+      "attributes": {
+        "solarTerm": "xiaoshu",
+        "solarTermName": "小暑",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 2,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaoshu-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaoshu",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-5"
+      ],
+      "resultCode": "yin-5",
+      "attributes": {
+        "solarTerm": "xiaoshu",
+        "solarTermName": "小暑",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 5,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-dashu-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:dashu",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-7"
+      ],
+      "resultCode": "yin-7",
+      "attributes": {
+        "solarTerm": "dashu",
+        "solarTermName": "大暑",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 7,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-dashu-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:dashu",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-1"
+      ],
+      "resultCode": "yin-1",
+      "attributes": {
+        "solarTerm": "dashu",
+        "solarTermName": "大暑",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 1,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-dashu-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:dashu",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-4"
+      ],
+      "resultCode": "yin-4",
+      "attributes": {
+        "solarTerm": "dashu",
+        "solarTermName": "大暑",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 4,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-liqiu-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:liqiu",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-2"
+      ],
+      "resultCode": "yin-2",
+      "attributes": {
+        "solarTerm": "liqiu",
+        "solarTermName": "立秋",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 2,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-liqiu-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:liqiu",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-5"
+      ],
+      "resultCode": "yin-5",
+      "attributes": {
+        "solarTerm": "liqiu",
+        "solarTermName": "立秋",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 5,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-liqiu-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:liqiu",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-8"
+      ],
+      "resultCode": "yin-8",
+      "attributes": {
+        "solarTerm": "liqiu",
+        "solarTermName": "立秋",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 8,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-chushu-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:chushu",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-1"
+      ],
+      "resultCode": "yin-1",
+      "attributes": {
+        "solarTerm": "chushu",
+        "solarTermName": "处暑",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 1,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-chushu-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:chushu",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-4"
+      ],
+      "resultCode": "yin-4",
+      "attributes": {
+        "solarTerm": "chushu",
+        "solarTermName": "处暑",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 4,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-chushu-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:chushu",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-7"
+      ],
+      "resultCode": "yin-7",
+      "attributes": {
+        "solarTerm": "chushu",
+        "solarTermName": "处暑",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 7,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-bailu-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:bailu",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-9"
+      ],
+      "resultCode": "yin-9",
+      "attributes": {
+        "solarTerm": "bailu",
+        "solarTermName": "白露",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 9,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-bailu-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:bailu",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-3"
+      ],
+      "resultCode": "yin-3",
+      "attributes": {
+        "solarTerm": "bailu",
+        "solarTermName": "白露",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 3,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-bailu-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:bailu",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-6"
+      ],
+      "resultCode": "yin-6",
+      "attributes": {
+        "solarTerm": "bailu",
+        "solarTermName": "白露",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 6,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-qiufen-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:qiufen",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-7"
+      ],
+      "resultCode": "yin-7",
+      "attributes": {
+        "solarTerm": "qiufen",
+        "solarTermName": "秋分",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 7,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-qiufen-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:qiufen",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-1"
+      ],
+      "resultCode": "yin-1",
+      "attributes": {
+        "solarTerm": "qiufen",
+        "solarTermName": "秋分",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 1,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-qiufen-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:qiufen",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-4"
+      ],
+      "resultCode": "yin-4",
+      "attributes": {
+        "solarTerm": "qiufen",
+        "solarTermName": "秋分",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 4,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-hanlu-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:hanlu",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-6"
+      ],
+      "resultCode": "yin-6",
+      "attributes": {
+        "solarTerm": "hanlu",
+        "solarTermName": "寒露",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 6,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-hanlu-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:hanlu",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-9"
+      ],
+      "resultCode": "yin-9",
+      "attributes": {
+        "solarTerm": "hanlu",
+        "solarTermName": "寒露",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 9,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-hanlu-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:hanlu",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-3"
+      ],
+      "resultCode": "yin-3",
+      "attributes": {
+        "solarTerm": "hanlu",
+        "solarTermName": "寒露",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 3,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-shuangjiang-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:shuangjiang",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-5"
+      ],
+      "resultCode": "yin-5",
+      "attributes": {
+        "solarTerm": "shuangjiang",
+        "solarTermName": "霜降",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 5,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-shuangjiang-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:shuangjiang",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-8"
+      ],
+      "resultCode": "yin-8",
+      "attributes": {
+        "solarTerm": "shuangjiang",
+        "solarTermName": "霜降",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 8,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-shuangjiang-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:shuangjiang",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-2"
+      ],
+      "resultCode": "yin-2",
+      "attributes": {
+        "solarTerm": "shuangjiang",
+        "solarTermName": "霜降",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 2,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-lidong-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:lidong",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-6"
+      ],
+      "resultCode": "yin-6",
+      "attributes": {
+        "solarTerm": "lidong",
+        "solarTermName": "立冬",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 6,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-lidong-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:lidong",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-9"
+      ],
+      "resultCode": "yin-9",
+      "attributes": {
+        "solarTerm": "lidong",
+        "solarTermName": "立冬",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 9,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-lidong-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:lidong",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-3"
+      ],
+      "resultCode": "yin-3",
+      "attributes": {
+        "solarTerm": "lidong",
+        "solarTermName": "立冬",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 3,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaoxue-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaoxue",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-5"
+      ],
+      "resultCode": "yin-5",
+      "attributes": {
+        "solarTerm": "xiaoxue",
+        "solarTermName": "小雪",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 5,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaoxue-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaoxue",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-8"
+      ],
+      "resultCode": "yin-8",
+      "attributes": {
+        "solarTerm": "xiaoxue",
+        "solarTermName": "小雪",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 8,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaoxue-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaoxue",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-2"
+      ],
+      "resultCode": "yin-2",
+      "attributes": {
+        "solarTerm": "xiaoxue",
+        "solarTermName": "小雪",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 2,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-daxue-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:daxue",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-4"
+      ],
+      "resultCode": "yin-4",
+      "attributes": {
+        "solarTerm": "daxue",
+        "solarTermName": "大雪",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yin",
+        "bureau": 4,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-daxue-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:daxue",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-7"
+      ],
+      "resultCode": "yin-7",
+      "attributes": {
+        "solarTerm": "daxue",
+        "solarTermName": "大雪",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yin",
+        "bureau": 7,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-daxue-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:daxue",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yin-1"
+      ],
+      "resultCode": "yin-1",
+      "attributes": {
+        "solarTerm": "daxue",
+        "solarTermName": "大雪",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yin",
+        "bureau": 1,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-dongzhi-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:dongzhi",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-1"
+      ],
+      "resultCode": "yang-1",
+      "attributes": {
+        "solarTerm": "dongzhi",
+        "solarTermName": "冬至",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 1,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-dongzhi-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:dongzhi",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-7"
+      ],
+      "resultCode": "yang-7",
+      "attributes": {
+        "solarTerm": "dongzhi",
+        "solarTermName": "冬至",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 7,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-dongzhi-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:dongzhi",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-4"
+      ],
+      "resultCode": "yang-4",
+      "attributes": {
+        "solarTerm": "dongzhi",
+        "solarTermName": "冬至",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 4,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaohan-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaohan",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-2"
+      ],
+      "resultCode": "yang-2",
+      "attributes": {
+        "solarTerm": "xiaohan",
+        "solarTermName": "小寒",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 2,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaohan-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaohan",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-8"
+      ],
+      "resultCode": "yang-8",
+      "attributes": {
+        "solarTerm": "xiaohan",
+        "solarTermName": "小寒",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 8,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-xiaohan-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:xiaohan",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-5"
+      ],
+      "resultCode": "yang-5",
+      "attributes": {
+        "solarTerm": "xiaohan",
+        "solarTermName": "小寒",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 5,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-dahan-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:dahan",
+        "qimenYuan:upper"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-3"
+      ],
+      "resultCode": "yang-3",
+      "attributes": {
+        "solarTerm": "dahan",
+        "solarTermName": "大寒",
+        "yuan": "upper",
+        "yuanName": "上元",
+        "dun": "yang",
+        "bureau": 3,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-dahan-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:dahan",
+        "qimenYuan:middle"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-9"
+      ],
+      "resultCode": "yang-9",
+      "attributes": {
+        "solarTerm": "dahan",
+        "solarTermName": "大寒",
+        "yuan": "middle",
+        "yuanName": "中元",
+        "dun": "yang",
+        "bureau": 9,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-term-bureau-dahan-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "solar_term_yuan_bureau",
+      "subjectCodes": [
+        "solarTerm:dahan",
+        "qimenYuan:lower"
+      ],
+      "objectCodes": [
+        "qimenBureau:yang-6"
+      ],
+      "resultCode": "yang-6",
+      "attributes": {
+        "solarTerm": "dahan",
+        "solarTermName": "大寒",
+        "yuan": "lower",
+        "yuanName": "下元",
+        "dun": "yang",
+        "bureau": 6,
+        "mappingVersion": "2026-07-20.qimen-foundation-v2"
+      },
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-opposite-kan-1-li-9",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "palace_opposition",
+      "subjectCodes": [
+        "qimenPalace:kan-1"
+      ],
+      "objectCodes": [
+        "qimenPalace:li-9"
+      ],
+      "resultCode": "li-9",
+      "attributes": {},
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-opposite-li-9-kan-1",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "palace_opposition",
+      "subjectCodes": [
+        "qimenPalace:li-9"
+      ],
+      "objectCodes": [
+        "qimenPalace:kan-1"
+      ],
+      "resultCode": "kan-1",
+      "attributes": {},
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-opposite-kun-2-gen-8",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "palace_opposition",
+      "subjectCodes": [
+        "qimenPalace:kun-2"
+      ],
+      "objectCodes": [
+        "qimenPalace:gen-8"
+      ],
+      "resultCode": "gen-8",
+      "attributes": {},
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-opposite-gen-8-kun-2",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "palace_opposition",
+      "subjectCodes": [
+        "qimenPalace:gen-8"
+      ],
+      "objectCodes": [
+        "qimenPalace:kun-2"
+      ],
+      "resultCode": "kun-2",
+      "attributes": {},
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-opposite-zhen-3-dui-7",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "palace_opposition",
+      "subjectCodes": [
+        "qimenPalace:zhen-3"
+      ],
+      "objectCodes": [
+        "qimenPalace:dui-7"
+      ],
+      "resultCode": "dui-7",
+      "attributes": {},
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-opposite-dui-7-zhen-3",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "palace_opposition",
+      "subjectCodes": [
+        "qimenPalace:dui-7"
+      ],
+      "objectCodes": [
+        "qimenPalace:zhen-3"
+      ],
+      "resultCode": "zhen-3",
+      "attributes": {},
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-opposite-xun-4-qian-6",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "palace_opposition",
+      "subjectCodes": [
+        "qimenPalace:xun-4"
+      ],
+      "objectCodes": [
+        "qimenPalace:qian-6"
+      ],
+      "resultCode": "qian-6",
+      "attributes": {},
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-palace-opposite-qian-6-xun-4",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "system": "qimen",
+      "relationType": "palace_opposition",
+      "subjectCodes": [
+        "qimenPalace:qian-6"
+      ],
+      "objectCodes": [
+        "qimenPalace:xun-4"
+      ],
+      "resultCode": "xun-4",
+      "attributes": {},
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
     }
   ],
   "methodRules": [
     {
       "id": "qimen-method-scope",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
       "step": 1,
       "code": "method_scope",
@@ -1754,7 +3914,7 @@
     },
     {
       "id": "qimen-time-input",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
       "step": 2,
       "code": "time_input",
@@ -1774,7 +3934,7 @@
     },
     {
       "id": "qimen-solar-term",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
       "step": 3,
       "code": "solar_term",
@@ -1790,7 +3950,7 @@
     },
     {
       "id": "qimen-yin-yang-dun",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
       "step": 4,
       "code": "yin_yang_dun",
@@ -1807,7 +3967,7 @@
     },
     {
       "id": "qimen-three-yuan",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
       "step": 5,
       "code": "three_yuan",
@@ -1827,7 +3987,7 @@
     },
     {
       "id": "qimen-bureau",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
       "step": 6,
       "code": "bureau",
@@ -1857,10 +4017,30 @@
       "isActive": true
     },
     {
-      "id": "qimen-earth-plate",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "id": "qimen-bureau-table",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
       "step": 7,
+      "code": "bureau_table",
+      "title": "查节气三元局数表",
+      "rule": {
+        "relationType": "solar_term_yuan_bureau",
+        "expectedMappings": 72,
+        "requires": [
+          "solarTerm",
+          "yuan"
+        ]
+      },
+      "explanation": "按二十四节气与上、中、下元查得阴阳遁局数；结果必须保留所用节气、元与映射版本。",
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-earth-plate",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "method": "qimen_hourly_rotating",
+      "step": 8,
       "code": "earth_plate",
       "title": "布地盘三奇六仪",
       "rule": {
@@ -1877,9 +4057,9 @@
     },
     {
       "id": "qimen-chief-envoy",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
-      "step": 8,
+      "step": 9,
       "code": "chief_and_envoy",
       "title": "取值符值使",
       "rule": {
@@ -1894,9 +4074,9 @@
     },
     {
       "id": "qimen-heaven-plate",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
-      "step": 9,
+      "step": 10,
       "code": "heaven_plate",
       "title": "布九星天盘",
       "rule": {
@@ -1913,9 +4093,9 @@
     },
     {
       "id": "qimen-human-plate",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
-      "step": 10,
+      "step": 11,
       "code": "human_plate",
       "title": "布八门人盘",
       "rule": {
@@ -1932,9 +4112,9 @@
     },
     {
       "id": "qimen-deity-plate",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
-      "step": 11,
+      "step": 12,
       "code": "deity_plate",
       "title": "布八神",
       "rule": {
@@ -1948,9 +4128,9 @@
     },
     {
       "id": "qimen-layer-reading",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
-      "step": 12,
+      "step": 13,
       "code": "layer_reading",
       "title": "分层合参",
       "rule": {
@@ -1970,10 +4150,58 @@
       "isActive": true
     },
     {
-      "id": "qimen-safety-boundary",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "id": "qimen-pattern-detection",
+      "version": "2026-07-20.qimen-foundation-v2",
       "method": "qimen_hourly_rotating",
-      "step": 13,
+      "step": 14,
+      "code": "pattern_detection",
+      "title": "识别可验证结构",
+      "rule": {
+        "patterns": [
+          "gate-fuyin",
+          "gate-fanyin",
+          "star-fuyin",
+          "star-fanyin",
+          "gate-pressure"
+        ],
+        "requireMachineCondition": true,
+        "forbidNameOnlyVerdict": true
+      },
+      "explanation": "伏吟、反吟、门迫等名称只能在盘面条件被程序核对后出现，并须说明触发条件，不能只凭名称下结论。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-evidence-output",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "method": "qimen_hourly_rotating",
+      "step": 15,
+      "code": "evidence_output",
+      "title": "保存判读证据",
+      "rule": {
+        "required": [
+          "methodVersion",
+          "timeInput",
+          "solarTerm",
+          "yuan",
+          "dun",
+          "bureau",
+          "matchedRelations",
+          "matchedPatterns"
+        ],
+        "reproducible": true
+      },
+      "explanation": "每项解释都要能追溯到局数映射、落宫关系和已匹配结构，便于复核同一输入的一致性。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-safety-boundary",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "method": "qimen_hourly_rotating",
+      "step": 16,
       "code": "safety_boundary",
       "title": "产品解释边界",
       "rule": {
@@ -1996,7 +4224,7 @@
   "interpretations": [
     {
       "id": "qimen-interpretation-qimen_gate-rest",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_gate",
       "code": "rest",
       "title": "休门",
@@ -2010,7 +4238,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_gate-death",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_gate",
       "code": "death",
       "title": "死门",
@@ -2024,7 +4252,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_gate-injury",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_gate",
       "code": "injury",
       "title": "伤门",
@@ -2038,7 +4266,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_gate-delusion",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_gate",
       "code": "delusion",
       "title": "杜门",
@@ -2052,7 +4280,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_gate-open",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_gate",
       "code": "open",
       "title": "开门",
@@ -2066,7 +4294,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_gate-fear",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_gate",
       "code": "fear",
       "title": "惊门",
@@ -2080,7 +4308,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_gate-life",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_gate",
       "code": "life",
       "title": "生门",
@@ -2094,7 +4322,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_gate-scenery",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_gate",
       "code": "scenery",
       "title": "景门",
@@ -2108,7 +4336,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_star-peng",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_star",
       "code": "peng",
       "title": "天蓬星",
@@ -2122,7 +4350,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_star-rui",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_star",
       "code": "rui",
       "title": "天芮星",
@@ -2136,7 +4364,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_star-chong",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_star",
       "code": "chong",
       "title": "天冲星",
@@ -2150,7 +4378,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_star-fu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_star",
       "code": "fu",
       "title": "天辅星",
@@ -2164,7 +4392,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_star-qin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_star",
       "code": "qin",
       "title": "天禽星",
@@ -2178,7 +4406,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_star-xin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_star",
       "code": "xin",
       "title": "天心星",
@@ -2192,7 +4420,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_star-zhu",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_star",
       "code": "zhu",
       "title": "天柱星",
@@ -2206,7 +4434,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_star-ren",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_star",
       "code": "ren",
       "title": "天任星",
@@ -2220,7 +4448,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_star-ying",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_star",
       "code": "ying",
       "title": "天英星",
@@ -2234,7 +4462,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_deity-chief",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_deity",
       "code": "chief",
       "title": "值符",
@@ -2248,7 +4476,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_deity-snake",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_deity",
       "code": "snake",
       "title": "腾蛇",
@@ -2262,7 +4490,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_deity-great-yin",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_deity",
       "code": "great-yin",
       "title": "太阴",
@@ -2276,7 +4504,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_deity-harmony",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_deity",
       "code": "harmony",
       "title": "六合",
@@ -2290,7 +4518,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_deity-white-tiger",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_deity",
       "code": "white-tiger",
       "title": "白虎",
@@ -2304,7 +4532,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_deity-black-tortoise",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_deity",
       "code": "black-tortoise",
       "title": "玄武",
@@ -2318,7 +4546,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_deity-nine-earth",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_deity",
       "code": "nine-earth",
       "title": "九地",
@@ -2332,7 +4560,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_deity-nine-heaven",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_deity",
       "code": "nine-heaven",
       "title": "九天",
@@ -2345,8 +4573,330 @@
       "isActive": true
     },
     {
+      "id": "qimen-interpretation-qimen_stem_role-yi",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_stem_role",
+      "code": "yi",
+      "title": "乙",
+      "summary": "乙在奇门结构中属于三奇。",
+      "detail": "三奇六仪既参与地盘和天盘排布，也用于记录旬首所隐；必须结合上下盘位置和完整结构解释。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_stem_role-bing",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_stem_role",
+      "code": "bing",
+      "title": "丙",
+      "summary": "丙在奇门结构中属于三奇。",
+      "detail": "三奇六仪既参与地盘和天盘排布，也用于记录旬首所隐；必须结合上下盘位置和完整结构解释。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_stem_role-ding",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_stem_role",
+      "code": "ding",
+      "title": "丁",
+      "summary": "丁在奇门结构中属于三奇。",
+      "detail": "三奇六仪既参与地盘和天盘排布，也用于记录旬首所隐；必须结合上下盘位置和完整结构解释。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_stem_role-wu",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_stem_role",
+      "code": "wu",
+      "title": "戊",
+      "summary": "戊在奇门结构中属于六仪。",
+      "detail": "三奇六仪既参与地盘和天盘排布，也用于记录旬首所隐；必须结合上下盘位置和完整结构解释。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_stem_role-ji",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_stem_role",
+      "code": "ji",
+      "title": "己",
+      "summary": "己在奇门结构中属于六仪。",
+      "detail": "三奇六仪既参与地盘和天盘排布，也用于记录旬首所隐；必须结合上下盘位置和完整结构解释。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_stem_role-geng",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_stem_role",
+      "code": "geng",
+      "title": "庚",
+      "summary": "庚在奇门结构中属于六仪。",
+      "detail": "三奇六仪既参与地盘和天盘排布，也用于记录旬首所隐；必须结合上下盘位置和完整结构解释。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_stem_role-xin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_stem_role",
+      "code": "xin",
+      "title": "辛",
+      "summary": "辛在奇门结构中属于六仪。",
+      "detail": "三奇六仪既参与地盘和天盘排布，也用于记录旬首所隐；必须结合上下盘位置和完整结构解释。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_stem_role-ren",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_stem_role",
+      "code": "ren",
+      "title": "壬",
+      "summary": "壬在奇门结构中属于六仪。",
+      "detail": "三奇六仪既参与地盘和天盘排布，也用于记录旬首所隐；必须结合上下盘位置和完整结构解释。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_stem_role-gui",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_stem_role",
+      "code": "gui",
+      "title": "癸",
+      "summary": "癸在奇门结构中属于六仪。",
+      "detail": "三奇六仪既参与地盘和天盘排布，也用于记录旬首所隐；必须结合上下盘位置和完整结构解释。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_jia_leader-jia-zi",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_jia_leader",
+      "code": "jia-zi",
+      "title": "甲子",
+      "summary": "甲子旬首在盘中隐于戊仪。",
+      "detail": "旬首用于确定值符、值使和排盘起点，是计算依据，不直接代表现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_jia_leader-jia-xu",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_jia_leader",
+      "code": "jia-xu",
+      "title": "甲戌",
+      "summary": "甲戌旬首在盘中隐于己仪。",
+      "detail": "旬首用于确定值符、值使和排盘起点，是计算依据，不直接代表现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_jia_leader-jia-shen",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_jia_leader",
+      "code": "jia-shen",
+      "title": "甲申",
+      "summary": "甲申旬首在盘中隐于庚仪。",
+      "detail": "旬首用于确定值符、值使和排盘起点，是计算依据，不直接代表现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_jia_leader-jia-wu",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_jia_leader",
+      "code": "jia-wu",
+      "title": "甲午",
+      "summary": "甲午旬首在盘中隐于辛仪。",
+      "detail": "旬首用于确定值符、值使和排盘起点，是计算依据，不直接代表现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_jia_leader-jia-chen",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_jia_leader",
+      "code": "jia-chen",
+      "title": "甲辰",
+      "summary": "甲辰旬首在盘中隐于壬仪。",
+      "detail": "旬首用于确定值符、值使和排盘起点，是计算依据，不直接代表现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_jia_leader-jia-yin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_jia_leader",
+      "code": "jia-yin",
+      "title": "甲寅",
+      "summary": "甲寅旬首在盘中隐于癸仪。",
+      "detail": "旬首用于确定值符、值使和排盘起点，是计算依据，不直接代表现实结果。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门遁甲统宗》",
+      "sourceUrl": "https://zh.wikisource.org/zh/奇門遁甲統宗",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_yuan-upper",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_yuan",
+      "code": "upper",
+      "title": "上元",
+      "summary": "上元是每一节气三元结构中的一个五日单位。",
+      "detail": "上、中、下元与节气共同确定局数；元的判定方法必须随排盘版本保存。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_yuan-middle",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_yuan",
+      "code": "middle",
+      "title": "中元",
+      "summary": "中元是每一节气三元结构中的一个五日单位。",
+      "detail": "上、中、下元与节气共同确定局数；元的判定方法必须随排盘版本保存。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_yuan-lower",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_yuan",
+      "code": "lower",
+      "title": "下元",
+      "summary": "下元是每一节气三元结构中的一个五日单位。",
+      "detail": "上、中、下元与节气共同确定局数；元的判定方法必须随排盘版本保存。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门旨归》卷一",
+      "sourceUrl": "https://ctext.org/wiki.pl?chapter=360446&if=gb",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_pattern-gate-fuyin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_pattern",
+      "code": "gate-fuyin",
+      "title": "八门伏吟",
+      "summary": "八门回到各自本宫的结构标记，传统上取其重复、停驻之象。",
+      "detail": "程序仅在条件“destinationPalaceEqualsBasePalace”成立时标记；它是合参证据之一，不得单独翻译成现实吉凶。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_pattern-gate-fanyin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_pattern",
+      "code": "gate-fanyin",
+      "title": "八门反吟",
+      "summary": "八门落到本宫对冲宫位的结构标记，传统上取其往复、变化之象。",
+      "detail": "程序仅在条件“destinationPalaceEqualsOppositeOfBasePalace”成立时标记；它是合参证据之一，不得单独翻译成现实吉凶。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_pattern-star-fuyin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_pattern",
+      "code": "star-fuyin",
+      "title": "九星伏吟",
+      "summary": "九星回到各自本宫的结构标记，须由星盘落宫逐一核对。",
+      "detail": "程序仅在条件“destinationPalaceEqualsBasePalace”成立时标记；它是合参证据之一，不得单独翻译成现实吉凶。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_pattern-star-fanyin",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_pattern",
+      "code": "star-fanyin",
+      "title": "九星反吟",
+      "summary": "九星落到本宫对冲宫位的结构标记，须由宫位对冲关系核对。",
+      "detail": "程序仅在条件“destinationPalaceEqualsOppositeOfBasePalace”成立时标记；它是合参证据之一，不得单独翻译成现实吉凶。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
+      "id": "qimen-interpretation-qimen_pattern-gate-pressure",
+      "version": "2026-07-20.qimen-foundation-v2",
+      "category": "qimen_pattern",
+      "code": "gate-pressure",
+      "title": "门迫",
+      "summary": "八门五行克制所落宫五行时称门迫，是门宫关系，不是单看门名。",
+      "detail": "程序仅在条件“gatePhaseControlsPalacePhase”成立时标记；它是合参证据之一，不得单独翻译成现实吉凶。",
+      "allowedUse": "仅用于解释可核验的奇门盘面结构、时间和方位关系。",
+      "forbiddenUse": "不得预测疾病、灾难、死亡、投资收益、诉讼结果或婚姻结局；不得作保证性判断或恐惧营销。",
+      "sourceTitle": "《奇门宝鉴御定》",
+      "sourceUrl": "https://zh.wikisource.org/zh-hant/奇門寶鑑御定",
+      "isActive": true
+    },
+    {
       "id": "qimen-interpretation-qimen_palace-kan-1",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_palace",
       "code": "kan-1",
       "title": "坎一宫",
@@ -2360,7 +4910,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_palace-kun-2",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_palace",
       "code": "kun-2",
       "title": "坤二宫",
@@ -2374,7 +4924,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_palace-zhen-3",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_palace",
       "code": "zhen-3",
       "title": "震三宫",
@@ -2388,7 +4938,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_palace-xun-4",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_palace",
       "code": "xun-4",
       "title": "巽四宫",
@@ -2402,7 +4952,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_palace-center-5",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_palace",
       "code": "center-5",
       "title": "中五宫",
@@ -2416,7 +4966,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_palace-qian-6",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_palace",
       "code": "qian-6",
       "title": "乾六宫",
@@ -2430,7 +4980,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_palace-dui-7",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_palace",
       "code": "dui-7",
       "title": "兑七宫",
@@ -2444,7 +4994,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_palace-gen-8",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_palace",
       "code": "gen-8",
       "title": "艮八宫",
@@ -2458,7 +5008,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_palace-li-9",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_palace",
       "code": "li-9",
       "title": "离九宫",
@@ -2472,7 +5022,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_boundary-method_version",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_boundary",
       "code": "method_version",
       "title": "排盘口径",
@@ -2486,7 +5036,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_boundary-time_precision",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_boundary",
       "code": "time_precision",
       "title": "时间精度",
@@ -2500,7 +5050,7 @@
     },
     {
       "id": "qimen-interpretation-qimen_boundary-safe_use",
-      "version": "2026-07-20.qimen-foundation-v1",
+      "version": "2026-07-20.qimen-foundation-v2",
       "category": "qimen_boundary",
       "code": "safe_use",
       "title": "使用边界",
