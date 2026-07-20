@@ -17,14 +17,14 @@ export const brand = {
   brandFullName: "卦安 GuaAn",
   taglineZh: "AI 国学生活顾问",
   subtitleZh:
-    "一个慢慢懂你的东方生活陪伴者，陪你看见自己、理顺关系、安顿空间，也把握更从容的时机。",
+    "以生辰为体、今日为用，看见传统历法中的每日相应。",
   brandDisclaimerShort:
     "内容仅供传统文化、民俗参考与生活规划启发，不构成法律、医疗、投资、婚姻等专业决策建议。",
   // 视觉层用的极短免责（导航栏附近）
   brandMicroDisclaimer: "传统文化生活参考 · 非算命非改运",
   // SEO 描述
   seoDescription:
-    "卦安 GuaAn · AI 国学生活顾问。有事来聊，无事来坐，陪你把生活里的事慢慢理清。所有内容仅供文化与生活规划参考。"
+    "卦安 GuaAn · AI 国学生活顾问。以个人生辰为基础，对照每日干支、五行与节气，呈现可核验的传统文化结构。"
 } as const;
 
 export type Brand = typeof brand;

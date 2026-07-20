@@ -3,7 +3,7 @@ import { brand } from "@/lib/config/brand";
 
 const NAV_ITEMS = [
   { href: "/", label: "今日" },
-  { href: "/#companion", label: "陪伴" },
+  { href: "/#today-correspondence", label: "今日相应" },
   { href: "/#daily-sign", label: "求签与静心" },
   { href: "/me", label: "我的" }
 ];

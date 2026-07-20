@@ -49,6 +49,26 @@ html, body {
   @apply bg-white/80 border border-mist rounded-xl shadow-scroll p-5;
 }
 
+/* 今日相应：以米纸和细金线呈现可核验的传统历法结构。 */
+.today-correspondence-shell {
+  @apply rounded-2xl border border-mist bg-white/80 shadow-scroll;
+  background:
+    radial-gradient(circle at 50% 17%, rgba(201, 163, 92, 0.13), transparent 25%),
+    radial-gradient(circle at 4% 96%, rgba(181, 59, 42, 0.055), transparent 30%),
+    rgba(255, 255, 255, 0.82);
+}
+.phase-glyph {
+  @apply mx-auto mt-2 inline-flex h-16 w-16 items-center justify-center rounded-full border font-serif text-3xl shadow-sm;
+}
+.phase-glyph-large {
+  @apply h-24 w-24 text-5xl;
+}
+.phase-wood { color: #365d4d; background-color: #e4eee8; border-color: #789988; }
+.phase-fire { color: #9f3024; background-color: #f6e5df; border-color: #c97565; }
+.phase-earth { color: #76591f; background-color: #f3ead5; border-color: #c5a86a; }
+.phase-metal { color: #6f604d; background-color: #f1e9d9; border-color: #a99778; }
+.phase-water { color: #26383f; background-color: #e2e9eb; border-color: #71848a; }
+
 /* 卦安陪伴入口：保持米纸感，不做通用 AI 工具式的冷白聊天框。 */
 .companion-shell {
   @apply rounded-2xl border border-mist bg-white/75 shadow-scroll;

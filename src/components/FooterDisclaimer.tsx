@@ -10,13 +10,13 @@ export default function FooterDisclaimer() {
           <span className="text-ink/40">· {brand.taglineZh}</span>
         </div>
         <p>
-          本站对话与生活参考会使用 AI，并结合传统历法、民俗文化与现实生活视角，
+          本站依据生辰资料、每日干支与节气呈现传统文化结构，
           <strong>{brand.brandDisclaimerShort}</strong>
         </p>
         <div className="mt-3 flex flex-wrap gap-4 text-ink/70">
           <Link href="/legal/terms" className="hover:underline">用户协议</Link>
           <Link href="/legal/privacy" className="hover:underline">隐私政策</Link>
-          <Link href="/legal/disclaimer" className="hover:underline">AI 内容免责声明</Link>
+          <Link href="/legal/disclaimer" className="hover:underline">内容免责声明</Link>
         </div>
       </div>
     </footer>

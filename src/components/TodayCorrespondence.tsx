@@ -1,0 +1,246 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import type { DailyCorrespondence } from "@/lib/domain/dailyCorrespondence";
+import type { Element } from "@/lib/domain/elements";
+
+interface ProfileValue {
+  birthDate: string;
+  birthTime: string | null;
+  birthLocation: string | null;
+  unknownTime: boolean;
+}
+
+interface SourceItem {
+  code: string;
+  title: string;
+  summary?: string;
+  detail?: string;
+  explanation?: string;
+  sourceTitle: string;
+  sourceUrl: string;
+}
+
+interface Payload {
+  profile: ProfileValue | null;
+  correspondence: DailyCorrespondence | null;
+  sources: SourceItem[];
+}
+
+const LOCATIONS = [
+  "", "北京", "天津", "河北", "山西", "内蒙古", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江",
+  "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "广西", "海南", "重庆", "四川",
+  "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏", "新疆", "香港", "澳门", "台湾", "海外"
+];
+
+export default function TodayCorrespondence() {
+  const [payload, setPayload] = useState<Payload | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/today-correspondence", { cache: "no-store" })
+      .then(async response => {
+        const body = await response.json();
+        if (!response.ok || !body.ok) throw new Error(body.error ?? "读取失败");
+        if (active) setPayload(body.data);
+      })
+      .catch(reason => active && setError(reason instanceof Error ? reason.message : "读取失败"));
+    return () => { active = false; };
+  }, []);
+
+  if (error) {
+    return <section className="today-correspondence-shell p-6 text-sm text-cinnabar">{error}</section>;
+  }
+  if (!payload) {
+    return <section className="today-correspondence-shell min-h-[34rem] animate-pulse p-6" aria-label="正在读取今日相应" />;
+  }
+  if (!payload.profile || !payload.correspondence) {
+    return <BirthProfileForm onSaved={setPayload} />;
+  }
+  return <CorrespondenceCard payload={payload} />;
+}
+
+export function BirthProfileForm({
+  initial,
+  onSaved,
+  context = "onboarding"
+}: {
+  initial?: ProfileValue | null;
+  onSaved?: (payload: Payload) => void;
+  context?: "onboarding" | "profile";
+}) {
+  const [birthDate, setBirthDate] = useState(initial?.birthDate ?? "");
+  const [birthTime, setBirthTime] = useState(initial?.birthTime ?? "");
+  const [unknownTime, setUnknownTime] = useState(initial?.unknownTime ?? false);
+  const [birthLocation, setBirthLocation] = useState(initial?.birthLocation ?? "");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function save() {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/today-correspondence", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ birthDate, birthTime: unknownTime ? null : birthTime, unknownTime, birthLocation: birthLocation || null })
+      });
+      const body = await response.json();
+      if (!response.ok || !body.ok) throw new Error(body.error ?? "保存失败");
+      setMessage("生辰资料已保存");
+      onSaved?.(body.data);
+    } catch (reason) {
+      setMessage(reason instanceof Error ? reason.message : "保存失败");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="today-correspondence-shell overflow-hidden">
+      <div className="border-b border-gold/25 px-6 py-5 md:px-8">
+        <div className="text-xs tracking-[0.24em] text-cinnabar">今日相应</div>
+        <h1 className="mt-2 font-serif text-3xl">{context === "profile" ? "我的生辰" : "先定下你的生辰"}</h1>
+        <p className="mt-3 max-w-xl text-sm leading-7 text-ink/65">
+          {context === "profile"
+            ? "这里保存今日相应使用的出生资料。修改后，首页会按新的日主重新计算。"
+            : "以后每次回来，卦安会以你的日主为基点，对照当天干支与节气。这里只保存出生资料，不需要描述困扰。"}
+        </p>
+      </div>
+      <div className="grid gap-5 px-6 py-6 md:grid-cols-2 md:px-8">
+        <label>
+          <span className="field-label">出生日期（公历）</span>
+          <input className="field-input" type="date" value={birthDate} max={new Date().toISOString().slice(0, 10)} onChange={event => setBirthDate(event.target.value)} />
+        </label>
+        <div>
+          <label className="field-label" htmlFor="correspondence-birth-time">出生时间</label>
+          <div className="flex items-center gap-3">
+            <input id="correspondence-birth-time" className="field-input" type="time" value={birthTime} disabled={unknownTime} onChange={event => setBirthTime(event.target.value)} />
+            <label className="flex shrink-0 items-center gap-1.5 text-xs text-ink/65">
+              <input type="checkbox" checked={unknownTime} onChange={event => setUnknownTime(event.target.checked)} />
+              时间不确定
+            </label>
+          </div>
+        </div>
+        <label>
+          <span className="field-label">出生地（省级即可）</span>
+          <select className="field-input" value={birthLocation} onChange={event => setBirthLocation(event.target.value)}>
+            <option value="">暂不填写</option>
+            {LOCATIONS.filter(Boolean).map(location => <option key={location} value={location}>{location}</option>)}
+          </select>
+        </label>
+        <div className="rounded-lg border border-mist bg-rice/70 px-4 py-3 text-xs leading-5 text-ink/55">
+          第一版统一按北京时间记录。未确认出生时刻时不使用时柱，也不会自动补猜。
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-3 border-t border-mist px-6 py-5 md:px-8">
+        <button className="btn-primary" disabled={busy || !birthDate || (!unknownTime && !birthTime)} onClick={save}>
+          {busy ? "正在保存…" : context === "profile" ? "保存生辰资料" : "保存并看今日"}
+        </button>
+        {message && <span className="text-sm text-ink/60" role="status">{message}</span>}
+      </div>
+    </section>
+  );
+}
+
+function CorrespondenceCard({ payload }: { payload: Payload }) {
+  const data = payload.correspondence!;
+  return (
+    <section id="today-correspondence" className="today-correspondence-shell overflow-hidden scroll-mt-24">
+      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-gold/25 px-5 py-5 md:px-8">
+        <div>
+          <div className="text-xs tracking-[0.24em] text-cinnabar">今日相应</div>
+          <h1 className="mt-1 font-serif text-2xl">生辰为体，今日为用</h1>
+        </div>
+        <div className="text-right text-xs leading-5 text-ink/55">
+          <div>{data.date} · {data.weekday}</div>
+          <div>{data.solarTerm} · {data.monthBranch}月</div>
+        </div>
+      </header>
+
+      <div className="px-5 py-7 md:px-8 md:py-9">
+        <div className="text-center">
+          <div className="text-xs tracking-[0.25em] text-ink/45">今日主气</div>
+          <PhaseGlyph value={data.today.element} element={data.today.element} large />
+          <div className="mt-2 font-serif text-lg">{data.today.dayPillar}日</div>
+        </div>
+
+        <div className="mx-auto mt-8 grid max-w-2xl grid-cols-[1fr_auto_1fr] items-center gap-3 md:gap-7">
+          <PillarSide label="你的日主" stem={data.birth.dayStem} element={data.birth.element} pillar={data.birth.dayPillar} />
+          <div className="flex flex-col items-center">
+            <span className="h-px w-12 bg-gold/55 md:w-24" />
+            <span className="my-2 inline-flex h-11 w-11 items-center justify-center rounded-full border border-gold/60 bg-rice font-serif text-xl text-ink">
+              {data.phaseRelation.title}
+            </span>
+            <span className="h-px w-12 bg-gold/55 md:w-24" />
+          </div>
+          <PillarSide label="今日天干" stem={data.today.dayStem} element={data.today.element} pillar={data.today.dayPillar} />
+        </div>
+
+        <div className="mx-auto mt-7 max-w-2xl rounded-xl border border-mist bg-rice/65 px-4 py-4 text-center">
+          <div className="text-sm font-medium">{data.phaseRelation.direction} · {data.tenGod.name}</div>
+          <p className="mt-1 text-sm leading-6 text-ink/65">{data.phaseRelation.explanation}</p>
+          {data.branchRelation && <p className="mt-2 text-xs leading-5 text-ink/55">日支另有：{data.branchRelation.explanation}</p>}
+        </div>
+
+        <details className="mx-auto mt-5 max-w-2xl rounded-xl border border-mist bg-white/60 px-4 py-3">
+          <summary className="cursor-pointer text-sm font-medium text-cinnabar">展开依据与算法</summary>
+          <div className="mt-4 space-y-5 text-sm leading-6 text-ink/70">
+            <div>
+              <h2 className="font-serif text-base text-ink">怎么算出来</h2>
+              <ol className="mt-2 list-decimal space-y-1 pl-5">
+                {data.calculation.map(item => <li key={item}>{item}</li>)}
+              </ol>
+              <p className="mt-2 text-xs text-ink/45">{data.precisionNote}</p>
+            </div>
+            {payload.sources.length > 0 && (
+              <div>
+                <h2 className="font-serif text-base text-ink">知识依据</h2>
+                <ul className="mt-2 space-y-3">
+                  {payload.sources.map(source => (
+                    <li key={`${source.code}-${source.title}`}>
+                      <div className="font-medium text-ink/80">{source.title}</div>
+                      <p className="text-xs leading-5 text-ink/55">{source.summary ?? source.explanation ?? source.detail}</p>
+                      <a className="text-xs text-cinnabar hover:underline" href={source.sourceUrl} target="_blank" rel="noreferrer">{source.sourceTitle} ↗</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </details>
+      </div>
+
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-mist px-5 py-4 text-xs text-ink/50 md:px-8">
+        <span>颜色只表示五行属性，不表示吉凶或结果。</span>
+        <Link href="/me#birth-profile" className="text-cinnabar hover:underline">查看我的生辰 →</Link>
+      </footer>
+    </section>
+  );
+}
+
+function PillarSide({ label, stem, element, pillar }: { label: string; stem: string; element: Element; pillar: string }) {
+  return (
+    <div className="text-center">
+      <div className="text-xs text-ink/45">{label}</div>
+      <PhaseGlyph value={stem} element={element} />
+      <div className="mt-1 text-xs text-ink/50">日柱 {pillar}</div>
+    </div>
+  );
+}
+
+function PhaseGlyph({ value, element, large = false }: { value: string; element: Element; large?: boolean }) {
+  const phaseClass: Record<Element, string> = {
+    木: "phase-wood", 火: "phase-fire", 土: "phase-earth", 金: "phase-metal", 水: "phase-water"
+  };
+  return (
+    <span
+      className={`phase-glyph ${phaseClass[element]} ${large ? "phase-glyph-large" : ""}`}
+      aria-label={`${value}，五行属${element}`}
+    >
+      {value}
+    </span>
+  );
+}

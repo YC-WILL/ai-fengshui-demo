@@ -1,20 +1,20 @@
 import { brand } from "@/lib/config/brand";
 
-export const metadata = { title: `AI 内容免责声明 · ${brand.brandFullName}` };
+export const metadata = { title: `内容免责声明 · ${brand.brandFullName}` };
 
 export default function DisclaimerPage() {
   return (
     <article className="prose-report card max-w-none">
-      <h1>AI 内容免责声明</h1>
+      <h1>内容免责声明</h1>
 
       <p>
-        本服务所有报告内容均由人工智能模型自动生成。请您在阅读与使用前充分理解以下事项：
+        本服务依据固定历法规则与传统知识卡呈现内容。请您在阅读与使用前充分理解以下事项：
       </p>
 
       <h2>1. 内容性质</h2>
       <p>
-        所有报告内容基于<strong>传统历法、民俗文化、空间环境建议与心理学框架</strong>生成，
-        <strong>仅供文化参考、娱乐参考与生活规划启发</strong>。
+        “今日相应”基于<strong>出生日期、每日干支、五行关系与节气</strong>计算，
+        <strong>仅供传统文化与民俗参考</strong>。同一结构名称不直接等同于现实事件或结果。
       </p>
 
       <h2>2. 我们不做的事</h2>
@@ -27,21 +27,20 @@ export default function DisclaimerPage() {
 
       <h2>3. 我们做的事</h2>
       <ul>
-        <li>结合传统视角与现实生活逻辑，提供可执行的<strong>生活规划与空间整理建议</strong>。</li>
-        <li>以"沟通、节奏、边界"为核心，给出关系相处的<strong>参考性</strong>视角。</li>
-        <li>对所有可能产生绝对化判断的内容进行安全过滤与重写。</li>
+        <li>呈现计算中使用的日主、当日天干、五行关系与十神名称。</li>
+        <li>说明计算步骤，并提供数据库中对应的知识来源。</li>
+        <li>出生时间不确定时省略依赖时柱的内容，不自动补猜。</li>
       </ul>
 
       <h2>4. 重要提醒</h2>
       <p>
-        AI 生成内容存在偏差与不确定性，请<strong>不要将本报告作为重大人生决策的唯一依据</strong>。
+        传统历法存在流派与口径差异，请<strong>不要将本服务内容作为重大人生决策的唯一依据</strong>。
         涉及健康、法律、财务、婚姻等重要事项，请<strong>务必咨询相应的专业人士</strong>。
       </p>
 
       <h2>5. 反馈与改进</h2>
       <p>
-        如您发现报告中存在不当内容（恐吓、绝对化承诺、医疗诊断、投资引导等），
-        请通过"我的"页面反馈，我们会持续完善内容安全规则。
+        如您发现日期、干支、节气或关系映射存在问题，请通过“我的”页面反馈，我们会核对计算口径与知识来源。
       </p>
     </article>
   );

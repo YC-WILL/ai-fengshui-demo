@@ -31,7 +31,7 @@ export default function DeleteAccountButton() {
           checked={confirmed}
           onChange={e => setConfirmed(e.target.checked)}
         />
-        我已了解：本操作不可撤销，将清除我的账户、陪伴记录和相关数据。
+        我已了解：本操作不可撤销，将清除我的账户、生辰资料和相关数据。
       </label>
       <button
         className="btn-secondary border-cinnabar/40 text-cinnabar hover:bg-cinnabar/5"
