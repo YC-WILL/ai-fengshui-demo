@@ -144,3 +144,91 @@ model TheoryCard {
   @@index([version])
   @@index([isActive])
 }
+
+// ----------------- 周易规范数据 -----------------
+// 经文与结构关系分开存储；不在此层加入吉凶营销或用户心理推断。
+model ZhouyiTrigram {
+  id                   String   @id
+  name                 String   @unique
+  symbol               String   @unique
+  binary               String   @unique // 自下而上，阳为 1、阴为 0
+  canonicalImage       String
+  canonicalVirtue      String
+  familyRole           String
+  laterHeavenDirection String
+  laterFivePhase       String
+  version              String
+  sourceUrl            String
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  upperHexagrams ZhouyiHexagram[] @relation("ZhouyiUpperTrigram")
+  lowerHexagrams ZhouyiHexagram[] @relation("ZhouyiLowerTrigram")
+
+  @@index([version])
+  @@index([isActive])
+}
+
+model ZhouyiHexagram {
+  number          Int      @id // 文王卦序 1–64
+  name            String   @unique
+  symbol          String   @unique
+  binary          String   @unique // 自初爻至上爻
+  lowerTrigramId  String
+  upperTrigramId  String
+  judgment        String   // 卦辞
+  tuan            String   // 彖传
+  image           String   // 大象传
+  wenyan          String?  // 乾、坤文言
+  extraLineLabel  String?  // 用九 / 用六
+  extraLineText   String?
+  extraLineImage  String?
+  sourceUrl       String
+  sourceRevision  String
+  sourceLicense   String
+  version         String
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  lowerTrigram    ZhouyiTrigram @relation("ZhouyiLowerTrigram", fields: [lowerTrigramId], references: [id])
+  upperTrigram    ZhouyiTrigram @relation("ZhouyiUpperTrigram", fields: [upperTrigramId], references: [id])
+  lines           ZhouyiLine[]  @relation("ZhouyiHexagramLines")
+  changedFromLines ZhouyiLine[] @relation("ZhouyiLineChangeTarget")
+
+  @@index([lowerTrigramId])
+  @@index([upperTrigramId])
+  @@index([version])
+  @@index([isActive])
+}
+
+model ZhouyiLine {
+  id                       String   @id // 例如 01-1
+  hexagramNumber           Int
+  position                 Int      // 初爻为 1，上爻为 6
+  label                    String
+  lineType                 String   // yin | yang
+  text                     String   // 爻辞
+  imageText                String   // 小象传
+  isCentral                Boolean  // 二、五为中
+  isInProperPosition       Boolean  // 阳居奇位、阴居偶位
+  correspondingPosition    Int      // 1↔4、2↔5、3↔6
+  hasCorrespondence        Boolean  // 对应两爻阴阳相异
+  changesToHexagramNumber  Int
+  version                  String
+  sourceUrl                String
+  sourceRevision           String
+  isActive                 Boolean  @default(true)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  hexagram        ZhouyiHexagram @relation("ZhouyiHexagramLines", fields: [hexagramNumber], references: [number], onDelete: Cascade)
+  changesToHexagram ZhouyiHexagram @relation("ZhouyiLineChangeTarget", fields: [changesToHexagramNumber], references: [number])
+
+  @@unique([hexagramNumber, position])
+  @@index([hexagramNumber])
+  @@index([changesToHexagramNumber])
+  @@index([version])
+  @@index([isActive])
+}

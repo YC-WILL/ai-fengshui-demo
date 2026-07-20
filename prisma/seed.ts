@@ -9,6 +9,8 @@ import { PrismaClient } from "@prisma/client";
 import { INLINE_RULES } from "../src/lib/safety/rules";
 import { THEORY_CATALOG_VERSION } from "../src/lib/knowledge/theoryCatalog";
 import { syncTheoryCards } from "../src/lib/knowledge/theorySync";
+import { ZHOUYI_CATALOG_VERSION } from "../src/lib/knowledge/zhouyiCatalog";
+import { syncZhouyiCanon } from "../src/lib/knowledge/zhouyiSync";
 
 const prisma = new PrismaClient();
 
@@ -31,6 +33,10 @@ async function main() {
   console.log(`[seed] syncing theory cards ${THEORY_CATALOG_VERSION}...`);
   const theoryCardCount = await syncTheoryCards(prisma);
   console.log(`[seed] ${theoryCardCount} theory cards written.`);
+
+  console.log(`[seed] syncing Zhouyi canon ${ZHOUYI_CATALOG_VERSION}...`);
+  const zhouyiCount = await syncZhouyiCanon(prisma);
+  console.log(`[seed] ${zhouyiCount.trigrams} trigrams, ${zhouyiCount.hexagrams} hexagrams, ${zhouyiCount.lines} lines written.`);
 }
 
 main()
