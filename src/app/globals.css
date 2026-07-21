@@ -185,6 +185,11 @@ html, body {
 .bazi-layer-title { @apply mb-4 flex flex-wrap items-end justify-between gap-2; }
 .bazi-layer-title h3 { @apply mt-1 font-serif text-xl; }
 .bazi-layer-title > small { @apply text-[10px] text-ink/45; }
+.layer-story { @apply mb-4 rounded-xl border border-gold/35 bg-white/75 p-4; }
+.layer-story > span { @apply text-[10px] tracking-wider text-cinnabar; }
+.layer-story > b { @apply mt-1 block font-serif text-base font-normal text-ink/80; }
+.layer-story > p { @apply mt-2 text-sm leading-7 text-ink/60; }
+.layer-story > small { @apply mt-3 block border-t border-dashed border-gold/35 pt-2 text-[10px] leading-5 text-ink/40; }
 .element-source-grid { @apply mt-4 grid gap-1.5 sm:grid-cols-2; }
 .element-source-grid > div { @apply flex items-center justify-between rounded-lg border border-mist bg-white/60 px-3 py-2 text-xs; }
 .element-source-grid b { @apply font-medium text-ink/70; }
@@ -211,6 +216,7 @@ html, body {
 .hidden-pillar-grid li > span { @apply text-[10px] text-ink/40; }
 .hidden-pillar-grid li > b { @apply font-serif text-base font-normal; }
 .hidden-pillar-grid li > small { @apply text-right text-[10px] text-ink/45; }
+.hidden-pillar-grid > div > p { @apply mt-3 border-t border-dashed border-gold/35 pt-3 text-xs leading-6 text-ink/55; }
 .ten-god-groups { @apply grid gap-2 sm:grid-cols-2; }
 .ten-god-groups > section { @apply overflow-hidden rounded-xl border border-mist bg-white/65; }
 .ten-god-groups > section.is-empty { @apply border-dashed bg-white/30; }

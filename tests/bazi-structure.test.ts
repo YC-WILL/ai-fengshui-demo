@@ -5,6 +5,7 @@ import {
   buildBaziMainline,
   buildBaziStructure,
   explainBaziCharacter,
+  hiddenLayerReading,
   tenGodFor
 } from "@/lib/domain/baziStructure";
 
@@ -73,8 +74,8 @@ describe("bazi structure evidence", () => {
       unknownTime: false
     });
     const structure = buildBaziStructure(chart);
-    const dayStem = explainBaziCharacter(structure.pillars[2], chart.dayMaster, "stem");
-    const monthBranch = explainBaziCharacter(structure.pillars[1], chart.dayMaster, "branch");
+    const dayStem = explainBaziCharacter(structure.pillars[2], chart.dayMaster, "stem", structure);
+    const monthBranch = explainBaziCharacter(structure.pillars[1], chart.dayMaster, "branch", structure);
 
     expect(dayStem).toMatchObject({
       character: chart.day.stem,
@@ -104,8 +105,8 @@ describe("bazi structure evidence", () => {
     });
     const structure = buildBaziStructure(chart);
     const explanations = structure.pillars.flatMap(pillar => [
-      explainBaziCharacter(pillar, chart.dayMaster, "stem"),
-      explainBaziCharacter(pillar, chart.dayMaster, "branch")
+      explainBaziCharacter(pillar, chart.dayMaster, "stem", structure),
+      explainBaziCharacter(pillar, chart.dayMaster, "branch", structure)
     ]).filter(Boolean);
 
     expect(new Set(explanations.map(item => item?.connectionTitle)).size).toBe(8);
@@ -113,6 +114,21 @@ describe("bazi structure evidence", () => {
     expect(explanations[4]?.connection).toMatch(/日主|自我参照/);
     expect(explanations[6]?.connection).toMatch(/后续展开|长远想法/);
     expect(explanations.every(item => !item?.connection.match(/一定|必然|注定|人格|诊断/))).toBe(true);
+  });
+
+  it("gives the same character a different story when its chart context changes", () => {
+    const firstChart = computeBazi({ gender: "other", birthDate: "2000-06-30", birthTime: "10:30", unknownTime: false });
+    const secondChart = computeBazi({ gender: "other", birthDate: "1990-06-15", birthTime: "10:30", unknownTime: false });
+    const firstStructure = buildBaziStructure(firstChart);
+    const secondStructure = buildBaziStructure(secondChart);
+    const first = explainBaziCharacter(firstStructure.pillars[0], firstChart.dayMaster, "stem", firstStructure);
+    const second = explainBaziCharacter(secondStructure.pillars[0], secondChart.dayMaster, "stem", secondStructure);
+
+    expect(first?.character).toBe("庚");
+    expect(second?.character).toBe("庚");
+    expect(first?.connection).not.toBe(second?.connection);
+    expect(first?.connection).toMatch(/月令|环境底色|明现|地支/);
+    expect(second?.connection).toMatch(/月令|环境底色|明现|地支/);
   });
 
   it("builds the three-question mainline from month command, visible stems and hidden stems", () => {
@@ -140,6 +156,22 @@ describe("bazi structure evidence", () => {
     expect(mainline.elementOverview.foundInHidden).toEqual(["水"]);
     expect(mainline.elementOverview.absentEntirely).toEqual([]);
     expect(mainline.elementOverview.summary).toMatch(/明字|藏干|不等于缺陷/);
+    expect(mainline.elementOverview.interpretation).toMatch(/接到新任务|需要推进|事务堆在一起|标准含糊|条件变化/);
+    expect(mainline.monthReading.image).toMatch(/想象|时节/);
+    expect(mainline.monthReading.interpretation).toMatch(/事情刚放到你桌上|月令的本气/);
+    expect(mainline.tenGodReading.interpretation).toMatch(/日常场景|传统上|不是拿一个十神/);
+  });
+
+  it("turns hidden stems into pillar-specific situations without losing evidence", () => {
+    const chart = computeBazi({ gender: "other", birthDate: "1990-06-15", birthTime: "10:30", unknownTime: false });
+    const structure = buildBaziStructure(chart);
+    const readings = structure.pillars.map(hiddenLayerReading);
+
+    expect(readings[0]).toMatch(/陌生环境|长辈|本气/);
+    expect(readings[1]).toMatch(/集体分工|日常任务|本气/);
+    expect(readings[2]).toMatch(/真正作决定|亲近关系|本气/);
+    expect(readings[3]).toMatch(/规划下一步|长期项目|本气/);
+    expect(readings.join("")).not.toMatch(/一定|必然|注定|保证/);
   });
 
   it("keeps visible and hidden evidence traceable to exact pillar positions", () => {

@@ -62,6 +62,15 @@ export interface BaziMainline {
     foundInHidden: Element[];
     absentEntirely: Element[];
     summary: string;
+    interpretation: string;
+  };
+  monthReading: {
+    image: string;
+    interpretation: string;
+  };
+  tenGodReading: {
+    headline: string;
+    interpretation: string;
   };
   incompleteNote?: string;
 }
@@ -294,14 +303,55 @@ function buildElementOverview(structure: ReturnType<typeof buildBaziStructure>, 
         foundInHidden.length ? `${foundInHidden.join("、")}虽未在明字出现，但可在地支藏干中找到` : "",
         absentEntirely.length ? `${absentEntirely.join("、")}在已知明字与藏干中均未见` : ""
       ].filter(Boolean).join("；");
+  const prominentScenes = prominent.map(element => `${element}所代表的${ELEMENT_LIFE_SCENE[element]}`).join("、");
+  const relationText = prominent.length
+    ? prominent.map(element => `${element}相对日主属于“${POWER_CATEGORY[categoryForElement(structure.dayMaster.element, element)].label}”`).join("，")
+    : "五行没有一类在明字中拉开明显差距";
+  const absentMeaning = absentVisible.length
+    ? `至于明字未见的${absentVisible.join("、")}，它们不一定消失，只是不习惯站在盘面最前面${foundInHidden.length ? `；其中${foundInHidden.join("、")}仍藏在地支，往往要到具体情境才被调用` : ""}。`
+    : "五行都在明字中出现，表示可见工具较齐，但仍要看月令和组合决定使用顺序。";
   return {
     prominent,
     absentVisible,
     foundInHidden,
     absentEntirely,
-    summary: `${prominentText}；${absentText}。这里的“未见”只描述已知盘面，不等于缺陷，也不单独决定旺衰。`
+    summary: `${prominentText}；${absentText}。这里的“未见”只描述已知盘面，不等于缺陷，也不单独决定旺衰。`,
+    interpretation: prominent.length
+      ? `你的明字更容易先调动${prominentScenes}这类方式。专业关系上，${relationText}，所以它不仅表示数量，也提示力量更常往哪个方向使用。${absentMeaning}`
+      : `你的明字不像只有一种工具反复出现，更像几种方式都能拿到手边。${relationText}，因此需要继续看月令和十神组合，不能只凭数量下结论。${absentMeaning}`
   };
 }
+
+const ELEMENT_LIFE_SCENE: Record<Element, string> = {
+  木: "接到新任务后先找延展方向、搭出下一步路径",
+  火: "需要推进时把态度、重点和进展摆到明处",
+  土: "信息和事务堆在一起时先归类、排顺序并安顿细节",
+  金: "标准含糊或意见不一时先做取舍、把边界说清",
+  水: "条件变化时先收集信息、连接资源并保留转圜空间"
+};
+
+function categoryForElement(dayElement: Element, otherElement: Element): PowerCategoryId {
+  if (otherElement === dayElement) return "self";
+  if (SHENG[otherElement] === dayElement) return "resource";
+  if (SHENG[dayElement] === otherElement) return "output";
+  if (KE[dayElement] === otherElement) return "reality";
+  return "constraint";
+}
+
+const MONTH_SCENE: Record<Branch, string> = {
+  寅: "初春刚破土的时节", 卯: "春木舒展的时节", 辰: "春夏交接、湿土承接的时节",
+  巳: "初夏火气渐起的时节", 午: "盛夏光热最显的时节", 未: "夏末收束、燥土整理的时节",
+  申: "初秋开始整序的时节", 酉: "秋金成形、分辨清楚的时节", 戌: "秋冬交接、守成收尾的时节",
+  亥: "初冬开始收藏的时节", 子: "冬水最深、蓄势待发的时节", 丑: "冬末积累尚未完全舒展的时节"
+};
+
+const POWER_BEHAVIOR_SCENE: Record<PowerCategoryId, string> = {
+  resource: "先把资料和依据找齐，或听懂有经验的人怎么做，再决定怎样下手",
+  self: "先确认自己的判断，再决定与谁并肩、哪些部分可以让步",
+  output: "先把方法说清、做出样品，或指出现有做法哪里不顺",
+  reality: "先把注意力拉回时间、资源、分工和最后能交付什么",
+  constraint: "先看清标准、期限和责任边界，避免做到一半才发现越线"
+};
 
 function evidenceCountPhrase(channel: PowerChannel): string {
   const visible = channel.visible.length ? `${channel.visible.length}处明干` : "未在天干明现";
@@ -369,6 +419,10 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
   const temperamentCounterpart = primary.id === monthCategory ? secondary : primary;
   const temperament = temperamentMeaning(monthCategory, channelById[monthCategory], temperamentCounterpart);
   const workingStyle = `做事时，你更可能${supportAction(resource, self)}，然后把主要力气放到${targetMeaning(primary)}。专业结构中，这叫“${primary.label}”较突出：${visibilityInLife(primary)}；“${secondary.label}”则${visibilityInLife(secondary)}。`;
+  const monthImage = `想象${DAY_MASTER_IMAGE[structure.dayMaster.stem]}来到${MONTH_SCENE[structure.monthCommand.branch]}。四周先给它的，是“${POWER_CATEGORY[monthCategory].label}”这层做事气候。`;
+  const monthInterpretation = `事情刚放到你桌上时，这更像你会${POWER_BEHAVIOR_SCENE[monthCategory]}。它不是凭一个字猜出来的，而是由${structure.monthCommand.branch}月令的本气${monthMain.stem}${monthMain.name}相对日主${structure.dayMaster.stem}形成。`;
+  const tenGodHeadline = `事情开始运转后，“${primary.label}”通常先走到前台，“${secondary.label}”在旁边接下一棒`;
+  const tenGodInterpretation = `放进日常场景里，你较容易${POWER_BEHAVIOR_SCENE[primary.id]}；事情继续往下走时，又会${POWER_BEHAVIOR_SCENE[secondary.id]}。前者${visibilityInLife(primary)}，后者${visibilityInLife(secondary)}。传统上分别归入${primary.traditional}与${secondary.traditional}，这里读的是两股力量怎样接续，不是拿一个十神给你贴标签。`;
 
   return {
     corePosition: {
@@ -394,6 +448,14 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
       basis: `由月令本气${monthMain.stem}${monthMain.name}、${primary.label}的${evidenceCountPhrase(primary)}${channelScore(secondary) > 0 ? `，以及${secondary.label}的组合` : ""}共同得出。`
     },
     elementOverview: buildElementOverview(structure, chart),
+    monthReading: {
+      image: monthImage,
+      interpretation: monthInterpretation
+    },
+    tenGodReading: {
+      headline: tenGodHeadline,
+      interpretation: tenGodInterpretation
+    },
     incompleteNote: chart.hour
       ? undefined
       : "出生时间未知，以上只使用年柱、月柱、日柱；时柱及其藏干没有参与主线判断。"
@@ -469,7 +531,7 @@ const BRANCH_USER_SIDE: Record<Branch, string> = {
   亥: "外部暂时安静时，较容易转向内在积累，为下一轮行动蓄力"
 };
 
-function pillarConnection(name: PillarName, kind: BaziCharacterKind, tendency: string): { title: string; text: string } {
+function pillarConnection(name: PillarName, kind: BaziCharacterKind, tendency: string, combinationDetail: string): { title: string; text: string } {
   const lens: Record<PillarName, Record<BaziCharacterKind, [string, string]>> = {
     年柱: {
       stem: ["别人较先看见的一面", "年柱天干偏向外部呈现与早年环境留下的表达方式"],
@@ -491,7 +553,7 @@ function pillarConnection(name: PillarName, kind: BaziCharacterKind, tendency: s
   const [title, context] = lens[name][kind];
   return {
     title,
-    text: `${context}。放到你的盘里，它提示你${tendency}。这是其中一面，仍要和月令、日主及全盘组合一起看。`
+    text: `${context}。${combinationDetail}落到生活里，它更像你${tendency}。这是其中一面，仍要和月令、日主及全盘组合一起看。`
   };
 }
 
@@ -509,16 +571,53 @@ export const TEN_GOD_PLAIN_MEANING: Record<TenGodName | "日主", string> = {
   正印: "像背后稳稳的支撑，侧重学习、依据、照料与承接经验。"
 };
 
+const HIDDEN_PILLAR_SCENE: Record<PillarName, string> = {
+  年柱: "到了陌生环境、面对长辈或沿用早年熟悉的做法时",
+  月柱: "进入集体分工、日常任务开始加压时",
+  日柱: "自己真正作决定，或回到亲近关系和日常生活时",
+  时柱: "规划下一步、经营长期项目或想象未来成果时"
+};
+
+export function hiddenLayerReading(item: PillarStructure): string {
+  if (!item.branch || !item.hiddenStems.length) return "出生时辰未知，这一柱没有补猜内部力量。";
+  const [main, ...others] = item.hiddenStems;
+  const otherText = others.length
+    ? `里面还收着${others.map(hidden => `${hidden.stem}${hidden.name}`).join("、")}，所以并不是只有一种反应。`
+    : "这一支内部只有这一条藏干线索。";
+  return `${item.name}${item.branch.branch}支像一个没有完全打开的抽屉，本气是${main.stem}${main.name}。${HIDDEN_PILLAR_SCENE[item.name]}，你较可能调出它所代表的这一面：${TEN_GOD_PLAIN_MEANING[main.name]}${otherText}`;
+}
+
+function stemCombinationDetail(
+  structure: ReturnType<typeof buildBaziStructure>,
+  item: PillarStructure,
+  role: TenGodName | "日主"
+): string {
+  const category = categoryForTenGod(role);
+  const visibleCount = structure.pillars.filter(pillar => pillar.visibleStem && categoryForTenGod(pillar.visibleStem.role) === category).length;
+  const hiddenCount = structure.pillars.flatMap(pillar => pillar.hiddenStems).filter(hidden => categoryForTenGod(hidden.name) === category).length;
+  const monthMain = structure.monthCommand.hiddenStems[0];
+  const monthCategory = categoryForTenGod(monthMain.name);
+  const monthMatches = monthCategory === category;
+  return `你的${structure.monthCommand.branch}月令先把“${POWER_CATEGORY[monthCategory].label}”放进环境底色，而这个字在${item.name}以“${role}”明现，把力量带向“${POWER_CATEGORY[category].label}”。同类力量在天干共有${visibleCount}处，地支里还有${hiddenCount}处${monthMatches ? "，月令也在呼应它" : ""}。`;
+}
+
+function branchCombinationDetail(item: PillarStructure): string {
+  const [main, ...others] = item.hiddenStems;
+  if (!main) return "";
+  return `它内部以${main.stem}${main.name}为本气${others.length ? `，同时还藏着${others.map(hidden => `${hidden.stem}${hidden.name}`).join("、")}` : ""}，所以这个字在你的盘里不是单独的一种性格。`;
+}
+
 export function explainBaziCharacter(
   item: PillarStructure,
   dayMaster: Stem,
-  kind: BaziCharacterKind
+  kind: BaziCharacterKind,
+  structure: ReturnType<typeof buildBaziStructure>
 ): BaziCharacterExplanation | null {
   if (kind === "stem") {
     if (!item.visibleStem) return null;
     const stem = item.visibleStem;
     const isDayMaster = stem.role === "日主";
-    const connection = pillarConnection(item.name, "stem", STEM_USER_SIDE[stem.stem]);
+    const connection = pillarConnection(item.name, "stem", STEM_USER_SIDE[stem.stem], stemCombinationDetail(structure, item, stem.role));
     return {
       character: stem.stem,
       element: stem.element,
@@ -540,7 +639,7 @@ export function explainBaziCharacter(
   if (!item.branch) return null;
   const hiddenSummary = item.hiddenStems.map(hidden => `${hidden.qiLevel}${hidden.stem}`).join("、");
   const isMonthCommand = item.name === "月柱";
-  const connection = pillarConnection(item.name, "branch", BRANCH_USER_SIDE[item.branch.branch]);
+  const connection = pillarConnection(item.name, "branch", BRANCH_USER_SIDE[item.branch.branch], branchCombinationDetail(item));
   return {
     character: item.branch.branch,
     element: item.branch.element,

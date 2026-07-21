@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { computeBazi } from "@/lib/domain/bazi";
-import { TEN_GOD_PLAIN_MEANING, buildBaziMainline, buildBaziStructure, explainBaziCharacter, type BaziCharacterKind } from "@/lib/domain/baziStructure";
+import { TEN_GOD_PLAIN_MEANING, buildBaziMainline, buildBaziStructure, explainBaziCharacter, hiddenLayerReading, type BaziCharacterKind } from "@/lib/domain/baziStructure";
 import { buildBaziTimeLayers, type BaziTimeLayerId } from "@/lib/domain/baziTimeComparison";
 import { buildPairStructure, HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
 import type { Element } from "@/lib/domain/elements";
@@ -99,7 +99,7 @@ export function BaziWorkspace() {
 
   if (!profile || !chart || !structure || !mainline) return <ProfileGate profile={profile} onSaved={payload => setContext(payload)} />;
   const selectedStructure = structure.pillars[selectedCharacter.pillar];
-  const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind);
+  const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind, structure);
   const activeTimeLayer = timeLayers.find(item => item.id === timeLayer) ?? timeLayers[0];
 
   return (
@@ -169,7 +169,7 @@ export function BaziWorkspace() {
                 {mainline.flow.channels.map((channel, index) => <div key={channel.id} className={channel.isMonthCommand ? "is-month-command" : ""}>
                   <i>{index ? "→" : "起"}</i><b>{channel.label}</b><small>{channel.traditional} · {channel.scene}</small>
                   <em>{channel.visible.length ? `明 ${channel.visible.length}` : "明 0"} · {channel.hidden.length ? `藏 ${channel.hidden.length}` : "藏 0"}</em>
-                  <details><summary>出处</summary><p>{[
+                  <details><summary>本盘证据</summary><p>{[
                     ...channel.visible.map(item => `${item.source}${item.stem}·${item.tenGod}`),
                     ...channel.hidden.map(item => `${item.source}${item.stem}·${item.tenGod}`)
                   ].join("；") || "已知盘面未见直接线索"}</p></details>
@@ -227,6 +227,7 @@ export function BaziWorkspace() {
                 <div><span>明字未见</span><b>{mainline.elementOverview.absentVisible.length ? mainline.elementOverview.absentVisible.join("、") : "五行均有出现"}</b></div>
                 <p>{mainline.elementOverview.summary}</p>
               </div>
+              <div className="layer-story"><span>放进你的生活里</span><b>这些五行通常怎样被你用出来</b><p>{mainline.elementOverview.interpretation}</p><small>本盘证据：明字五行数量 + 地支藏干；不以数量直接代替旺衰。</small></div>
               <div className="element-structure-bar" aria-label="五行结构">
                 {ELEMENTS.filter(element => chart.elementDistribution.counts[element] > 0).map(element => (
                   <i key={element} className={ELEMENT_CLASS[element]} style={{ width: `${chart.elementDistribution.ratios[element] * 100}%` }} />
@@ -246,9 +247,10 @@ export function BaziWorkspace() {
               <div className="bazi-layer-title"><div><span className="section-kicker">第二层 · 月令</span><h3>{structure.monthCommand.branch}月令 · 属{structure.monthCommand.element}</h3></div><small>出处：{structure.monthCommand.source}</small></div>
               <div className="month-command-card">
                 <strong>{structure.monthCommand.branch}</strong>
-                <div><b>月支取令</b><p>月令取月柱地支，不取月柱天干。它标记出生时段的季节位置，是判断全盘气势的入口之一。</p></div>
+                <div><b>日主来到怎样的季节</b><p>{mainline.monthReading.image}</p></div>
               </div>
               <div className="hidden-stem-line"><b>月令藏干</b>{structure.monthCommand.hiddenStems.map(hidden => <span key={hidden.stem}>{hidden.qiLevel}·{hidden.stem}{hidden.element}<small>{hidden.name}</small></span>)}</div>
+              <div className="layer-story"><span>事情刚放到桌上时</span><b>月令如何影响你的第一反应</b><p>{mainline.monthReading.interpretation}</p><small>本盘证据：{structure.monthCommand.branch}月令 · 本气{structure.monthCommand.hiddenStems[0]?.stem}{structure.monthCommand.hiddenStems[0]?.name}。</small></div>
               <p className="bazi-method-note">月柱以十二节的实际交接时刻切换，并按出生地法定时区 {chart.calculation.timezone} 换算。若出生时间未知且当天恰逢交节，月柱仍需在确认时刻后复核；当前不做经度真太阳时校正。</p>
             </div>
           )}
@@ -260,6 +262,7 @@ export function BaziWorkspace() {
                   <div key={item.name} className={!item.pillar ? "is-empty" : ""}>
                     <header><b>{item.name}地支</b><strong>{item.branch?.branch ?? "—"}</strong><small>{item.branch?.source ?? "时辰未知"}</small></header>
                     <ul>{item.hiddenStems.length ? item.hiddenStems.map(hidden => <li key={hidden.stem}><span>{hidden.qiLevel}</span><b>{hidden.stem}</b><small>{hidden.element} · {hidden.name}</small></li>) : <li><small>不自动补猜藏干</small></li>}</ul>
+                    <p>{hiddenLayerReading(item)}</p>
                   </div>
                 ))}
               </div>
@@ -269,6 +272,7 @@ export function BaziWorkspace() {
           {layer === "roles" && (
             <div>
               <div className="bazi-layer-title"><div><span className="section-kicker">第三层 · 十神</span><h3>以日主{chart.dayMaster}为唯一参照</h3></div><small>规则：五行生克 + 阴阳同异</small></div>
+              <div className="layer-story"><span>这张盘里的十神怎样接力</span><b>{mainline.tenGodReading.headline}</b><p>{mainline.tenGodReading.interpretation}</p><small>本盘证据：以下逐柱列出明干与藏干的十神身份、五行生克和阴阳同异。</small></div>
               <div className="ten-god-groups">
                 {structure.pillars.map(item => (
                   <section key={item.name} className={!item.pillar ? "is-empty" : ""}>
