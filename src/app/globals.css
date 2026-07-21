@@ -114,6 +114,23 @@ html, body {
 .day-master-anchor p { @apply flex min-w-0 flex-col text-sm; }
 .day-master-anchor p b { @apply font-medium text-ink/75; }
 .day-master-anchor p span { @apply mt-1 text-xs leading-5 text-ink/45; }
+.bazi-time-comparison { @apply mt-4 rounded-xl border border-gold/35 bg-white/60 p-4; }
+.bazi-time-head { @apply flex flex-wrap items-end justify-between gap-2; }
+.bazi-time-head h3 { @apply mt-1 font-serif text-lg; }
+.bazi-time-head > small { @apply text-[10px] text-ink/40; }
+.bazi-time-tabs { @apply mt-3 grid grid-cols-3 gap-2; }
+.bazi-time-tabs > button { @apply relative flex min-h-24 flex-col items-start rounded-xl border border-mist bg-rice/45 p-3 text-left transition hover:border-gold/55; }
+.bazi-time-tabs > button[aria-pressed="true"] { @apply border-cinnabar/40 bg-cinnabar/5 shadow-sm; }
+.bazi-time-tabs span { @apply text-[10px] text-cinnabar; }
+.bazi-time-tabs strong { @apply mt-1 font-serif text-xl font-normal; }
+.bazi-time-tabs small { @apply mt-1 text-[10px] text-ink/40; }
+.bazi-time-tabs em { @apply absolute right-3 top-3 rounded-full border border-gold/35 px-2 py-0.5 text-[9px] not-italic text-ink/50; }
+.bazi-time-detail { @apply mt-2 grid gap-2 lg:grid-cols-3; }
+.bazi-time-detail > section { @apply flex flex-col rounded-lg border border-mist bg-white/70 p-3; }
+.bazi-time-detail span { @apply text-[10px] text-cinnabar; }
+.bazi-time-detail b { @apply mt-1 text-sm font-medium text-ink/75; }
+.bazi-time-detail p { @apply mt-1 text-xs leading-5 text-ink/50; }
+.bazi-time-footnote { @apply mt-3 border-t border-dashed border-gold/40 pt-2 text-[10px] leading-5 text-ink/45; }
 .bazi-layer-title { @apply mb-4 flex flex-wrap items-end justify-between gap-2; }
 .bazi-layer-title h3 { @apply mt-1 font-serif text-xl; }
 .bazi-layer-title > small { @apply text-[10px] text-ink/45; }
@@ -217,6 +234,11 @@ html, body {
   .pillar-card > em { @apply px-1.5; }
   .day-master-anchor { @apply items-start gap-3 px-3; }
   .day-master-anchor > div { @apply flex-col gap-1 pr-3; }
+  .bazi-time-comparison { @apply p-3; }
+  .bazi-time-tabs { @apply gap-1; }
+  .bazi-time-tabs > button { @apply min-h-24 px-2 py-3; }
+  .bazi-time-tabs em { @apply static mt-2; }
+  .bazi-time-tabs strong { @apply text-lg; }
   .month-command-card { @apply grid-cols-[3.5rem_1fr] gap-3 p-3; }
   .month-command-card > strong { @apply h-12 w-12 text-2xl; }
   .pair-axis { @apply grid-cols-[1fr_4.75rem_1fr] gap-1 p-2; }

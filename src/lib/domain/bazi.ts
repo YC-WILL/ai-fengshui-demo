@@ -82,6 +82,11 @@ function yearPillar(year: number): Pillar {
   return makePillar(stemIdx, branchIdx);
 }
 
+/** 按干支纪年生成年柱；调用方需先决定以立春或其他边界切换年份。 */
+export function pillarForGanzhiYear(year: number): Pillar {
+  return yearPillar(year);
+}
+
 // ---------- 月柱（简化：按公历月份）----------
 // 五虎遁：年干 → 寅月起干
 const FIVE_TIGER: Record<Stem, Stem> = {
@@ -101,6 +106,14 @@ function monthPillar(yearStem: Stem, month: number): Pillar {
   const offsetFromYin = ((branchIdx - 2) % 12 + 12) % 12;
   const stemIdx = (startStemIdx + offsetFromYin) % 10;
   return makePillar(stemIdx, branchIdx);
+}
+
+/** 按节气月支与年干起月柱，供已确定节气边界的时间层使用。 */
+export function pillarForSolarMonth(yearStem: Stem, branch: Branch): Pillar {
+  const branchIdx = BRANCHES.indexOf(branch);
+  const startStemIdx = STEMS.indexOf(FIVE_TIGER[yearStem]);
+  const offsetFromYin = ((branchIdx - 2) % 12 + 12) % 12;
+  return makePillar((startStemIdx + offsetFromYin) % 10, branchIdx);
 }
 
 // ---------- 时柱（简化：按 24 小时区间）----------

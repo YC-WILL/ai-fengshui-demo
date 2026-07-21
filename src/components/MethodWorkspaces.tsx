@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { computeBazi } from "@/lib/domain/bazi";
 import { buildBaziStructure, explainBaziCharacter, type BaziCharacterKind } from "@/lib/domain/baziStructure";
+import { buildBaziTimeLayers, type BaziTimeLayerId } from "@/lib/domain/baziTimeComparison";
 import { buildPairStructure, HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
 import type { Element } from "@/lib/domain/elements";
 import { DATE_EVENTS, RELATION_DIMENSIONS } from "@/lib/product/methodUi";
@@ -16,6 +17,11 @@ interface BirthProfile {
   unknownTime: boolean;
 }
 
+interface BirthContext {
+  profile: BirthProfile | null;
+  correspondence: { date: string } | null;
+}
+
 const ELEMENTS: Element[] = ["木", "火", "土", "金", "水"];
 const ELEMENT_CLASS: Record<Element, string> = {
   木: "element-bar-wood",
@@ -25,17 +31,22 @@ const ELEMENT_CLASS: Record<Element, string> = {
   水: "element-bar-water"
 };
 
-function useBirthProfile() {
-  const [profile, setProfile] = useState<BirthProfile | null | undefined>(undefined);
+function useBirthContext() {
+  const [context, setContext] = useState<BirthContext | null | undefined>(undefined);
   useEffect(() => {
     let active = true;
     fetch("/api/today-correspondence", { cache: "no-store" })
       .then(response => response.json())
-      .then(body => active && setProfile(body?.data?.profile ?? null))
-      .catch(() => active && setProfile(null));
+      .then(body => active && setContext(body?.data ?? null))
+      .catch(() => active && setContext(null));
     return () => { active = false; };
   }, []);
-  return profile;
+  return context;
+}
+
+function useBirthProfile() {
+  const context = useBirthContext();
+  return context === undefined ? undefined : context?.profile ?? null;
 }
 
 function ProfileGate({ profile }: { profile: BirthProfile | null | undefined }) {
@@ -54,7 +65,8 @@ function ProfileGate({ profile }: { profile: BirthProfile | null | undefined }) 
 }
 
 export function BaziWorkspace() {
-  const profile = useBirthProfile();
+  const context = useBirthContext();
+  const profile = context === undefined ? undefined : context?.profile ?? null;
   const chart = useMemo(() => profile ? computeBazi({
     gender: "other",
     birthDate: profile.birthDate,
@@ -63,12 +75,17 @@ export function BaziWorkspace() {
     unknownTime: profile.unknownTime
   }) : null, [profile]);
   const structure = useMemo(() => chart ? buildBaziStructure(chart) : null, [chart]);
+  const timeLayers = useMemo(() => chart && context?.correspondence?.date
+    ? buildBaziTimeLayers(chart, context.correspondence.date)
+    : [], [chart, context?.correspondence?.date]);
   const [selectedCharacter, setSelectedCharacter] = useState<{ pillar: number; kind: BaziCharacterKind }>({ pillar: 2, kind: "stem" });
   const [layer, setLayer] = useState<"elements" | "month" | "hidden" | "roles">("elements");
+  const [timeLayer, setTimeLayer] = useState<BaziTimeLayerId>("today");
 
   if (!chart || !structure) return <ProfileGate profile={profile} />;
   const selectedStructure = structure.pillars[selectedCharacter.pillar];
   const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind);
+  const activeTimeLayer = timeLayers.find(item => item.id === timeLayer) ?? timeLayers[0];
 
   return (
     <section className="plate-shell">
@@ -105,6 +122,24 @@ export function BaziWorkspace() {
           <div><span className="section-kicker">全盘参照点</span><strong>{structure.dayMaster.stem}</strong></div>
           <p><b>{structure.dayMaster.yinYang}{structure.dayMaster.element}日主</b><span>取自{structure.dayMaster.source}；十神均由其他天干与它比较而得。</span></p>
         </div>
+
+        {activeTimeLayer && <div className="bazi-time-comparison">
+          <div className="bazi-time-head">
+            <div><span className="section-kicker">本命之上 · 时间对照</span><h3>今天、这个月和这一年，分别带来什么结构</h3></div>
+            <small>只比较结构，不判断吉凶</small>
+          </div>
+          <div className="bazi-time-tabs" aria-label="本命时间对照">
+            {timeLayers.map(item => <button key={item.id} type="button" aria-pressed={timeLayer === item.id} onClick={() => setTimeLayer(item.id)}>
+              <span>{item.label}</span><strong>{item.pillar.pillarLabel}</strong><small>{item.period}</small><em>{item.stemRole}</em>
+            </button>)}
+          </div>
+          <div className="bazi-time-detail">
+            <section><span>天干对日主</span><b>{activeTimeLayer.pillar.stem} · {activeTimeLayer.stemRole}</b><p>相对日主{chart.dayMaster}形成“{activeTimeLayer.stemRelation}”。{activeTimeLayer.sameStemPositions.length ? `本命${activeTimeLayer.sameStemPositions.join("、")}也出现${activeTimeLayer.pillar.stem}。` : "本命明干中没有相同的字。"}</p></section>
+            <section><span>地支对本命</span><b>{activeTimeLayer.pillar.branch} · {activeTimeLayer.branchLinks.length ? `${activeTimeLayer.branchLinks.length}处对应` : "暂无显著对应"}</b><p>{activeTimeLayer.branchLinks.length ? activeTimeLayer.branchLinks.map(item => `与${item.position}${item.natalBranch}${item.relation}`).join("；") : "与本命四支未形成这里列出的同支、六合、六冲、六害或六破。"}</p></section>
+            <section><span>这一层从哪里来</span><b>{activeTimeLayer.source}</b><p>{activeTimeLayer.precision}</p></section>
+          </div>
+          <p className="bazi-time-footnote">时间层会随日期变化，本命盘本身不会改变；这些名称只表示传统结构关系，不直接等同于现实结果。</p>
+        </div>}
 
         <div className="plate-tabs" aria-label="八字盘内容层级">
           {([
