@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { computeBazi } from "@/lib/domain/bazi";
-import { buildBaziStructure, explainBaziCharacter, type BaziCharacterKind } from "@/lib/domain/baziStructure";
+import { buildBaziMainline, buildBaziStructure, explainBaziCharacter, type BaziCharacterKind } from "@/lib/domain/baziStructure";
 import { buildBaziTimeLayers, type BaziTimeLayerId } from "@/lib/domain/baziTimeComparison";
 import { buildPairStructure, HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
 import type { Element } from "@/lib/domain/elements";
@@ -81,6 +81,7 @@ export function BaziWorkspace() {
     unknownTime: profile.unknownTime
   }) : null, [profile]);
   const structure = useMemo(() => chart ? buildBaziStructure(chart) : null, [chart]);
+  const mainline = useMemo(() => chart ? buildBaziMainline(chart) : null, [chart]);
   const timeLayers = useMemo(() => chart && context?.correspondence?.date
     ? buildBaziTimeLayers(chart, context.correspondence.date)
     : [], [chart, context?.correspondence?.date]);
@@ -89,7 +90,7 @@ export function BaziWorkspace() {
   const [timeLayer, setTimeLayer] = useState<BaziTimeLayerId>("today");
   const [editingProfile, setEditingProfile] = useState(false);
 
-  if (!profile || !chart || !structure) return <ProfileGate profile={profile} onSaved={payload => setContext(payload)} />;
+  if (!profile || !chart || !structure || !mainline) return <ProfileGate profile={profile} onSaved={payload => setContext(payload)} />;
   const selectedStructure = structure.pillars[selectedCharacter.pillar];
   const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind);
   const activeTimeLayer = timeLayers.find(item => item.id === timeLayer) ?? timeLayers[0];
@@ -140,6 +141,42 @@ export function BaziWorkspace() {
           <div><span className="section-kicker">全盘参照点</span><strong>{structure.dayMaster.stem}</strong></div>
           <p><b>{structure.dayMaster.yinYang}{structure.dayMaster.element}日主</b><span>取自{structure.dayMaster.source}；十神均由其他天干与它比较而得。</span></p>
         </div>
+
+        <section className="bazi-mainline" aria-labelledby="bazi-mainline-title">
+          <header className="bazi-mainline-head">
+            <div><span className="section-kicker">本命盘第一层</span><h2 id="bazi-mainline-title">我的命局主线</h2></div>
+            <small>只由月令、明干与藏干组合得出</small>
+          </header>
+
+          <article className="bazi-mainline-answer">
+            <span>一</span>
+            <div><h3>{mainline.corePosition.title}</h3><p>{mainline.corePosition.summary}</p>
+              <details><summary>查看盘面依据</summary><ul>{mainline.corePosition.evidence.map(item => <li key={item}>{item}</li>)}</ul></details>
+            </div>
+          </article>
+
+          <article className="bazi-mainline-answer">
+            <span>二</span>
+            <div className="min-w-0"><h3>{mainline.flow.title}</h3><p>{mainline.flow.summary}</p>
+              <div className="power-flow" aria-label={mainline.flow.sequence.join("到")}>
+                {mainline.flow.channels.map((channel, index) => <div key={channel.id} className={channel.isMonthCommand ? "is-month-command" : ""}>
+                  <i>{index ? "→" : "起"}</i><b>{channel.label}</b><small>{channel.traditional}</small>
+                  <em>{channel.visible.length ? `明 ${channel.visible.length}` : "明 0"} · {channel.hidden.length ? `藏 ${channel.hidden.length}` : "藏 0"}</em>
+                  <details><summary>出处</summary><p>{[
+                    ...channel.visible.map(item => `${item.source}${item.stem}·${item.tenGod}`),
+                    ...channel.hidden.map(item => `${item.source}${item.stem}·${item.tenGod}`)
+                  ].join("；") || "已知盘面未见直接线索"}</p></details>
+                </div>)}
+              </div>
+            </div>
+          </article>
+
+          <article className="bazi-mainline-answer is-meaning">
+            <span>三</span>
+            <div><h3>{mainline.meaning.title}</h3><p>{mainline.meaning.summary}</p><div className="bazi-mainline-basis">组合依据：{mainline.meaning.basis}</div></div>
+          </article>
+          {mainline.incompleteNote && <p className="bazi-mainline-note">{mainline.incompleteNote}</p>}
+        </section>
 
         {activeTimeLayer && <div className="bazi-time-comparison">
           <div className="bazi-time-head">
