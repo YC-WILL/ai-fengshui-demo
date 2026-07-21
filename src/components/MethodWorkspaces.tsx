@@ -173,7 +173,14 @@ export function BaziWorkspace() {
 
           <article className="bazi-mainline-answer is-meaning">
             <span>三</span>
-            <div><h3>{mainline.meaning.title}</h3><p>{mainline.meaning.summary}</p><details className="bazi-mainline-basis"><summary>查看组合依据</summary><p>{mainline.meaning.basis}</p></details></div>
+            <div>
+              <h3>{mainline.meaning.title}</h3>
+              <div className="bazi-meaning-points">
+                <p><b>盘面气质</b>{mainline.meaning.temperament}</p>
+                <p><b>做事方式</b>{mainline.meaning.workingStyle}</p>
+              </div>
+              <details className="bazi-mainline-basis"><summary>查看组合依据</summary><p>{mainline.meaning.basis}</p></details>
+            </div>
           </article>
           {mainline.incompleteNote && <p className="bazi-mainline-note">{mainline.incompleteNote}</p>}
         </section>
@@ -207,7 +214,12 @@ export function BaziWorkspace() {
         <div className="bazi-layer-panel">
           {layer === "elements" && (
             <>
-              <div className="bazi-layer-title"><div><span className="section-kicker">第二层 · 五行</span><h3>八个明字的五行位置</h3></div><small>统计范围：四柱天干、地支；未含藏干</small></div>
+              <div className="bazi-layer-title"><div><span className="section-kicker">第二层 · 五行</span><h3>已知明字的五行位置</h3></div><small>统计范围：已知四柱天干、地支；未含藏干</small></div>
+              <div className="element-plain-summary">
+                <div><span>相对偏多</span><b>{mainline.elementOverview.prominent.length ? mainline.elementOverview.prominent.join("、") : "没有明显偏多"}</b></div>
+                <div><span>明字未见</span><b>{mainline.elementOverview.absentVisible.length ? mainline.elementOverview.absentVisible.join("、") : "五行均有出现"}</b></div>
+                <p>{mainline.elementOverview.summary}</p>
+              </div>
               <div className="element-structure-bar" aria-label="五行结构">
                 {ELEMENTS.filter(element => chart.elementDistribution.counts[element] > 0).map(element => (
                   <i key={element} className={ELEMENT_CLASS[element]} style={{ width: `${chart.elementDistribution.ratios[element] * 100}%` }} />
@@ -273,6 +285,7 @@ export function BaziWorkspace() {
           <section><span>它是什么</span><b>{characterExplanation.identity}</b><p>先认清这是天干还是地支，以及它本身的阴阳和五行。</p></section>
           <section><span>从哪里来</span><b>{characterExplanation.source}</b><p>它来自{selectedStructure.pillar?.pillarLabel}中的这个位置，不是后续推测出来的字。</p></section>
           <section><span>在盘中起什么作用</span><b>{characterExplanation.roleTitle}</b><p>{characterExplanation.role}</p></section>
+          <section className="is-plain"><span>翻成白话</span><b>{characterExplanation.character}字的传统意象</b><p>{characterExplanation.plainMeaning}</p></section>
         </div>}
         <div className="plate-evidence"><b>怎么算出来</b><span>{characterExplanation?.evidence ?? "出生时辰未知，不自动补猜"}</span></div>
         <div className="member-extension"><span>会员层</span><b>大运、流年与历年对照</b><small>增加时间跨度与比较，不改变本命盘基础结果。</small></div>

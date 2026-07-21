@@ -116,6 +116,11 @@ html, body {
 .bazi-layer-panel { @apply mt-4 min-h-40 rounded-xl border border-mist bg-rice/45 p-5; }
 .element-structure-bar { @apply flex h-3 overflow-hidden rounded-full border border-ink/10 bg-white; }
 .element-structure-bar i { @apply block h-full; }
+.element-plain-summary { @apply mb-4 grid gap-2 sm:grid-cols-2; }
+.element-plain-summary > div { @apply flex items-center justify-between rounded-lg border border-mist bg-white/65 px-3 py-2 text-xs; }
+.element-plain-summary span { @apply text-ink/45; }
+.element-plain-summary b { @apply font-medium text-ink/75; }
+.element-plain-summary > p { @apply text-xs leading-6 text-ink/55 sm:col-span-2; }
 .day-master-anchor { @apply mt-3 flex items-center gap-4 rounded-xl border border-gold/35 bg-white/65 px-4 py-3; }
 .day-master-anchor > div { @apply flex shrink-0 items-center gap-3 border-r border-mist pr-4; }
 .day-master-anchor > div strong { @apply font-serif text-3xl font-normal; }
@@ -134,6 +139,9 @@ html, body {
 .bazi-mainline-answer details summary { @apply w-fit cursor-pointer text-cinnabar/80; }
 .bazi-mainline-answer details ul { @apply mt-2 space-y-1 border-l border-gold/40 pl-3 leading-5; }
 .bazi-mainline-answer.is-meaning { @apply bg-white/45; }
+.bazi-meaning-points { @apply mt-2 grid gap-2 sm:grid-cols-2; }
+.bazi-meaning-points > p { @apply flex flex-col rounded-lg border border-mist bg-white/65 px-3 py-3 text-xs leading-6 text-ink/60; }
+.bazi-meaning-points b { @apply mb-1 text-[10px] font-medium tracking-wider text-cinnabar; }
 .bazi-mainline-basis { @apply mt-3 rounded-lg border border-mist bg-white/60 px-3 py-2 text-[11px] leading-5 text-ink/45; }
 .bazi-mainline-basis > p { @apply mt-2; }
 .bazi-mainline-note { @apply border-t border-dashed border-gold/40 px-4 py-3 text-[11px] leading-5 text-ink/50; }
@@ -209,6 +217,7 @@ html, body {
 .character-explanation span { @apply text-[10px] text-cinnabar; }
 .character-explanation b { @apply mt-1 font-serif text-lg font-normal; }
 .character-explanation p { @apply mt-1 text-xs leading-5 text-ink/50; }
+.character-explanation > section.is-plain { @apply border-cinnabar/20 bg-cinnabar/5; }
 
 .compact-field { @apply flex items-center gap-2 text-xs text-ink/55; }
 .compact-field input { @apply rounded-lg border border-mist bg-white px-3 py-2 text-sm text-ink focus:border-cinnabar/40 focus:outline-none focus:ring-2 focus:ring-cinnabar/15; }

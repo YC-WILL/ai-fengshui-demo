@@ -50,8 +50,17 @@ export interface BaziMainline {
   };
   meaning: {
     title: string;
+    temperament: string;
+    workingStyle: string;
     summary: string;
     basis: string;
+  };
+  elementOverview: {
+    prominent: Element[];
+    absentVisible: Element[];
+    foundInHidden: Element[];
+    absentEntirely: Element[];
+    summary: string;
   };
   incompleteNote?: string;
 }
@@ -233,6 +242,52 @@ function targetMeaning(target: PowerChannel): string {
   return "建立自身立场并调用同类力量";
 }
 
+function temperamentMeaning(monthCategory: PowerCategoryId, monthChannel: PowerChannel, counterpart: PowerChannel): string {
+  const entry: Record<PowerCategoryId, string> = {
+    resource: "先观察、吸收并确认依据",
+    self: "先从自身立场和同类呼应出发",
+    output: "先把感受与判断转成表达或方法",
+    reality: "先看具体事务、资源与结果怎样落地",
+    constraint: "先留意标准、责任与边界"
+  };
+  const visibility = monthChannel.visible.length
+    ? "这部分在天干明现，较容易直接成为外在表现"
+    : "这部分主要藏在地支，更可能在具体情境中才显出来";
+  const counterpartText = channelScore(counterpart) > 0
+    ? `${counterpart.label}也有盘面线索，使这种气质不会只停在单一方向。`
+    : "已知盘面暂未见另一类明显线索。";
+  return `传统结构呈现的气质更偏向${entry[monthCategory]}；${visibility}。${counterpartText}`;
+}
+
+function buildElementOverview(structure: ReturnType<typeof buildBaziStructure>, chart: BaziChart): BaziMainline["elementOverview"] {
+  const elements = ["木", "火", "土", "金", "水"] as const;
+  const counts = chart.elementDistribution.counts;
+  const values = elements.map(element => counts[element]);
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const prominent = max - min >= 2 ? elements.filter(element => counts[element] === max) : [];
+  const absentVisible = elements.filter(element => counts[element] === 0);
+  const hiddenSet = new Set(structure.pillars.flatMap(pillar => pillar.hiddenStems.map(hidden => hidden.element)));
+  const foundInHidden = absentVisible.filter(element => hiddenSet.has(element));
+  const absentEntirely = absentVisible.filter(element => !hiddenSet.has(element));
+  const prominentText = prominent.length
+    ? `明字中${prominent.join("、")}相对偏多`
+    : "明字五行分布接近，没有明显偏多的一类";
+  const absentText = !absentVisible.length
+    ? "五行在明字中都有出现"
+    : [
+        foundInHidden.length ? `${foundInHidden.join("、")}虽未在明字出现，但可在地支藏干中找到` : "",
+        absentEntirely.length ? `${absentEntirely.join("、")}在已知明字与藏干中均未见` : ""
+      ].filter(Boolean).join("；");
+  return {
+    prominent,
+    absentVisible,
+    foundInHidden,
+    absentEntirely,
+    summary: `${prominentText}；${absentText}。这里的“未见”只描述已知盘面，不等于缺陷，也不单独决定旺衰。`
+  };
+}
+
 function evidenceCountPhrase(channel: PowerChannel): string {
   const visible = channel.visible.length ? `${channel.visible.length}处明干` : "未在天干明现";
   const hidden = channel.hidden.length ? `${channel.hidden.length}处藏干` : "地支未见藏干线索";
@@ -304,6 +359,10 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
     ? `月令本气也归入${primary.label}，因此它位于这张盘的季节入口。`
     : `月令本气归入${POWER_CATEGORY[monthCategory].label}，它构成另一层季节背景。`;
 
+  const temperamentCounterpart = primary.id === monthCategory ? secondary : primary;
+  const temperament = temperamentMeaning(monthCategory, channelById[monthCategory], temperamentCounterpart);
+  const workingStyle = `做事时更可能${supportAction(resource, self)}，再把力量投入到${targetMeaning(primary)}。${primary.label}${primaryVisibility}；${secondary.label}${evidenceState(secondary)}。`;
+
   return {
     corePosition: {
       title: "你在盘中的核心位置",
@@ -322,9 +381,12 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
     },
     meaning: {
       title: "这对你意味着什么",
-      summary: `从组合看，做事更依赖${supportAction(resource, self)}，再把力量投入到${targetMeaning(primary)}。${primary.label}${primaryVisibility}。${monthClause}${secondaryClause}这是盘中力量的使用顺序，不是固定性格标签。`,
+      temperament,
+      workingStyle,
+      summary: `${temperament}${workingStyle}${monthClause}${secondaryClause}这是盘中力量的使用顺序，不是固定性格标签。`,
       basis: `由月令本气${monthMain.stem}${monthMain.name}、${primary.label}的${evidenceCountPhrase(primary)}${channelScore(secondary) > 0 ? `，以及${secondary.label}的组合` : ""}共同得出。`
     },
+    elementOverview: buildElementOverview(structure, chart),
     incompleteNote: chart.hour
       ? undefined
       : "出生时间未知，以上只使用年柱、月柱、日柱；时柱及其藏干没有参与主线判断。"
@@ -337,8 +399,37 @@ export interface BaziCharacterExplanation {
   source: string;
   roleTitle: string;
   role: string;
+  plainMeaning: string;
   evidence: string;
 }
+
+const STEM_PLAIN_MEANING: Record<Stem, string> = {
+  甲: "像向上成形的树干，白话里侧重开端、建立与向外生长。",
+  乙: "像藤蔓与花草，白话里侧重顺势调整、连接与寻找路径。",
+  丙: "像日光铺开，白话里侧重照见、表达与把事情推到明处。",
+  丁: "像灯火聚焦，白话里侧重专注、持续与细处照料。",
+  戊: "像高地与厚土，白话里侧重承载、稳定与建立框架。",
+  己: "像可耕作的土，白话里侧重吸收、整理与把细节安顿下来。",
+  庚: "像需要锻打的金属，白话里侧重切入、执行与破开阻滞。",
+  辛: "像经过打磨的金属，白话里侧重分辨、精细与明确边界。",
+  壬: "像江河大水，白话里侧重流动、连接与打开更大范围。",
+  癸: "像雨露细水，白话里侧重渗透、观察与润物无声。"
+};
+
+const BRANCH_PLAIN_MEANING: Record<Branch, string> = {
+  子: "子是水气集中的地支，也含夜半与起始之意，白话里偏向蓄势与流动的入口。",
+  丑: "丑是寒湿之土，处在收藏将尽、尚待舒展的位置，白话里偏向积累与等待成形。",
+  寅: "寅是初春木气发动的位置，白话里偏向启动、破土与打开局面。",
+  卯: "卯是仲春木气舒展的位置，白话里偏向展开、生长与建立连接。",
+  辰: "辰是春夏交接的湿土，白话里偏向承接、转换与容纳多种线索。",
+  巳: "巳是初夏火气渐盛的位置，白话里偏向酝酿成熟与加快显现。",
+  午: "午是火气旺盛的位置，白话里偏向显露、推动与把力量送到前台。",
+  未: "未是夏秋交接的燥土，白话里偏向收束、整合与整理已有成果。",
+  申: "申是初秋金气发动的位置，白话里偏向整理、切换与重新建立秩序。",
+  酉: "酉是仲秋金气成形的位置，白话里偏向分辨、收敛与把边界说清。",
+  戌: "戌是秋冬交接的燥土，白话里偏向收尾、守住成果与确定界线。",
+  亥: "亥是初冬水气展开的位置，白话里偏向收藏、孕育与为下一轮蓄力。"
+};
 
 export function explainBaziCharacter(
   item: PillarStructure,
@@ -357,6 +448,7 @@ export function explainBaziCharacter(
       role: isDayMaster
         ? "这是日主，是全盘的参照点。其他天干和藏干都要先与它比较，才能得到十神名称。"
         : `以日主${dayMaster}为参照，它与日主形成“${stem.relation}”关系，对应十神“${stem.role}”。`,
+      plainMeaning: `${STEM_PLAIN_MEANING[stem.stem]}它落在${item.name}天干位置；这是一条盘面线索，不单独等同于完整性格。`,
       evidence: isDayMaster
         ? `取${item.name}天干${stem.stem}为日主`
         : `${stem.stem}属${stem.element}，再比较日主${dayMaster}的五行与阴阳`
@@ -374,6 +466,7 @@ export function explainBaziCharacter(
     role: isMonthCommand
       ? `它位于月柱地支，因此也是月令，标记出生时段的季节位置。内部藏有${hiddenSummary}。`
       : `它承载这一柱的地支结构，内部藏有${hiddenSummary}。地支本身不直接定十神，要看其中藏干与日主的关系。`,
+    plainMeaning: `${BRANCH_PLAIN_MEANING[item.branch.branch]}它落在${item.name}地支位置，仍需与月令、日主和藏干一起理解。`,
     evidence: `${item.branch.branch}属${item.branch.element}；藏干按固定地支藏干表展开`
   };
 }

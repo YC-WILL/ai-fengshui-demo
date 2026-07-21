@@ -83,12 +83,14 @@ describe("bazi structure evidence", () => {
     });
     expect(dayStem?.identity).toMatch(/[阴阳][木火土金水]天干/);
     expect(dayStem?.role).toMatch(/全盘的参照点/);
+    expect(dayStem?.plainMeaning).toMatch(/白话里|盘面线索/);
     expect(monthBranch).toMatchObject({
       character: chart.month.branch,
       source: "月柱地支",
       roleTitle: "月令"
     });
     expect(monthBranch?.role).toMatch(/季节位置|内部藏有/);
+    expect(monthBranch?.plainMeaning).toMatch(/白话里|一起理解/);
   });
 
   it("builds the three-question mainline from month command, visible stems and hidden stems", () => {
@@ -111,6 +113,11 @@ describe("bazi structure evidence", () => {
     expect(monthChannel).toMatchObject({ id: "constraint", label: "规则约束", isMonthCommand: true });
     expect(mainline.corePosition.summary).toMatch(/乙木（阴木）|酉月|月令本气辛|规则约束/);
     expect(mainline.meaning.basis).toMatch(/月令本气辛七杀|明干|藏干/);
+    expect(mainline.elementOverview.prominent).toContain("火");
+    expect(mainline.elementOverview.absentVisible).toEqual(["水"]);
+    expect(mainline.elementOverview.foundInHidden).toEqual(["水"]);
+    expect(mainline.elementOverview.absentEntirely).toEqual([]);
+    expect(mainline.elementOverview.summary).toMatch(/明字|藏干|不等于缺陷/);
   });
 
   it("keeps visible and hidden evidence traceable to exact pillar positions", () => {
@@ -141,6 +148,7 @@ describe("bazi structure evidence", () => {
 
     expect(evidence.every(item => !item.source.startsWith("时柱"))).toBe(true);
     expect(mainline.incompleteNote).toMatch(/时柱及其藏干没有参与/);
+    expect(mainline.meaning.temperament).not.toMatch(/时柱/);
   });
 
   it("changes the meaning with the combined chart instead of a single-god personality label", () => {
@@ -152,9 +160,13 @@ describe("bazi structure evidence", () => {
     }));
 
     expect(first.meaning.summary).not.toBe(second.meaning.summary);
+    expect(first.meaning.temperament).not.toBe(second.meaning.temperament);
+    expect(first.meaning.workingStyle).not.toBe(second.meaning.workingStyle);
     expect(first.meaning.basis).not.toBe(second.meaning.basis);
-    expect(`${first.meaning.summary}${second.meaning.summary}`).not.toMatch(/你就是|天生|注定|一定|人格|焦虑症|抑郁症/);
+    expect(`${first.meaning.temperament}${first.meaning.workingStyle}${second.meaning.temperament}${second.meaning.workingStyle}`).not.toMatch(/你就是|天生|注定|一定|人格|焦虑症|抑郁症/);
     expect(first.meaning.summary).toMatch(/使用顺序|不是固定性格标签/);
+    expect(first.meaning.temperament.length).toBeLessThan(180);
+    expect(first.meaning.workingStyle.length).toBeLessThan(180);
     expect(first.meaning.summary.length).toBeLessThan(220);
     expect(second.meaning.summary.length).toBeLessThan(220);
   });
