@@ -90,13 +90,17 @@ html, body {
 .member-extension small { @apply text-xs leading-5 text-ink/45; }
 
 .pillar-grid { @apply grid grid-cols-4 gap-2; }
-.pillar-grid button { @apply flex min-h-48 flex-col items-center justify-center rounded-xl border border-mist bg-rice/40 px-2 py-4 transition hover:border-gold/50; }
-.pillar-grid button > span { @apply mb-3 text-xs text-ink/45; }
-.pillar-grid button > em { @apply mb-1 rounded-full border border-gold/35 px-2 py-0.5 text-[9px] not-italic text-ink/50; }
-.pillar-grid button strong { @apply font-serif text-3xl font-normal leading-tight md:text-4xl; }
-.pillar-grid button small { @apply mt-3 text-[10px] text-ink/40; }
-.pillar-grid button.is-active { @apply border-cinnabar/40 bg-cinnabar/5 shadow-sm; }
-.pillar-grid button.is-active > span { @apply text-cinnabar; }
+.pillar-card { @apply flex min-h-48 flex-col items-center justify-center rounded-xl border border-mist bg-rice/40 px-2 py-4 transition; }
+.pillar-card > span { @apply mb-3 text-xs text-ink/45; }
+.pillar-card > em { @apply mb-1 rounded-full border border-gold/35 px-2 py-0.5 text-[9px] not-italic text-ink/50; }
+.pillar-card > button { @apply relative rounded-lg px-4 font-serif text-3xl font-normal leading-tight outline-none transition hover:bg-white hover:text-cinnabar focus-visible:ring-2 focus-visible:ring-cinnabar/30 md:text-4xl; }
+.pillar-card > button::after { @apply absolute -right-1 top-1/2 -translate-y-1/2 text-[8px] font-sans text-ink/25; content: "点"; }
+.pillar-card > button.is-character-active { @apply bg-white text-cinnabar shadow-sm ring-1 ring-cinnabar/25; }
+.pillar-card > button:disabled { @apply cursor-default text-ink/35 hover:bg-transparent hover:text-ink/35; }
+.pillar-card > button:disabled::after { content: ""; }
+.pillar-card > small { @apply mt-3 text-[10px] text-ink/40; }
+.pillar-card.is-active { @apply border-cinnabar/40 bg-cinnabar/5 shadow-sm; }
+.pillar-card.is-active > span { @apply text-cinnabar; }
 .plate-tabs { @apply mt-5 flex flex-wrap gap-2; }
 .plate-tabs button, .event-chips button { @apply rounded-full border border-mist bg-white px-3.5 py-1.5 text-xs text-ink/60 transition hover:border-gold/55; }
 .plate-tabs button[aria-pressed="true"], .event-chips button[aria-pressed="true"] { @apply border-cinnabar/40 bg-cinnabar/5 text-cinnabar; }
@@ -149,11 +153,12 @@ html, body {
 .ten-god-row > b { @apply text-right font-medium text-ink/80; }
 .ten-god-row > small { @apply col-span-2 mt-0.5 text-[9px] text-ink/40; }
 .ten-god-row.is-hidden { @apply bg-rice/45; }
-.pillar-evidence-stack { @apply mt-4 space-y-2; }
-.pillar-evidence-stack > div { @apply flex flex-col rounded-xl border border-mist bg-white/65 p-3; }
-.pillar-evidence-stack span { @apply text-[10px] text-cinnabar; }
-.pillar-evidence-stack b { @apply mt-1 font-serif text-lg font-normal; }
-.pillar-evidence-stack small { @apply mt-1 text-[10px] leading-4 text-ink/45; }
+.plate-aside-mark.character-mark { @apply min-h-32 text-5xl text-cinnabar; }
+.character-explanation { @apply mt-4 space-y-2; }
+.character-explanation > section { @apply flex flex-col rounded-xl border border-mist bg-white/65 p-3; }
+.character-explanation span { @apply text-[10px] text-cinnabar; }
+.character-explanation b { @apply mt-1 font-serif text-lg font-normal; }
+.character-explanation p { @apply mt-1 text-xs leading-5 text-ink/50; }
 
 .compact-field { @apply flex items-center gap-2 text-xs text-ink/55; }
 .compact-field input { @apply rounded-lg border border-mist bg-white px-3 py-2 text-sm text-ink focus:border-cinnabar/40 focus:outline-none focus:ring-2 focus:ring-cinnabar/15; }
@@ -206,10 +211,10 @@ html, body {
 @media (max-width: 520px) {
   .plate-main, .plate-aside { @apply p-4; }
   .pillar-grid { @apply gap-1; }
-  .pillar-grid button { @apply min-h-40 px-1; }
-  .pillar-grid button strong { @apply text-2xl; }
-  .pillar-grid button small { @apply hidden; }
-  .pillar-grid button > em { @apply px-1.5; }
+  .pillar-card { @apply min-h-40 px-1; }
+  .pillar-card > button { @apply px-3 text-2xl; }
+  .pillar-card > small { @apply hidden; }
+  .pillar-card > em { @apply px-1.5; }
   .day-master-anchor { @apply items-start gap-3 px-3; }
   .day-master-anchor > div { @apply flex-col gap-1 pr-3; }
   .month-command-card { @apply grid-cols-[3.5rem_1fr] gap-3 p-3; }

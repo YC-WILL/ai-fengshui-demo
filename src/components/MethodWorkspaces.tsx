@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { computeBazi } from "@/lib/domain/bazi";
-import { buildBaziStructure, PILLAR_NAMES } from "@/lib/domain/baziStructure";
+import { buildBaziStructure, explainBaziCharacter, type BaziCharacterKind } from "@/lib/domain/baziStructure";
 import { buildPairStructure, HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
 import type { Element } from "@/lib/domain/elements";
 import { DATE_EVENTS, RELATION_DIMENSIONS } from "@/lib/product/methodUi";
@@ -63,28 +63,41 @@ export function BaziWorkspace() {
     unknownTime: profile.unknownTime
   }) : null, [profile]);
   const structure = useMemo(() => chart ? buildBaziStructure(chart) : null, [chart]);
-  const [selected, setSelected] = useState(2);
+  const [selectedCharacter, setSelectedCharacter] = useState<{ pillar: number; kind: BaziCharacterKind }>({ pillar: 2, kind: "stem" });
   const [layer, setLayer] = useState<"elements" | "month" | "hidden" | "roles">("elements");
 
   if (!chart || !structure) return <ProfileGate profile={profile} />;
-  const selectedStructure = structure.pillars[selected];
+  const selectedStructure = structure.pillars[selectedCharacter.pillar];
+  const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind);
 
   return (
     <section className="plate-shell">
       <div className="plate-main">
         <div className="plate-section-head">
-          <div><span>本命四柱</span><small>点击柱位查看它在盘中的位置</small></div>
+          <div><span>本命四柱</span><small>点一个字，看懂它是什么、从哪里来、起什么作用</small></div>
           <span className="plate-status">已保存</span>
         </div>
         <div className="pillar-grid">
           {structure.pillars.map((item, index) => (
-            <button key={item.name} type="button" className={selected === index ? "is-active" : ""} onClick={() => setSelected(index)}>
+            <div key={item.name} className={`pillar-card ${selectedCharacter.pillar === index ? "is-active" : ""}`}>
               <span>{item.name}</span>
               <em>{item.visibleStem?.role ?? "未定"}</em>
-              <strong>{item.pillar?.stem ?? "—"}</strong>
-              <strong>{item.pillar?.branch ?? "—"}</strong>
+              <button
+                type="button"
+                className={selectedCharacter.pillar === index && selectedCharacter.kind === "stem" ? "is-character-active" : ""}
+                disabled={!item.visibleStem}
+                aria-label={item.visibleStem ? `查看${item.name}天干${item.visibleStem.stem}` : `${item.name}天干未定`}
+                onClick={() => setSelectedCharacter({ pillar: index, kind: "stem" })}
+              >{item.pillar?.stem ?? "—"}</button>
+              <button
+                type="button"
+                className={selectedCharacter.pillar === index && selectedCharacter.kind === "branch" ? "is-character-active" : ""}
+                disabled={!item.branch}
+                aria-label={item.branch ? `查看${item.name}地支${item.branch.branch}` : `${item.name}地支未定`}
+                onClick={() => setSelectedCharacter({ pillar: index, kind: "branch" })}
+              >{item.pillar?.branch ?? "—"}</button>
               <small>{item.pillar ? `天干${item.pillar.stemElement} · 地支${item.pillar.branchElement}` : "出生时辰未计入"}</small>
-            </button>
+            </div>
           ))}
         </div>
 
@@ -163,15 +176,15 @@ export function BaziWorkspace() {
       </div>
 
       <aside className="plate-aside">
-        <div className="plate-aside-mark">{selectedStructure.pillar?.pillarLabel ?? "时柱未定"}</div>
-        <div className="section-kicker">当前所见</div>
-        <h2 className="mt-2 font-serif text-2xl">{PILLAR_NAMES[selected]}</h2>
-        {selectedStructure.pillar ? <div className="pillar-evidence-stack">
-          <div><span>天干</span><b>{selectedStructure.visibleStem?.stem} · {selectedStructure.visibleStem?.element}</b><small>{selectedStructure.visibleStem?.role}｜出处：{selectedStructure.visibleStem?.source}</small></div>
-          <div><span>地支</span><b>{selectedStructure.branch?.branch} · {selectedStructure.branch?.element}</b><small>出处：{selectedStructure.branch?.source}</small></div>
-          <div><span>藏干</span><b>{selectedStructure.hiddenStems.map(item => item.stem).join(" · ")}</b><small>{selectedStructure.hiddenStems.map(item => `${item.qiLevel}${item.stem}`).join("，")}</small></div>
-        </div> : <p className="mt-3 text-sm leading-7 text-ink/60">出生时间未确认，所以这一柱保持空白，不自动补猜，也不生成对应藏干与十神。</p>}
-        <div className="plate-evidence"><b>计算层级</b><span>四柱明字 → 日主参照 → 月令位置 → 地支藏干 → 十神关系</span></div>
+        <div className="plate-aside-mark character-mark">{characterExplanation?.character ?? "—"}</div>
+        <div className="section-kicker">点字释义 · {selectedStructure.name}</div>
+        <h2 className="mt-2 font-serif text-2xl">{characterExplanation?.character} · {characterExplanation?.roleTitle}</h2>
+        {characterExplanation && <div className="character-explanation">
+          <section><span>它是什么</span><b>{characterExplanation.identity}</b><p>先认清这是天干还是地支，以及它本身的阴阳和五行。</p></section>
+          <section><span>从哪里来</span><b>{characterExplanation.source}</b><p>它来自{selectedStructure.pillar?.pillarLabel}中的这个位置，不是后续推测出来的字。</p></section>
+          <section><span>在盘中起什么作用</span><b>{characterExplanation.roleTitle}</b><p>{characterExplanation.role}</p></section>
+        </div>}
+        <div className="plate-evidence"><b>怎么算出来</b><span>{characterExplanation?.evidence ?? "出生时辰未知，不自动补猜"}</span></div>
         <div className="member-extension"><span>会员层</span><b>大运、流年与历年对照</b><small>增加时间跨度与比较，不改变本命盘基础结果。</small></div>
       </aside>
     </section>

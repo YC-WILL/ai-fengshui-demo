@@ -3,6 +3,7 @@ import { computeBazi } from "@/lib/domain/bazi";
 import {
   HIDDEN_STEM_REFERENCE,
   buildBaziStructure,
+  explainBaziCharacter,
   tenGodFor
 } from "@/lib/domain/baziStructure";
 
@@ -61,5 +62,31 @@ describe("bazi structure evidence", () => {
     expect(hour.pillar).toBeNull();
     expect(hour.visibleStem).toBeNull();
     expect(hour.hiddenStems).toEqual([]);
+  });
+
+  it("explains each visible character as identity, source and role", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "1990-06-15",
+      birthTime: "10:30",
+      unknownTime: false
+    });
+    const structure = buildBaziStructure(chart);
+    const dayStem = explainBaziCharacter(structure.pillars[2], chart.dayMaster, "stem");
+    const monthBranch = explainBaziCharacter(structure.pillars[1], chart.dayMaster, "branch");
+
+    expect(dayStem).toMatchObject({
+      character: chart.day.stem,
+      source: "日柱天干",
+      roleTitle: "日主"
+    });
+    expect(dayStem?.identity).toMatch(/[阴阳][木火土金水]天干/);
+    expect(dayStem?.role).toMatch(/全盘的参照点/);
+    expect(monthBranch).toMatchObject({
+      character: chart.month.branch,
+      source: "月柱地支",
+      roleTitle: "月令"
+    });
+    expect(monthBranch?.role).toMatch(/季节位置|内部藏有/);
   });
 });

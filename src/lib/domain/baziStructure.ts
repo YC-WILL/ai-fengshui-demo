@@ -1,6 +1,7 @@
 import type { BaziChart, Pillar } from "./bazi";
 import {
   BRANCH_ELEMENT,
+  BRANCH_YIN_YANG,
   KE,
   SHENG,
   STEM_ELEMENT,
@@ -15,6 +16,7 @@ export type PillarName = (typeof PILLAR_NAMES)[number];
 export type QiLevel = "本气" | "中气" | "余气";
 export type TenGodName = "比肩" | "劫财" | "食神" | "伤官" | "偏财" | "正财" | "七杀" | "正官" | "偏印" | "正印";
 export type TenGodRelation = "同我" | "我生" | "我克" | "克我" | "生我";
+export type BaziCharacterKind = "stem" | "branch";
 
 interface HiddenStemDefinition {
   stem: Stem;
@@ -60,6 +62,7 @@ export interface PillarStructure {
   branch: null | {
     branch: Branch;
     element: Element;
+    yinYang: "阳" | "阴";
     source: string;
   };
   hiddenStems: HiddenStemFact[];
@@ -115,6 +118,7 @@ export function buildBaziStructure(chart: BaziChart) {
       branch: {
         branch: pillar.branch,
         element: BRANCH_ELEMENT[pillar.branch],
+        yinYang: BRANCH_YIN_YANG[pillar.branch],
         source: `${name}地支`
       },
       hiddenStems: hiddenStemsFor(pillar.branch, chart.dayMaster, name)
@@ -135,6 +139,53 @@ export function buildBaziStructure(chart: BaziChart) {
       hiddenStems: hiddenStemsFor(chart.month.branch, chart.dayMaster, "月柱")
     },
     pillars
+  };
+}
+
+export interface BaziCharacterExplanation {
+  character: Stem | Branch;
+  identity: string;
+  source: string;
+  roleTitle: string;
+  role: string;
+  evidence: string;
+}
+
+export function explainBaziCharacter(
+  item: PillarStructure,
+  dayMaster: Stem,
+  kind: BaziCharacterKind
+): BaziCharacterExplanation | null {
+  if (kind === "stem") {
+    if (!item.visibleStem) return null;
+    const stem = item.visibleStem;
+    const isDayMaster = stem.role === "日主";
+    return {
+      character: stem.stem,
+      identity: `${STEM_YIN_YANG[stem.stem]}${stem.element}天干`,
+      source: stem.source,
+      roleTitle: stem.role,
+      role: isDayMaster
+        ? "这是日主，是全盘的参照点。其他天干和藏干都要先与它比较，才能得到十神名称。"
+        : `以日主${dayMaster}为参照，它与日主形成“${stem.relation}”关系，对应十神“${stem.role}”。`,
+      evidence: isDayMaster
+        ? `取${item.name}天干${stem.stem}为日主`
+        : `${stem.stem}属${stem.element}，再比较日主${dayMaster}的五行与阴阳`
+    };
+  }
+
+  if (!item.branch) return null;
+  const hiddenSummary = item.hiddenStems.map(hidden => `${hidden.qiLevel}${hidden.stem}`).join("、");
+  const isMonthCommand = item.name === "月柱";
+  return {
+    character: item.branch.branch,
+    identity: `${item.branch.yinYang}${item.branch.element}地支`,
+    source: item.branch.source,
+    roleTitle: isMonthCommand ? "月令" : "地支",
+    role: isMonthCommand
+      ? `它位于月柱地支，因此也是月令，标记出生时段的季节位置。内部藏有${hiddenSummary}。`
+      : `它承载这一柱的地支结构，内部藏有${hiddenSummary}。地支本身不直接定十神，要看其中藏干与日主的关系。`,
+    evidence: `${item.branch.branch}属${item.branch.element}；藏干按固定地支藏干表展开`
   };
 }
 
