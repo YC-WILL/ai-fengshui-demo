@@ -77,6 +77,14 @@ html, body {
 .plate-section-head > div:first-child > span { @apply font-serif text-xl; }
 .plate-section-head small { @apply text-xs text-ink/45; }
 .plate-status { @apply rounded-full border border-jade/35 bg-jade/5 px-3 py-1 text-xs text-jade; }
+.plate-profile-summary { @apply relative flex min-w-48 flex-col items-start rounded-xl border border-jade/35 bg-jade/5 px-3 py-2 pr-14 text-left transition hover:bg-white; }
+.plate-profile-summary span { @apply text-[9px] tracking-wider text-jade; }
+.plate-profile-summary b { @apply mt-0.5 text-xs font-medium text-ink/65; }
+.plate-profile-summary em { @apply absolute right-3 top-1/2 -translate-y-1/2 text-[10px] not-italic text-cinnabar; }
+.plate-inline-profile-editor { @apply mb-5 rounded-2xl border border-gold/30 bg-rice/70 p-2 shadow-sm; }
+.plate-inline-profile-editor .today-correspondence-shell { @apply shadow-none; }
+.plate-profile-onboarding { @apply rounded-2xl border border-gold/30 bg-white/70 p-2 shadow-scroll; }
+.plate-profile-onboarding .today-correspondence-shell { @apply shadow-none; }
 .plate-loading { @apply min-h-80 animate-pulse rounded-2xl border border-mist bg-white/70; }
 .plate-empty { @apply flex min-h-52 flex-col items-start justify-center gap-4 rounded-2xl border border-dashed border-gold/45 bg-white/65 p-6 sm:flex-row sm:items-center; }
 .plate-seal { @apply inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-cinnabar/30 font-serif text-xl text-cinnabar; }
@@ -227,6 +235,8 @@ html, body {
 
 @media (max-width: 520px) {
   .plate-main, .plate-aside { @apply p-4; }
+  .plate-profile-summary { @apply w-full; }
+  .plate-inline-profile-editor, .plate-profile-onboarding { @apply p-1; }
   .pillar-grid { @apply gap-1; }
   .pillar-card { @apply min-h-40 px-1; }
   .pillar-card > button { @apply px-3 text-2xl; }

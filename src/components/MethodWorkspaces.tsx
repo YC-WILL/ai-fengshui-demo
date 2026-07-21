@@ -9,6 +9,7 @@ import { buildPairStructure, HOME_DIRECTIONS, selectCoreDates, type CoreDateCand
 import type { Element } from "@/lib/domain/elements";
 import { DATE_EVENTS, RELATION_DIMENSIONS } from "@/lib/product/methodUi";
 import type { DateSelectionEvent } from "@/lib/types";
+import { BirthProfileForm } from "@/components/TodayCorrespondence";
 
 interface BirthProfile {
   birthDate: string;
@@ -41,17 +42,20 @@ function useBirthContext() {
       .catch(() => active && setContext(null));
     return () => { active = false; };
   }, []);
-  return context;
+  return { context, setContext };
 }
 
 function useBirthProfile() {
-  const context = useBirthContext();
+  const { context } = useBirthContext();
   return context === undefined ? undefined : context?.profile ?? null;
 }
 
-function ProfileGate({ profile }: { profile: BirthProfile | null | undefined }) {
+function ProfileGate({ profile, onSaved }: { profile: BirthProfile | null | undefined; onSaved?: (context: BirthContext) => void }) {
   if (profile === undefined) return <div className="plate-loading" aria-label="正在读取生辰资料" />;
   if (profile) return null;
+  if (onSaved) {
+    return <div className="plate-profile-onboarding"><BirthProfileForm context="plate" onSaved={payload => onSaved(payload)} /></div>;
+  }
   return (
     <div className="plate-empty">
       <span className="plate-seal" aria-hidden>生</span>
@@ -65,7 +69,7 @@ function ProfileGate({ profile }: { profile: BirthProfile | null | undefined }) 
 }
 
 export function BaziWorkspace() {
-  const context = useBirthContext();
+  const { context, setContext } = useBirthContext();
   const profile = context === undefined ? undefined : context?.profile ?? null;
   const chart = useMemo(() => profile ? computeBazi({
     gender: "other",
@@ -81,8 +85,9 @@ export function BaziWorkspace() {
   const [selectedCharacter, setSelectedCharacter] = useState<{ pillar: number; kind: BaziCharacterKind }>({ pillar: 2, kind: "stem" });
   const [layer, setLayer] = useState<"elements" | "month" | "hidden" | "roles">("elements");
   const [timeLayer, setTimeLayer] = useState<BaziTimeLayerId>("today");
+  const [editingProfile, setEditingProfile] = useState(false);
 
-  if (!chart || !structure) return <ProfileGate profile={profile} />;
+  if (!profile || !chart || !structure) return <ProfileGate profile={profile} onSaved={payload => setContext(payload)} />;
   const selectedStructure = structure.pillars[selectedCharacter.pillar];
   const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind);
   const activeTimeLayer = timeLayers.find(item => item.id === timeLayer) ?? timeLayers[0];
@@ -92,8 +97,19 @@ export function BaziWorkspace() {
       <div className="plate-main">
         <div className="plate-section-head">
           <div><span>本命四柱</span><small>点一个字，看懂它是什么、从哪里来、起什么作用</small></div>
-          <span className="plate-status">已保存</span>
+          <button type="button" className="plate-profile-summary" aria-expanded={editingProfile} onClick={() => setEditingProfile(value => !value)}>
+            <span>已保存生辰</span><b>{profile.birthDate} · {profile.unknownTime ? "时间未定" : profile.birthTime}</b><em>{editingProfile ? "收起" : "修改"}</em>
+          </button>
         </div>
+        {editingProfile && <div className="plate-inline-profile-editor">
+          <BirthProfileForm
+            key={`${profile.birthDate}-${profile.birthTime}-${profile.birthLocation}`}
+            initial={profile}
+            context="profile"
+            onSaved={payload => { setContext(payload); setEditingProfile(false); }}
+            onRemoved={() => { setContext({ profile: null, correspondence: null }); setEditingProfile(false); }}
+          />
+        </div>}
         <div className="pillar-grid">
           {structure.pillars.map((item, index) => (
             <div key={item.name} className={`pillar-card ${selectedCharacter.pillar === index ? "is-active" : ""}`}>

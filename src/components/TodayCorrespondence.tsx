@@ -71,7 +71,7 @@ export function BirthProfileForm({
   initial?: ProfileValue | null;
   onSaved?: (payload: Payload) => void;
   onRemoved?: () => void;
-  context?: "onboarding" | "profile";
+  context?: "onboarding" | "profile" | "plate";
 }) {
   const initialDateParts = (initial?.birthDate ?? "").split("-");
   const [birthYear, setBirthYear] = useState(initialDateParts[0] ?? "");
@@ -153,11 +153,13 @@ export function BirthProfileForm({
   return (
     <section className="today-correspondence-shell overflow-hidden">
       <div className="border-b border-gold/25 px-6 py-5 md:px-8">
-        <div className="text-xs tracking-[0.24em] text-cinnabar">今日相应</div>
-        <h1 className="mt-2 font-serif text-3xl">{context === "profile" ? "我的生辰" : "先定下你的生辰"}</h1>
+        <div className="text-xs tracking-[0.24em] text-cinnabar">{context === "plate" ? "四盘共用资料" : "今日相应"}</div>
+        <h1 className="mt-2 font-serif text-3xl">{context === "profile" ? "我的生辰" : context === "plate" ? "保存一次，以后直接看盘" : "先定下你的生辰"}</h1>
         <p className="mt-3 max-w-xl text-sm leading-7 text-ink/65">
           {context === "profile"
             ? "这里保存今日相应使用的出生资料。修改后，首页会按新的日主重新计算。"
+            : context === "plate"
+              ? "这份资料会保存到“我的”，八字盘、关系盘和择时盘共用。以后回来不需要重新填写，修改后各盘会按新资料重算。"
             : "以后每次回来，卦安会以你的日主为基点，对照当天干支与节气。这里只保存出生资料，不需要描述困扰。"}
         </p>
       </div>
@@ -202,7 +204,7 @@ export function BirthProfileForm({
       </div>
       <div className="flex flex-wrap items-center gap-3 border-t border-mist px-6 py-5 md:px-8">
         <button className="btn-primary" disabled={busy || !birthDate || (!unknownTime && !birthTime)} onClick={save}>
-          {busy ? "正在保存…" : context === "profile" ? "保存生辰资料" : "保存并看今日"}
+          {busy ? "正在保存…" : context === "profile" ? "保存生辰资料" : context === "plate" ? "保存并查看本命盘" : "保存并看今日"}
         </button>
         {context === "profile" && initial && (
           <button className="btn-secondary border-cinnabar/30 text-cinnabar" disabled={busy} onClick={remove}>
