@@ -202,9 +202,9 @@ function evidenceState(channel: PowerChannel, excludeDayMaster = false): string 
   const visible = excludeDayMaster
     ? channel.visible.filter(item => item.tenGod !== "日主").length
     : channel.visible.length;
-  if (visible && channel.hidden.length) return "在天干有明现，也在地支有藏干依据";
-  if (visible) return "主要在天干明现";
-  if (channel.hidden.length) return "主要藏在地支";
+  if (visible && channel.hidden.length) return "明干、藏干都有线索";
+  if (visible) return "在天干明现";
+  if (channel.hidden.length) return "藏在地支";
   return "在已知三柱或四柱中未见直接线索";
 }
 
@@ -219,9 +219,9 @@ function channelScore(channel: PowerChannel): number {
 function supportAction(resource: PowerChannel, self: PowerChannel): string {
   const hasResource = resource.visible.length + resource.hidden.length > 0;
   const peerCount = self.visible.filter(item => item.tenGod !== "日主").length + self.hidden.length;
-  if (hasResource && peerCount) return "先承接已有依据，再确认自己的立场与可调用力量";
-  if (hasResource) return "先理解、吸收并找到可以承接的依据";
-  if (peerCount) return "先确认自己的立场，或借同类呼应稳住起点";
+  if (hasResource && peerCount) return "先承接依据，再确认自身立场";
+  if (hasResource) return "先理解、吸收并找到承接依据";
+  if (peerCount) return "先确认自身立场，或借同类呼应稳住起点";
   return "从自身参照点直接进入眼前事项";
 }
 
@@ -298,7 +298,7 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
   const hiddenOnlyLabels = channels.filter(channel => !channel.visible.length && channel.hidden.length).map(channel => channel.label);
   const primaryVisibility = evidenceState(primary);
   const secondaryClause = channelScore(secondary) > 0
-    ? `与此同时，${secondary.label}也形成次要落点，${evidenceState(secondary)}。`
+    ? `${secondary.label}是另一落点，${evidenceState(secondary)}。`
     : "";
   const monthClause = primary.isMonthCommand
     ? `月令本气也归入${primary.label}，因此它位于这张盘的季节入口。`
@@ -307,7 +307,7 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
   return {
     corePosition: {
       title: "你在盘中的核心位置",
-      summary: `日主为${structure.dayMaster.stem}${structure.dayMaster.element}（${structure.dayMaster.yinYang}${structure.dayMaster.element}），是全盘参照点，生于${structure.monthCommand.branch}月；月令本气${monthMain.stem}归入“${POWER_CATEGORY[monthCategory].label}”。${supportSummary}。除自身与承接外，盘面较集中的落点是${primary.label}${channelScore(secondary) > 0 ? `，其次是${secondary.label}` : ""}。`,
+      summary: `日主为${structure.dayMaster.stem}${structure.dayMaster.element}（${structure.dayMaster.yinYang}${structure.dayMaster.element}），是全盘参照点，生于${structure.monthCommand.branch}月；月令本气${monthMain.stem}归入“${POWER_CATEGORY[monthCategory].label}”。${supportSummary}。主要落点是${primary.label}${channelScore(secondary) > 0 ? `，其次是${secondary.label}` : ""}。`,
       evidence: [
         `日主：${structure.dayMaster.stem}，取自${structure.dayMaster.source}`,
         `月令：${structure.monthCommand.branch}，本气${monthMain.stem}·${monthMain.name}`,
@@ -322,7 +322,7 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
     },
     meaning: {
       title: "这对你意味着什么",
-      summary: `从这组组合看，做事更依赖${supportAction(resource, self)}，再把力量投入到${targetMeaning(primary)}。${primary.label}${primaryVisibility}。${monthClause}${secondaryClause}这描述的是盘中力量的使用顺序，不是固定性格标签。`,
+      summary: `从组合看，做事更依赖${supportAction(resource, self)}，再把力量投入到${targetMeaning(primary)}。${primary.label}${primaryVisibility}。${monthClause}${secondaryClause}这是盘中力量的使用顺序，不是固定性格标签。`,
       basis: `由月令本气${monthMain.stem}${monthMain.name}、${primary.label}的${evidenceCountPhrase(primary)}${channelScore(secondary) > 0 ? `，以及${secondary.label}的组合` : ""}共同得出。`
     },
     incompleteNote: chart.hour

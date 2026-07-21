@@ -173,7 +173,7 @@ export function BaziWorkspace() {
 
           <article className="bazi-mainline-answer is-meaning">
             <span>三</span>
-            <div><h3>{mainline.meaning.title}</h3><p>{mainline.meaning.summary}</p><div className="bazi-mainline-basis">组合依据：{mainline.meaning.basis}</div></div>
+            <div><h3>{mainline.meaning.title}</h3><p>{mainline.meaning.summary}</p><details className="bazi-mainline-basis"><summary>查看组合依据</summary><p>{mainline.meaning.basis}</p></details></div>
           </article>
           {mainline.incompleteNote && <p className="bazi-mainline-note">{mainline.incompleteNote}</p>}
         </section>
