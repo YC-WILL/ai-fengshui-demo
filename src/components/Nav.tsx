@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { brand } from "@/lib/config/brand";
+import { METHOD_MODULES } from "@/lib/product/methodUi";
 
 export default function Nav() {
   return (
     <header className="border-b border-mist bg-white/70 backdrop-blur sticky top-0 z-30">
-      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
         <Link href="/" className="font-serif text-lg text-ink flex items-center gap-2 group">
           <span
             aria-hidden
@@ -20,6 +21,9 @@ export default function Nav() {
           </span>
         </Link>
         <div className="flex-1" />
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="主要功能">
+          {METHOD_MODULES.map(module => <Link key={module.id} href={module.href} className="nav-method-link">{module.title}</Link>)}
+        </nav>
         <nav aria-label="账户">
           <Link
             href="/me"
@@ -29,6 +33,9 @@ export default function Nav() {
           </Link>
         </nav>
       </div>
+      <nav className="nav-mobile-methods lg:hidden" aria-label="四盘入口">
+        {METHOD_MODULES.map(module => <Link key={module.id} href={module.href}>{module.title}</Link>)}
+      </nav>
     </header>
   );
 }

@@ -1,5 +1,5 @@
-import CoreMethodGrid from "@/components/CoreMethodGrid";
 import DailySignDraw from "@/components/DailySignDraw";
+import MethodEntryGrid from "@/components/MethodEntryGrid";
 import SolarTermTimeline from "@/components/SolarTermTimeline";
 import TodayCorrespondence from "@/components/TodayCorrespondence";
 import WoodenToad from "@/components/WoodenToad";
@@ -15,10 +15,20 @@ export default function HomePage() {
     <div className="space-y-8">
       <SolarTermTimeline data={solarTerms} />
 
+      <section className="home-intro">
+        <div>
+          <div className="section-kicker">今日 · {solarTerms.current.name}</div>
+          <h1 className="mt-2 font-serif text-3xl md:text-4xl">把传统方法，做成可以反复使用的四张盘</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-ink/60">不是读完即走的长报告。先建立自己的盘，再保存关系、住宅与事项，让每一次回来都有上下文。</p>
+        </div>
+        <div className="home-intro-mark" aria-hidden>安</div>
+      </section>
+
+      <MethodEntryGrid />
+
       <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
         <div className="space-y-5">
           <TodayCorrespondence />
-          <CoreMethodGrid today={solarTerms.date} />
         </div>
         <aside id="daily-sign" className="space-y-4 scroll-mt-24">
           <DailySignDraw />

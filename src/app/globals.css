@@ -43,10 +43,126 @@ html, body {
 }
 .btn-secondary {
   @apply inline-flex items-center justify-center rounded-md border border-ink/20 bg-white
-         px-4 py-2 text-sm font-medium hover:bg-mist transition;
+         px-4 py-2 text-sm font-medium hover:bg-mist disabled:cursor-not-allowed
+         disabled:opacity-50 transition;
 }
 .card {
   @apply bg-white/80 border border-mist rounded-xl shadow-scroll p-5;
+}
+
+/* 四盘产品模型：米纸底、墨色结构、朱砂只标记当前状态。 */
+.section-kicker { @apply text-[11px] font-medium tracking-[0.22em] text-cinnabar; }
+.nav-method-link { @apply rounded-full px-3 py-1.5 text-sm text-ink/60 transition hover:bg-rice hover:text-ink; }
+.nav-mobile-methods { @apply mx-auto flex max-w-6xl gap-1 overflow-x-auto border-t border-mist/70 px-4 py-2; scrollbar-width: none; }
+.nav-mobile-methods::-webkit-scrollbar { display: none; }
+.nav-mobile-methods a { @apply shrink-0 rounded-full px-3 py-1 text-xs text-ink/60; }
+
+.home-intro { @apply flex items-center justify-between gap-6 rounded-2xl border border-gold/30 bg-white/70 px-6 py-7 shadow-scroll md:px-8; }
+.home-intro-mark { @apply hidden h-20 w-20 shrink-0 items-center justify-center rounded-full border border-cinnabar/30 font-serif text-3xl text-cinnabar md:flex; }
+.method-entry-grid { @apply grid gap-3 sm:grid-cols-2 lg:grid-cols-4; }
+.method-entry-card { @apply flex min-h-64 flex-col justify-between gap-5 rounded-2xl border border-mist bg-white/80 p-5 shadow-scroll transition hover:-translate-y-0.5 hover:border-gold/55 hover:bg-white; }
+.method-entry-index { @apply font-serif text-sm text-ink/30; }
+
+.method-local-nav { @apply flex gap-1 overflow-x-auto rounded-xl border border-mist bg-white/60 p-1.5 shadow-sm; scrollbar-width: none; }
+.method-local-nav::-webkit-scrollbar { display: none; }
+.method-local-nav a { @apply min-w-24 shrink-0 rounded-lg px-4 py-2 text-center text-sm text-ink/55 transition hover:bg-rice; }
+.method-local-nav a[aria-current="page"] { @apply bg-ink text-rice; }
+.method-page-heading { @apply flex flex-col gap-4 rounded-2xl border border-gold/30 bg-white/70 px-6 py-6 shadow-scroll sm:flex-row sm:items-center sm:justify-between md:px-8; }
+
+.plate-shell { @apply grid overflow-hidden rounded-2xl border border-mist bg-white/80 shadow-scroll lg:grid-cols-[minmax(0,1fr)_18rem]; }
+.plate-main { @apply min-w-0 p-5 md:p-7; }
+.plate-aside { @apply border-t border-mist bg-rice/55 p-5 md:p-7 lg:border-l lg:border-t-0; }
+.plate-section-head { @apply mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-mist pb-4; }
+.plate-section-head > div:first-child { @apply flex flex-col gap-1; }
+.plate-section-head > div:first-child > span { @apply font-serif text-xl; }
+.plate-section-head small { @apply text-xs text-ink/45; }
+.plate-status { @apply rounded-full border border-jade/35 bg-jade/5 px-3 py-1 text-xs text-jade; }
+.plate-loading { @apply min-h-80 animate-pulse rounded-2xl border border-mist bg-white/70; }
+.plate-empty { @apply flex min-h-52 flex-col items-start justify-center gap-4 rounded-2xl border border-dashed border-gold/45 bg-white/65 p-6 sm:flex-row sm:items-center; }
+.plate-seal { @apply inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-cinnabar/30 font-serif text-xl text-cinnabar; }
+.plate-aside-mark { @apply mb-5 flex min-h-24 items-center justify-center rounded-xl border border-gold/35 bg-white/65 font-serif text-3xl; }
+.plate-evidence { @apply mt-5 flex flex-col gap-1 rounded-xl border border-mist bg-white/65 p-4 text-xs leading-5; }
+.plate-evidence b { @apply text-ink/75; }
+.plate-evidence span { @apply text-ink/50; }
+.member-extension { @apply mt-6 flex flex-col gap-1 border-t border-dashed border-gold/50 pt-5; }
+.member-extension span { @apply w-fit rounded-full border border-gold/50 px-2 py-0.5 text-[10px] tracking-wider text-ink/45; }
+.member-extension b { @apply mt-1 font-serif text-base; }
+.member-extension small { @apply text-xs leading-5 text-ink/45; }
+
+.pillar-grid { @apply grid grid-cols-4 gap-2; }
+.pillar-grid button { @apply flex min-h-48 flex-col items-center justify-center rounded-xl border border-mist bg-rice/40 px-2 py-4 transition hover:border-gold/50; }
+.pillar-grid button > span { @apply mb-3 text-xs text-ink/45; }
+.pillar-grid button strong { @apply font-serif text-3xl font-normal leading-tight md:text-4xl; }
+.pillar-grid button small { @apply mt-3 text-[10px] text-ink/40; }
+.pillar-grid button.is-active { @apply border-cinnabar/40 bg-cinnabar/5 shadow-sm; }
+.pillar-grid button.is-active > span { @apply text-cinnabar; }
+.plate-tabs { @apply mt-5 flex flex-wrap gap-2; }
+.plate-tabs button, .event-chips button { @apply rounded-full border border-mist bg-white px-3.5 py-1.5 text-xs text-ink/60 transition hover:border-gold/55; }
+.plate-tabs button[aria-pressed="true"], .event-chips button[aria-pressed="true"] { @apply border-cinnabar/40 bg-cinnabar/5 text-cinnabar; }
+.plate-tabs.compact { @apply mt-0; }
+.bazi-layer-panel { @apply mt-4 min-h-40 rounded-xl border border-mist bg-rice/45 p-5; }
+.element-structure-bar { @apply flex h-3 overflow-hidden rounded-full border border-ink/10 bg-white; }
+.element-structure-bar i { @apply block h-full; }
+
+.compact-field { @apply flex items-center gap-2 text-xs text-ink/55; }
+.compact-field input { @apply rounded-lg border border-mist bg-white px-3 py-2 text-sm text-ink focus:border-cinnabar/40 focus:outline-none focus:ring-2 focus:ring-cinnabar/15; }
+.pair-axis { @apply grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-2xl border border-gold/30 bg-rice/40 p-4 md:p-6; }
+.person-node { @apply flex min-h-32 flex-col items-center justify-center rounded-xl border border-mist bg-white/75 p-3 text-center; }
+.person-node > span { @apply text-xs text-ink/45; }
+.person-node strong { @apply mt-2 font-serif text-3xl font-normal; }
+.person-node small { @apply mt-1 text-xs text-ink/45; }
+.person-node.is-muted { @apply border-dashed bg-white/35 text-ink/40; }
+.pair-bridge { @apply flex min-w-24 flex-col items-center text-center; }
+.pair-bridge i { @apply mb-2 h-px w-full bg-gold/60; }
+.pair-bridge span { @apply font-serif text-base; }
+.pair-bridge small { @apply mt-1 text-[10px] text-ink/45; }
+.relation-dimension-grid { @apply mt-4 grid gap-2 sm:grid-cols-2; }
+.relation-dimension-grid button { @apply relative flex min-h-20 flex-col items-start rounded-xl border border-mist bg-white px-4 py-3 text-left transition hover:border-gold/55; }
+.relation-dimension-grid button b { @apply font-serif font-normal; }
+.relation-dimension-grid button span { @apply mt-1 text-xs text-ink/45; }
+.relation-dimension-grid button i { @apply absolute right-4 top-4 not-italic text-cinnabar; }
+.relation-dimension-grid button[aria-pressed="true"] { @apply border-cinnabar/35 bg-cinnabar/5; }
+.relation-detail { @apply mt-4 rounded-xl border border-mist bg-rice/45 p-5; }
+
+.home-grid-wrap { @apply grid gap-5 md:grid-cols-[minmax(0,1.35fr)_minmax(13rem,0.65fr)] md:items-stretch; }
+.home-direction-grid { @apply grid aspect-square max-h-[32rem] grid-cols-3 border-l border-t border-ink/15; }
+.home-direction-grid button { @apply flex min-h-24 flex-col items-center justify-center border-b border-r border-ink/15 bg-rice/35 p-2 transition hover:bg-white; }
+.home-direction-grid button b { @apply font-serif font-normal; }
+.home-direction-grid button span { @apply mt-1 text-xs text-ink/45; }
+.home-direction-grid button[aria-pressed="true"] { @apply bg-cinnabar/5 text-cinnabar outline outline-1 -outline-offset-2 outline-cinnabar/40; }
+.home-selected { @apply flex flex-col items-center justify-center rounded-xl border border-gold/35 bg-white/60 p-5 text-center; }
+.trigram-lines { @apply mb-6 flex w-16 flex-col gap-2; }
+.trigram-lines > i { @apply block h-1 bg-black; }
+.trigram-lines > span { @apply flex justify-between; }
+.trigram-lines > span i { @apply block h-1 w-[42%] bg-black; }
+.reality-checks { @apply mt-4 grid gap-2 grid-cols-2 sm:grid-cols-4; }
+.reality-checks div { @apply flex flex-col rounded-lg border border-mist bg-white/60 p-3; }
+.reality-checks b { @apply text-sm font-medium; }
+.reality-checks span { @apply mt-1 text-[11px] text-ink/45; }
+
+.event-chips { @apply flex flex-wrap gap-2; }
+.candidate-list { @apply mt-5 grid gap-3 sm:grid-cols-3; }
+.candidate-list > button { @apply flex min-h-32 flex-col items-start rounded-xl border border-mist bg-white px-4 py-4 text-left transition hover:border-gold/55; }
+.candidate-list > button span { @apply text-[10px] tracking-wider text-cinnabar; }
+.candidate-list > button strong { @apply mt-2 font-serif text-xl font-normal; }
+.candidate-list > button small { @apply mt-2 text-xs leading-5 text-ink/45; }
+.candidate-list > button[aria-pressed="true"] { @apply border-cinnabar/40 bg-cinnabar/5; }
+.timing-detail { @apply mt-4 grid gap-5 rounded-xl border border-mist bg-rice/45 p-5 sm:grid-cols-[1fr_15rem]; }
+.preparation-list { @apply border-t border-mist pt-4 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0; }
+.preparation-list > b { @apply text-sm; }
+.preparation-list ol { @apply mt-2 list-decimal space-y-1 pl-4 text-xs leading-5 text-ink/55; }
+
+@media (max-width: 520px) {
+  .plate-main, .plate-aside { @apply p-4; }
+  .pillar-grid { @apply gap-1; }
+  .pillar-grid button { @apply min-h-40 px-1; }
+  .pillar-grid button strong { @apply text-2xl; }
+  .pillar-grid button small { @apply hidden; }
+  .pair-axis { @apply grid-cols-[1fr_4.75rem_1fr] gap-1 p-2; }
+  .person-node { @apply min-h-28 p-2; }
+  .person-node strong { @apply text-xl; }
+  .pair-bridge { @apply min-w-0; }
+  .home-direction-grid button { @apply min-h-20; }
 }
 
 /* 二十四节气是首页的时间骨架；默认紧凑，全年信息按需展开。 */

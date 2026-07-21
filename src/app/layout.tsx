@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="zh-CN">
       <body className="min-h-screen flex flex-col">
         <Nav />
-        <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-6">{children}</main>
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6 md:py-8">{children}</main>
         <FooterDisclaimer />
         <Analytics />
       </body>
