@@ -92,6 +92,7 @@ html, body {
 .pillar-grid { @apply grid grid-cols-4 gap-2; }
 .pillar-grid button { @apply flex min-h-48 flex-col items-center justify-center rounded-xl border border-mist bg-rice/40 px-2 py-4 transition hover:border-gold/50; }
 .pillar-grid button > span { @apply mb-3 text-xs text-ink/45; }
+.pillar-grid button > em { @apply mb-1 rounded-full border border-gold/35 px-2 py-0.5 text-[9px] not-italic text-ink/50; }
 .pillar-grid button strong { @apply font-serif text-3xl font-normal leading-tight md:text-4xl; }
 .pillar-grid button small { @apply mt-3 text-[10px] text-ink/40; }
 .pillar-grid button.is-active { @apply border-cinnabar/40 bg-cinnabar/5 shadow-sm; }
@@ -103,6 +104,56 @@ html, body {
 .bazi-layer-panel { @apply mt-4 min-h-40 rounded-xl border border-mist bg-rice/45 p-5; }
 .element-structure-bar { @apply flex h-3 overflow-hidden rounded-full border border-ink/10 bg-white; }
 .element-structure-bar i { @apply block h-full; }
+.day-master-anchor { @apply mt-3 flex items-center gap-4 rounded-xl border border-gold/35 bg-white/65 px-4 py-3; }
+.day-master-anchor > div { @apply flex shrink-0 items-center gap-3 border-r border-mist pr-4; }
+.day-master-anchor > div strong { @apply font-serif text-3xl font-normal; }
+.day-master-anchor p { @apply flex min-w-0 flex-col text-sm; }
+.day-master-anchor p b { @apply font-medium text-ink/75; }
+.day-master-anchor p span { @apply mt-1 text-xs leading-5 text-ink/45; }
+.bazi-layer-title { @apply mb-4 flex flex-wrap items-end justify-between gap-2; }
+.bazi-layer-title h3 { @apply mt-1 font-serif text-xl; }
+.bazi-layer-title > small { @apply text-[10px] text-ink/45; }
+.element-source-grid { @apply mt-4 grid gap-1.5 sm:grid-cols-2; }
+.element-source-grid > div { @apply flex items-center justify-between rounded-lg border border-mist bg-white/60 px-3 py-2 text-xs; }
+.element-source-grid b { @apply font-medium text-ink/70; }
+.element-source-grid span { @apply text-ink/45; }
+.bazi-method-note { @apply mt-4 border-t border-dashed border-gold/45 pt-3 text-xs leading-6 text-ink/55; }
+.bazi-method-note.is-warning { @apply rounded-lg border border-cinnabar/20 bg-cinnabar/5 px-3 py-2 text-ink/60; }
+.month-command-card { @apply grid grid-cols-[4.5rem_1fr] items-center gap-4 rounded-xl border border-gold/35 bg-white/65 p-4; }
+.month-command-card > strong { @apply flex h-16 w-16 items-center justify-center rounded-full border border-cinnabar/30 font-serif text-3xl font-normal text-cinnabar; }
+.month-command-card b { @apply text-sm font-medium; }
+.month-command-card p { @apply mt-1 text-xs leading-6 text-ink/55; }
+.hidden-stem-line { @apply mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-mist bg-white/50 p-3 text-xs; }
+.hidden-stem-line > b { @apply mr-1 font-medium text-ink/65; }
+.hidden-stem-line > span { @apply flex items-center gap-1 rounded-full border border-gold/35 bg-white px-2.5 py-1 text-ink/65; }
+.hidden-stem-line small { @apply text-[9px] text-cinnabar/75; }
+.hidden-pillar-grid { @apply grid gap-2 sm:grid-cols-2; }
+.hidden-pillar-grid > div { @apply rounded-xl border border-mist bg-white/65 p-3; }
+.hidden-pillar-grid > div.is-empty { @apply border-dashed bg-white/30; }
+.hidden-pillar-grid header { @apply flex items-center gap-2 border-b border-mist pb-2; }
+.hidden-pillar-grid header b { @apply text-xs font-medium text-ink/60; }
+.hidden-pillar-grid header strong { @apply font-serif text-xl font-normal; }
+.hidden-pillar-grid header small { @apply ml-auto text-[9px] text-ink/40; }
+.hidden-pillar-grid ul { @apply mt-2 space-y-1; }
+.hidden-pillar-grid li { @apply grid grid-cols-[3rem_1.5rem_1fr] items-center text-xs; }
+.hidden-pillar-grid li > span { @apply text-[10px] text-ink/40; }
+.hidden-pillar-grid li > b { @apply font-serif text-base font-normal; }
+.hidden-pillar-grid li > small { @apply text-right text-[10px] text-ink/45; }
+.ten-god-groups { @apply grid gap-2 sm:grid-cols-2; }
+.ten-god-groups > section { @apply overflow-hidden rounded-xl border border-mist bg-white/65; }
+.ten-god-groups > section.is-empty { @apply border-dashed bg-white/30; }
+.ten-god-groups h4 { @apply flex items-center justify-between border-b border-mist px-3 py-2 text-sm font-medium; }
+.ten-god-groups h4 small { @apply font-serif text-xs font-normal text-ink/45; }
+.ten-god-row { @apply grid grid-cols-[1fr_3rem] items-center gap-x-2 border-b border-mist/70 px-3 py-2 text-xs last:border-b-0; }
+.ten-god-row > span { @apply text-ink/60; }
+.ten-god-row > b { @apply text-right font-medium text-ink/80; }
+.ten-god-row > small { @apply col-span-2 mt-0.5 text-[9px] text-ink/40; }
+.ten-god-row.is-hidden { @apply bg-rice/45; }
+.pillar-evidence-stack { @apply mt-4 space-y-2; }
+.pillar-evidence-stack > div { @apply flex flex-col rounded-xl border border-mist bg-white/65 p-3; }
+.pillar-evidence-stack span { @apply text-[10px] text-cinnabar; }
+.pillar-evidence-stack b { @apply mt-1 font-serif text-lg font-normal; }
+.pillar-evidence-stack small { @apply mt-1 text-[10px] leading-4 text-ink/45; }
 
 .compact-field { @apply flex items-center gap-2 text-xs text-ink/55; }
 .compact-field input { @apply rounded-lg border border-mist bg-white px-3 py-2 text-sm text-ink focus:border-cinnabar/40 focus:outline-none focus:ring-2 focus:ring-cinnabar/15; }
@@ -158,6 +209,11 @@ html, body {
   .pillar-grid button { @apply min-h-40 px-1; }
   .pillar-grid button strong { @apply text-2xl; }
   .pillar-grid button small { @apply hidden; }
+  .pillar-grid button > em { @apply px-1.5; }
+  .day-master-anchor { @apply items-start gap-3 px-3; }
+  .day-master-anchor > div { @apply flex-col gap-1 pr-3; }
+  .month-command-card { @apply grid-cols-[3.5rem_1fr] gap-3 p-3; }
+  .month-command-card > strong { @apply h-12 w-12 text-2xl; }
   .pair-axis { @apply grid-cols-[1fr_4.75rem_1fr] gap-1 p-2; }
   .person-node { @apply min-h-28 p-2; }
   .person-node strong { @apply text-xl; }

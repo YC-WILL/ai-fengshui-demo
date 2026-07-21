@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { computeBazi, type Pillar } from "@/lib/domain/bazi";
+import { computeBazi } from "@/lib/domain/bazi";
+import { buildBaziStructure, PILLAR_NAMES } from "@/lib/domain/baziStructure";
 import { buildPairStructure, HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
 import type { Element } from "@/lib/domain/elements";
 import { DATE_EVENTS, RELATION_DIMENSIONS } from "@/lib/product/methodUi";
@@ -61,12 +62,12 @@ export function BaziWorkspace() {
     birthLocation: profile.birthLocation ?? undefined,
     unknownTime: profile.unknownTime
   }) : null, [profile]);
-  const pillars = chart ? [chart.year, chart.month, chart.day, chart.hour] : [];
+  const structure = useMemo(() => chart ? buildBaziStructure(chart) : null, [chart]);
   const [selected, setSelected] = useState(2);
   const [layer, setLayer] = useState<"elements" | "month" | "hidden" | "roles">("elements");
 
-  if (!chart) return <ProfileGate profile={profile} />;
-  const selectedPillar = pillars[selected];
+  if (!chart || !structure) return <ProfileGate profile={profile} />;
+  const selectedStructure = structure.pillars[selected];
 
   return (
     <section className="plate-shell">
@@ -76,14 +77,20 @@ export function BaziWorkspace() {
           <span className="plate-status">已保存</span>
         </div>
         <div className="pillar-grid">
-          {pillars.map((pillar, index) => (
-            <button key={index} type="button" className={selected === index ? "is-active" : ""} onClick={() => setSelected(index)}>
-              <span>{["年柱", "月柱", "日柱", "时柱"][index]}</span>
-              <strong>{pillar?.stem ?? "—"}</strong>
-              <strong>{pillar?.branch ?? "—"}</strong>
-              <small>{pillar ? `${pillar.stemElement} · ${pillar.branchElement}` : "未计入"}</small>
+          {structure.pillars.map((item, index) => (
+            <button key={item.name} type="button" className={selected === index ? "is-active" : ""} onClick={() => setSelected(index)}>
+              <span>{item.name}</span>
+              <em>{item.visibleStem?.role ?? "未定"}</em>
+              <strong>{item.pillar?.stem ?? "—"}</strong>
+              <strong>{item.pillar?.branch ?? "—"}</strong>
+              <small>{item.pillar ? `天干${item.pillar.stemElement} · 地支${item.pillar.branchElement}` : "出生时辰未计入"}</small>
             </button>
           ))}
+        </div>
+
+        <div className="day-master-anchor">
+          <div><span className="section-kicker">全盘参照点</span><strong>{structure.dayMaster.stem}</strong></div>
+          <p><b>{structure.dayMaster.yinYang}{structure.dayMaster.element}日主</b><span>取自{structure.dayMaster.source}；十神均由其他天干与它比较而得。</span></p>
         </div>
 
         <div className="plate-tabs" aria-label="八字盘内容层级">
@@ -97,6 +104,7 @@ export function BaziWorkspace() {
         <div className="bazi-layer-panel">
           {layer === "elements" && (
             <>
+              <div className="bazi-layer-title"><div><span className="section-kicker">第二层 · 五行</span><h3>八个明字的五行位置</h3></div><small>统计范围：四柱天干、地支；未含藏干</small></div>
               <div className="element-structure-bar" aria-label="五行结构">
                 {ELEMENTS.filter(element => chart.elementDistribution.counts[element] > 0).map(element => (
                   <i key={element} className={ELEMENT_CLASS[element]} style={{ width: `${chart.elementDistribution.ratios[element] * 100}%` }} />
@@ -105,23 +113,65 @@ export function BaziWorkspace() {
               <div className="mt-4 grid grid-cols-5 gap-2">
                 {ELEMENTS.map(element => <div key={element} className="text-center"><b className="font-serif">{element}</b><div className="mt-1 text-xs text-ink/45">{chart.elementDistribution.counts[element]} 份</div></div>)}
               </div>
-              <p className="mt-4 text-xs leading-6 text-ink/55">五行只显示盘中出现的位置与比例；少见或未出现不表示缺陷，也不直接对应现实结果。</p>
+              <div className="element-source-grid">
+                {structure.pillars.map(item => <div key={item.name}><b>{item.name}</b><span>{item.pillar ? `${item.pillar.stem}（天干·${item.pillar.stemElement}）　${item.pillar.branch}（地支·${item.pillar.branchElement}）` : "时辰未知，未计入"}</span></div>)}
+              </div>
+              <p className="bazi-method-note">五行只显示明字出现的位置与比例；少见或未出现不表示缺陷，也不直接对应现实结果。</p>
             </>
           )}
-          {layer === "month" && <LayerCopy title={`${chart.month.pillarLabel}月柱`} copy="月柱用于标记出生月份所处的季节位置，是继续判断结构力量的重要入口。当前版本会明确展示算法口径，不把简化结果包装成精确结论。" />}
-          {layer === "hidden" && <LayerCopy title="地支内部结构" copy="藏干会在后续层展开到每一个地支的内部天干，并保留来自年、月、日、时哪一柱的证据链。第一层不堆满术语。" />}
-          {layer === "roles" && <LayerCopy title={`以${chart.dayMaster}为日主`} copy="十神是其他天干与日主之间的传统关系名称。这里会按位置查看，不把十神直接写成人格标签或现实断语。" />}
+          {layer === "month" && (
+            <div>
+              <div className="bazi-layer-title"><div><span className="section-kicker">第二层 · 月令</span><h3>{structure.monthCommand.branch}月令 · 属{structure.monthCommand.element}</h3></div><small>出处：{structure.monthCommand.source}</small></div>
+              <div className="month-command-card">
+                <strong>{structure.monthCommand.branch}</strong>
+                <div><b>月支取令</b><p>月令取月柱地支，不取月柱天干。它标记出生时段的季节位置，是判断全盘气势的入口之一。</p></div>
+              </div>
+              <div className="hidden-stem-line"><b>月令藏干</b>{structure.monthCommand.hiddenStems.map(hidden => <span key={hidden.stem}>{hidden.qiLevel}·{hidden.stem}{hidden.element}<small>{hidden.name}</small></span>)}</div>
+              <p className="bazi-method-note is-warning">当前排盘口径仍以公历月份近似月柱，尚未按出生时刻精确切换节气。临近节气交接的出生日期，月柱与月令需在接入精确历法后复核；页面不会把这一结果包装成最终定盘。</p>
+            </div>
+          )}
+          {layer === "hidden" && (
+            <div>
+              <div className="bazi-layer-title"><div><span className="section-kicker">第三层 · 藏干</span><h3>逐支展开内部天干</h3></div><small>次序：本气 → 中气 → 余气</small></div>
+              <div className="hidden-pillar-grid">
+                {structure.pillars.map(item => (
+                  <div key={item.name} className={!item.pillar ? "is-empty" : ""}>
+                    <header><b>{item.name}地支</b><strong>{item.branch?.branch ?? "—"}</strong><small>{item.branch?.source ?? "时辰未知"}</small></header>
+                    <ul>{item.hiddenStems.length ? item.hiddenStems.map(hidden => <li key={hidden.stem}><span>{hidden.qiLevel}</span><b>{hidden.stem}</b><small>{hidden.element} · {hidden.name}</small></li>) : <li><small>不自动补猜藏干</small></li>}</ul>
+                  </div>
+                ))}
+              </div>
+              <p className="bazi-method-note">藏干采用固定地支藏干表；每个十神名称仍以日主{chart.dayMaster}为参照计算，不由地支五行直接代替。</p>
+            </div>
+          )}
+          {layer === "roles" && (
+            <div>
+              <div className="bazi-layer-title"><div><span className="section-kicker">第三层 · 十神</span><h3>以日主{chart.dayMaster}为唯一参照</h3></div><small>规则：五行生克 + 阴阳同异</small></div>
+              <div className="ten-god-groups">
+                {structure.pillars.map(item => (
+                  <section key={item.name} className={!item.pillar ? "is-empty" : ""}>
+                    <h4>{item.name}<small>{item.pillar?.pillarLabel ?? "未定"}</small></h4>
+                    {item.visibleStem ? <div className="ten-god-row"><span>天干 · {item.visibleStem.stem}</span><b>{item.visibleStem.role}</b><small>{item.visibleStem.source} · {item.visibleStem.relation}</small></div> : <div className="ten-god-row"><small>时辰未知，不生成十神</small></div>}
+                    {item.hiddenStems.map(hidden => <div className="ten-god-row is-hidden" key={hidden.stem}><span>{item.branch?.branch}藏{hidden.stem} · {hidden.qiLevel}</span><b>{hidden.name}</b><small>{hidden.relation} · {hidden.polarity}</small></div>)}
+                  </section>
+                ))}
+              </div>
+              <p className="bazi-method-note">十神在这里是天干相对日主的结构名称，不直接等同于职业、性格、亲属关系或现实结果。</p>
+            </div>
+          )}
         </div>
       </div>
 
       <aside className="plate-aside">
-        <div className="plate-aside-mark">{selectedPillar?.pillarLabel ?? "时柱未定"}</div>
+        <div className="plate-aside-mark">{selectedStructure.pillar?.pillarLabel ?? "时柱未定"}</div>
         <div className="section-kicker">当前所见</div>
-        <h2 className="mt-2 font-serif text-2xl">{["年柱", "月柱", "日柱", "时柱"][selected]}</h2>
-        <p className="mt-3 text-sm leading-7 text-ink/60">
-          {selectedPillar ? pillarDescription(selectedPillar, selected) : "出生时间未确认，所以这一柱保持空白，不自动补猜。"}
-        </p>
-        <div className="plate-evidence"><b>依据</b><span>{selectedPillar ? `${selectedPillar.stem}属${selectedPillar.stemElement}，${selectedPillar.branch}属${selectedPillar.branchElement}` : "未使用时柱"}</span></div>
+        <h2 className="mt-2 font-serif text-2xl">{PILLAR_NAMES[selected]}</h2>
+        {selectedStructure.pillar ? <div className="pillar-evidence-stack">
+          <div><span>天干</span><b>{selectedStructure.visibleStem?.stem} · {selectedStructure.visibleStem?.element}</b><small>{selectedStructure.visibleStem?.role}｜出处：{selectedStructure.visibleStem?.source}</small></div>
+          <div><span>地支</span><b>{selectedStructure.branch?.branch} · {selectedStructure.branch?.element}</b><small>出处：{selectedStructure.branch?.source}</small></div>
+          <div><span>藏干</span><b>{selectedStructure.hiddenStems.map(item => item.stem).join(" · ")}</b><small>{selectedStructure.hiddenStems.map(item => `${item.qiLevel}${item.stem}`).join("，")}</small></div>
+        </div> : <p className="mt-3 text-sm leading-7 text-ink/60">出生时间未确认，所以这一柱保持空白，不自动补猜，也不生成对应藏干与十神。</p>}
+        <div className="plate-evidence"><b>计算层级</b><span>四柱明字 → 日主参照 → 月令位置 → 地支藏干 → 十神关系</span></div>
         <div className="member-extension"><span>会员层</span><b>大运、流年与历年对照</b><small>增加时间跨度与比较，不改变本命盘基础结果。</small></div>
       </aside>
     </section>
@@ -255,15 +305,6 @@ export function TimingWorkspace({ today }: { today: string }) {
       </aside>
     </section>
   );
-}
-
-function LayerCopy({ title, copy }: { title: string; copy: string }) {
-  return <div><h3 className="font-serif text-xl">{title}</h3><p className="mt-2 text-sm leading-7 text-ink/60">{copy}</p></div>;
-}
-
-function pillarDescription(pillar: Pillar, index: number) {
-  const meaning = ["年柱是四柱结构的起点之一", "月柱标记出生月份与季节位置", "日柱中的天干作为日主", "时柱补充出生时段位置"][index];
-  return `${pillar.pillarLabel}由天干${pillar.stem}与地支${pillar.branch}组成。${meaning}，点击其他柱位可以比较五行出现在哪里。`;
 }
 
 function PersonNode({ label, pillar, element, muted }: { label: string; pillar: string; element?: Element; muted?: boolean }) {
