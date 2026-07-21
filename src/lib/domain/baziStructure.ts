@@ -271,7 +271,7 @@ function temperamentMeaning(monthCategory: PowerCategoryId, monthChannel: PowerC
   const counterpartText = channelScore(counterpart) > 0
     ? `${counterpart.label}也有盘面线索，使这种气质不会只停在单一方向。`
     : "已知盘面暂未见另一类明显线索。";
-  return `从月令带来的底色看，你更像${entry[monthCategory]}。这股力量${visibility}。${counterpartText}`;
+  return `从月令带来的底色看，你更容易先这样回应：${entry[monthCategory]}。这股力量${visibility}。${counterpartText}`;
 }
 
 function buildElementOverview(structure: ReturnType<typeof buildBaziStructure>, chart: BaziChart): BaziMainline["elementOverview"] {

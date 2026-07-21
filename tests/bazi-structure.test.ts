@@ -189,6 +189,7 @@ describe("bazi structure evidence", () => {
     expect(first.meaning.summary).toMatch(/使用顺序|不是固定性格标签/);
     expect(first.meaning.temperament.length).toBeLessThan(180);
     expect(first.meaning.workingStyle.length).toBeLessThan(180);
+    expect(`${first.meaning.temperament}${second.meaning.temperament}`).not.toMatch(/像像|更像像/);
     expect(first.meaning.summary.length).toBeLessThan(220);
     expect(second.meaning.summary.length).toBeLessThan(220);
   });
