@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { computeBazi } from "@/lib/domain/bazi";
-import { buildBaziMainline, buildBaziStructure, explainBaziCharacter, type BaziCharacterKind } from "@/lib/domain/baziStructure";
+import { TEN_GOD_PLAIN_MEANING, buildBaziMainline, buildBaziStructure, explainBaziCharacter, type BaziCharacterKind } from "@/lib/domain/baziStructure";
 import { buildBaziTimeLayers, type BaziTimeLayerId } from "@/lib/domain/baziTimeComparison";
 import { buildPairStructure, HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
 import type { Element } from "@/lib/domain/elements";
@@ -31,6 +31,13 @@ const ELEMENT_CLASS: Record<Element, string> = {
   土: "element-bar-earth",
   金: "element-bar-metal",
   水: "element-bar-water"
+};
+const ELEMENT_TONE_CLASS: Record<Element, string> = {
+  木: "character-tone-wood",
+  火: "character-tone-fire",
+  土: "character-tone-earth",
+  金: "character-tone-metal",
+  水: "character-tone-water"
 };
 
 function useBirthContext() {
@@ -99,7 +106,7 @@ export function BaziWorkspace() {
     <section className="plate-shell">
       <div className="plate-main">
         <div className="plate-section-head">
-          <div><span>本命四柱</span><small>点一个字，看懂它是什么、从哪里来、起什么作用</small></div>
+          <div><span>本命四柱</span><small>点一个字，看它映照你性格与生活中的哪一面</small></div>
           <button type="button" className="plate-profile-summary" aria-expanded={editingProfile} onClick={() => setEditingProfile(value => !value)}>
             <span>已保存生辰</span><b>{profile.birthDate} · {profile.unknownTime ? "时间未定" : profile.birthTime}</b><em>{editingProfile ? "收起" : "修改"}</em>
           </button>
@@ -120,14 +127,14 @@ export function BaziWorkspace() {
               <em>{item.visibleStem?.role ?? "未定"}</em>
               <button
                 type="button"
-                className={selectedCharacter.pillar === index && selectedCharacter.kind === "stem" ? "is-character-active" : ""}
+                className={`character-tone ${item.visibleStem ? ELEMENT_TONE_CLASS[item.visibleStem.element] : ""} ${selectedCharacter.pillar === index && selectedCharacter.kind === "stem" ? "is-character-active" : ""}`}
                 disabled={!item.visibleStem}
                 aria-label={item.visibleStem ? `查看${item.name}天干${item.visibleStem.stem}` : `${item.name}天干未定`}
                 onClick={() => setSelectedCharacter({ pillar: index, kind: "stem" })}
               >{item.pillar?.stem ?? "—"}</button>
               <button
                 type="button"
-                className={selectedCharacter.pillar === index && selectedCharacter.kind === "branch" ? "is-character-active" : ""}
+                className={`character-tone ${item.branch ? ELEMENT_TONE_CLASS[item.branch.element] : ""} ${selectedCharacter.pillar === index && selectedCharacter.kind === "branch" ? "is-character-active" : ""}`}
                 disabled={!item.branch}
                 aria-label={item.branch ? `查看${item.name}地支${item.branch.branch}` : `${item.name}地支未定`}
                 onClick={() => setSelectedCharacter({ pillar: index, kind: "branch" })}
@@ -139,7 +146,7 @@ export function BaziWorkspace() {
 
         <div className="day-master-anchor">
           <div><span className="section-kicker">全盘参照点</span><strong>{structure.dayMaster.stem}</strong></div>
-          <p><b>{structure.dayMaster.yinYang}{structure.dayMaster.element}日主</b><span>取自{structure.dayMaster.source}；十神均由其他天干与它比较而得。</span></p>
+          <p><b>{structure.dayMaster.yinYang}{structure.dayMaster.element}日主</b><span>它像你站在整张盘中央的位置；其他十神都要先与它比较，才有意义。</span></p>
         </div>
 
         <section className="bazi-mainline" aria-labelledby="bazi-mainline-title">
@@ -160,7 +167,7 @@ export function BaziWorkspace() {
             <div className="min-w-0"><h3>{mainline.flow.title}</h3><p>{mainline.flow.summary}</p>
               <div className="power-flow" aria-label={mainline.flow.sequence.join("到")}>
                 {mainline.flow.channels.map((channel, index) => <div key={channel.id} className={channel.isMonthCommand ? "is-month-command" : ""}>
-                  <i>{index ? "→" : "起"}</i><b>{channel.label}</b><small>{channel.traditional}</small>
+                  <i>{index ? "→" : "起"}</i><b>{channel.label}</b><small>{channel.traditional} · {channel.scene}</small>
                   <em>{channel.visible.length ? `明 ${channel.visible.length}` : "明 0"} · {channel.hidden.length ? `藏 ${channel.hidden.length}` : "藏 0"}</em>
                   <details><summary>出处</summary><p>{[
                     ...channel.visible.map(item => `${item.source}${item.stem}·${item.tenGod}`),
@@ -187,7 +194,7 @@ export function BaziWorkspace() {
 
         {activeTimeLayer && <div className="bazi-time-comparison">
           <div className="bazi-time-head">
-            <div><span className="section-kicker">本命之上 · 时间对照</span><h3>今天、这个月和这一年，分别带来什么结构</h3></div>
+            <div><span className="section-kicker">本命之上 · 时间对照</span><h3>今天、这个月和这一年，分别照到生活的哪一面</h3></div>
             <small>只比较结构，不判断吉凶</small>
           </div>
           <div className="bazi-time-tabs" aria-label="本命时间对照">
@@ -196,11 +203,11 @@ export function BaziWorkspace() {
             </button>)}
           </div>
           <div className="bazi-time-detail">
-            <section><span>天干对日主</span><b>{activeTimeLayer.pillar.stem} · {activeTimeLayer.stemRole}</b><p>相对日主{chart.dayMaster}形成“{activeTimeLayer.stemRelation}”。{activeTimeLayer.sameStemPositions.length ? `本命${activeTimeLayer.sameStemPositions.join("、")}也出现${activeTimeLayer.pillar.stem}。` : "本命明干中没有相同的字。"}</p></section>
-            <section><span>地支对本命</span><b>{activeTimeLayer.pillar.branch} · {activeTimeLayer.branchLinks.length ? `${activeTimeLayer.branchLinks.length}处对应` : "暂无显著对应"}</b><p>{activeTimeLayer.branchLinks.length ? activeTimeLayer.branchLinks.map(item => `与${item.position}${item.natalBranch}${item.relation}`).join("；") : "与本命四支未形成这里列出的同支、六合、六冲、六害或六破。"}</p></section>
-            <section><span>这一层从哪里来</span><b>{activeTimeLayer.source}</b><p>{activeTimeLayer.precision}</p></section>
+            <section><span>{activeTimeLayer.focusTitle}</span><b>{activeTimeLayer.pillar.stem} · {activeTimeLayer.stemRole}</b><p>{activeTimeLayer.lifeTheme}</p></section>
+            <section><span>与本命怎样相遇</span><b>{activeTimeLayer.pillar.branch} · {activeTimeLayer.branchLinks.length ? `${activeTimeLayer.branchLinks.length}处相遇` : "暂未正面交会"}</b><p>{activeTimeLayer.branchTheme}</p></section>
+            <section><span>专业名称保留</span><b>{activeTimeLayer.pillar.pillarLabel} · {activeTimeLayer.source}</b><p>{activeTimeLayer.professionalSummary}</p><details><summary>查看历法口径</summary><p>{activeTimeLayer.precision}</p></details></section>
           </div>
-          <p className="bazi-time-footnote">时间层会随日期变化，本命盘本身不会改变；这些名称只表示传统结构关系，不直接等同于现实结果。</p>
+          <p className="bazi-time-footnote">时间层像照到本命盘上的光，会提示某类主题较容易被看见；它不会改写本命盘，也不等同于当天一定发生某件事。</p>
         </div>}
 
         <div className="plate-tabs" aria-label="八字盘内容层级">
@@ -266,8 +273,8 @@ export function BaziWorkspace() {
                 {structure.pillars.map(item => (
                   <section key={item.name} className={!item.pillar ? "is-empty" : ""}>
                     <h4>{item.name}<small>{item.pillar?.pillarLabel ?? "未定"}</small></h4>
-                    {item.visibleStem ? <div className="ten-god-row"><span>天干 · {item.visibleStem.stem}</span><b>{item.visibleStem.role}</b><small>{item.visibleStem.source} · {item.visibleStem.relation}</small></div> : <div className="ten-god-row"><small>时辰未知，不生成十神</small></div>}
-                    {item.hiddenStems.map(hidden => <div className="ten-god-row is-hidden" key={hidden.stem}><span>{item.branch?.branch}藏{hidden.stem} · {hidden.qiLevel}</span><b>{hidden.name}</b><small>{hidden.relation} · {hidden.polarity}</small></div>)}
+                    {item.visibleStem ? <div className="ten-god-row"><span>天干 · {item.visibleStem.stem}</span><b>{item.visibleStem.role}</b><small><span>{TEN_GOD_PLAIN_MEANING[item.visibleStem.role]}</span><em>专业关系：{item.visibleStem.relation}</em></small></div> : <div className="ten-god-row"><small>时辰未知，不生成十神</small></div>}
+                    {item.hiddenStems.map(hidden => <div className="ten-god-row is-hidden" key={hidden.stem}><span>{item.branch?.branch}藏{hidden.stem} · {hidden.qiLevel}</span><b>{hidden.name}</b><small><span>藏在地支，较像特定情境才打开的一面。{TEN_GOD_PLAIN_MEANING[hidden.name]}</span><em>专业关系：{hidden.relation} · {hidden.polarity}</em></small></div>)}
                   </section>
                 ))}
               </div>
@@ -277,17 +284,15 @@ export function BaziWorkspace() {
         </div>
       </div>
 
-      <aside className="plate-aside">
-        <div className="plate-aside-mark character-mark">{characterExplanation?.character ?? "—"}</div>
+      <aside className={`plate-aside character-tone ${characterExplanation ? ELEMENT_TONE_CLASS[characterExplanation.element] : ""}`}>
+        <div className="plate-aside-mark character-mark character-tone">{characterExplanation?.character ?? "—"}</div>
         <div className="section-kicker">点字释义 · {selectedStructure.name}</div>
         <h2 className="mt-2 font-serif text-2xl">{characterExplanation?.character} · {characterExplanation?.roleTitle}</h2>
         {characterExplanation && <div className="character-explanation">
-          <section><span>它是什么</span><b>{characterExplanation.identity}</b><p>先认清这是天干还是地支，以及它本身的阴阳和五行。</p></section>
-          <section><span>从哪里来</span><b>{characterExplanation.source}</b><p>它来自{selectedStructure.pillar?.pillarLabel}中的这个位置，不是后续推测出来的字。</p></section>
-          <section><span>在盘中起什么作用</span><b>{characterExplanation.roleTitle}</b><p>{characterExplanation.role}</p></section>
-          <section className="is-plain"><span>翻成白话</span><b>{characterExplanation.character}字的传统意象</b><p>{characterExplanation.plainMeaning}</p></section>
+          <section className="is-connection"><span>它映照你哪一面</span><b>{characterExplanation.connectionTitle}</b><p>{characterExplanation.connection}</p></section>
+          <section className="is-plain"><span>传统意象 · 白话</span><b>{characterExplanation.character}字像什么</b><p>{characterExplanation.plainMeaning}</p></section>
+          <section><span>专业名称保留</span><b>{characterExplanation.identity} · {characterExplanation.roleTitle}</b><p>{characterExplanation.role}</p></section>
         </div>}
-        <div className="plate-evidence"><b>怎么算出来</b><span>{characterExplanation?.evidence ?? "出生时辰未知，不自动补猜"}</span></div>
         <div className="member-extension"><span>会员层</span><b>大运、流年与历年对照</b><small>增加时间跨度与比较，不改变本命盘基础结果。</small></div>
       </aside>
     </section>

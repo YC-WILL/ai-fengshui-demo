@@ -83,14 +83,36 @@ describe("bazi structure evidence", () => {
     });
     expect(dayStem?.identity).toMatch(/[阴阳][木火土金水]天干/);
     expect(dayStem?.role).toMatch(/全盘的参照点/);
-    expect(dayStem?.plainMeaning).toMatch(/白话里|盘面线索/);
+    expect(dayStem?.plainMeaning).toMatch(/白话里/);
+    expect(dayStem?.connectionTitle).toMatch(/决定|起点/);
+    expect(dayStem?.connection).toMatch(/放到你的盘里|其中一面/);
+    expect(dayStem?.element).toMatch(/木|火|土|金|水/);
     expect(monthBranch).toMatchObject({
       character: chart.month.branch,
       source: "月柱地支",
       roleTitle: "月令"
     });
     expect(monthBranch?.role).toMatch(/季节位置|内部藏有/);
-    expect(monthBranch?.plainMeaning).toMatch(/白话里|一起理解/);
+    expect(monthBranch?.plainMeaning).toMatch(/白话里/);
+    expect(monthBranch?.connectionTitle).toMatch(/季节/);
+    expect(monthBranch?.connection).toMatch(/月令|做事底色/);
+  });
+
+  it("connects the same chart characters to different life facets by pillar position", () => {
+    const chart = computeBazi({
+      gender: "other", birthDate: "1990-06-15", birthTime: "10:30", unknownTime: false
+    });
+    const structure = buildBaziStructure(chart);
+    const explanations = structure.pillars.flatMap(pillar => [
+      explainBaziCharacter(pillar, chart.dayMaster, "stem"),
+      explainBaziCharacter(pillar, chart.dayMaster, "branch")
+    ]).filter(Boolean);
+
+    expect(new Set(explanations.map(item => item?.connectionTitle)).size).toBe(8);
+    expect(explanations[0]?.connection).toMatch(/外部呈现|早年环境/);
+    expect(explanations[4]?.connection).toMatch(/日主|自我参照/);
+    expect(explanations[6]?.connection).toMatch(/后续展开|长远想法/);
+    expect(explanations.every(item => !item?.connection.match(/一定|必然|注定|人格|诊断/))).toBe(true);
   });
 
   it("builds the three-question mainline from month command, visible stems and hidden stems", () => {

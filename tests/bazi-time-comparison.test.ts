@@ -18,6 +18,9 @@ describe("Bazi time comparison", () => {
     expect(layers[1].pillar.branch).toBe("未");
     expect(layers[2].period).toBe("2026年");
     expect(layers[2].precision).toMatch(/立春/);
+    expect(layers.map(item => item.focusTitle)).toEqual([
+      "今天较容易碰到的主题", "这个月反复出现的主题", "这一年的长期背景"
+    ]);
   });
 
   it("uses the previous Ganzhi year before Li Chun", () => {
@@ -34,6 +37,9 @@ describe("Bazi time comparison", () => {
       expect(layer.stemRole).toBeTruthy();
       expect(layer.source).toBeTruthy();
       expect(layer.precision).toBeTruthy();
+      expect(layer.lifeTheme).toMatch(/放到今日|放到当月|放到流年/);
+      expect(layer.branchTheme.length).toBeGreaterThan(20);
+      expect(layer.professionalSummary).toMatch(/相对日主|地支/);
       expect(JSON.stringify(layer)).not.toMatch(/吉|凶|一定|必然|注定|保证/);
     });
   });

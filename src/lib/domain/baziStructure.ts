@@ -31,6 +31,7 @@ export interface PowerChannel {
   id: PowerCategoryId;
   label: "自身力量" | "承接来源" | "表达输出" | "现实事务" | "规则约束";
   traditional: "比劫" | "印" | "食伤" | "财" | "官杀";
+  scene: string;
   visible: PowerEvidence[];
   hidden: PowerEvidence[];
   isMonthCommand: boolean;
@@ -189,12 +190,12 @@ export function buildBaziStructure(chart: BaziChart) {
   };
 }
 
-const POWER_CATEGORY: Record<PowerCategoryId, Pick<PowerChannel, "label" | "traditional">> = {
-  self: { label: "自身力量", traditional: "比劫" },
-  resource: { label: "承接来源", traditional: "印" },
-  output: { label: "表达输出", traditional: "食伤" },
-  reality: { label: "现实事务", traditional: "财" },
-  constraint: { label: "规则约束", traditional: "官杀" }
+const POWER_CATEGORY: Record<PowerCategoryId, Pick<PowerChannel, "label" | "traditional" | "scene">> = {
+  self: { label: "自身力量", traditional: "比劫", scene: "像立足：确认自己与同类" },
+  resource: { label: "承接来源", traditional: "印", scene: "像补给：接住经验与依据" },
+  output: { label: "表达输出", traditional: "食伤", scene: "像出口：把所想变成表达" },
+  reality: { label: "现实事务", traditional: "财", scene: "像落地：处理资源与成果" },
+  constraint: { label: "规则约束", traditional: "官杀", scene: "像边框：面对标准与责任" }
 };
 
 const POWER_SEQUENCE: PowerCategoryId[] = ["resource", "self", "output", "reality", "constraint"];
@@ -228,35 +229,49 @@ function channelScore(channel: PowerChannel): number {
 function supportAction(resource: PowerChannel, self: PowerChannel): string {
   const hasResource = resource.visible.length + resource.hidden.length > 0;
   const peerCount = self.visible.filter(item => item.tenGod !== "日主").length + self.hidden.length;
-  if (hasResource && peerCount) return "先承接依据，再确认自身立场";
-  if (hasResource) return "先理解、吸收并找到承接依据";
-  if (peerCount) return "先确认自身立场，或借同类呼应稳住起点";
-  return "从自身参照点直接进入眼前事项";
+  if (hasResource && peerCount) return "先像接过一张地图，弄清依据，再站稳自己的位置";
+  if (hasResource) return "先把信息收进来，理解清楚后再动手";
+  if (peerCount) return "先确认自己的位置，也会借同类回应来稳住起点";
+  return "先从自己的判断出发，直接进入眼前事项";
 }
 
 function targetMeaning(target: PowerChannel): string {
-  if (target.id === "output") return "把理解和判断转成表达、方法、作品或可见输出";
-  if (target.id === "reality") return "处理资源、进度、交换、成果等具体事务";
-  if (target.id === "constraint") return "回应标准、责任、边界以及需要遵循的规则";
-  if (target.id === "resource") return "吸收信息、建立依据并取得承接";
-  return "建立自身立场并调用同类力量";
+  if (target.id === "output") return "把心里的判断送到桌面上，变成一句话、一套方法或看得见的成果";
+  if (target.id === "reality") return "把资源、进度和成果一件件安放到现实里";
+  if (target.id === "constraint") return "在标准、责任与边界之间找到可行的位置";
+  if (target.id === "resource") return "先吸收经验、建立依据，再形成自己的理解";
+  return "站稳自己的立场，并与身边同类形成呼应";
+}
+
+const DAY_MASTER_IMAGE: Record<Stem, string> = {
+  甲: "一株向上立起的乔木", 乙: "一枝会顺势寻找空间的藤木",
+  丙: "把四周照亮的日光", 丁: "把一处照深的灯火",
+  戊: "能承住重量的高地", 己: "能整理与滋养事物的田土",
+  庚: "需要锻打成形的金属", 辛: "经过打磨、善于分辨的细金",
+  壬: "向远处汇流的江河", 癸: "慢慢渗入细处的雨露"
+};
+
+function visibilityInLife(channel: PowerChannel): string {
+  const visible = channel.visible.filter(item => item.tenGod !== "日主").length;
+  if (visible && channel.hidden.length) return "既写在天干表面，也埋在地支内部，平时和关键情境里都容易被调动";
+  if (visible) return "写在天干表面，别人通常较容易看见";
+  if (channel.hidden.length) return "藏在地支内部，更像遇到具体情境才会打开的抽屉";
+  return "在已知盘面中没有直接露出，需要结合后续时间层再观察";
 }
 
 function temperamentMeaning(monthCategory: PowerCategoryId, monthChannel: PowerChannel, counterpart: PowerChannel): string {
   const entry: Record<PowerCategoryId, string> = {
-    resource: "先观察、吸收并确认依据",
-    self: "先从自身立场和同类呼应出发",
-    output: "先把感受与判断转成表达或方法",
-    reality: "先看具体事务、资源与结果怎样落地",
-    constraint: "先留意标准、责任与边界"
+    resource: "像先把水收进容器：观察、吸收，确认有依据后再回应",
+    self: "像先把脚站稳：先确认自己的位置，再看谁能同行",
+    output: "像先打开一扇窗：把感受与判断说出来、做出来",
+    reality: "像先整理桌面：先看资源、进度和结果怎样落地",
+    constraint: "像先看清门框：先辨认标准、责任和边界，再决定怎样通过"
   };
-  const visibility = monthChannel.visible.length
-    ? "这部分在天干明现，较容易直接成为外在表现"
-    : "这部分主要藏在地支，更可能在具体情境中才显出来";
+  const visibility = visibilityInLife(monthChannel);
   const counterpartText = channelScore(counterpart) > 0
     ? `${counterpart.label}也有盘面线索，使这种气质不会只停在单一方向。`
     : "已知盘面暂未见另一类明显线索。";
-  return `传统结构呈现的气质更偏向${entry[monthCategory]}；${visibility}。${counterpartText}`;
+  return `从月令带来的底色看，你更像${entry[monthCategory]}。这股力量${visibility}。${counterpartText}`;
 }
 
 function buildElementOverview(structure: ReturnType<typeof buildBaziStructure>, chart: BaziChart): BaziMainline["elementOverview"] {
@@ -342,16 +357,8 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
   const secondary = external[1];
   const peerCount = self.visible.filter(item => item.tenGod !== "日主").length + self.hidden.length;
   const resourceCount = resource.visible.length + resource.hidden.length;
-  const supportSummary = peerCount && resourceCount
-    ? `同类与生扶都有线索：自身同类${evidenceState(self, true)}，承接来源${evidenceState(resource)}`
-    : peerCount
-      ? `盘中可见自身同类，${evidenceState(self, true)}；承接来源未见直接线索`
-      : resourceCount
-        ? `盘中未见额外同类，承接来源${evidenceState(resource)}`
-        : "盘中未见额外同类或承接来源的直接线索";
   const visibleLabels = channels.filter(channel => channel.visible.length).map(channel => channel.label);
   const hiddenOnlyLabels = channels.filter(channel => !channel.visible.length && channel.hidden.length).map(channel => channel.label);
-  const primaryVisibility = evidenceState(primary);
   const secondaryClause = channelScore(secondary) > 0
     ? `${secondary.label}是另一落点，${evidenceState(secondary)}。`
     : "";
@@ -361,12 +368,12 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
 
   const temperamentCounterpart = primary.id === monthCategory ? secondary : primary;
   const temperament = temperamentMeaning(monthCategory, channelById[monthCategory], temperamentCounterpart);
-  const workingStyle = `做事时更可能${supportAction(resource, self)}，再把力量投入到${targetMeaning(primary)}。${primary.label}${primaryVisibility}；${secondary.label}${evidenceState(secondary)}。`;
+  const workingStyle = `做事时，你更可能${supportAction(resource, self)}，然后把主要力气放到${targetMeaning(primary)}。专业结构中，这叫“${primary.label}”较突出：${visibilityInLife(primary)}；“${secondary.label}”则${visibilityInLife(secondary)}。`;
 
   return {
     corePosition: {
       title: "你在盘中的核心位置",
-      summary: `日主为${structure.dayMaster.stem}${structure.dayMaster.element}（${structure.dayMaster.yinYang}${structure.dayMaster.element}），是全盘参照点，生于${structure.monthCommand.branch}月；月令本气${monthMain.stem}归入“${POWER_CATEGORY[monthCategory].label}”。${supportSummary}。主要落点是${primary.label}${channelScore(secondary) > 0 ? `，其次是${secondary.label}` : ""}。`,
+      summary: `把日主${structure.dayMaster.stem}${structure.dayMaster.element}想成${DAY_MASTER_IMAGE[structure.dayMaster.stem]}，它站在整张盘中央，代表你处理事情时的基本出发点。它生在${structure.monthCommand.branch}月，月令本气${monthMain.stem}带来“${POWER_CATEGORY[monthCategory].label}”的环境底色。盘中较常被调动的是${primary.label}${channelScore(secondary) > 0 ? `，旁边还有${secondary.label}` : ""}。`,
       evidence: [
         `日主：${structure.dayMaster.stem}，取自${structure.dayMaster.source}`,
         `月令：${structure.monthCommand.branch}，本气${monthMain.stem}·${monthMain.name}`,
@@ -376,14 +383,14 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
     flow: {
       title: "这张盘的力量怎样流动",
       sequence: channels.map(channel => channel.label),
-      summary: `传统结构的顺序是“承接来源 → 自身力量 → 表达输出 → 现实事务 → 规则约束”。本盘${visibleLabels.join("、")}在天干有明现${hiddenOnlyLabels.length ? `；${hiddenOnlyLabels.join("、")}只在地支藏干出现` : ""}。${POWER_CATEGORY[monthCategory].label}由月令本气带入，是观察这条主线的起点之一。`,
+      summary: `把命局想成一条从“接住信息”到“把事落地”的路：先有承接来源，再站稳自身力量，随后经过表达输出、现实事务，最后碰到规则约束。本盘${visibleLabels.join("、")}像摆在桌面上的工具${hiddenOnlyLabels.length ? `；${hiddenOnlyLabels.join("、")}更像收在抽屉里，要到具体情境才会拿出来` : ""}。月令带入的${POWER_CATEGORY[monthCategory].label}，是这条路的季节底色。`,
       channels
     },
     meaning: {
       title: "这对你意味着什么",
       temperament,
       workingStyle,
-      summary: `${temperament}${workingStyle}${monthClause}${secondaryClause}这是盘中力量的使用顺序，不是固定性格标签。`,
+      summary: `从组合看，你做事较可能${supportAction(resource, self)}，主要把力量放到${targetMeaning(primary)}。${monthClause}${secondaryClause}这是盘中力量的使用顺序，不是固定性格标签。`,
       basis: `由月令本气${monthMain.stem}${monthMain.name}、${primary.label}的${evidenceCountPhrase(primary)}${channelScore(secondary) > 0 ? `，以及${secondary.label}的组合` : ""}共同得出。`
     },
     elementOverview: buildElementOverview(structure, chart),
@@ -395,10 +402,13 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
 
 export interface BaziCharacterExplanation {
   character: Stem | Branch;
+  element: Element;
   identity: string;
   source: string;
   roleTitle: string;
   role: string;
+  connectionTitle: string;
+  connection: string;
   plainMeaning: string;
   evidence: string;
 }
@@ -431,6 +441,74 @@ const BRANCH_PLAIN_MEANING: Record<Branch, string> = {
   亥: "亥是初冬水气展开的位置，白话里偏向收藏、孕育与为下一轮蓄力。"
 };
 
+const STEM_USER_SIDE: Record<Stem, string> = {
+  甲: "较愿意先立方向、搭骨架，再带着事情向上生长",
+  乙: "较会观察条件，在连接与调整中找到可以继续前进的缝隙",
+  丙: "较愿意把信息摊开，让目标、态度和进展被看见",
+  丁: "较容易把注意力聚在一处，用持续和细致把事情照深",
+  戊: "较重视稳住局面、建立框架，让事情有地方可以承放",
+  己: "较擅长吸收杂乱信息，再把人和事一层层整理妥当",
+  庚: "遇到阻滞时较想找到切入口，用执行把局面打开",
+  辛: "较容易察觉细微差别，愿意把标准、品质和边界磨清楚",
+  壬: "较习惯连接更大范围，在流动的信息和关系中寻找通路",
+  癸: "较会先观察细节，以渐进、柔和的方式影响事情走向"
+};
+
+const BRANCH_USER_SIDE: Record<Branch, string> = {
+  子: "面对新变化时，常先蓄住信息，再寻找一个流动的入口",
+  丑: "面对尚未成熟的事，较能先积累、容纳，等条件慢慢成形",
+  寅: "局面需要启动时，较容易产生先迈一步、把空间打开的动力",
+  卯: "进入人与事的连接时，较重视展开、协调和持续生长",
+  辰: "处在转换阶段时，较能同时容纳几条线索，再寻找承接点",
+  巳: "事情接近成熟时，较容易集中热度，让进展加快显现",
+  午: "需要推动局面时，较愿意把力量放到前台，让态度变得清楚",
+  未: "事情已有积累后，较愿意收束线索、整合成果并安顿细节",
+  申: "环境开始变化时，较容易重新整理顺序，找到新的切换方式",
+  酉: "需要取舍时，较重视分辨、收敛，并把界线说得更明确",
+  戌: "进入收尾阶段时，较愿意守住已有成果，把边界和责任定下来",
+  亥: "外部暂时安静时，较容易转向内在积累，为下一轮行动蓄力"
+};
+
+function pillarConnection(name: PillarName, kind: BaziCharacterKind, tendency: string): { title: string; text: string } {
+  const lens: Record<PillarName, Record<BaziCharacterKind, [string, string]>> = {
+    年柱: {
+      stem: ["别人较先看见的一面", "年柱天干偏向外部呈现与早年环境留下的表达方式"],
+      branch: ["早年环境留下的底色", "年柱地支偏向早期生活环境与面对外部世界时的背景节奏"]
+    },
+    月柱: {
+      stem: ["你进入集体时的一面", "月柱天干偏向处理日常任务、进入集体与回应环境要求的方式"],
+      branch: ["你做事时所处的季节", "月柱地支同时是月令，偏向整张盘的季节气候与做事底色"]
+    },
+    日柱: {
+      stem: ["你作决定时的起点", "日柱天干是日主，偏向你调动整张盘时最基本的自我参照"],
+      branch: ["你回到日常生活时的一面", "日柱地支偏向贴近日常、亲近互动与内在落脚处的节奏"]
+    },
+    时柱: {
+      stem: ["你规划下一步时的一面", "时柱天干偏向后续展开、长远想法与想要表达出去的方向"],
+      branch: ["你为未来积累的方式", "时柱地支偏向内在愿景、后续成果与尚在酝酿中的节奏"]
+    }
+  };
+  const [title, context] = lens[name][kind];
+  return {
+    title,
+    text: `${context}。放到你的盘里，它提示你${tendency}。这是其中一面，仍要和月令、日主及全盘组合一起看。`
+  };
+}
+
+export const TEN_GOD_PLAIN_MEANING: Record<TenGodName | "日主", string> = {
+  日主: "整张盘的中心坐标，像你站在盘中看事情的起点。",
+  比肩: "像并肩同行的力量，侧重自己的立场、同类与协作。",
+  劫财: "像同桌分配资源，侧重同伴互动、协商与竞争中的取舍。",
+  食神: "像把经验做成一道成品，侧重从容表达、方法与持续输出。",
+  伤官: "像发现旧方法不顺手后另开一扇窗，侧重辨别、表达与突破。",
+  偏财: "像接住流动中的机会，侧重外部往来、机动资源与快速调配。",
+  正财: "像把账本和日程排稳，侧重可管理的资源、进度与日常成果。",
+  七杀: "像迎面而来的硬任务，侧重压力、时限与需要迅速回应的要求。",
+  正官: "像一把清楚的尺，侧重规则、职责、次序与可遵循的边界。",
+  偏印: "像从侧门取得线索，侧重非典型经验、独立吸收与重新组合。",
+  正印: "像背后稳稳的支撑，侧重学习、依据、照料与承接经验。"
+};
+
 export function explainBaziCharacter(
   item: PillarStructure,
   dayMaster: Stem,
@@ -440,15 +518,19 @@ export function explainBaziCharacter(
     if (!item.visibleStem) return null;
     const stem = item.visibleStem;
     const isDayMaster = stem.role === "日主";
+    const connection = pillarConnection(item.name, "stem", STEM_USER_SIDE[stem.stem]);
     return {
       character: stem.stem,
+      element: stem.element,
       identity: `${STEM_YIN_YANG[stem.stem]}${stem.element}天干`,
       source: stem.source,
       roleTitle: stem.role,
       role: isDayMaster
         ? "这是日主，是全盘的参照点。其他天干和藏干都要先与它比较，才能得到十神名称。"
         : `以日主${dayMaster}为参照，它与日主形成“${stem.relation}”关系，对应十神“${stem.role}”。`,
-      plainMeaning: `${STEM_PLAIN_MEANING[stem.stem]}它落在${item.name}天干位置；这是一条盘面线索，不单独等同于完整性格。`,
+      connectionTitle: connection.title,
+      connection: connection.text,
+      plainMeaning: STEM_PLAIN_MEANING[stem.stem],
       evidence: isDayMaster
         ? `取${item.name}天干${stem.stem}为日主`
         : `${stem.stem}属${stem.element}，再比较日主${dayMaster}的五行与阴阳`
@@ -458,15 +540,19 @@ export function explainBaziCharacter(
   if (!item.branch) return null;
   const hiddenSummary = item.hiddenStems.map(hidden => `${hidden.qiLevel}${hidden.stem}`).join("、");
   const isMonthCommand = item.name === "月柱";
+  const connection = pillarConnection(item.name, "branch", BRANCH_USER_SIDE[item.branch.branch]);
   return {
     character: item.branch.branch,
+    element: item.branch.element,
     identity: `${item.branch.yinYang}${item.branch.element}地支`,
     source: item.branch.source,
     roleTitle: isMonthCommand ? "月令" : "地支",
     role: isMonthCommand
       ? `它位于月柱地支，因此也是月令，标记出生时段的季节位置。内部藏有${hiddenSummary}。`
       : `它承载这一柱的地支结构，内部藏有${hiddenSummary}。地支本身不直接定十神，要看其中藏干与日主的关系。`,
-    plainMeaning: `${BRANCH_PLAIN_MEANING[item.branch.branch]}它落在${item.name}地支位置，仍需与月令、日主和藏干一起理解。`,
+    connectionTitle: connection.title,
+    connection: connection.text,
+    plainMeaning: BRANCH_PLAIN_MEANING[item.branch.branch],
     evidence: `${item.branch.branch}属${item.branch.element}；藏干按固定地支藏干表展开`
   };
 }

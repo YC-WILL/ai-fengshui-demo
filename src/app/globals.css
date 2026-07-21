@@ -109,6 +109,14 @@ html, body {
 .pillar-card > small { @apply mt-3 text-[10px] text-ink/40; }
 .pillar-card.is-active { @apply border-cinnabar/40 bg-cinnabar/5 shadow-sm; }
 .pillar-card.is-active > span { @apply text-cinnabar; }
+.character-tone-wood { --character-tone: #365d4d; --character-soft: #e4eee8; --character-edge: #789988; }
+.character-tone-fire { --character-tone: #b83d2d; --character-soft: #f8e5df; --character-edge: #d58b7e; }
+.character-tone-earth { --character-tone: #8c6722; --character-soft: #f4ead2; --character-edge: #c9a45b; }
+.character-tone-metal { --character-tone: #766b58; --character-soft: #f4efe4; --character-edge: #aa9c83; }
+.character-tone-water { --character-tone: #273b49; --character-soft: #e3eaee; --character-edge: #718795; }
+.pillar-card > button.character-tone { color: var(--character-tone); }
+.pillar-card > button.character-tone:hover,
+.pillar-card > button.character-tone.is-character-active { color: var(--character-tone); background-color: var(--character-soft); box-shadow: 0 0 0 1px var(--character-edge); }
 .plate-tabs { @apply mt-5 flex flex-wrap gap-2; }
 .plate-tabs button, .event-chips button { @apply rounded-full border border-mist bg-white px-3.5 py-1.5 text-xs text-ink/60 transition hover:border-gold/55; }
 .plate-tabs button[aria-pressed="true"], .event-chips button[aria-pressed="true"] { @apply border-cinnabar/40 bg-cinnabar/5 text-cinnabar; }
@@ -146,12 +154,12 @@ html, body {
 .bazi-mainline-basis > p { @apply mt-2; }
 .bazi-mainline-note { @apply border-t border-dashed border-gold/40 px-4 py-3 text-[11px] leading-5 text-ink/50; }
 .power-flow { @apply mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5; }
-.power-flow > div { @apply relative flex min-h-28 flex-col rounded-lg border border-mist bg-white/65 p-2.5; }
+.power-flow > div { @apply relative flex min-h-32 flex-col rounded-lg border border-mist bg-white/65 p-2.5; }
 .power-flow > div.is-month-command { @apply border-cinnabar/35 bg-cinnabar/5; }
 .power-flow > div > i { @apply absolute -left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-rice px-1 text-[9px] not-italic text-cinnabar; }
 .power-flow > div:first-child > i { @apply left-auto right-2 top-2 translate-y-0; }
 .power-flow > div > b { @apply pr-3 text-xs font-medium text-ink/75; }
-.power-flow > div > small { @apply mt-0.5 text-[9px] text-cinnabar/75; }
+.power-flow > div > small { @apply mt-0.5 text-[9px] leading-4 text-cinnabar/75; }
 .power-flow > div > em { @apply mt-2 text-[10px] not-italic text-ink/45; }
 .power-flow > div details { @apply mt-auto pt-2; }
 .power-flow > div details p { @apply mt-1 break-words text-[9px] leading-4 text-ink/45; }
@@ -171,6 +179,8 @@ html, body {
 .bazi-time-detail span { @apply text-[10px] text-cinnabar; }
 .bazi-time-detail b { @apply mt-1 text-sm font-medium text-ink/75; }
 .bazi-time-detail p { @apply mt-1 text-xs leading-5 text-ink/50; }
+.bazi-time-detail details { @apply mt-2 border-t border-dashed border-gold/35 pt-2 text-[10px] text-ink/45; }
+.bazi-time-detail details summary { @apply w-fit cursor-pointer text-cinnabar/80; }
 .bazi-time-footnote { @apply mt-3 border-t border-dashed border-gold/40 pt-2 text-[10px] leading-5 text-ink/45; }
 .bazi-layer-title { @apply mb-4 flex flex-wrap items-end justify-between gap-2; }
 .bazi-layer-title h3 { @apply mt-1 font-serif text-xl; }
@@ -209,15 +219,20 @@ html, body {
 .ten-god-row { @apply grid grid-cols-[1fr_3rem] items-center gap-x-2 border-b border-mist/70 px-3 py-2 text-xs last:border-b-0; }
 .ten-god-row > span { @apply text-ink/60; }
 .ten-god-row > b { @apply text-right font-medium text-ink/80; }
-.ten-god-row > small { @apply col-span-2 mt-0.5 text-[9px] text-ink/40; }
+.ten-god-row > small { @apply col-span-2 mt-1 flex flex-col gap-1 text-[10px] leading-5 text-ink/50; }
+.ten-god-row > small em { @apply text-[9px] not-italic text-ink/35; }
 .ten-god-row.is-hidden { @apply bg-rice/45; }
 .plate-aside-mark.character-mark { @apply min-h-32 text-5xl text-cinnabar; }
+.plate-aside-mark.character-mark.character-tone { color: var(--character-tone); background-color: var(--character-soft); border-color: var(--character-edge); }
 .character-explanation { @apply mt-4 space-y-2; }
 .character-explanation > section { @apply flex flex-col rounded-xl border border-mist bg-white/65 p-3; }
 .character-explanation span { @apply text-[10px] text-cinnabar; }
 .character-explanation b { @apply mt-1 font-serif text-lg font-normal; }
 .character-explanation p { @apply mt-1 text-xs leading-5 text-ink/50; }
 .character-explanation > section.is-plain { @apply border-cinnabar/20 bg-cinnabar/5; }
+.character-explanation > section.is-connection { border-color: var(--character-edge); background-color: var(--character-soft); }
+.character-explanation > section.is-connection span,
+.character-explanation > section.is-connection b { color: var(--character-tone); }
 
 .compact-field { @apply flex items-center gap-2 text-xs text-ink/55; }
 .compact-field input { @apply rounded-lg border border-mist bg-white px-3 py-2 text-sm text-ink focus:border-cinnabar/40 focus:outline-none focus:ring-2 focus:ring-cinnabar/15; }
