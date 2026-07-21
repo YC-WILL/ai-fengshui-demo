@@ -30,6 +30,7 @@
     "@anthropic-ai/sdk": "^0.95.2",
     "@prisma/client": "5.22.0",
     "@vercel/analytics": "^2.0.1",
+    "lunar-typescript": "1.8.6",
     "next": "14.2.35",
     "openai": "4.73.0",
     "react": "18.3.1",

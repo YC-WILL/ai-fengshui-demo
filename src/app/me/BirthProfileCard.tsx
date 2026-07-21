@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { BirthProfileForm } from "@/components/TodayCorrespondence";
 import type { BirthVisual } from "@/lib/domain/birthVisual";
 import type { Element } from "@/lib/domain/elements";
+import { DEFAULT_BIRTH_TIMEZONE } from "@/lib/domain/birthTimezone";
 
 type VisualData = BirthVisual & {
   hexagram: { number: number; name: string; symbol: string; binary: string };
@@ -14,6 +15,7 @@ export default function BirthProfileCard({ profile, visual }: {
     birthDate: string | null;
     birthTime: string | null;
     birthLocation: string | null;
+    timezone: string | null;
   } | null;
   visual: VisualData | null;
 }) {
@@ -22,6 +24,7 @@ export default function BirthProfileCard({ profile, visual }: {
     birthDate: profile.birthDate,
     birthTime: profile.birthTime,
     birthLocation: profile.birthLocation,
+    timezone: profile.timezone ?? DEFAULT_BIRTH_TIMEZONE,
     unknownTime: !profile.birthTime
   } : null;
 

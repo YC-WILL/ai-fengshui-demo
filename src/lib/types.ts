@@ -25,6 +25,8 @@ export interface BaziInput {
   birthDate: string; // yyyy-MM-dd
   birthTime: string; // HH:mm
   birthLocation?: string;
+  /** 出生地当时采用的 IANA 法定时区，用于换算立春与节气交接时刻。 */
+  timezone?: string;
   unknownTime?: boolean;
   /** 用户希望报告回应的当前困境、想法或具体场景。 */
   userContext?: string;

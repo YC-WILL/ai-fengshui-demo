@@ -6,7 +6,7 @@ import {
 } from "@/lib/domain/bazi";
 import { behavioralAccent, relationshipAccent } from "@/lib/domain/behavioralAccent";
 
-describe("computeBazi (simplified)", () => {
+describe("computeBazi", () => {
   it("uses twelve hidden birth-date accents without exposing their source", () => {
     const dates = ["2000-03-21", "2000-04-20", "2000-05-21", "2000-06-22", "2000-07-23", "2000-08-23", "2000-09-23", "2000-10-24", "2000-11-23", "2000-12-22", "2000-01-20", "2000-02-19"];
     const profiles = dates.map(date => behavioralAccent(date).profile);
@@ -173,7 +173,7 @@ describe("computeBazi (simplified)", () => {
     expect(lifeReminders(first)).not.toEqual(lifeReminders(second));
   });
 
-  it("keeps the reported customer pair meaningfully distinct even with the same strongest element", () => {
+  it("keeps the reported customer pair meaningfully distinct after precise calendar calculation", () => {
     const younger = computeBazi({
       gender: "male", birthDate: "2006-10-03", birthTime: "", unknownTime: true
     });
@@ -189,8 +189,6 @@ describe("computeBazi (simplified)", () => {
       ...lifeReminders(older), ...lifeSuggestions(older)
     ];
 
-    expect(younger.elementDistribution.strongest).toBe("土");
-    expect(older.elementDistribution.strongest).toBe("土");
     expect(friendlyCoreConclusion(younger)).toMatch(/彼此都能接受|关系中的细节/);
     expect(friendlyCoreConclusion(older)).toMatch(/身边人的感受|熟悉的生活/);
     expect(lifeReminders(younger).filter(item => lifeReminders(older).includes(item))).toHaveLength(0);

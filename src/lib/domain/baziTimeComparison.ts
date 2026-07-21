@@ -1,5 +1,5 @@
-import { computeBazi, pillarForGanzhiYear, pillarForSolarMonth, type BaziChart, type Pillar } from "./bazi";
-import { currentSolarTerm, solarTermTimeline } from "./dailyCorrespondence";
+import { computeBazi, pillarForGanzhiYear, type BaziChart, type Pillar } from "./bazi";
+import { currentSolarTerm } from "./dailyCorrespondence";
 import { tenGodFor, type PillarName, type TenGodName, type TenGodRelation } from "./baziStructure";
 import type { Branch } from "./elements";
 
@@ -26,25 +26,23 @@ const BRANCH_RELATIONS: Array<{ name: string; pairs: Array<[Branch, Branch]> }> 
 ];
 
 export function buildBaziTimeLayers(natal: BaziChart, dateKey: string): BaziTimeLayer[] {
-  const timeline = solarTermTimeline(dateKey);
   const term = currentSolarTerm(dateKey);
-  const liChun = timeline.yearTerms.find(item => item.name === "立春");
-  if (!liChun) throw new Error("无法确定当年立春日期");
-  const calendarYear = Number(dateKey.slice(0, 4));
-  const ganzhiYear = dateKey < liChun.date ? calendarYear - 1 : calendarYear;
-  const yearPillar = pillarForGanzhiYear(ganzhiYear);
-  const monthPillar = pillarForSolarMonth(yearPillar.stem, term.monthBranch);
-  const dayPillar = computeBazi({
+  const currentChart = computeBazi({
     gender: "other",
     birthDate: dateKey,
     birthTime: "12:00",
+    timezone: "Asia/Shanghai",
     unknownTime: false
-  }).day;
+  });
+  const calendarYear = Number(dateKey.slice(0, 4));
+  const ganzhiYear = currentChart.year.pillarLabel === pillarForGanzhiYear(calendarYear).pillarLabel
+    ? calendarYear
+    : calendarYear - 1;
 
   return [
-    makeLayer(natal, "today", "今日", dateKey, dayPillar, "当日干支", "日柱按公历日期换日；本层不使用时辰。"),
-    makeLayer(natal, "month", "当月", `${term.name} · ${term.monthBranch}月`, monthPillar, `${term.name}后的节气月`, "月柱按北京时间节气月支与流年年干推得。"),
-    makeLayer(natal, "year", "流年", `${ganzhiYear}年`, yearPillar, "立春后的干支纪年", `流年以${liChun.date}立春为年界，不按公历元旦切换。`)
+    makeLayer(natal, "today", "今日", dateKey, currentChart.day, "当日干支", "日柱按当天中国标准时间 12:00 取值；本层不作为出生时柱。"),
+    makeLayer(natal, "month", "当月", `${term.name} · ${currentChart.month.branch}月`, currentChart.month, "十二节交接后的月柱", "月柱按实际节气交接时刻切换；本层以当天中国标准时间 12:00 为观察点。"),
+    makeLayer(natal, "year", "流年", `${ganzhiYear}年`, currentChart.year, "立春交接后的干支纪年", "流年按立春实际交接时刻切换，不按公历元旦或农历正月初一切换。")
   ];
 }
 

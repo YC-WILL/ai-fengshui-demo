@@ -1,16 +1,8 @@
-// ============================================================
-// 八字（四柱）简化计算
-//
-// ⚠️ MVP 注意：本实现采用简化算法 ——
-//   · 年柱按公历年份近似（未严格按立春切换）
-//   · 月柱按公历月份近似（未按节气切换）
-//   · 日柱使用儒略日法，结果较准确
-//   · 时柱按 24 小时区间近似（未按真太阳时）
-//
-// 正式上线请替换为成熟农历/节气库（如 lunar-typescript），
-// 本文件已尽量隔离接口，便于无痛替换。
-// ============================================================
+// 八字四柱底座：年柱以立春交接时刻为界，月柱以十二节交接时刻为界。
+// lunar-typescript 的节气时刻以中国标准时间表达；海外出生资料先按出生地
+// 法定时区还原为同一时刻，再换算到中国标准时间比较交节边界。
 
+import { Solar } from "lunar-typescript";
 import {
   STEMS, BRANCHES, STEM_ELEMENT, BRANCH_ELEMENT,
   STEM_YIN_YANG, ZODIAC_BY_BRANCH, elementDistribution,
@@ -18,6 +10,7 @@ import {
 } from "./elements";
 import type { BaziInput } from "../types";
 import { behavioralAccent } from "./behavioralAccent";
+import { DEFAULT_BIRTH_TIMEZONE, isSupportedBirthTimezone } from "./birthTimezone";
 
 export interface Pillar {
   stem: Stem;
@@ -36,31 +29,14 @@ export interface BaziChart {
   zodiac: string;
   elementDistribution: ReturnType<typeof elementDistribution>;
   notes: string[];
+  calculation: {
+    timezone: string;
+    birthLocation?: string;
+    timeKnown: boolean;
+    yearBoundary: "立春交接时刻";
+    monthBoundary: "节气交接时刻";
+  };
   inputSnapshot: BaziInput;
-}
-
-// ---------- 儒略日 ----------
-function toJulianDay(y: number, m: number, d: number) {
-  const a = Math.floor((14 - m) / 12);
-  const yy = y + 4800 - a;
-  const mm = m + 12 * a - 3;
-  return (
-    d +
-    Math.floor((153 * mm + 2) / 5) +
-    365 * yy +
-    Math.floor(yy / 4) -
-    Math.floor(yy / 100) +
-    Math.floor(yy / 400) -
-    32045
-  );
-}
-
-// 1900-01-01 (Gregorian) 是 甲戌日：stem=0(甲), branch=10(戌)
-// JD(1900-01-01) = 2415021
-function dayPillarFromJD(jd: number): Pillar {
-  const stemIdx = ((jd - 1) % 10 + 10) % 10;
-  const branchIdx = ((jd + 1) % 12 + 12) % 12;
-  return makePillar(stemIdx, branchIdx);
 }
 
 function makePillar(stemIdx: number, branchIdx: number): Pillar {
@@ -75,7 +51,6 @@ function makePillar(stemIdx: number, branchIdx: number): Pillar {
   };
 }
 
-// ---------- 年柱（简化：按公历年份） ----------
 function yearPillar(year: number): Pillar {
   const stemIdx = ((year - 4) % 10 + 10) % 10;
   const branchIdx = ((year - 4) % 12 + 12) % 12;
@@ -87,7 +62,6 @@ export function pillarForGanzhiYear(year: number): Pillar {
   return yearPillar(year);
 }
 
-// ---------- 月柱（简化：按公历月份）----------
 // 五虎遁：年干 → 寅月起干
 const FIVE_TIGER: Record<Stem, Stem> = {
   甲: "丙", 己: "丙",
@@ -96,18 +70,6 @@ const FIVE_TIGER: Record<Stem, Stem> = {
   丁: "壬", 壬: "壬",
   戊: "甲", 癸: "甲"
 };
-function monthPillar(yearStem: Stem, month: number): Pillar {
-  // Gregorian month → branch： Feb→寅(2), …, Dec→子(0), Jan→丑(1)
-  const branchIdx = month % 12;
-  // 寅月起干 = FIVE_TIGER[yearStem]，然后按 (branchIdx - 2) 偏移
-  const startStem = FIVE_TIGER[yearStem];
-  const startStemIdx = STEMS.indexOf(startStem);
-  // 从寅(2)开始按月推进
-  const offsetFromYin = ((branchIdx - 2) % 12 + 12) % 12;
-  const stemIdx = (startStemIdx + offsetFromYin) % 10;
-  return makePillar(stemIdx, branchIdx);
-}
-
 /** 按节气月支与年干起月柱，供已确定节气边界的时间层使用。 */
 export function pillarForSolarMonth(yearStem: Stem, branch: Branch): Pillar {
   const branchIdx = BRANCHES.indexOf(branch);
@@ -116,25 +78,72 @@ export function pillarForSolarMonth(yearStem: Stem, branch: Branch): Pillar {
   return makePillar((startStemIdx + offsetFromYin) % 10, branchIdx);
 }
 
-// ---------- 时柱（简化：按 24 小时区间）----------
-// 五鼠遁：日干 → 子时起干
-const FIVE_RAT: Record<Stem, Stem> = {
-  甲: "甲", 己: "甲",
-  乙: "丙", 庚: "丙",
-  丙: "戊", 辛: "戊",
-  丁: "庚", 壬: "庚",
-  戊: "壬", 癸: "壬"
-};
-function hourBranchIndex(hour: number): number {
-  // 23-1=子(0), 1-3=丑(1), ..., 21-23=亥(11)
-  return Math.floor(((hour + 1) % 24) / 2);
+interface CivilTime {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  second: number;
 }
-function hourPillar(dayStem: Stem, hour: number): Pillar {
-  const branchIdx = hourBranchIndex(hour);
-  const startStem = FIVE_RAT[dayStem];
-  const startStemIdx = STEMS.indexOf(startStem);
-  const stemIdx = (startStemIdx + branchIdx) % 10;
+
+function parsePillar(label: string): Pillar {
+  const stem = label[0] as Stem;
+  const branch = label[1] as Branch;
+  const stemIdx = STEMS.indexOf(stem);
+  const branchIdx = BRANCHES.indexOf(branch);
+  if (stemIdx < 0 || branchIdx < 0) throw new Error(`无法识别干支：${label}`);
   return makePillar(stemIdx, branchIdx);
+}
+
+function formatterFor(timezone: string) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  });
+}
+
+function partsInTimezone(instant: Date, timezone: string): CivilTime {
+  const parts = Object.fromEntries(
+    formatterFor(timezone).formatToParts(instant)
+      .filter(part => part.type !== "literal")
+      .map(part => [part.type, Number(part.value)])
+  );
+  return {
+    year: parts.year,
+    month: parts.month,
+    day: parts.day,
+    hour: parts.hour,
+    minute: parts.minute,
+    second: parts.second
+  };
+}
+
+function timezoneOffsetMs(instant: Date, timezone: string): number {
+  const parts = partsInTimezone(instant, timezone);
+  return Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second) - instant.getTime();
+}
+
+function civilTimeToInstant(civil: CivilTime, timezone: string): Date {
+  const wallClockUtc = Date.UTC(civil.year, civil.month - 1, civil.day, civil.hour, civil.minute, civil.second);
+  let instant = new Date(wallClockUtc - timezoneOffsetMs(new Date(wallClockUtc), timezone));
+  instant = new Date(wallClockUtc - timezoneOffsetMs(instant, timezone));
+  const roundTrip = partsInTimezone(instant, timezone);
+  if (Object.keys(civil).some(key => civil[key as keyof CivilTime] !== roundTrip[key as keyof CivilTime])) {
+    throw new Error("出生时间落在当地时区不存在的时刻，请检查夏令时切换。");
+  }
+  return instant;
+}
+
+function validDateParts(year: number, month: number, day: number): boolean {
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 }
 
 // ---------- 主函数 ----------
@@ -145,25 +154,40 @@ export function computeBazi(input: BaziInput): BaziChart {
   const m = parseInt(mStr, 10);
   const d = parseInt(dStr, 10);
 
-  if (!y || !m || !d) {
+  if (!y || !m || !d || !validDateParts(y, m, d)) {
     throw new Error("出生日期格式错误，应为 YYYY-MM-DD");
   }
 
-  const yp = yearPillar(y);
-  const mp = monthPillar(yp.stem, m);
-  const jd = toJulianDay(y, m, d);
-  const dp = dayPillarFromJD(jd);
+  const timezone = input.timezone ?? DEFAULT_BIRTH_TIMEZONE;
+  if (!isSupportedBirthTimezone(timezone)) throw new Error("暂不支持该出生时区");
+  let hour = 12;
+  let minute = 0;
+  const timeKnown = !input.unknownTime && Boolean(input.birthTime);
+  if (timeKnown) {
+    const match = input.birthTime.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+    if (!match) throw new Error("出生时间格式错误，应为 HH:mm");
+    hour = Number(match[1]);
+    minute = Number(match[2]);
+  }
+
+  const civil = { year: y, month: m, day: d, hour, minute, second: 0 };
+  const instant = civilTimeToInstant(civil, timezone);
+  const chinaTime = partsInTimezone(instant, DEFAULT_BIRTH_TIMEZONE);
+  const boundaryLunar = Solar.fromYmdHms(
+    chinaTime.year, chinaTime.month, chinaTime.day,
+    chinaTime.hour, chinaTime.minute, chinaTime.second
+  ).getLunar();
+  const localLunar = Solar.fromYmdHms(y, m, d, hour, minute, 0).getLunar();
+
+  const yp = parsePillar(boundaryLunar.getYearInGanZhiExact());
+  const mp = parsePillar(boundaryLunar.getMonthInGanZhiExact());
+  const dp = parsePillar(localLunar.getDayInGanZhiExact2());
 
   let hp: Pillar | null = null;
   if (input.unknownTime) {
-    notes.push("出生时间未知，时柱已省略，相关结论仅参考。");
+    notes.push("出生时间未知：时柱明确省略，不以中午或其他时刻代填。若出生当日恰逢交节，年柱或月柱仍可能随实际时刻变化。");
   } else if (input.birthTime) {
-    const [hh] = input.birthTime.split(":").map(n => parseInt(n, 10));
-    if (Number.isFinite(hh)) {
-      hp = hourPillar(dp.stem, hh);
-    } else {
-      notes.push("出生时间解析失败，时柱已省略。");
-    }
+    hp = parsePillar(localLunar.getTimeInGanZhi());
   } else {
     notes.push("未填写出生时间，时柱已省略。");
   }
@@ -175,7 +199,8 @@ export function computeBazi(input: BaziInput): BaziChart {
     ...(hp ? [hp.stemElement, hp.branchElement] : [])
   ];
 
-  notes.push("本计算为简化版：年/月柱未严格按立春与节气切换，仅供参考。");
+  notes.push("年柱按立春交接时刻切换；月柱按十二节的实际交接时刻切换。");
+  notes.push(`${input.birthLocation ? `出生地按“${input.birthLocation}”记录，` : ""}交节边界按出生地法定时区 ${timezone} 换算；当前不做经度真太阳时校正。`);
 
   return {
     year: yp,
@@ -186,7 +211,14 @@ export function computeBazi(input: BaziInput): BaziChart {
     zodiac: ZODIAC_BY_BRANCH[yp.branch],
     elementDistribution: elementDistribution(allElements),
     notes,
-    inputSnapshot: input
+    calculation: {
+      timezone,
+      birthLocation: input.birthLocation?.trim() || undefined,
+      timeKnown,
+      yearBoundary: "立春交接时刻",
+      monthBoundary: "节气交接时刻"
+    },
+    inputSnapshot: { ...input, timezone }
   };
 }
 

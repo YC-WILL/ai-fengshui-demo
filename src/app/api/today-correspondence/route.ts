@@ -4,11 +4,13 @@ import { getOrCreateUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { buildDailyCorrespondence } from "@/lib/domain/dailyCorrespondence";
 import { dateKeyInTimeZone } from "@/lib/time";
+import { DEFAULT_BIRTH_TIMEZONE, isSupportedBirthTimezone } from "@/lib/domain/birthTimezone";
 
 const profileSchema = z.object({
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   birthTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).nullable().optional(),
   birthLocation: z.string().max(40).nullable().optional(),
+  timezone: z.string().max(64).optional(),
   unknownTime: z.boolean().optional()
 });
 
@@ -29,15 +31,24 @@ export async function PUT(request: NextRequest) {
     if (!parsed.success || parsed.data.birthDate > dateKeyInTimeZone()) {
       return NextResponse.json({ ok: false, error: "请检查出生日期和时间。" }, { status: 400 });
     }
-    // 先走领域计算验证真实日期，避免将 2 月 30 日等无效资料写入档案。
-    try {
-      buildDailyCorrespondence({ birthDate: parsed.data.birthDate }, dateKeyInTimeZone());
-    } catch {
-      return NextResponse.json({ ok: false, error: "出生日期不是有效日期。" }, { status: 400 });
-    }
     const birthTime = parsed.data.unknownTime ? null : parsed.data.birthTime ?? null;
     if (!parsed.data.unknownTime && !birthTime) {
       return NextResponse.json({ ok: false, error: "请选择出生时间，或勾选时间不确定。" }, { status: 400 });
+    }
+    const timezone = parsed.data.timezone ?? DEFAULT_BIRTH_TIMEZONE;
+    if (!isSupportedBirthTimezone(timezone)) {
+      return NextResponse.json({ ok: false, error: "请选择列表中的出生地时区。" }, { status: 400 });
+    }
+    try {
+      buildDailyCorrespondence({
+        birthDate: parsed.data.birthDate,
+        birthTime,
+        birthLocation: parsed.data.birthLocation,
+        timezone
+      }, dateKeyInTimeZone());
+    } catch (reason) {
+      const message = reason instanceof Error ? reason.message : "出生资料无效";
+      return NextResponse.json({ ok: false, error: message.includes("夏令时") ? message : "出生日期或时间不是有效资料。" }, { status: 400 });
     }
     await prisma.userProfile.upsert({
       where: { userId: user.id },
@@ -46,13 +57,13 @@ export async function PUT(request: NextRequest) {
         birthDate: parsed.data.birthDate,
         birthTime,
         birthLocation: parsed.data.birthLocation || null,
-        timezone: "Asia/Shanghai"
+        timezone
       },
       update: {
         birthDate: parsed.data.birthDate,
         birthTime,
         birthLocation: parsed.data.birthLocation || null,
-        timezone: "Asia/Shanghai"
+        timezone
       }
     });
     return NextResponse.json(await responseForUser(user.id));
@@ -105,6 +116,7 @@ async function responseForUser(userId: string) {
         birthDate: profile.birthDate,
         birthTime: profile.birthTime,
         birthLocation: profile.birthLocation,
+        timezone: profile.timezone ?? DEFAULT_BIRTH_TIMEZONE,
         unknownTime: !profile.birthTime
       },
       correspondence,

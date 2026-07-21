@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { DailyCorrespondence } from "@/lib/domain/dailyCorrespondence";
 import type { Element } from "@/lib/domain/elements";
+import { BIRTH_TIMEZONE_OPTIONS, DEFAULT_BIRTH_TIMEZONE, defaultBirthTimezoneForLocation } from "@/lib/domain/birthTimezone";
 
 interface ProfileValue {
   birthDate: string;
   birthTime: string | null;
   birthLocation: string | null;
+  timezone: string;
   unknownTime: boolean;
 }
 
@@ -80,6 +82,7 @@ export function BirthProfileForm({
   const [birthTime, setBirthTime] = useState(initial?.birthTime ?? "");
   const [unknownTime, setUnknownTime] = useState(initial?.unknownTime ?? false);
   const [birthLocation, setBirthLocation] = useState(initial?.birthLocation ?? "");
+  const [timezone, setTimezone] = useState(initial?.timezone ?? defaultBirthTimezoneForLocation(initial?.birthLocation));
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const birthDate = birthYear && birthMonth && birthDay ? `${birthYear}-${birthMonth}-${birthDay}` : "";
@@ -114,7 +117,7 @@ export function BirthProfileForm({
       const response = await fetch("/api/today-correspondence", {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ birthDate, birthTime: unknownTime ? null : birthTime, unknownTime, birthLocation: birthLocation || null })
+        body: JSON.stringify({ birthDate, birthTime: unknownTime ? null : birthTime, unknownTime, birthLocation: birthLocation || null, timezone })
       });
       const body = await response.json();
       if (!response.ok || !body.ok) throw new Error(body.error ?? "保存失败");
@@ -141,6 +144,7 @@ export function BirthProfileForm({
       setBirthTime("");
       setUnknownTime(false);
       setBirthLocation("");
+      setTimezone(DEFAULT_BIRTH_TIMEZONE);
       setMessage("生辰资料已清除，其他记录未受影响");
       onRemoved?.();
     } catch (reason) {
@@ -193,13 +197,24 @@ export function BirthProfileForm({
         </div>
         <label>
           <span className="field-label">出生地（省级即可）</span>
-          <select className="field-input" value={birthLocation} onChange={event => setBirthLocation(event.target.value)}>
+          <select className="field-input" value={birthLocation} onChange={event => {
+            const location = event.target.value;
+            setBirthLocation(location);
+            setTimezone(defaultBirthTimezoneForLocation(location));
+          }}>
             <option value="">暂不填写</option>
             {LOCATIONS.filter(Boolean).map(location => <option key={location} value={location}>{location}</option>)}
           </select>
         </label>
-        <div className="rounded-lg border border-mist bg-rice/70 px-4 py-3 text-xs leading-5 text-ink/55">
-          第一版统一按北京时间记录。未确认出生时刻时不使用时柱，也不会自动补猜。
+        <label>
+          <span className="field-label">出生地当时采用的时区</span>
+          <select className="field-input" value={timezone} onChange={event => setTimezone(event.target.value)}>
+            {BIRTH_TIMEZONE_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
+          <span className="mt-1 block text-[11px] leading-5 text-ink/45">用于把立春和节气交接时刻换算到出生地；含历史夏令时。当前不做省级经度的真太阳时校正。</span>
+        </label>
+        <div className="rounded-lg border border-mist bg-rice/70 px-4 py-3 text-xs leading-5 text-ink/55 md:col-span-2">
+          年柱按立春交接时刻、月柱按节气交接时刻切换。未确认出生时刻时，时柱显示为空，不会自动补猜。
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3 border-t border-mist px-6 py-5 md:px-8">

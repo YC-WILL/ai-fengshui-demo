@@ -132,6 +132,7 @@ export function buildDailyCorrespondence(
     birthDate: profile.birthDate,
     birthTime: profile.birthTime ?? "",
     birthLocation: profile.birthLocation ?? undefined,
+    timezone: profile.timezone ?? undefined,
     unknownTime: !profile.birthTime
   });
   const todayChart = computeBazi({

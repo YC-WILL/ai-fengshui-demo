@@ -59,7 +59,8 @@ export default async function MePage() {
       <BirthProfileCard profile={user.profile ? {
         birthDate: user.profile.birthDate,
         birthTime: user.profile.birthTime,
-        birthLocation: user.profile.birthLocation
+        birthLocation: user.profile.birthLocation,
+        timezone: user.profile.timezone
       } : null} visual={birthVisual && hexagram ? { ...birthVisual, hexagram } : null} />
 
       <MeActions email={user.email} nickname={user.nickname} />

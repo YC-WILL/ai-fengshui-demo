@@ -15,6 +15,7 @@ interface BirthProfile {
   birthDate: string;
   birthTime: string | null;
   birthLocation: string | null;
+  timezone: string;
   unknownTime: boolean;
 }
 
@@ -76,6 +77,7 @@ export function BaziWorkspace() {
     birthDate: profile.birthDate,
     birthTime: profile.birthTime ?? "",
     birthLocation: profile.birthLocation ?? undefined,
+    timezone: profile.timezone,
     unknownTime: profile.unknownTime
   }) : null, [profile]);
   const structure = useMemo(() => chart ? buildBaziStructure(chart) : null, [chart]);
@@ -103,7 +105,7 @@ export function BaziWorkspace() {
         </div>
         {editingProfile && <div className="plate-inline-profile-editor">
           <BirthProfileForm
-            key={`${profile.birthDate}-${profile.birthTime}-${profile.birthLocation}`}
+            key={`${profile.birthDate}-${profile.birthTime}-${profile.birthLocation}-${profile.timezone}`}
             initial={profile}
             context="profile"
             onSaved={payload => { setContext(payload); setEditingProfile(false); }}
@@ -191,7 +193,7 @@ export function BaziWorkspace() {
                 <div><b>月支取令</b><p>月令取月柱地支，不取月柱天干。它标记出生时段的季节位置，是判断全盘气势的入口之一。</p></div>
               </div>
               <div className="hidden-stem-line"><b>月令藏干</b>{structure.monthCommand.hiddenStems.map(hidden => <span key={hidden.stem}>{hidden.qiLevel}·{hidden.stem}{hidden.element}<small>{hidden.name}</small></span>)}</div>
-              <p className="bazi-method-note is-warning">当前排盘口径仍以公历月份近似月柱，尚未按出生时刻精确切换节气。临近节气交接的出生日期，月柱与月令需在接入精确历法后复核；页面不会把这一结果包装成最终定盘。</p>
+              <p className="bazi-method-note">月柱以十二节的实际交接时刻切换，并按出生地法定时区 {chart.calculation.timezone} 换算。若出生时间未知且当天恰逢交节，月柱仍需在确认时刻后复核；当前不做经度真太阳时校正。</p>
             </div>
           )}
           {layer === "hidden" && (
