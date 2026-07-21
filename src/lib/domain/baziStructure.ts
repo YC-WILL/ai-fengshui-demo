@@ -270,11 +270,11 @@ function visibilityInLife(channel: PowerChannel): string {
 
 function temperamentMeaning(monthCategory: PowerCategoryId, monthChannel: PowerChannel, counterpart: PowerChannel): string {
   const entry: Record<PowerCategoryId, string> = {
-    resource: "像先把水收进容器：观察、吸收，确认有依据后再回应",
-    self: "像先把脚站稳：先确认自己的位置，再看谁能同行",
-    output: "像先打开一扇窗：把感受与判断说出来、做出来",
-    reality: "像先整理桌面：先看资源、进度和结果怎样落地",
-    constraint: "像先看清门框：先辨认标准、责任和边界，再决定怎样通过"
+    resource: "像把水先收进容器：观察、吸收，确认有依据后再回应",
+    self: "像先把脚站稳：确认自己的位置，再看谁能同行",
+    output: "像打开一扇窗：把感受与判断说出来、做出来",
+    reality: "像整理桌面：先看资源、进度和结果怎样落地",
+    constraint: "像看清门框：先辨认标准、责任和边界，再决定怎样通过"
   };
   const visibility = visibilityInLife(monthChannel);
   const counterpartText = channelScore(counterpart) > 0
@@ -303,7 +303,7 @@ function buildElementOverview(structure: ReturnType<typeof buildBaziStructure>, 
         foundInHidden.length ? `${foundInHidden.join("、")}虽未在明字出现，但可在地支藏干中找到` : "",
         absentEntirely.length ? `${absentEntirely.join("、")}在已知明字与藏干中均未见` : ""
       ].filter(Boolean).join("；");
-  const prominentScenes = prominent.map(element => `${element}所代表的${ELEMENT_LIFE_SCENE[element]}`).join("、");
+  const prominentScenes = prominent.map(element => ELEMENT_LIFE_SCENE[element]).join("；");
   const relationText = prominent.length
     ? prominent.map(element => `${element}相对日主属于“${POWER_CATEGORY[categoryForElement(structure.dayMaster.element, element)].label}”`).join("，")
     : "五行没有一类在明字中拉开明显差距";
@@ -317,17 +317,17 @@ function buildElementOverview(structure: ReturnType<typeof buildBaziStructure>, 
     absentEntirely,
     summary: `${prominentText}；${absentText}。这里的“未见”只描述已知盘面，不等于缺陷，也不单独决定旺衰。`,
     interpretation: prominent.length
-      ? `你的明字更容易先调动${prominentScenes}这类方式。专业关系上，${relationText}，所以它不仅表示数量，也提示力量更常往哪个方向使用。${absentMeaning}`
+      ? `明字中${prominent.join("、")}出现得更集中。放到日常里，这更像：${prominentScenes}。专业关系上，${relationText}，所以这里不只是在数数量，也是在看你的力气较常往哪里去。${absentMeaning}`
       : `你的明字不像只有一种工具反复出现，更像几种方式都能拿到手边。${relationText}，因此需要继续看月令和十神组合，不能只凭数量下结论。${absentMeaning}`
   };
 }
 
 const ELEMENT_LIFE_SCENE: Record<Element, string> = {
-  木: "接到新任务后先找延展方向、搭出下一步路径",
-  火: "需要推进时把态度、重点和进展摆到明处",
-  土: "信息和事务堆在一起时先归类、排顺序并安顿细节",
-  金: "标准含糊或意见不一时先做取舍、把边界说清",
-  水: "条件变化时先收集信息、连接资源并保留转圜空间"
+  木: "接到新任务后，你较容易先找延展方向，搭出下一步路径",
+  火: "事情需要推进时，你较容易把态度、重点和进展摆到明处",
+  土: "信息和事务堆在一起时，你较容易先归类、排顺序并安顿细节",
+  金: "标准含糊或意见不一时，你较容易先做取舍、把边界说清",
+  水: "条件发生变化时，你较容易先收集信息、连接资源并保留转圜空间"
 };
 
 function categoryForElement(dayElement: Element, otherElement: Element): PowerCategoryId {
@@ -418,7 +418,7 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
 
   const temperamentCounterpart = primary.id === monthCategory ? secondary : primary;
   const temperament = temperamentMeaning(monthCategory, channelById[monthCategory], temperamentCounterpart);
-  const workingStyle = `做事时，你更可能${supportAction(resource, self)}，然后把主要力气放到${targetMeaning(primary)}。专业结构中，这叫“${primary.label}”较突出：${visibilityInLife(primary)}；“${secondary.label}”则${visibilityInLife(secondary)}。`;
+  const workingStyle = `做事时，你更可能${supportAction(resource, self)}，然后会${targetMeaning(primary)}。专业结构中，这叫“${primary.label}”较突出：${visibilityInLife(primary)}；“${secondary.label}”则${visibilityInLife(secondary)}。`;
   const monthImage = `想象${DAY_MASTER_IMAGE[structure.dayMaster.stem]}来到${MONTH_SCENE[structure.monthCommand.branch]}。四周先给它的，是“${POWER_CATEGORY[monthCategory].label}”这层做事气候。`;
   const monthInterpretation = `事情刚放到你桌上时，这更像你会${POWER_BEHAVIOR_SCENE[monthCategory]}。它不是凭一个字猜出来的，而是由${structure.monthCommand.branch}月令的本气${monthMain.stem}${monthMain.name}相对日主${structure.dayMaster.stem}形成。`;
   const tenGodHeadline = `事情开始运转后，“${primary.label}”通常先走到前台，“${secondary.label}”在旁边接下一棒`;
@@ -444,7 +444,7 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
       title: "这对你意味着什么",
       temperament,
       workingStyle,
-      summary: `从组合看，你做事较可能${supportAction(resource, self)}，主要把力量放到${targetMeaning(primary)}。${monthClause}${secondaryClause}这是盘中力量的使用顺序，不是固定性格标签。`,
+      summary: `从组合看，你做事较可能${supportAction(resource, self)}，随后更常${targetMeaning(primary)}。${monthClause}${secondaryClause}这是盘中力量的使用顺序，不是固定性格标签。`,
       basis: `由月令本气${monthMain.stem}${monthMain.name}、${primary.label}的${evidenceCountPhrase(primary)}${channelScore(secondary) > 0 ? `，以及${secondary.label}的组合` : ""}共同得出。`
     },
     elementOverview: buildElementOverview(structure, chart),
