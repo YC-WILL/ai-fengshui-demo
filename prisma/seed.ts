@@ -15,6 +15,8 @@ import { TRADITIONAL_CALENDAR_VERSION } from "../src/lib/knowledge/traditionalCa
 import { syncTraditionalCalendarKnowledge } from "../src/lib/knowledge/traditionalCalendarSync";
 import { QIMEN_CATALOG_VERSION } from "../src/lib/knowledge/qimenCatalog";
 import { syncQimenKnowledge } from "../src/lib/knowledge/qimenSync";
+import { BAZI_SCENE_CATALOG_VERSION } from "../src/lib/knowledge/baziSceneCatalog";
+import { syncBaziSceneKnowledge } from "../src/lib/knowledge/baziSceneSync";
 
 const prisma = new PrismaClient();
 
@@ -45,6 +47,10 @@ async function main() {
   console.log(`[seed] syncing traditional calendar ${TRADITIONAL_CALENDAR_VERSION}...`);
   const traditionalCount = await syncTraditionalCalendarKnowledge(prisma);
   console.log(`[seed] ${traditionalCount.entities} entities, ${traditionalCount.relations} relations, ${traditionalCount.methodRules} method rules, ${traditionalCount.interpretations} interpretations written.`);
+
+  console.log(`[seed] syncing Bazi scene knowledge ${BAZI_SCENE_CATALOG_VERSION}...`);
+  const baziSceneCount = await syncBaziSceneKnowledge(prisma);
+  console.log(`[seed] ${baziSceneCount} Bazi scene method rules written.`);
 
   console.log(`[seed] syncing Qimen foundation ${QIMEN_CATALOG_VERSION}...`);
   const qimenCount = await syncQimenKnowledge(prisma);

@@ -5,6 +5,7 @@
   "description": "卦安 GuaAn · AI 国学生活顾问 — 黄历、八字、关系、住宅空间与择日参考报告平台",
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/sync-bazi-scenes-on-vercel.mjs",
     "build": "NEXT_PRIVATE_BUILD_WORKER=1 next build",
     "start": "next start",
     "postinstall": "DATABASE_URL=${DATABASE_URL:-postgresql://USER:PASSWORD@HOST/db?sslmode=require} prisma generate",
@@ -17,6 +18,7 @@
     "db:seed:theory": "tsx prisma/seed-theory.ts",
     "db:seed:zhouyi": "tsx prisma/seed-zhouyi.ts",
     "db:seed:traditional-calendar": "tsx prisma/seed-traditional-calendar.ts",
+    "db:seed:bazi-scenes": "tsx prisma/seed-bazi-scenes.ts",
     "db:seed:qimen": "tsx prisma/seed-qimen.ts",
     "data:zhouyi": "node scripts/fetch-zhouyi-canon.mjs",
     "data:traditional-calendar": "node scripts/build-traditional-calendar-catalog.mjs",
