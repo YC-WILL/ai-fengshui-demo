@@ -24,7 +24,7 @@ describe("bazi life observation cards", () => {
       expect(card.conclusion).toMatch(/^当.+时，你可能/);
       expect(card.trigger).toBeTruthy();
       expect(card.strength).toMatch(/优势|适度使用|可能/);
-      expect(card.watchout).toMatch(/可以观察自己是否/);
+      expect(card.watchout).toMatch(/可以观察.*是否出现/);
       expect(card.action).toMatch(/分钟/);
       expect(card.evidence.length).toBeGreaterThanOrEqual(2);
       expect(new Set(card.evidence.map(item => item.source)).size).toBeGreaterThanOrEqual(2);

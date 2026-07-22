@@ -212,7 +212,7 @@ function buildCard(
     conclusion: `当${scene.trigger}时，你可能${scene.response}。${SECONDARY_HINT[secondaryFamily]}，可以观察两种反应是否会先后出现。`,
     trigger: `在${scene.trigger}时较容易看见；若现实经历不符合，不把它当作固定结论。`,
     strength: `适度使用时，可能${scene.strength}。`,
-    watchout: `如果持续使用同一种方式，可以观察自己是否会${scene.watchout}。`,
+    watchout: `如果持续使用同一种方式，可以观察以下情况是否出现：${scene.watchout}。`,
     action: scene.action,
     evidence,
     confidence,
