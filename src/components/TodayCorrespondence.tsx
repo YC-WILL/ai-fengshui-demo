@@ -5,8 +5,11 @@ import Link from "next/link";
 import type { DailyCorrespondence } from "@/lib/domain/dailyCorrespondence";
 import type { Element } from "@/lib/domain/elements";
 import { BIRTH_TIMEZONE_OPTIONS, DEFAULT_BIRTH_TIMEZONE, defaultBirthTimezoneForLocation } from "@/lib/domain/birthTimezone";
+import { PROFILE_GENDER_OPTIONS, normalizeProfileGender } from "@/lib/profileGender";
+import type { Gender } from "@/lib/types";
 
 interface ProfileValue {
+  gender: Gender;
   birthDate: string;
   birthTime: string | null;
   birthLocation: string | null;
@@ -76,6 +79,7 @@ export function BirthProfileForm({
   context?: "onboarding" | "profile" | "plate";
 }) {
   const initialDateParts = (initial?.birthDate ?? "").split("-");
+  const [gender, setGender] = useState<Gender>(normalizeProfileGender(initial?.gender));
   const [birthYear, setBirthYear] = useState(initialDateParts[0] ?? "");
   const [birthMonth, setBirthMonth] = useState(initialDateParts[1] ?? "");
   const [birthDay, setBirthDay] = useState(initialDateParts[2] ?? "");
@@ -117,7 +121,7 @@ export function BirthProfileForm({
       const response = await fetch("/api/today-correspondence", {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ birthDate, birthTime: unknownTime ? null : birthTime, unknownTime, birthLocation: birthLocation || null, timezone })
+        body: JSON.stringify({ gender, birthDate, birthTime: unknownTime ? null : birthTime, unknownTime, birthLocation: birthLocation || null, timezone })
       });
       const body = await response.json();
       if (!response.ok || !body.ok) throw new Error(body.error ?? "保存失败");
@@ -141,6 +145,7 @@ export function BirthProfileForm({
       setBirthYear("");
       setBirthMonth("");
       setBirthDay("");
+      setGender("other");
       setBirthTime("");
       setUnknownTime(false);
       setBirthLocation("");
@@ -168,6 +173,25 @@ export function BirthProfileForm({
         </p>
       </div>
       <div className="grid gap-5 px-6 py-6 md:grid-cols-2 md:px-8">
+        <fieldset>
+          <legend className="field-label">性别</legend>
+          <div className="grid grid-cols-3 gap-2" aria-label="性别">
+            {PROFILE_GENDER_OPTIONS.map(option => (
+              <label key={option.value} className={`cursor-pointer rounded-lg border px-3 py-2.5 text-center text-sm transition ${gender === option.value ? "border-cinnabar bg-cinnabar/5 text-cinnabar" : "border-mist bg-white/60 text-ink/60 hover:border-gold"}`}>
+                <input
+                  className="sr-only"
+                  type="radio"
+                  name="birth-profile-gender"
+                  value={option.value}
+                  checked={gender === option.value}
+                  onChange={() => setGender(option.value)}
+                />
+                {option.label}
+              </label>
+            ))}
+          </div>
+          <span className="mt-1 block text-[11px] leading-5 text-ink/45">不改变四柱本身；用于后续需要区分性别的传统排法。</span>
+        </fieldset>
         <fieldset>
           <legend className="field-label">出生日期（公历）</legend>
           <div className="grid grid-cols-[1.35fr_1fr_1fr] gap-2">

@@ -11,8 +11,11 @@ import type { Element } from "@/lib/domain/elements";
 import { DATE_EVENTS, RELATION_DIMENSIONS } from "@/lib/product/methodUi";
 import type { DateSelectionEvent } from "@/lib/types";
 import { BirthProfileForm } from "@/components/TodayCorrespondence";
+import { profileGenderLabel } from "@/lib/profileGender";
+import type { Gender } from "@/lib/types";
 
 interface BirthProfile {
+  gender: Gender;
   birthDate: string;
   birthTime: string | null;
   birthLocation: string | null;
@@ -81,7 +84,7 @@ export function BaziWorkspace() {
   const { context, setContext } = useBirthContext();
   const profile = context === undefined ? undefined : context?.profile ?? null;
   const chart = useMemo(() => profile ? computeBazi({
-    gender: "other",
+    gender: profile.gender,
     birthDate: profile.birthDate,
     birthTime: profile.birthTime ?? "",
     birthLocation: profile.birthLocation ?? undefined,
@@ -113,12 +116,12 @@ export function BaziWorkspace() {
         <div className="plate-section-head">
           <div><span>你的八字盘</span><small>先从生活场景看见自己，再向下查看专业结构</small></div>
           <button type="button" className="plate-profile-summary" aria-expanded={editingProfile} onClick={() => setEditingProfile(value => !value)}>
-            <span>已保存生辰</span><b>{profile.birthDate} · {profile.unknownTime ? "时间未定" : profile.birthTime}</b><em>{editingProfile ? "收起" : "修改"}</em>
+            <span>已保存生辰</span><b>{profile.birthDate} · {profileGenderLabel(profile.gender)} · {profile.unknownTime ? "时间未定" : profile.birthTime}</b><em>{editingProfile ? "收起" : "修改"}</em>
           </button>
         </div>
         {editingProfile && <div className="plate-inline-profile-editor">
           <BirthProfileForm
-            key={`${profile.birthDate}-${profile.birthTime}-${profile.birthLocation}-${profile.timezone}`}
+            key={`${profile.gender}-${profile.birthDate}-${profile.birthTime}-${profile.birthLocation}-${profile.timezone}`}
             initial={profile}
             context="profile"
             onSaved={payload => { setContext(payload); setEditingProfile(false); }}

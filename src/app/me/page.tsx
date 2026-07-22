@@ -57,6 +57,7 @@ export default async function MePage() {
       </nav>
 
       <BirthProfileCard profile={user.profile ? {
+        gender: user.profile.gender,
         birthDate: user.profile.birthDate,
         birthTime: user.profile.birthTime,
         birthLocation: user.profile.birthLocation,

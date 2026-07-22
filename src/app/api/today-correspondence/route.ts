@@ -5,8 +5,10 @@ import { prisma } from "@/lib/db";
 import { buildDailyCorrespondence } from "@/lib/domain/dailyCorrespondence";
 import { dateKeyInTimeZone } from "@/lib/time";
 import { DEFAULT_BIRTH_TIMEZONE, isSupportedBirthTimezone } from "@/lib/domain/birthTimezone";
+import { normalizeProfileGender } from "@/lib/profileGender";
 
 const profileSchema = z.object({
+  gender: z.enum(["male", "female", "other"]).optional().default("other"),
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   birthTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).nullable().optional(),
   birthLocation: z.string().max(40).nullable().optional(),
@@ -54,12 +56,14 @@ export async function PUT(request: NextRequest) {
       where: { userId: user.id },
       create: {
         userId: user.id,
+        gender: parsed.data.gender,
         birthDate: parsed.data.birthDate,
         birthTime,
         birthLocation: parsed.data.birthLocation || null,
         timezone
       },
       update: {
+        gender: parsed.data.gender,
         birthDate: parsed.data.birthDate,
         birthTime,
         birthLocation: parsed.data.birthLocation || null,
@@ -113,6 +117,7 @@ async function responseForUser(userId: string) {
     ok: true,
     data: {
       profile: {
+        gender: normalizeProfileGender(profile.gender),
         birthDate: profile.birthDate,
         birthTime: profile.birthTime,
         birthLocation: profile.birthLocation,

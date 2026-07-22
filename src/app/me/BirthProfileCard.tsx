@@ -5,6 +5,7 @@ import { BirthProfileForm } from "@/components/TodayCorrespondence";
 import type { BirthVisual } from "@/lib/domain/birthVisual";
 import type { Element } from "@/lib/domain/elements";
 import { DEFAULT_BIRTH_TIMEZONE } from "@/lib/domain/birthTimezone";
+import { normalizeProfileGender } from "@/lib/profileGender";
 
 type VisualData = BirthVisual & {
   hexagram: { number: number; name: string; symbol: string; binary: string };
@@ -12,6 +13,7 @@ type VisualData = BirthVisual & {
 
 export default function BirthProfileCard({ profile, visual }: {
   profile: {
+    gender: string | null;
     birthDate: string | null;
     birthTime: string | null;
     birthLocation: string | null;
@@ -21,6 +23,7 @@ export default function BirthProfileCard({ profile, visual }: {
 }) {
   const router = useRouter();
   const initial = profile?.birthDate ? {
+    gender: normalizeProfileGender(profile.gender),
     birthDate: profile.birthDate,
     birthTime: profile.birthTime,
     birthLocation: profile.birthLocation,
