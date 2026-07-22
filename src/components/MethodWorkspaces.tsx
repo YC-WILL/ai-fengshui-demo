@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { computeBazi } from "@/lib/domain/bazi";
-import { buildBaziLifeScenes, type BaziLifeSceneId } from "@/lib/domain/baziLifeScenes";
 import { TEN_GOD_PLAIN_MEANING, buildBaziMainline, buildBaziStructure, explainBaziCharacter, hiddenLayerReading, type BaziCharacterKind } from "@/lib/domain/baziStructure";
 import { buildBaziTimeLayers, type BaziTimeLayerId } from "@/lib/domain/baziTimeComparison";
 import { buildPairStructure, HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
@@ -93,7 +92,6 @@ export function BaziWorkspace() {
   }) : null, [profile]);
   const structure = useMemo(() => chart ? buildBaziStructure(chart) : null, [chart]);
   const mainline = useMemo(() => chart ? buildBaziMainline(chart) : null, [chart]);
-  const lifeScenes = useMemo(() => chart ? buildBaziLifeScenes(chart) : [], [chart]);
   const timeLayers = useMemo(() => chart && context?.correspondence?.date
     ? buildBaziTimeLayers(chart, context.correspondence.date)
     : [], [chart, context?.correspondence?.date]);
@@ -101,20 +99,17 @@ export function BaziWorkspace() {
   const [layer, setLayer] = useState<"elements" | "month" | "hidden" | "roles">("elements");
   const [timeLayer, setTimeLayer] = useState<BaziTimeLayerId>("today");
   const [editingProfile, setEditingProfile] = useState(false);
-  const [lifeScene, setLifeScene] = useState<BaziLifeSceneId>("social");
-  const [lifeEvidenceOpen, setLifeEvidenceOpen] = useState(false);
 
   if (!profile || !chart || !structure || !mainline) return <ProfileGate profile={profile} onSaved={payload => setContext(payload)} />;
   const selectedStructure = structure.pillars[selectedCharacter.pillar];
   const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind, structure);
   const activeTimeLayer = timeLayers.find(item => item.id === timeLayer) ?? timeLayers[0];
-  const activeLifeScene = lifeScenes.find(item => item.id === lifeScene) ?? lifeScenes[0];
 
   return (
     <section className="plate-shell">
       <div className="plate-main">
         <div className="plate-section-head">
-          <div><span>你的八字盘</span><small>先从生活场景看见自己，再向下查看专业结构</small></div>
+          <div><span>你的八字盘</span><small>从四柱明字开始，逐层查看这张命盘的结构依据</small></div>
           <button type="button" className="plate-profile-summary" aria-expanded={editingProfile} onClick={() => setEditingProfile(value => !value)}>
             <span>已保存生辰</span><b>{profile.birthDate} · {profileGenderLabel(profile.gender)} · {profile.unknownTime ? "时间未定" : profile.birthTime}</b><em>{editingProfile ? "收起" : "修改"}</em>
           </button>
@@ -128,31 +123,6 @@ export function BaziWorkspace() {
             onRemoved={() => { setContext({ profile: null, correspondence: null }); setEditingProfile(false); }}
           />
         </div>}
-
-        {activeLifeScene && <section className="bazi-life-scenes" aria-labelledby="bazi-life-scenes-title">
-          <header className="bazi-life-scenes-head">
-            <div><span className="section-kicker">本命盘第一层</span><h2 id="bazi-life-scenes-title">你的四种生活状态</h2></div>
-            <small>{chart.hour ? "四柱已知 · 场景依据完整四柱组合" : "时柱未录 · 当前只使用年、月、日三柱"}</small>
-          </header>
-          <nav className="bazi-life-tabs" aria-label="四种生活状态">
-            {lifeScenes.map(scene => <button key={scene.id} type="button" aria-pressed={lifeScene === scene.id} onClick={() => { setLifeScene(scene.id); setLifeEvidenceOpen(false); }}>
-              <span>{scene.shortLabel}</span><small>{scene.moments.map(moment => moment.label).join(" · ")}</small>
-            </button>)}
-          </nav>
-          <div className="bazi-life-panel">
-            <div className="bazi-life-intro"><span>{activeLifeScene.label}</span><p>{activeLifeScene.lead}</p></div>
-            <div className="bazi-life-moments">
-              {activeLifeScene.moments.map((moment, index) => <article key={moment.id}>
-                <span>0{index + 1} · {moment.label}</span><h3>{moment.title}</h3><p>{moment.body}</p>
-              </article>)}
-            </div>
-            <details className="bazi-life-evidence" open={lifeEvidenceOpen} onToggle={event => setLifeEvidenceOpen(event.currentTarget.open)}>
-              <summary>为什么这样看</summary>
-              <p>{activeLifeScene.evidenceSummary}</p>
-              <ul>{activeLifeScene.evidence.map(item => <li key={item}>{item}</li>)}</ul>
-            </details>
-          </div>
-        </section>}
 
         <div className="bazi-professional-head">
           <div><span className="section-kicker">专业命盘</span><h2>四柱与结构依据</h2></div>
