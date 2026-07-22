@@ -142,7 +142,7 @@ export function BaziWorkspace() {
                 <span>0{index + 1} · {moment.label}</span><h3>{moment.title}</h3><p>{moment.body}</p>
               </article>)}
             </div>
-            <details className="bazi-life-evidence">
+            <details key={activeLifeScene.id} className="bazi-life-evidence">
               <summary>为什么这样看</summary>
               <p>{activeLifeScene.evidenceSummary}</p>
               <ul>{activeLifeScene.evidence.map(item => <li key={item}>{item}</li>)}</ul>
