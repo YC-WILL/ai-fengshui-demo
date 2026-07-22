@@ -316,19 +316,22 @@ html, body {
   .home-direction-grid button { @apply min-h-20; }
 }
 
-/* 二十四节气是首页首屏；每天按北京时间换日期，交节后换图景。 */
+/* 二十四节气是首页首屏；以文字层级呈现当天与交节位置。 */
 .solar-term-card {
   @apply overflow-hidden rounded-2xl border border-gold/35 bg-white/80 shadow-scroll;
   background:
     radial-gradient(circle at 8% 0%, rgba(181, 59, 42, 0.06), transparent 28%),
     rgba(255, 255, 255, 0.78);
 }
-.solar-term-hero { @apply grid min-h-[26rem] md:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)]; }
-.solar-term-scene { @apply relative min-h-72 overflow-hidden bg-mist md:min-h-[26rem]; }
-.solar-term-scene::after { @apply pointer-events-none absolute inset-0; content: ""; box-shadow: inset -28px 0 50px rgba(247, 243, 234, 0.14), inset 0 -30px 50px rgba(36, 32, 28, 0.08); }
-.solar-term-scene svg { @apply absolute inset-0 h-full w-full; }
-.solar-term-scene span { @apply absolute bottom-4 left-4 rounded-full border border-white/55 bg-white/70 px-3 py-1 text-[10px] tracking-[0.18em] text-ink/55 backdrop-blur; }
-.solar-term-copy { @apply flex flex-col justify-between gap-8 bg-[rgba(255,253,248,0.9)] p-6 md:p-8; }
+.solar-term-hero { @apply grid min-h-72 md:grid-cols-[minmax(0,1fr)_16rem]; }
+.solar-term-copy { @apply flex flex-col justify-between gap-8 bg-[rgba(255,253,248,0.88)] p-6 md:p-8; }
+.solar-term-rhythm { @apply relative flex min-h-48 flex-col justify-center overflow-hidden border-t border-gold/25 bg-rice/75 p-6 md:border-l md:border-t-0 md:p-8; }
+.solar-term-rhythm > span { @apply text-[11px] tracking-[0.24em] text-cinnabar; }
+.solar-term-rhythm > div { @apply relative z-10 mt-3 flex items-baseline; }
+.solar-term-rhythm strong { @apply font-serif text-6xl font-normal text-ink; }
+.solar-term-rhythm small { @apply ml-2 text-xs text-ink/45; }
+.solar-term-rhythm p { @apply relative z-10 mt-2 text-xs text-ink/50; }
+.solar-term-rhythm i { @apply absolute -bottom-8 -right-3 font-serif text-[9rem] not-italic leading-none text-gold/10; }
 .solar-term-progress { @apply h-1.5 overflow-hidden rounded-full bg-mist; }
 .solar-term-progress > span { @apply block h-full rounded-full bg-cinnabar/75; }
 .solar-term-year-list { @apply border-t border-mist bg-white/70 px-5 py-4 md:px-7; }

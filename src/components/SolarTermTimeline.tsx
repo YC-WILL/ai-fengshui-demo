@@ -1,26 +1,17 @@
 import type { SolarTermTimeline as SolarTermTimelineData } from "@/lib/domain/dailyCorrespondence";
-import { solarTermScene } from "@/lib/product/solarTermScenes";
+import { solarTermNote } from "@/lib/product/solarTermPresentation";
 
 export default function SolarTermTimeline({ data }: { data: SolarTermTimelineData }) {
   const year = data.date.slice(0, 4);
-  const scene = solarTermScene(data.current.name);
-  const [x, y, width, height] = scene.crop;
   return (
     <section className="solar-term-card" aria-labelledby="solar-term-title">
       <div className="solar-term-hero">
-        <div className="solar-term-scene" aria-hidden="true">
-          <svg viewBox={`${x} ${y} ${width} ${height}`} preserveAspectRatio="xMidYMid slice" role="presentation">
-            <image href="/assets/solar-term-scenes.jpg" width="1536" height="1024" />
-          </svg>
-          <span>卦安 · 节气图景</span>
-        </div>
-
         <div className="solar-term-copy">
           <div>
             <div className="section-kicker">今日 · {formatDate(data.date)}</div>
             <div className="mt-3 text-xs tracking-[0.24em] text-ink/45">二十四节气</div>
             <h1 id="solar-term-title" className="mt-1 font-serif text-4xl md:text-5xl">{data.current.name}</h1>
-            <p className="mt-3 font-serif text-lg leading-8 text-ink/70">{scene.note}</p>
+            <p className="mt-3 font-serif text-lg leading-8 text-ink/70">{solarTermNote(data.current.name)}</p>
           </div>
 
           <div>
@@ -32,9 +23,16 @@ export default function SolarTermTimeline({ data }: { data: SolarTermTimelineDat
               <span style={{ width: `${data.progress * 100}%` }} />
             </div>
             <div className="mt-2 text-[11px] leading-5 text-ink/45">
-              今天是本节气第 {data.elapsedDays + 1} 天。页面每天按北京时间更新，进入下一节气后自动换景。
+              页面每天按北京时间更新，进入下一节气后自动切换。
             </div>
           </div>
+        </div>
+
+        <div className="solar-term-rhythm" aria-label={`今天是${data.current.name}第${data.elapsedDays + 1}天`}>
+          <span>{data.current.season} · {data.current.monthBranch}月</span>
+          <div><strong>{data.elapsedDays + 1}</strong><small> / {data.totalDays} 日</small></div>
+          <p>今日处在本节气中的位置</p>
+          <i aria-hidden>{data.current.name.slice(0, 1)}</i>
         </div>
       </div>
 
