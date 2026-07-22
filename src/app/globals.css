@@ -139,6 +139,35 @@ html, body {
 .bazi-boundary-warning > span { @apply text-[10px] tracking-wider text-cinnabar; }
 .bazi-boundary-warning > b { @apply mt-1 text-sm font-medium text-ink/80; }
 .bazi-boundary-warning > p { @apply mt-1 text-xs leading-6 text-ink/55; }
+.bazi-observations { @apply overflow-hidden rounded-xl border border-gold/40 bg-rice/35; }
+.bazi-observations-head { @apply flex flex-wrap items-end justify-between gap-2 border-b border-gold/30 bg-white/65 px-4 py-4; }
+.bazi-observations-head h2 { @apply mt-1 font-serif text-xl; }
+.bazi-observations-head > small { @apply text-[10px] text-ink/40; }
+.bazi-observation-grid { @apply grid gap-px bg-mist lg:grid-cols-3; }
+.bazi-observation-card { @apply min-w-0 bg-white/80 p-4; }
+.bazi-observation-card > header { @apply flex items-center gap-3; }
+.bazi-observation-card > header > span { @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-cinnabar/25 font-serif text-sm text-cinnabar; }
+.bazi-observation-card h3 { @apply font-serif text-lg; }
+.bazi-observation-card header small { @apply mt-0.5 block text-[10px] text-ink/40; }
+.bazi-observation-conclusion { @apply mt-3 text-sm leading-7 text-ink/70; }
+.bazi-observation-points { @apply mt-3 space-y-2; }
+.bazi-observation-points > p { @apply flex flex-col rounded-lg border border-mist bg-rice/35 px-3 py-2 text-xs leading-6 text-ink/55; }
+.bazi-observation-points b { @apply mb-0.5 text-[10px] font-medium tracking-wider text-cinnabar; }
+.bazi-observation-points .is-action { @apply border-gold/45 bg-gold/5 text-ink/65; }
+.bazi-observation-evidence { @apply mt-3 border-t border-dashed border-gold/40 pt-3 text-[11px] leading-5 text-ink/45; }
+.bazi-observation-evidence summary { @apply w-fit cursor-pointer text-cinnabar/80; }
+.bazi-observation-evidence ul { @apply mt-2 space-y-2; }
+.bazi-observation-evidence li { @apply flex flex-col border-l border-gold/40 pl-3; }
+.bazi-observation-evidence li b { @apply font-medium text-ink/65; }
+.bazi-observation-evidence li span { @apply text-ink/55; }
+.bazi-observation-evidence li small { @apply leading-5 text-ink/40; }
+.bazi-observation-evidence > p { @apply mt-2 rounded-lg bg-rice/55 px-3 py-2; }
+.bazi-observation-card.is-pending { @apply bg-rice/45; }
+.bazi-observation-limitation { @apply mt-3 rounded-lg border border-cinnabar/20 bg-cinnabar/5 px-3 py-3 text-xs leading-6 text-ink/55; }
+.bazi-weekly-action { @apply mt-4 rounded-xl border border-cinnabar/25 bg-cinnabar/5 px-4 py-4; }
+.bazi-weekly-action > span { @apply text-[10px] tracking-wider text-cinnabar; }
+.bazi-weekly-action h2 { @apply mt-1 font-serif text-lg; }
+.bazi-weekly-action p { @apply mt-2 text-sm leading-7 text-ink/65; }
 .bazi-reading-map { @apply mb-4 grid gap-2 sm:grid-cols-3; }
 .bazi-reading-map > div { @apply flex flex-col rounded-xl border border-mist bg-white/65 px-3 py-3; }
 .bazi-reading-map span { @apply text-[10px] tracking-wider text-cinnabar; }
