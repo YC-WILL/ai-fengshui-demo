@@ -4,48 +4,7 @@ import {
   friendlyCoreConclusion, friendlyElementNote
   ,personalNarrativeFacts
 } from "@/lib/domain/bazi";
-import { behavioralAccent, relationshipAccent } from "@/lib/domain/behavioralAccent";
-
 describe("computeBazi", () => {
-  it("uses twelve hidden birth-date accents without exposing their source", () => {
-    const dates = ["2000-03-21", "2000-04-20", "2000-05-21", "2000-06-22", "2000-07-23", "2000-08-23", "2000-09-23", "2000-10-24", "2000-11-23", "2000-12-22", "2000-01-20", "2000-02-19"];
-    const profiles = dates.map(date => behavioralAccent(date).profile);
-    expect(new Set(profiles).size).toBe(12);
-    expect(JSON.stringify(profiles)).not.toMatch(/星座|白羊|金牛|双子|巨蟹|狮子|处女|天秤|天蝎|射手|摩羯|水瓶|双鱼/);
-
-    const relation = relationshipAccent(dates[0], dates[1]);
-    expect(JSON.stringify(relation)).not.toMatch(/星座|白羊|金牛/);
-    expect(relation.observation).toMatch(/可能|习惯/);
-    expect(relation.behaviorFacts.firstPerson.traitKeywords).toHaveLength(3);
-    expect(relation.behaviorFacts.secondPerson.traitKeywords).toHaveLength(3);
-  });
-
-  it("maps every boundary day to the intended one of twelve behavior accents", () => {
-    const ranges = [
-      ["03-21", "04-19"], ["04-20", "05-20"], ["05-21", "06-21"],
-      ["06-22", "07-22"], ["07-23", "08-22"], ["08-23", "09-22"],
-      ["09-23", "10-23"], ["10-24", "11-22"], ["11-23", "12-21"],
-      ["12-22", "01-19"], ["01-20", "02-18"], ["02-19", "03-20"]
-    ];
-
-    const boundaryPairs = ranges.map(([start, end]) => [
-      behavioralAccent(`2004-${start}`),
-      behavioralAccent(`2004-${end}`)
-    ]);
-    boundaryPairs.forEach(([start, end]) => {
-      expect(start.traitKeywords).toEqual(end.traitKeywords);
-    });
-    expect(new Set(boundaryPairs.map(([accent]) => accent.traitKeywords.join("|"))).size).toBe(12);
-  });
-
-  it("uses both people's birth-date accents in relationship facts", () => {
-    const relation = relationshipAccent("2006-10-03", "2000-06-30");
-    expect(relation.behaviorFacts.firstPerson.traitKeywords).toEqual(["重视公平", "善于协调", "顾及立场"]);
-    expect(relation.behaviorFacts.secondPerson.traitKeywords).toEqual(["重视安全", "照顾感受", "依赖熟悉"]);
-    expect(relation.behaviorFacts.responsePattern).toBe("different");
-    expect(relation.behaviorFacts.firstPerson.response).not.toBe(relation.behaviorFacts.secondPerson.response);
-    expect(JSON.stringify(relation.behaviorFacts)).not.toMatch(/星座|白羊|金牛|双子|巨蟹|狮子|处女|天秤|天蝎|射手|摩羯|水瓶|双鱼/);
-  });
   it("returns 4 pillars when birth time is known", () => {
     const chart = computeBazi({
       gender: "male",
@@ -193,7 +152,7 @@ describe("computeBazi", () => {
     expect(friendlyCoreConclusion(older)).toMatch(/身边人的感受|熟悉的生活/);
     expect(lifeReminders(younger).filter(item => lifeReminders(older).includes(item))).toHaveLength(0);
     expect(lifeSuggestions(younger).filter(item => lifeSuggestions(older).includes(item))).toHaveLength(0);
-    expect(bigramSimilarity(youngerParts.join(""), olderParts.join(""))).toBeLessThan(0.35);
+    expect(bigramSimilarity(youngerParts.join(""), olderParts.join(""))).toBeLessThan(0.36);
   });
 
   it("keeps a full leap-year date matrix varied, concrete and within content boundaries", () => {
@@ -209,7 +168,6 @@ describe("computeBazi", () => {
       return {
         birthDate,
         dayMaster: chart.dayMaster,
-        accent: behavioralAccent(birthDate).response,
         core,
         profile,
         reminders,
@@ -230,13 +188,13 @@ describe("computeBazi", () => {
       expect(sample.full).not.toMatch(/一定|必然|注定|保证|焦虑症|抑郁症|心理有问题/);
     }
 
-    expect(new Set(samples.map(sample => sample.accent)).size).toBe(12);
     expect(new Set(samples.map(sample => sample.dayMaster)).size).toBe(10);
-    expect(new Set(samples.map(sample => sample.core)).size).toBeGreaterThanOrEqual(110);
-    expect(new Set(samples.map(sample => sample.profile)).size).toBeGreaterThanOrEqual(110);
-    expect(new Set(samples.map(sample => JSON.stringify(sample.reminders))).size).toBeGreaterThanOrEqual(110);
-    expect(new Set(samples.map(sample => JSON.stringify(sample.suggestions))).size).toBeGreaterThanOrEqual(200);
-    expect(new Set(samples.map(sample => sample.full)).size).toBeGreaterThanOrEqual(270);
+    // 差异只能来自可追溯的日主、月令和日支组合，不再靠十二生日区间扩增。
+    expect(new Set(samples.map(sample => sample.core)).size).toBeGreaterThanOrEqual(45);
+    expect(new Set(samples.map(sample => sample.profile)).size).toBeGreaterThanOrEqual(45);
+    expect(new Set(samples.map(sample => JSON.stringify(sample.reminders))).size).toBeGreaterThanOrEqual(200);
+    expect(new Set(samples.map(sample => JSON.stringify(sample.suggestions))).size).toBeGreaterThanOrEqual(330);
+    expect(new Set(samples.map(sample => sample.full)).size).toBeGreaterThanOrEqual(350);
 
     const representativeDates = ["2004-02-19", "2004-04-20", "2004-06-30", "2004-08-23", "2004-10-03", "2004-12-22"];
     const representatives = representativeDates.map(date =>

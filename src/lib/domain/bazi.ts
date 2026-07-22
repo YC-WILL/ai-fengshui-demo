@@ -9,7 +9,6 @@ import {
   type Stem, type Branch, type Element
 } from "./elements";
 import type { BaziInput } from "../types";
-import { behavioralAccent } from "./behavioralAccent";
 import { DEFAULT_BIRTH_TIMEZONE, isSupportedBirthTimezone } from "./birthTimezone";
 
 export interface Pillar {
@@ -35,6 +34,12 @@ export interface BaziChart {
     timeKnown: boolean;
     yearBoundary: "立春交接时刻";
     monthBoundary: "节气交接时刻";
+    dayBoundary: "出生地民用日期 00:00 换日";
+    uncertainty?: {
+      yearCandidates?: Pillar[];
+      monthCandidates?: Pillar[];
+      reason: string;
+    };
   };
   inputSnapshot: BaziInput;
 }
@@ -138,6 +143,13 @@ function civilTimeToInstant(civil: CivilTime, timezone: string): Date {
   if (Object.keys(civil).some(key => civil[key as keyof CivilTime] !== roundTrip[key as keyof CivilTime])) {
     throw new Error("出生时间落在当地时区不存在的时刻，请检查夏令时切换。");
   }
+  const sameCivil = (candidate: Date) => {
+    const parts = partsInTimezone(candidate, timezone);
+    return Object.keys(civil).every(key => civil[key as keyof CivilTime] === parts[key as keyof CivilTime]);
+  };
+  if (sameCivil(new Date(instant.getTime() - 60 * 60 * 1000)) || sameCivil(new Date(instant.getTime() + 60 * 60 * 1000))) {
+    throw new Error("出生时间落在夏令时回拨的重复时段，同一钟表时刻对应两个真实时刻，暂不能唯一排盘。");
+  }
   return instant;
 }
 
@@ -183,6 +195,38 @@ export function computeBazi(input: BaziInput): BaziChart {
   const mp = parsePillar(boundaryLunar.getMonthInGanZhiExact());
   const dp = parsePillar(localLunar.getDayInGanZhiExact2());
 
+  let uncertainty: BaziChart["calculation"]["uncertainty"];
+  if (!timeKnown) {
+    const boundaryAt = (candidateHour: number, candidateMinute: number) => {
+      const candidateInstant = civilTimeToInstant({ year: y, month: m, day: d, hour: candidateHour, minute: candidateMinute, second: 0 }, timezone);
+      const candidateChinaTime = partsInTimezone(candidateInstant, DEFAULT_BIRTH_TIMEZONE);
+      const candidateLunar = Solar.fromYmdHms(
+        candidateChinaTime.year, candidateChinaTime.month, candidateChinaTime.day,
+        candidateChinaTime.hour, candidateChinaTime.minute, candidateChinaTime.second
+      ).getLunar();
+      return {
+        year: parsePillar(candidateLunar.getYearInGanZhiExact()),
+        month: parsePillar(candidateLunar.getMonthInGanZhiExact())
+      };
+    };
+    const dayStart = boundaryAt(0, 0);
+    const dayEnd = boundaryAt(23, 59);
+    const yearCandidates = dayStart.year.pillarLabel === dayEnd.year.pillarLabel ? undefined : [dayStart.year, dayEnd.year];
+    const monthCandidates = dayStart.month.pillarLabel === dayEnd.month.pillarLabel ? undefined : [dayStart.month, dayEnd.month];
+    if (yearCandidates || monthCandidates) {
+      uncertainty = {
+        yearCandidates,
+        monthCandidates,
+        reason: "出生当天发生立春或交节，未提供出生时刻，年柱或月柱不能确定。"
+      };
+      const candidateText = [
+        yearCandidates ? `年柱可能为${yearCandidates.map(item => item.pillarLabel).join("或")}` : "",
+        monthCandidates ? `月柱可能为${monthCandidates.map(item => item.pillarLabel).join("或")}` : ""
+      ].filter(Boolean).join("；");
+      notes.push(`${candidateText}；确认大致出生时段后才能确定。`);
+    }
+  }
+
   let hp: Pillar | null = null;
   if (input.unknownTime) {
     notes.push("出生时间未知：时柱明确省略，不以中午或其他时刻代填。若出生当日恰逢交节，年柱或月柱仍可能随实际时刻变化。");
@@ -200,6 +244,7 @@ export function computeBazi(input: BaziInput): BaziChart {
   ];
 
   notes.push("年柱按立春交接时刻切换；月柱按十二节的实际交接时刻切换。");
+  notes.push("日柱按出生地民用日期 00:00 换日；23:00–23:59 归入子时柱，但日柱不提前换日。");
   notes.push(`${input.birthLocation ? `出生地按“${input.birthLocation}”记录，` : ""}交节边界按出生地法定时区 ${timezone} 换算；当前不做经度真太阳时校正。`);
 
   return {
@@ -216,14 +261,16 @@ export function computeBazi(input: BaziInput): BaziChart {
       birthLocation: input.birthLocation?.trim() || undefined,
       timeKnown,
       yearBoundary: "立春交接时刻",
-      monthBoundary: "节气交接时刻"
+      monthBoundary: "节气交接时刻",
+      dayBoundary: "出生地民用日期 00:00 换日",
+      uncertainty
     },
     inputSnapshot: { ...input, timezone }
   };
 }
 
 // ---------- 简化"性格画像"与生活建议派生 ----------
-// 使用日主、五行相对强弱与隐性生日行为侧重生成观察性描述，避免固定人格标签。
+// 只使用可展示、可追溯的盘面结构生成观察性描述，避免隐藏来源和固定人格标签。
 const GIFT_BY_ELEMENT: Record<Element, string> = {
   木: "生长和尝试",
   火: "表达和行动",
@@ -393,28 +440,28 @@ const DAY_BRANCH_MODIFIER: Record<Element, DayBranchModifier> = {
 };
 
 export function friendlyCoreConclusion(chart: BaziChart): string {
-  const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
   const modifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
-  return `遇到重要事情时，你可能会${accent.response}。${pattern.strength}；不过，${modifier.tradeoff}。`;
+  return `从日主与日支的传统意象看，${pattern.strength}；不过，${modifier.tradeoff}。这是一条生活观察，不是人格定论。`;
 }
 
 export function personalNarrativeFacts(chart: BaziChart, userContext?: string): PersonalNarrativeFacts {
-  const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
   const dayModifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
-  const monthModifier = DAY_BRANCH_MODIFIER[chart.month.branchElement];
+  const monthModifier = chart.calculation.uncertainty
+    ? dayModifier
+    : DAY_BRANCH_MODIFIER[chart.month.branchElement];
   const { strongest, weakest } = chart.elementDistribution;
   const situation = situationGuidance(userContext);
   return {
-    traitKeywords: accent.traitKeywords,
-    firstResponse: accent.response,
+    traitKeywords: [`${chart.dayMaster}日主`, chart.calculation.uncertainty ? "月令待确认" : `${chart.month.branch}月令`, `${chart.day.branch}日支`],
+    firstResponse: pattern.decision,
     coreStrength: pattern.strength,
     decisionPattern: pattern.decision,
-    planningPreference: accent.planning,
+    planningPreference: dayModifier.action,
     pressurePattern: monthModifier.pressure,
-    cautionSignals: [accent.watchFor, dayModifier.reminder],
-    actionSeeds: [accent.action, pattern.action, dayModifier.action],
+    cautionSignals: [monthModifier.reminder, dayModifier.reminder],
+    actionSeeds: [pattern.action, dayModifier.action, monthModifier.action],
     elementContext: {
       prominentGift: GIFT_BY_ELEMENT[strongest],
       quieterGift: GIFT_BY_ELEMENT[weakest]
@@ -434,29 +481,28 @@ export function friendlyElementNote(chart: BaziChart): string {
 }
 
 export function personalityProfile(chart: BaziChart): string {
-  const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
   const modifier = DAY_BRANCH_MODIFIER[chart.month.branchElement];
-  return `从日常互动看，你可能${accent.profile}。做决定时，${pattern.decision}；准备落实时，你更适合${accent.planning}。${modifier.pressure}。这些表现只适合用来对照真实经历，不是固定结论。`;
+  return `从传统结构看，你可能${pattern.strength}。做决定时，${pattern.decision}；落实时，可以尝试${modifier.action}。${modifier.pressure}。这些只适合对照真实经历，不是固定结论。`;
 }
 
 export function lifeReminders(chart: BaziChart): string[] {
-  const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   const modifier = DAY_BRANCH_MODIFIER[chart.month.branchElement];
+  const dayModifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
   return [
-    `${accent.watchFor}；${REMINDER_BY_DAY_MASTER[chart.dayMaster]}。`,
-    `${accent.planning}，再观察：${modifier.reminder}。`
+    `${dayModifier.reminder}；${REMINDER_BY_DAY_MASTER[chart.dayMaster]}。`,
+    `${modifier.action}，再观察：${modifier.reminder}。`
   ];
 }
 
 export function lifeSuggestions(chart: BaziChart): string[] {
-  const accent = behavioralAccent(chart.inputSnapshot.birthDate);
   const pattern = DAY_MASTER_PATTERN[chart.dayMaster];
   const modifier = DAY_BRANCH_MODIFIER[chart.day.branchElement];
+  const monthModifier = DAY_BRANCH_MODIFIER[chart.month.branchElement];
   return [
-    `${accent.action}。`,
-    `${pattern.action}。`,
-    `可以${accent.planning}；随后${modifier.action}。`
+    `按${chart.dayMaster}日主的观察，可以${pattern.action}。`,
+    `结合${chart.day.branch}日支，可以${modifier.action}。`,
+    `结合${chart.month.branch}月令，可以${monthModifier.action}；完成后再回看现实反馈。`
   ];
 }
 

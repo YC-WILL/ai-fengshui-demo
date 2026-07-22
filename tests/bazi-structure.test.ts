@@ -142,9 +142,9 @@ describe("bazi structure evidence", () => {
     const mainline = buildBaziMainline(chart);
     const monthChannel = mainline.flow.channels.find(channel => channel.isMonthCommand);
 
-    expect(mainline.corePosition.title).toBe("你在盘中的核心位置");
-    expect(mainline.flow.title).toBe("这张盘的力量怎样流动");
-    expect(mainline.meaning.title).toBe("这对你意味着什么");
+    expect(mainline.corePosition.title).toBe("先确认两个排盘事实");
+    expect(mainline.flow.title).toBe("五类十神线索怎样分布");
+    expect(mainline.meaning.title).toBe("两条可以对照生活的观察");
     expect(mainline.flow.channels.map(channel => channel.label)).toEqual([
       "承接来源", "自身力量", "表达输出", "现实事务", "规则约束"
     ]);
@@ -218,7 +218,9 @@ describe("bazi structure evidence", () => {
     expect(first.meaning.workingStyle).not.toBe(second.meaning.workingStyle);
     expect(first.meaning.basis).not.toBe(second.meaning.basis);
     expect(`${first.meaning.temperament}${first.meaning.workingStyle}${second.meaning.temperament}${second.meaning.workingStyle}`).not.toMatch(/你就是|天生|注定|一定|人格|焦虑症|抑郁症/);
-    expect(first.meaning.summary).toMatch(/使用顺序|不是固定性格标签/);
+    expect(first.meaning.summary).toMatch(/生活观察|不代表.*格局、旺衰或用神/);
+    expect(first.meaning.basis).toMatch(/未使用自定义分数判断强弱/);
+    expect(first.flow.summary).toMatch(/教学顺序|不代表.*实际.*流动/);
     expect(first.meaning.temperament.length).toBeLessThan(180);
     expect(first.meaning.workingStyle.length).toBeLessThan(180);
     expect(`${first.meaning.temperament}${second.meaning.temperament}`).not.toMatch(/像像|更像像/);

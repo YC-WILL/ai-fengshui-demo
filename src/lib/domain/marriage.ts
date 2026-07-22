@@ -10,7 +10,22 @@
 import { computeBazi, personalNarrativeFacts, type BaziChart } from "./bazi";
 import { SHENG, KE, type Element, BRANCH_ELEMENT } from "./elements";
 import type { MarriageInput } from "../types";
-import { relationshipAccent, type RelationshipBehaviorFacts } from "./behavioralAccent";
+
+interface RelationshipBehaviorFact {
+  traitKeywords: [string, string, string];
+  profile: string;
+  response: string;
+  action: string;
+  planning: string;
+  watchFor: string;
+}
+
+interface RelationshipBehaviorFacts {
+  firstPerson: RelationshipBehaviorFact;
+  secondPerson: RelationshipBehaviorFact;
+  responsePattern: "similar" | "different";
+  planningPattern: "similar" | "different";
+}
 
 /**
  * 出生资料是关系报告的增强线索，不是沟通建议的必要条件。
@@ -162,6 +177,17 @@ function communicationStyle(a: BaziChart, b: BaziChart): string {
     `日主组合 ${a.dayMaster}/${b.dayMaster}：建议建立每周固定的"对齐时间"，把可能的分歧前置沟通。`;
 }
 
+function relationshipBehaviorFact(facts: ReturnType<typeof personalNarrativeFacts>): RelationshipBehaviorFact {
+  return {
+    traitKeywords: facts.traitKeywords,
+    profile: facts.coreStrength,
+    response: facts.firstResponse,
+    action: facts.actionSeeds[0],
+    planning: facts.planningPreference,
+    watchFor: facts.cautionSignals[0]
+  };
+}
+
 export function matchMarriage(input: MarriageInput): MarriageMatch {
   const aHasBirthDate = !!input.partyA.birthDate;
   const bHasBirthDate = !!input.partyB.birthDate;
@@ -172,7 +198,22 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
   const rel = dayMasterRelation(a, b);
   const zod = zodiacRelation(a, b);
   const bal = elementBalance(a, b);
-  const accent = relationshipAccent(aInput.birthDate, bInput.birthDate);
+  const firstDistinctness = personalNarrativeFacts(a, aInput.userContext);
+  const secondDistinctness = personalNarrativeFacts(b, bInput.userContext);
+  const firstBehavior = relationshipBehaviorFact(firstDistinctness);
+  const secondBehavior = relationshipBehaviorFact(secondDistinctness);
+  const behaviorFacts: RelationshipBehaviorFacts = {
+    firstPerson: firstBehavior,
+    secondPerson: secondBehavior,
+    responsePattern: firstBehavior.response === secondBehavior.response ? "similar" : "different",
+    planningPattern: firstBehavior.planning === secondBehavior.planning ? "similar" : "different"
+  };
+  const behaviorObservation = behaviorFacts.responsePattern === "similar"
+    ? `从双方日主与日支的传统观察看，你们的回应线索有相似处；仍需以真实沟通确认，不能据此认定性格相同。`
+    : `从双方日主与日支的传统观察看，回应顺序可能不同；这只是一条沟通观察，需要用实际相处验证。`;
+  const behaviorSuggestion = behaviorFacts.responsePattern === "similar"
+    ? "讨论重要事情时，可以分别先写下自己的结论与顾虑，再确认相似表述背后是否真是同一意思。"
+    : "聊重要事情前，可以先约定这次是先听彼此的顾虑，还是先确定下一步，让不同回应顺序都有位置。";
 
   const strengths: string[] = [];
   const frictionPoints: string[] = [];
@@ -219,7 +260,7 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
     水: "每周留一次不解决问题的聊天，只听彼此最近在想什么，让情绪有地方慢慢流动。"
   };
   suggestions.push(balanceSuggestion[weakest]);
-  suggestions[2] = `${suggestions[2]} ${accent.suggestion}`;
+  suggestions[2] = `${suggestions[2]} ${behaviorSuggestion}`;
 
   return {
     partyA: a,
@@ -227,12 +268,12 @@ export function matchMarriage(input: MarriageInput): MarriageMatch {
     dayMasterRelation: rel,
     zodiacRelation: zod,
     elementBalance: bal,
-    behaviorFacts: accent.behaviorFacts,
+    behaviorFacts,
     personalDistinctness: {
-      first: personalNarrativeFacts(a, aInput.userContext),
-      second: personalNarrativeFacts(b, bInput.userContext)
+      first: firstDistinctness,
+      second: secondDistinctness
     },
-    communicationStyle: `${communicationStyle(a, b)} ${accent.observation}`,
+    communicationStyle: `${communicationStyle(a, b)} ${behaviorObservation}`,
     strengths,
     frictionPoints,
     suggestions,

@@ -135,6 +135,17 @@ html, body {
 .day-master-anchor p { @apply flex min-w-0 flex-col text-sm; }
 .day-master-anchor p b { @apply font-medium text-ink/75; }
 .day-master-anchor p span { @apply mt-1 text-xs leading-5 text-ink/45; }
+.bazi-boundary-warning { @apply mb-4 flex flex-col rounded-xl border border-cinnabar/30 bg-cinnabar/5 px-4 py-3; }
+.bazi-boundary-warning > span { @apply text-[10px] tracking-wider text-cinnabar; }
+.bazi-boundary-warning > b { @apply mt-1 text-sm font-medium text-ink/80; }
+.bazi-boundary-warning > p { @apply mt-1 text-xs leading-6 text-ink/55; }
+.bazi-reading-map { @apply mb-4 grid gap-2 sm:grid-cols-3; }
+.bazi-reading-map > div { @apply flex flex-col rounded-xl border border-mist bg-white/65 px-3 py-3; }
+.bazi-reading-map span { @apply text-[10px] tracking-wider text-cinnabar; }
+.bazi-reading-map b { @apply mt-1 text-sm font-medium text-ink/75; }
+.bazi-reading-map small { @apply mt-1 text-[10px] leading-5 text-ink/40; }
+.pillar-card.is-uncertain { @apply border-cinnabar/35 bg-cinnabar/5; }
+.pillar-card .pillar-candidates { @apply my-auto font-serif text-xl font-normal text-cinnabar; }
 .bazi-mainline { @apply mt-4 overflow-hidden rounded-xl border border-gold/40 bg-rice/35; }
 .bazi-mainline-head { @apply flex flex-wrap items-end justify-between gap-2 border-b border-gold/30 bg-white/65 px-4 py-4; }
 .bazi-mainline-head h2 { @apply mt-1 font-serif text-xl; }
@@ -156,8 +167,6 @@ html, body {
 .power-flow { @apply mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5; }
 .power-flow > div { @apply relative flex min-h-32 flex-col rounded-lg border border-mist bg-white/65 p-2.5; }
 .power-flow > div.is-month-command { @apply border-cinnabar/35 bg-cinnabar/5; }
-.power-flow > div > i { @apply absolute -left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-rice px-1 text-[9px] not-italic text-cinnabar; }
-.power-flow > div:first-child > i { @apply left-auto right-2 top-2 translate-y-0; }
 .power-flow > div > b { @apply pr-3 text-xs font-medium text-ink/75; }
 .power-flow > div > small { @apply mt-0.5 text-[9px] leading-4 text-cinnabar/75; }
 .power-flow > div > em { @apply mt-2 text-[10px] not-italic text-ink/45; }

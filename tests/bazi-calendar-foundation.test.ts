@@ -66,6 +66,26 @@ describe("precise Bazi calendar foundation", () => {
     })).toThrow(/夏令时/);
   });
 
+  it("rejects an ambiguous wall-clock time during a DST fall-back", () => {
+    expect(() => computeBazi({
+      ...base,
+      birthDate: "2024-11-03",
+      birthTime: "01:30",
+      timezone: "America/New_York"
+    })).toThrow(/夏令时回拨|重复时段/);
+  });
+
+  it("states and follows the midnight day-boundary convention for the early Zi hour", () => {
+    const late = computeBazi({ ...base, birthDate: "2024-03-05", birthTime: "23:01", timezone: "Asia/Shanghai" });
+    const next = computeBazi({ ...base, birthDate: "2024-03-06", birthTime: "00:00", timezone: "Asia/Shanghai" });
+
+    expect(late.hour?.branch).toBe("子");
+    expect(late.day.pillarLabel).toBe("戊辰");
+    expect(next.day.pillarLabel).toBe("己巳");
+    expect(late.calculation.dayBoundary).toBe("出生地民用日期 00:00 换日");
+    expect(late.notes.join(" ")).toMatch(/23:00–23:59.*子时柱.*日柱不提前换日/);
+  });
+
   it("omits the hour pillar explicitly when birth time is unknown", () => {
     const chart = computeBazi({
       gender: "other",
@@ -79,6 +99,32 @@ describe("precise Bazi calendar foundation", () => {
     expect(chart.hour).toBeNull();
     expect(chart.calculation.timeKnown).toBe(false);
     expect(chart.notes.join(" ")).toMatch(/时柱明确省略|不以中午或其他时刻代填/);
+  });
+
+  it("returns both month candidates when time is unknown on a solar-term boundary day", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "2024-03-05",
+      birthTime: "",
+      timezone: "Asia/Shanghai",
+      unknownTime: true
+    });
+
+    expect(chart.calculation.uncertainty?.monthCandidates?.map(item => item.pillarLabel)).toEqual(["丙寅", "丁卯"]);
+    expect(chart.notes.join(" ")).toMatch(/月柱可能为丙寅或丁卯|确认大致出生时段后才能确定/);
+  });
+
+  it("returns both year and month candidates when Li Chun occurs on an unknown-time birth date", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "2024-02-04",
+      birthTime: "",
+      timezone: "Asia/Shanghai",
+      unknownTime: true
+    });
+
+    expect(chart.calculation.uncertainty?.yearCandidates?.map(item => item.pillarLabel)).toEqual(["癸卯", "甲辰"]);
+    expect(chart.calculation.uncertainty?.monthCandidates?.map(item => item.pillarLabel)).toEqual(["乙丑", "丙寅"]);
   });
 
   it("derives the legal timezone from supported birth locations", () => {

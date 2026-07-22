@@ -227,29 +227,8 @@ function evidenceState(channel: PowerChannel, excludeDayMaster = false): string 
   return "在已知三柱或四柱中未见直接线索";
 }
 
-function channelScore(channel: PowerChannel): number {
-  const visibleScore = channel.visible.filter(item => item.tenGod !== "日主").length * 3;
-  const hiddenScore = channel.hidden.reduce((sum, item) => sum + (
-    item.qiLevel === "本气" ? 2 : item.qiLevel === "中气" ? 1.25 : 0.75
-  ), 0);
-  return visibleScore + hiddenScore + (channel.isMonthCommand ? 4 : 0);
-}
-
-function supportAction(resource: PowerChannel, self: PowerChannel): string {
-  const hasResource = resource.visible.length + resource.hidden.length > 0;
-  const peerCount = self.visible.filter(item => item.tenGod !== "日主").length + self.hidden.length;
-  if (hasResource && peerCount) return "先像接过一张地图，弄清依据，再站稳自己的位置";
-  if (hasResource) return "先把信息收进来，理解清楚后再动手";
-  if (peerCount) return "先确认自己的位置，也会借同类回应来稳住起点";
-  return "先从自己的判断出发，直接进入眼前事项";
-}
-
-function targetMeaning(target: PowerChannel): string {
-  if (target.id === "output") return "把心里的判断送到桌面上，变成一句话、一套方法或看得见的成果";
-  if (target.id === "reality") return "把资源、进度和成果一件件安放到现实里";
-  if (target.id === "constraint") return "在标准、责任与边界之间找到可行的位置";
-  if (target.id === "resource") return "先吸收经验、建立依据，再形成自己的理解";
-  return "站稳自己的立场，并与身边同类形成呼应";
+function hasChannelEvidence(channel: PowerChannel): boolean {
+  return channel.visible.some(item => item.tenGod !== "日主") || channel.hidden.length > 0;
 }
 
 const DAY_MASTER_IMAGE: Record<Stem, string> = {
@@ -277,10 +256,10 @@ function temperamentMeaning(monthCategory: PowerCategoryId, monthChannel: PowerC
     constraint: "像看清门框：先辨认标准、责任和边界，再决定怎样通过"
   };
   const visibility = visibilityInLife(monthChannel);
-  const counterpartText = channelScore(counterpart) > 0
-    ? `${counterpart.label}也有盘面线索，使这种气质不会只停在单一方向。`
+  const counterpartText = hasChannelEvidence(counterpart)
+    ? `本次另取${counterpart.label}作为第二条观察线索，用来和现实经历交叉对照。`
     : "已知盘面暂未见另一类明显线索。";
-  return `从月令带来的底色看，你更容易先这样回应：${entry[monthCategory]}。这股力量${visibility}。${counterpartText}`;
+  return `传统上可先从月令观察：${entry[monthCategory]}。这类线索${visibility}。${counterpartText}`;
 }
 
 function buildElementOverview(structure: ReturnType<typeof buildBaziStructure>, chart: BaziChart): BaziMainline["elementOverview"] {
@@ -360,8 +339,8 @@ function evidenceCountPhrase(channel: PowerChannel): string {
 }
 
 /**
- * 将十神拆成五类可理解的力量，并用月令、明干、藏干的组合生成一条短主线。
- * 这里不做单一十神对应人格，也不把出现次数直接等同于旺衰结论。
+ * 将十神拆成五类可核对的观察线索。五类的展示顺序只是教学顺序，
+ * 不代表某个人的实际力量流动，也不以自定义分数判断强弱。
  */
 export function buildBaziMainline(chart: BaziChart): BaziMainline {
   const structure = buildBaziStructure(chart);
@@ -400,34 +379,30 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
 
   const self = channelById.self;
   const resource = channelById.resource;
-  const external = channels
-    .filter(channel => !["self", "resource"].includes(channel.id))
-    .sort((a, b) => channelScore(b) - channelScore(a));
-  const primary = external[0];
-  const secondary = external[1];
+  const primary = channelById[monthCategory];
+  const secondary = channels.find(channel => channel.id !== primary.id && channel.visible.some(item => item.tenGod !== "日主"))
+    ?? channels.find(channel => channel.id !== primary.id && channel.hidden.length)
+    ?? channels.find(channel => channel.id !== primary.id)!;
   const peerCount = self.visible.filter(item => item.tenGod !== "日主").length + self.hidden.length;
   const resourceCount = resource.visible.length + resource.hidden.length;
   const visibleLabels = channels.filter(channel => channel.visible.length).map(channel => channel.label);
   const hiddenOnlyLabels = channels.filter(channel => !channel.visible.length && channel.hidden.length).map(channel => channel.label);
-  const secondaryClause = channelScore(secondary) > 0
-    ? `${secondary.label}是另一落点，${evidenceState(secondary)}。`
+  const secondaryClause = hasChannelEvidence(secondary)
+    ? `${secondary.label}是本次选取的另一条观察线索，${evidenceState(secondary)}。`
     : "";
-  const monthClause = primary.isMonthCommand
-    ? `月令本气也归入${primary.label}，因此它位于这张盘的季节入口。`
-    : `月令本气归入${POWER_CATEGORY[monthCategory].label}，它构成另一层季节背景。`;
+  const monthClause = `月令本气归入${primary.label}，这里只把它作为出生季节的观察入口。`;
 
-  const temperamentCounterpart = primary.id === monthCategory ? secondary : primary;
-  const temperament = temperamentMeaning(monthCategory, channelById[monthCategory], temperamentCounterpart);
-  const workingStyle = `做事时，你更可能${supportAction(resource, self)}，然后会${targetMeaning(primary)}。专业结构中，这叫“${primary.label}”较突出：${visibilityInLife(primary)}；“${secondary.label}”则${visibilityInLife(secondary)}。`;
+  const temperament = temperamentMeaning(monthCategory, primary, secondary);
+  const workingStyle = `另一条可对照的线索是“${secondary.label}”：${visibilityInLife(secondary)}。可以观察自己在相关情境中是否会${POWER_BEHAVIOR_SCENE[secondary.id]}；若现实经历不符合，不应把它当作性格结论。`;
   const monthImage = `想象${DAY_MASTER_IMAGE[structure.dayMaster.stem]}来到${MONTH_SCENE[structure.monthCommand.branch]}。四周先给它的，是“${POWER_CATEGORY[monthCategory].label}”这层做事气候。`;
   const monthInterpretation = `事情刚放到你桌上时，这更像你会${POWER_BEHAVIOR_SCENE[monthCategory]}。它不是凭一个字猜出来的，而是由${structure.monthCommand.branch}月令的本气${monthMain.stem}${monthMain.name}相对日主${structure.dayMaster.stem}形成。`;
-  const tenGodHeadline = `事情开始运转后，“${primary.label}”通常先走到前台，“${secondary.label}”在旁边接下一棒`;
-  const tenGodInterpretation = `放进日常场景里，你较容易${POWER_BEHAVIOR_SCENE[primary.id]}；事情继续往下走时，又会${POWER_BEHAVIOR_SCENE[secondary.id]}。前者${visibilityInLife(primary)}，后者${visibilityInLife(secondary)}。传统上分别归入${primary.traditional}与${secondary.traditional}，这里读的是两股力量怎样接续，不是拿一个十神给你贴标签。`;
+  const tenGodHeadline = `本次先观察“${primary.label}”与“${secondary.label}”两组盘面线索`;
+  const tenGodInterpretation = `第一条取自月令本气，第二条取自已知天干或藏干的位置。传统上分别归入${primary.traditional}与${secondary.traditional}。这里用于帮助核对结构，不表示两股力量有固定先后，也不据此给人格下结论。`;
 
   return {
     corePosition: {
-      title: "你在盘中的核心位置",
-      summary: `把日主${structure.dayMaster.stem}${structure.dayMaster.element}想成${DAY_MASTER_IMAGE[structure.dayMaster.stem]}，它站在整张盘中央，代表你处理事情时的基本出发点。它生在${structure.monthCommand.branch}月，月令本气${monthMain.stem}带来“${POWER_CATEGORY[monthCategory].label}”的环境底色。盘中较常被调动的是${primary.label}${channelScore(secondary) > 0 ? `，旁边还有${secondary.label}` : ""}。`,
+      title: "先确认两个排盘事实",
+      summary: `日主是${structure.dayMaster.stem}${structure.dayMaster.element}，传统意象可理解为${DAY_MASTER_IMAGE[structure.dayMaster.stem]}；出生在${structure.monthCommand.branch}月，月令本气为${monthMain.stem}${monthMain.name}。这两项是后续观察的起点，不直接等于性格或人生结论。`,
       evidence: [
         `日主：${structure.dayMaster.stem}，取自${structure.dayMaster.source}`,
         `月令：${structure.monthCommand.branch}，本气${monthMain.stem}·${monthMain.name}`,
@@ -435,17 +410,17 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
       ]
     },
     flow: {
-      title: "这张盘的力量怎样流动",
+      title: "五类十神线索怎样分布",
       sequence: channels.map(channel => channel.label),
-      summary: `把命局想成一条从“接住信息”到“把事落地”的路：先有承接来源，再站稳自身力量，随后经过表达输出、现实事务，最后碰到规则约束。本盘${visibleLabels.join("、")}像摆在桌面上的工具${hiddenOnlyLabels.length ? `；${hiddenOnlyLabels.join("、")}更像收在抽屉里，要到具体情境才会拿出来` : ""}。月令带入的${POWER_CATEGORY[monthCategory].label}，是这条路的季节底色。`,
+      summary: `下面五类按十神生克的教学顺序并列展示；这个顺序对所有命盘都一样，不代表你的力量实际这样流动。本盘天干可见${visibleLabels.join("、") || "日主"}${hiddenOnlyLabels.length ? `；${hiddenOnlyLabels.join("、")}只见于藏干` : ""}。月令本气归入${POWER_CATEGORY[monthCategory].label}。`,
       channels
     },
     meaning: {
-      title: "这对你意味着什么",
+      title: "两条可以对照生活的观察",
       temperament,
       workingStyle,
-      summary: `从组合看，你做事较可能${supportAction(resource, self)}，随后更常${targetMeaning(primary)}。${monthClause}${secondaryClause}这是盘中力量的使用顺序，不是固定性格标签。`,
-      basis: `由月令本气${monthMain.stem}${monthMain.name}、${primary.label}的${evidenceCountPhrase(primary)}${channelScore(secondary) > 0 ? `，以及${secondary.label}的组合` : ""}共同得出。`
+      summary: `${monthClause}${secondaryClause}这只是传统解释转成的生活观察，不代表经专业校盘确认的格局、旺衰或用神结论。`,
+      basis: `第一条来自月令本气${monthMain.stem}${monthMain.name}；第二条来自${secondary.label}的${evidenceCountPhrase(secondary)}。未使用自定义分数判断强弱。`
     },
     elementOverview: buildElementOverview(structure, chart),
     monthReading: {

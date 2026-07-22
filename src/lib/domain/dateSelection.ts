@@ -11,7 +11,6 @@
 import { computeBazi } from "./bazi";
 import { ZODIAC_BY_BRANCH, SHENG, KE, type Element } from "./elements";
 import type { DateSelectionInput, DateSelectionEvent } from "../types";
-import { behavioralAccent } from "./behavioralAccent";
 
 interface DayCandidate {
   date: string;
@@ -96,7 +95,6 @@ const EVENT_PREP: Record<DateSelectionEvent, string[]> = {
 
 export function selectDates(input: DateSelectionInput): DateSelectionResult {
   const userChart = computeBazi(input.user);
-  const accent = behavioralAccent(input.user.birthDate);
   const constraints = parseRealityConstraints(input.notes);
   const start = new Date(input.dateRangeStart);
   const end = new Date(input.dateRangeEnd);
@@ -136,10 +134,10 @@ export function selectDates(input: DateSelectionInput): DateSelectionResult {
     event: input.event,
     eventLabel: EVENT_LABEL[input.event],
     dateRange: { start: input.dateRangeStart, end: input.dateRangeEnd },
-    personalPlanningHint: accent.planning,
+    personalPlanningHint: `先确认${EVENT_LABEL[input.event]}的现实限制，再从可执行日期中参考传统结构。`,
     recommended,
     notRecommended,
-    preparationChecklist: [accent.planning, ...(EVENT_PREP[input.event] ?? [])],
+    preparationChecklist: EVENT_PREP[input.event] ?? [],
     warnings: [
       `本结果为「民俗参考」，不作为${EVENT_LABEL[input.event]}的唯一决策依据。`,
       "实际选定日期请综合考虑家庭、合同、签证、天气、节假日等现实条件。",

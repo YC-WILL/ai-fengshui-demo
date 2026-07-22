@@ -104,6 +104,7 @@ export function BaziWorkspace() {
   const selectedStructure = structure.pillars[selectedCharacter.pillar];
   const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind, structure);
   const activeTimeLayer = timeLayers.find(item => item.id === timeLayer) ?? timeLayers[0];
+  const boundaryUncertainty = chart.calculation.uncertainty;
 
   return (
     <section className="plate-shell">
@@ -124,12 +125,33 @@ export function BaziWorkspace() {
           />
         </div>}
 
+        {boundaryUncertainty && <div className="bazi-boundary-warning" role="status">
+          <span>排盘事实尚不能唯一确定</span>
+          <b>{[
+            boundaryUncertainty.yearCandidates ? `年柱可能为 ${boundaryUncertainty.yearCandidates.map(item => item.pillarLabel).join(" 或 ")}` : "",
+            boundaryUncertainty.monthCandidates ? `月柱可能为 ${boundaryUncertainty.monthCandidates.map(item => item.pillarLabel).join(" 或 ")}` : ""
+          ].filter(Boolean).join("；")}</b>
+          <p>出生当天发生交节。确认大致出生时段后才能确定；在此之前，依赖年柱或月柱的解释暂不展示。</p>
+        </div>}
+
+        <div className="bazi-reading-map" aria-label="本页内容边界">
+          <div><span>盘面事实</span><b>日主 · {structure.dayMaster.stem}{structure.dayMaster.element}</b><small>由日柱天干直接取得</small></div>
+          <div><span>传统解释</span><b>{boundaryUncertainty?.monthCandidates ? "出生季节待确认" : `${structure.monthCommand.branch}月令 · ${structure.monthCommand.element}`}</b><small>{boundaryUncertainty ? "补充大致时段后再解释" : "说明传统名称与位置关系"}</small></div>
+          <div><span>生活观察</span><b>{boundaryUncertainty ? "暂缓生成" : "两条可核对线索"}</b><small>用于对照经历，不是性格定论</small></div>
+        </div>
+
         <div className="bazi-professional-head">
-          <div><span className="section-kicker">专业命盘</span><h2>四柱与结构依据</h2></div>
+          <div><span className="section-kicker">盘面事实</span><h2>四柱与结构依据</h2></div>
           <small>点一个字，看它在这张盘中映照哪一面</small>
         </div>
         <div className="pillar-grid">
-          {structure.pillars.map((item, index) => (
+          {structure.pillars.map((item, index) => {
+            const candidates = index === 0 ? boundaryUncertainty?.yearCandidates : index === 1 ? boundaryUncertainty?.monthCandidates : undefined;
+            return candidates ? <div key={item.name} className="pillar-card is-uncertain">
+              <span>{item.name}</span><em>待确认</em>
+              <strong className="pillar-candidates">{candidates.map(candidate => candidate.pillarLabel).join(" / ")}</strong>
+              <small>需补充大致出生时段</small>
+            </div> : (
             <div key={item.name} className={`pillar-card ${selectedCharacter.pillar === index ? "is-active" : ""}`}>
               <span>{item.name}</span>
               <em>{item.visibleStem?.role ?? "未定"}</em>
@@ -149,7 +171,7 @@ export function BaziWorkspace() {
               >{item.pillar?.branch ?? "—"}</button>
               <small>{item.pillar ? `天干${item.pillar.stemElement} · 地支${item.pillar.branchElement}` : "出生时辰未计入"}</small>
             </div>
-          ))}
+          );})}
         </div>
 
         <div className="day-master-anchor">
@@ -157,10 +179,10 @@ export function BaziWorkspace() {
           <p><b>{structure.dayMaster.yinYang}{structure.dayMaster.element}日主</b><span>它像你站在整张盘中央的位置；其他十神都要先与它比较，才有意义。</span></p>
         </div>
 
-        <section className="bazi-mainline" aria-labelledby="bazi-mainline-title">
+        {!boundaryUncertainty && <section className="bazi-mainline" aria-labelledby="bazi-mainline-title">
           <header className="bazi-mainline-head">
-            <div><span className="section-kicker">命盘结构层</span><h2 id="bazi-mainline-title">我的命局主线</h2></div>
-            <small>只由月令、明干与藏干组合得出</small>
+            <div><span className="section-kicker">传统解释</span><h2 id="bazi-mainline-title">盘面结构观察</h2></div>
+            <small>不判断格局、旺衰、用神或人生趋势</small>
           </header>
 
           <article className="bazi-mainline-answer">
@@ -173,9 +195,9 @@ export function BaziWorkspace() {
           <article className="bazi-mainline-answer">
             <span>二</span>
             <div className="min-w-0"><h3>{mainline.flow.title}</h3><p>{mainline.flow.summary}</p>
-              <div className="power-flow" aria-label={mainline.flow.sequence.join("到")}>
-                {mainline.flow.channels.map((channel, index) => <div key={channel.id} className={channel.isMonthCommand ? "is-month-command" : ""}>
-                  <i>{index ? "→" : "起"}</i><b>{channel.label}</b><small>{channel.traditional} · {channel.scene}</small>
+              <div className="power-flow" aria-label="五类十神线索并列分布">
+                {mainline.flow.channels.map(channel => <div key={channel.id} className={channel.isMonthCommand ? "is-month-command" : ""}>
+                  <b>{channel.label}</b><small>{channel.traditional} · {channel.scene}</small>
                   <em>{channel.visible.length ? `明 ${channel.visible.length}` : "明 0"} · {channel.hidden.length ? `藏 ${channel.hidden.length}` : "藏 0"}</em>
                   <details><summary>本盘证据</summary><p>{[
                     ...channel.visible.map(item => `${item.source}${item.stem}·${item.tenGod}`),
@@ -191,16 +213,16 @@ export function BaziWorkspace() {
             <div>
               <h3>{mainline.meaning.title}</h3>
               <div className="bazi-meaning-points">
-                <p><b>盘面气质</b>{mainline.meaning.temperament}</p>
-                <p><b>做事方式</b>{mainline.meaning.workingStyle}</p>
+                <p><b>月令观察</b>{mainline.meaning.temperament}</p>
+                <p><b>另一条观察</b>{mainline.meaning.workingStyle}</p>
               </div>
               <details className="bazi-mainline-basis"><summary>查看组合依据</summary><p>{mainline.meaning.basis}</p></details>
             </div>
           </article>
           {mainline.incompleteNote && <p className="bazi-mainline-note">{mainline.incompleteNote}</p>}
-        </section>
+        </section>}
 
-        {activeTimeLayer && <div className="bazi-time-comparison">
+        {!boundaryUncertainty && activeTimeLayer && <div className="bazi-time-comparison">
           <div className="bazi-time-head">
             <div><span className="section-kicker">本命之上 · 时间对照</span><h3>今天、这个月和这一年，分别照到生活的哪一面</h3></div>
             <small>只比较结构，不判断吉凶</small>
@@ -218,7 +240,7 @@ export function BaziWorkspace() {
           <p className="bazi-time-footnote">时间层像照到本命盘上的光，会提示某类主题较容易被看见；它不会改写本命盘，也不等同于当天一定发生某件事。</p>
         </div>}
 
-        <div className="plate-tabs" aria-label="八字盘内容层级">
+        {!boundaryUncertainty && <><div className="plate-tabs" aria-label="八字盘内容层级">
           {([
             ["elements", "五行"], ["month", "月令"], ["hidden", "藏干"], ["roles", "十神"]
           ] as const).map(([id, label]) => (
@@ -293,7 +315,7 @@ export function BaziWorkspace() {
               <p className="bazi-method-note">十神在这里是天干相对日主的结构名称，不直接等同于职业、性格、亲属关系或现实结果。</p>
             </div>
           )}
-        </div>
+        </div></>}
       </div>
 
       <aside className={`plate-aside character-tone ${characterExplanation ? ELEMENT_TONE_CLASS[characterExplanation.element] : ""}`}>
