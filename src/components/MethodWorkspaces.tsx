@@ -99,6 +99,7 @@ export function BaziWorkspace() {
   const [timeLayer, setTimeLayer] = useState<BaziTimeLayerId>("today");
   const [editingProfile, setEditingProfile] = useState(false);
   const [lifeScene, setLifeScene] = useState<BaziLifeSceneId>("social");
+  const [lifeEvidenceOpen, setLifeEvidenceOpen] = useState(false);
 
   if (!profile || !chart || !structure || !mainline) return <ProfileGate profile={profile} onSaved={payload => setContext(payload)} />;
   const selectedStructure = structure.pillars[selectedCharacter.pillar];
@@ -131,7 +132,7 @@ export function BaziWorkspace() {
             <small>{chart.hour ? "四柱已知 · 场景依据完整四柱组合" : "时柱未录 · 当前只使用年、月、日三柱"}</small>
           </header>
           <nav className="bazi-life-tabs" aria-label="四种生活状态">
-            {lifeScenes.map(scene => <button key={scene.id} type="button" aria-pressed={lifeScene === scene.id} onClick={() => setLifeScene(scene.id)}>
+            {lifeScenes.map(scene => <button key={scene.id} type="button" aria-pressed={lifeScene === scene.id} onClick={() => { setLifeScene(scene.id); setLifeEvidenceOpen(false); }}>
               <span>{scene.shortLabel}</span><small>{scene.moments.map(moment => moment.label).join(" · ")}</small>
             </button>)}
           </nav>
@@ -142,7 +143,7 @@ export function BaziWorkspace() {
                 <span>0{index + 1} · {moment.label}</span><h3>{moment.title}</h3><p>{moment.body}</p>
               </article>)}
             </div>
-            <details key={activeLifeScene.id} className="bazi-life-evidence">
+            <details className="bazi-life-evidence" open={lifeEvidenceOpen} onToggle={event => setLifeEvidenceOpen(event.currentTarget.open)}>
               <summary>为什么这样看</summary>
               <p>{activeLifeScene.evidenceSummary}</p>
               <ul>{activeLifeScene.evidence.map(item => <li key={item}>{item}</li>)}</ul>
