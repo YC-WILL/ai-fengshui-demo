@@ -6,9 +6,16 @@ import { computeBazi } from "@/lib/domain/bazi";
 import { buildBaziObservationCards, buildBaziWeeklyAction } from "@/lib/domain/baziObservations";
 import { TEN_GOD_PLAIN_MEANING, buildBaziMainline, buildBaziStructure, explainBaziCharacter, hiddenLayerReading, type BaziCharacterKind } from "@/lib/domain/baziStructure";
 import { buildBaziTimeLayers, type BaziTimeLayerId } from "@/lib/domain/baziTimeComparison";
-import { buildPairStructure, HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
+import { HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
+import {
+  RELATIONSHIP_TYPES,
+  buildPairInteractionFacts,
+  buildRelationshipJointAction,
+  buildRelationshipObservationCards,
+  type RelationshipType
+} from "@/lib/domain/relationshipInteractions";
 import type { Element } from "@/lib/domain/elements";
-import { DATE_EVENTS, RELATION_DIMENSIONS } from "@/lib/product/methodUi";
+import { DATE_EVENTS } from "@/lib/product/methodUi";
 import type { DateSelectionEvent } from "@/lib/types";
 import { BirthProfileForm } from "@/components/TodayCorrespondence";
 import { profileGenderLabel } from "@/lib/profileGender";
@@ -110,7 +117,7 @@ export function BaziWorkspace() {
   const boundaryUncertainty = chart.calculation.uncertainty;
 
   return (
-    <section className="plate-shell">
+    <section className="plate-shell bazi-plate-shell">
       <div className="plate-main">
         <div className="plate-section-head">
           <div><span>你的八字盘</span><small>先对照具体生活情境，再查看盘面依据</small></div>
@@ -142,9 +149,16 @@ export function BaziWorkspace() {
             <div><span className="section-kicker">先看生活</span><h2 id="bazi-observations-title">这张生辰盘，建议你先观察三件事</h2></div>
             <small>条件式观察，不替你下固定结论</small>
           </header>
+          <p className="bazi-observation-scope">{chart.hour
+            ? "出生时辰已知，时柱作为补充参照；当前三张生活观察主要依据年月日结构。"
+            : "出生时辰未知，本次观察未使用时柱。"}</p>
           <div className="bazi-observation-grid">
-            {observationCards.map((card, index) => <article key={card.id} className={`bazi-observation-card ${card.confidence === "暂不判断" ? "is-pending" : ""}`}>
-              <header><span>{index + 1}</span><div><h3>{card.title}</h3><small>{card.confidence}</small></div></header>
+            {observationCards.map((card, index) => {
+              const primaryEvidence = card.evidence.filter(item => item.role === "primary");
+              const supportingEvidence = card.evidence.filter(item => item.role === "supporting");
+              const statusLabel = card.confidence === "完整资料" ? "出生时辰已知" : card.confidence === "部分资料" ? "未含时柱" : "边界待确认";
+              return <article key={card.id} className={`bazi-observation-card ${card.confidence === "暂不判断" ? "is-pending" : ""}`}>
+              <header><span>{index + 1}</span><div><h3>{card.title}</h3><small>{statusLabel}</small></div></header>
               <p className="bazi-observation-conclusion">{card.conclusion}</p>
               {card.confidence !== "暂不判断" ? <div className="bazi-observation-points">
                 <p><b>什么时候比较明显</b>{card.trigger}</p>
@@ -154,10 +168,11 @@ export function BaziWorkspace() {
               </div> : <p className="bazi-observation-limitation">{card.limitation}</p>}
               {card.confidence !== "暂不判断" && <details className="bazi-observation-evidence">
                 <summary>为什么这样说</summary>
-                <ul>{card.evidence.map(item => <li key={`${item.source}-${item.fact}`}><b>{item.source}</b><span>{item.fact}</span><small>{item.explanation}</small></li>)}</ul>
+                <section><h4>主要依据</h4><p>这部分确定本卡的主要观察方向。</p><ul>{primaryEvidence.map(item => <li key={`${item.source}-${item.fact}`}><b>{item.source}</b><span>{item.fact}</span><small>{item.explanation}</small></li>)}</ul></section>
+                {supportingEvidence.length > 0 && <section><h4>辅助线索</h4><p>这部分提供另一项盘面参照；是否改变表层结论，以每条说明为准。</p><ul>{supportingEvidence.map(item => <li key={`${item.source}-${item.fact}`}><b>{item.source}</b><span>{item.fact}</span><small>{item.explanation}</small></li>)}</ul></section>}
                 {card.limitation && <p>{card.limitation}</p>}
               </details>}
-            </article>)}
+            </article>;})}
           </div>
         </section>
 
@@ -168,10 +183,12 @@ export function BaziWorkspace() {
         </section>}
 
         <div className="bazi-professional-head">
-          <div><span className="section-kicker">专业依据</span><h2>查看我的专业命盘</h2></div>
-          <small>点一个字，看它在这张盘中映照哪一面</small>
+          <div><span className="section-kicker">第二层 · 专业依据</span><h2>查看我的专业命盘</h2></div>
+          <small>四柱是事实底座；点一个字，再看它在盘中的位置</small>
         </div>
-        <div className="pillar-grid">
+        <div className="bazi-chart-workbench">
+          <div className="bazi-chart-core">
+          <div className="pillar-grid">
           {structure.pillars.map((item, index) => {
             const candidates = index === 0 ? boundaryUncertainty?.yearCandidates : index === 1 ? boundaryUncertainty?.monthCandidates : undefined;
             return candidates ? <div key={item.name} className="pillar-card is-uncertain">
@@ -204,6 +221,19 @@ export function BaziWorkspace() {
         <div className="day-master-anchor">
           <div><span className="section-kicker">全盘参照点</span><strong>{structure.dayMaster.stem}</strong></div>
           <p><b>{structure.dayMaster.yinYang}{structure.dayMaster.element}日主</b><span>它像你站在整张盘中央的位置；其他十神都要先与它比较，才有意义。</span></p>
+        </div>
+          </div>
+
+          <aside className={`bazi-character-inspector character-tone ${characterExplanation ? ELEMENT_TONE_CLASS[characterExplanation.element] : ""}`}>
+            <div className="bazi-inspector-mark character-tone">{characterExplanation?.character ?? "—"}</div>
+            <div className="section-kicker">点字释义 · {selectedStructure.name}</div>
+            <h2>{characterExplanation?.character} · {characterExplanation?.roleTitle}</h2>
+            {characterExplanation && <div className="character-explanation">
+              <section className="is-connection"><span>它映照你哪一面</span><b>{characterExplanation.connectionTitle}</b><p>{characterExplanation.connection}</p></section>
+              <section className="is-plain"><span>传统意象 · 白话</span><b>{characterExplanation.character}字像什么</b><p>{characterExplanation.plainMeaning}</p></section>
+              <section><span>专业名称保留</span><b>{characterExplanation.identity} · {characterExplanation.roleTitle}</b><p>{characterExplanation.role}</p></section>
+            </div>}
+          </aside>
         </div>
 
         {!boundaryUncertainty && <><div className="plate-tabs" aria-label="八字盘内容层级">
@@ -301,18 +331,6 @@ export function BaziWorkspace() {
           <p className="bazi-time-footnote">时间层只提示某类主题较容易被看见；它不会改写本命盘，也不表示当天必定发生某件事。</p>
         </div>}
       </div>
-
-      <aside className={`plate-aside character-tone ${characterExplanation ? ELEMENT_TONE_CLASS[characterExplanation.element] : ""}`}>
-        <div className="plate-aside-mark character-mark character-tone">{characterExplanation?.character ?? "—"}</div>
-        <div className="section-kicker">点字释义 · {selectedStructure.name}</div>
-        <h2 className="mt-2 font-serif text-2xl">{characterExplanation?.character} · {characterExplanation?.roleTitle}</h2>
-        {characterExplanation && <div className="character-explanation">
-          <section className="is-connection"><span>它映照你哪一面</span><b>{characterExplanation.connectionTitle}</b><p>{characterExplanation.connection}</p></section>
-          <section className="is-plain"><span>传统意象 · 白话</span><b>{characterExplanation.character}字像什么</b><p>{characterExplanation.plainMeaning}</p></section>
-          <section><span>专业名称保留</span><b>{characterExplanation.identity} · {characterExplanation.roleTitle}</b><p>{characterExplanation.role}</p></section>
-        </div>}
-        <div className="member-extension"><span>会员层</span><b>大运、流年与历年对照</b><small>增加时间跨度与比较，不改变本命盘基础结果。</small></div>
-      </aside>
     </section>
   );
 }
@@ -320,47 +338,83 @@ export function BaziWorkspace() {
 export function RelationWorkspace() {
   const profile = useBirthProfile();
   const [otherDate, setOtherDate] = useState("");
-  const [dimension, setDimension] = useState<(typeof RELATION_DIMENSIONS)[number]["id"]>("communication");
-  const pair = useMemo(() => profile && otherDate ? buildPairStructure(profile.birthDate, otherDate) : null, [otherDate, profile]);
+  const [relationshipType, setRelationshipType] = useState<RelationshipType>("partner");
+  const firstChart = useMemo(() => profile ? computeBazi({
+    gender: profile.gender,
+    birthDate: profile.birthDate,
+    birthTime: profile.birthTime ?? "",
+    birthLocation: profile.birthLocation ?? undefined,
+    timezone: profile.timezone,
+    unknownTime: profile.unknownTime
+  }) : null, [profile]);
+  const secondChart = useMemo(() => otherDate ? computeBazi({
+    gender: "other",
+    birthDate: otherDate,
+    birthTime: "",
+    timezone: "Asia/Shanghai",
+    unknownTime: true
+  }) : null, [otherDate]);
+  const facts = useMemo(() => firstChart && secondChart ? buildPairInteractionFacts(firstChart, secondChart) : null, [firstChart, secondChart]);
+  const cards = useMemo(() => buildRelationshipObservationCards(facts, relationshipType), [facts, relationshipType]);
+  const jointAction = useMemo(() => buildRelationshipJointAction(cards), [cards]);
   if (!profile) return <ProfileGate profile={profile} />;
 
-  const detail = relationDetail(dimension, pair);
   return (
-    <section className="plate-shell">
+    <section className="plate-shell relation-plate">
       <div className="plate-main">
-        <div className="plate-section-head">
-          <div><span>双人合参</span><small>只看结构，不给匹配分数</small></div>
-          <label className="compact-field">另一人的出生日期<input type="date" value={otherDate} onChange={event => setOtherDate(event.target.value)} /></label>
-        </div>
+        <section className="relationship-setup" aria-labelledby="relationship-setup-title">
+          <div className="relationship-setup-copy"><span className="section-kicker">起一张关系盘</span><h2 id="relationship-setup-title">两个人的结构怎样相遇</h2><p>选择你们的关系场景，再填写另一人的出生日期。这里不做评分，只观察日柱之间的双向作用。</p></div>
+          <div className="relationship-setup-controls">
+            <div><span>你们是什么关系</span><div className="relation-type-picker" aria-label="关系类型">{RELATIONSHIP_TYPES.map(item => <button key={item.id} type="button" aria-pressed={relationshipType === item.id} onClick={() => setRelationshipType(item.id)}>{item.label}</button>)}</div></div>
+            <label className="relationship-date-field"><span>另一人的出生日期</span><input type="date" value={otherDate} onChange={event => setOtherDate(event.target.value)} /></label>
+          </div>
+        </section>
 
-        <div className="pair-axis">
-          <PersonNode label="你" pillar={pair?.first.pillar ?? "日柱"} element={pair?.first.element} />
-          <div className="pair-bridge"><i /><span>{pair ? pair.stemRelation : "等待合参"}</span><small>{pair ? `日支 · ${pair.branchRelation}` : "选择日期后展开"}</small></div>
-          <PersonNode label="对方" pillar={pair?.second.pillar ?? "日柱"} element={pair?.second.element} muted={!pair} />
-        </div>
+        {!facts ? <div className="plate-empty relation-empty">
+          <span className="plate-seal" aria-hidden>合</span>
+          <div><h2 className="font-serif text-xl">先填写另一人的出生日期</h2><p className="mt-1 text-sm leading-6 text-ink/55">有了双方日柱后，再展开连接、摩擦与协作三项观察；资料不足时不会补写结论。</p></div>
+        </div> : <>
+          <section className="relation-summary" aria-labelledby="relation-summary-title">
+            <div><span className="section-kicker">{RELATIONSHIP_TYPES.find(item => item.id === relationshipType)?.label}关系 · 结构初见</span><h2 id="relation-summary-title" className="mt-2 font-serif text-2xl">先看你们怎样回应彼此</h2><p>这里不是两份个人性格并排，而是观察同一件事来到两个人之间时，双方可能先处理什么。</p><small>关系初见以双方日柱为观察入口，不代表完整合婚，也不判断关系结果；出生时辰不参与本次生活判断。</small></div>
+            <div className="relation-input-summary"><span>你的资料</span><b>{profile.birthDate}</b><span>对方资料</span><b>{otherDate}</b></div>
+          </section>
 
-        <div className="relation-dimension-grid">
-          {RELATION_DIMENSIONS.map(item => (
-            <button key={item.id} type="button" aria-pressed={dimension === item.id} onClick={() => setDimension(item.id)}>
-              <b>{item.label}</b><span>{item.basis}</span><i>→</i>
-            </button>
-          ))}
-        </div>
+          <div className="relationship-card-grid">
+            {cards.map((card, index) => <article className="relationship-card" key={card.id}>
+              <header><span>0{index + 1}</span><div><small>关系观察</small><h2>{card.title}</h2></div></header>
+              <p className="relationship-conclusion">{card.conclusion}</p>
+              <dl>
+                <div><dt>什么时候明显</dt><dd>{card.trigger}</dd></div>
+                <div><dt>能带来什么</dt><dd>{card.strength}</dd></div>
+                <div><dt>容易卡在哪里</dt><dd>{card.watchout}</dd></div>
+                <div><dt>可以怎么做</dt><dd>{card.action}</dd></div>
+              </dl>
+              <details className="relationship-evidence"><summary>为什么这样说</summary>
+                <div><b>主要依据</b>{card.evidence.filter(item => item.role === "primary").map(item => <p key={`${item.source}-${item.fact}`}><strong>{item.source}</strong>{item.fact}<small>{item.explanation}</small></p>)}</div>
+                <div><b>辅助线索</b>{card.evidence.filter(item => item.role === "supporting").map(item => <p key={`${item.source}-${item.fact}`}><strong>{item.source}</strong>{item.fact}<small>{item.explanation}</small></p>)}</div>
+                <p className="relationship-card-boundary"><strong>本卡边界</strong>{card.limitation}</p>
+              </details>
+            </article>)}
+          </div>
 
-        <div className="relation-detail">
-          <div className="section-kicker">{detail.eyebrow}</div>
-          <h2 className="mt-2 font-serif text-xl">{detail.title}</h2>
-          <p className="mt-2 text-sm leading-7 text-ink/60">{detail.copy}</p>
-          <div className="plate-evidence"><b>盘面依据</b><span>{detail.basis}</span></div>
-        </div>
+          {jointAction && <section className="relationship-joint-action"><span className="section-kicker">来自“{cards.find(card => card.id === jointAction.sourceCardId)?.title}”</span><h2>{jointAction.title}</h2><p>{jointAction.action}</p><small>{jointAction.durationMinutes}分钟内 · {jointAction.doneWhen}</small></section>}
+
+          <section className="relationship-professional" aria-labelledby="relationship-pillars-title">
+            <span className="section-kicker">查看双方日柱</span><h2 id="relationship-pillars-title">日柱是本次关系观察的边界</h2>
+            <div className="pair-axis">
+              <PersonNode label="你" pillar={facts.first.pillar} element={facts.first.element} />
+              <div className="pair-bridge"><i /><span>{facts.elementRelation.label}</span><small>{facts.branchRelations.map(item => item.label).join(" · ")}</small></div>
+              <PersonNode label="对方" pillar={facts.second.pillar} element={facts.second.element} />
+            </div>
+          </section>
+
+          <section className="relationship-facts"><span className="section-kicker">日干怎样双向作用</span><h2>同一对日干，要从两个方向分别看</h2><div className="relationship-fact-grid"><article><b>{facts.firstPerspective.perspective}</b><strong>{facts.firstPerspective.tenGod}</strong><p>{facts.firstPerspective.fact}</p></article><article><b>{facts.secondPerspective.perspective}</b><strong>{facts.secondPerspective.tenGod}</strong><p>{facts.secondPerspective.fact}</p></article><article><b>五行与阴阳</b><strong>{facts.elementRelation.label}</strong><p>{facts.elementRelation.fact}；{facts.polarityFact}。</p></article></div><p className="bazi-method-note">“你看对方”和“对方看你”，是把双方日干互相作为参照得到的结构观察，用来提示可能的互动顺序；它不代表双方在现实中固定承担某种角色，也不等于完整四柱合参。</p></section>
+
+          <section className="relationship-facts"><span className="section-kicker">日支之间有什么关系</span><h2>名称保留，关系好坏不由它决定</h2><div className="relationship-branch-list">{facts.branchRelations.map(item => <article key={`${item.id}-${item.fact}`}><b>{item.label}</b><p>{item.fact}。{item.explanation}</p></article>)}</div><p className="bazi-method-note">同一对日支可能同时出现多种传统关系名称。它们表示不同观察角度，不自动互相抵消，也不共同生成吉凶结论。</p></section>
+
+          <details className="relationship-method"><summary>查看本次方法与边界</summary><p>{facts.boundary}</p><p>六合、六冲、六害、六破与刑是传统结构名称，不等于现实事件，也不替代你们对真实沟通和处境的判断。</p></details>
+        </>}
       </div>
-      <aside className="plate-aside">
-        <div className="section-kicker">保存关系</div>
-        <h2 className="mt-2 font-serif text-2xl">从一次合参变成一份关系盘</h2>
-        <p className="mt-3 text-sm leading-7 text-ink/60">保存后，可以在同一份关系里切换日期，观察结构如何随时间变化，不必重复填写双方资料。</p>
-        <button type="button" className="btn-primary mt-5" disabled>保存入口 · 下一步接通</button>
-        <div className="member-extension"><span>会员层</span><b>多关系与跨期比较</b><small>增加保存数量、时间跨度和并排比较。</small></div>
-      </aside>
     </section>
   );
 }
@@ -448,17 +502,6 @@ export function TimingWorkspace({ today }: { today: string }) {
 
 function PersonNode({ label, pillar, element, muted }: { label: string; pillar: string; element?: Element; muted?: boolean }) {
   return <div className={`person-node ${muted ? "is-muted" : ""}`}><span>{label}</span><strong>{pillar}</strong><small>{element ? `日干属${element}` : "待填写"}</small></div>;
-}
-
-function relationDetail(dimension: (typeof RELATION_DIMENSIONS)[number]["id"], pair: ReturnType<typeof buildPairStructure> | null) {
-  if (!pair) return { eyebrow: "等待资料", title: "先选择另一人的出生日期", copy: "日期确定后，四个维度会使用同一份双人结构展开，不需要描述关系事件。", basis: "尚未起盘" };
-  const map = {
-    communication: { eyebrow: "沟通层", title: `双方日干形成“${pair.stemRelation}”`, copy: "这里先呈现表达与承接的作用方向；不会由一个结构名称直接推断谁更有问题。", basis: `${pair.first.pillar}与${pair.second.pillar}的日干五行关系` },
-    cooperation: { eyebrow: "共同推进层", title: "查看力量从哪一方流向哪一方", copy: "相生、相克与同类是结构关系，后续会把它翻译成双方如何发起、承接与协商，而不是给相处好坏下结论。", basis: `日干关系：${pair.stemRelation}` },
-    rhythm: { eyebrow: "日常节奏层", title: `双方日支显示“${pair.branchRelation}”`, copy: "日支关系用于标记日常节奏可能出现的相同、牵引或碰撞位置；真实相处仍需结合双方实际情况。", basis: `${pair.first.pillar.slice(1)}与${pair.second.pillar.slice(1)}的地支关系` },
-    boundary: { eyebrow: "边界层", title: "只呈现盘面可以支持的范围", copy: "这一层会明确哪些内容来自日柱、哪些需要完整四柱，避免把未知信息写成确定事实。", basis: "当前仅使用双方出生日期的日柱" }
-  };
-  return map[dimension];
 }
 
 function Trigram({ binary }: { binary: string }) {

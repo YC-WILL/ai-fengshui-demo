@@ -3,11 +3,14 @@ import { buildBaziStructure, type HiddenStemFact, type TenGodName } from "./bazi
 
 export type BaziObservationCardId = "starting" | "pressure" | "collaboration";
 export type BaziObservationConfidence = "完整资料" | "部分资料" | "暂不判断";
+export type BaziObservationEvidenceRole = "primary" | "supporting";
 
 export interface BaziObservationEvidence {
   source: string;
   fact: string;
   explanation: string;
+  role: BaziObservationEvidenceRole;
+  affectsConclusion: boolean;
 }
 
 export interface BaziObservationCard {
@@ -169,23 +172,43 @@ const SECONDARY_HINT: Record<BehaviorFamily, string> = {
   constraint: "同时，另一条线索偏向确认规则与责任"
 };
 
-function evidenceFromHidden(item: HiddenStemFact, chart: BaziChart, use: string): BaziObservationEvidence {
+function evidenceFromHidden(
+  item: HiddenStemFact,
+  chart: BaziChart,
+  use: string,
+  role: BaziObservationEvidenceRole,
+  affectsConclusion: boolean
+): BaziObservationEvidence {
   return {
     source: item.source,
     fact: `${item.stem}相对${chart.dayMaster}日主为${item.name}`,
-    explanation: `${use}；这里使用的是具体柱位与十神关系，不以出现次数判断强弱。`
+    explanation: role === "primary"
+      ? `${use}；这项依据确定本卡的主要观察方向，不以出现次数判断强弱。`
+      : affectsConclusion
+        ? `${use}；它补充结论中的另一条观察线索，当前没有单独改写本卡的触发条件、优势、风险和行动。`
+        : `${use}；它作为补充参照，当前没有改变本卡的结论、触发条件、优势、风险和行动。`,
+    role,
+    affectsConclusion
   };
 }
 
 function evidenceFromVisible(
   item: NonNullable<ReturnType<typeof buildBaziStructure>["pillars"][number]["visibleStem"]>,
   chart: BaziChart,
-  use: string
+  use: string,
+  role: BaziObservationEvidenceRole,
+  affectsConclusion: boolean
 ): BaziObservationEvidence {
   return {
     source: item.source,
     fact: `${item.stem}相对${chart.dayMaster}日主为${item.role}`,
-    explanation: `${use}；这是一项明现位置事实，不单独作为性格结论。`
+    explanation: role === "primary"
+      ? `${use}；这项依据确定本卡的主要观察方向，不单独作为固定性格结论。`
+      : affectsConclusion
+        ? `${use}；它补充结论中的另一条观察线索，当前没有单独改写本卡的触发条件、优势、风险和行动。`
+        : `${use}；它作为补充参照，当前没有改变本卡的结论、触发条件、优势、风险和行动。`,
+    role,
+    affectsConclusion
   };
 }
 
@@ -259,19 +282,19 @@ export function buildBaziObservationCards(chart: BaziChart): BaziObservationCard
   }
 
   const starting = buildCard("starting", "开始一件事", monthMain, dayMain, STARTING_COPY, chart, [
-    evidenceFromHidden(monthMain, chart, "用于观察接到任务时先回应哪类条件"),
-    evidenceFromHidden(dayMain, chart, "用于交叉核对进入实际行动后的落脚方式")
+    evidenceFromHidden(monthMain, chart, "用于观察接到任务时先回应哪类条件", "primary", true),
+    evidenceFromHidden(dayMain, chart, "用于交叉核对进入实际行动后的落脚方式", "supporting", true)
   ]);
   const pressure = buildCard("pressure", "面对压力", dayMain, monthVisible, PRESSURE_COPY, chart, [
-    evidenceFromHidden(dayMain, chart, "用于观察压力进入日常后较先调动的回应"),
-    evidenceFromVisible(monthVisible, chart, "用于交叉核对集体任务与外部要求中的表现")
+    evidenceFromHidden(dayMain, chart, "用于观察压力进入日常后较先调动的回应", "primary", true),
+    evidenceFromVisible(monthVisible, chart, "用于交叉核对集体任务与外部要求中的表现", "supporting", true)
   ]);
   const collaborationEvidence = [
-    evidenceFromVisible(yearVisible, chart, "用于观察对外互动时较容易被看见的协作方式"),
-    evidenceFromHidden(monthMain, chart, "用于交叉核对进入持续分工后的环境反应")
+    evidenceFromVisible(yearVisible, chart, "用于观察对外互动时较容易被看见的协作方式", "primary", true),
+    evidenceFromHidden(monthMain, chart, "用于交叉核对进入持续分工后的环境反应", "supporting", true)
   ];
   if (structure.pillars[3].visibleStem) {
-    collaborationEvidence.push(evidenceFromVisible(structure.pillars[3].visibleStem, chart, "用于补充观察协作向后推进时的表达位置"));
+    collaborationEvidence.push(evidenceFromVisible(structure.pillars[3].visibleStem, chart, "出生时辰已知，用于补充观察协作向后推进时的表达位置", "supporting", false));
   }
   const collaboration = buildCard("collaboration", "与人协作", yearVisible, monthMain, COLLABORATION_COPY, chart, collaborationEvidence);
 

@@ -29,7 +29,13 @@ describe("bazi life observation cards", () => {
       expect(card.evidence.length).toBeGreaterThanOrEqual(2);
       expect(new Set(card.evidence.map(item => item.source)).size).toBeGreaterThanOrEqual(2);
       expect(card.evidence.every(item => /年柱|月柱|日柱|时柱/.test(item.source))).toBe(true);
+      expect(card.evidence.filter(item => item.role === "primary")).toHaveLength(1);
+      expect(card.evidence.filter(item => item.role === "supporting").length).toBeGreaterThanOrEqual(1);
+      expect(card.evidence.find(item => item.role === "primary")?.affectsConclusion).toBe(true);
     });
+    const hourEvidence = cards.flatMap(card => card.evidence).find(item => item.source === "时柱天干");
+    expect(hourEvidence).toMatchObject({ role: "supporting", affectsConclusion: false });
+    expect(hourEvidence?.explanation).toMatch(/没有改变本卡的结论、触发条件、优势、风险和行动/);
 
     const weekly = buildBaziWeeklyAction(cards);
     expect(weekly).toMatchObject({ sourceCardId: "starting", action: cards[0].action });
@@ -99,6 +105,7 @@ describe("bazi life observation cards", () => {
 
   it("puts life observations before professional facts and removes the personal flow presentation", () => {
     const source = readFileSync(resolve(process.cwd(), "src/components/MethodWorkspaces.tsx"), "utf8");
+    const pageSource = readFileSync(resolve(process.cwd(), "src/app/bazi/page.tsx"), "utf8");
     const observations = source.indexOf("这张生辰盘，建议你先观察三件事");
     const professional = source.indexOf("查看我的专业命盘");
     const tabs = source.indexOf("八字盘内容层级");
@@ -110,5 +117,29 @@ describe("bazi life observation cards", () => {
     expect(tabs).toBeLessThan(timeComparison);
     expect(source).not.toMatch(/我的命局主线|这张盘的力量怎样流动|这张盘里的十神怎样接力/);
     expect(source).toContain("这是通用的十神关系说明，不是本命盘独有的力量流动");
+    expect(source).toContain("主要依据");
+    expect(source).toContain("辅助线索");
+    expect(source).toContain("出生时辰未知，本次观察未使用时柱");
+    expect(source).toContain("出生时辰已知，时柱作为补充参照；当前三张生活观察主要依据年月日结构");
+    expect(source).not.toContain("<small>{card.confidence}</small>");
+    expect(pageSource).toContain("先从三项生活观察认识这张生辰盘");
+    expect(pageSource).not.toContain("从四柱明字开始");
+  });
+
+  it("marks the real evidence roles without claiming full joint inference", () => {
+    const cards = buildBaziObservationCards(computeBazi({
+      gender: "other", birthDate: "2006-10-03", birthTime: "09:00", unknownTime: false
+    }));
+
+    cards.forEach(card => {
+      const [primary, secondary, hour] = card.evidence;
+      expect(primary).toMatchObject({ role: "primary", affectsConclusion: true });
+      expect(secondary).toMatchObject({ role: "supporting", affectsConclusion: true });
+      expect(primary.explanation).toMatch(/确定本卡的主要观察方向/);
+      expect(secondary.explanation).toMatch(/补充结论中的另一条观察线索/);
+      expect(secondary.explanation).toMatch(/没有单独改写本卡的触发条件、优势、风险和行动/);
+      if (hour) expect(hour).toMatchObject({ role: "supporting", affectsConclusion: false });
+    });
+    expect(JSON.stringify(cards)).not.toMatch(/综合.*共同判断|共同得出完整结论/);
   });
 });

@@ -68,6 +68,20 @@ html, body {
 .method-local-nav a { @apply min-w-24 shrink-0 rounded-lg px-4 py-2 text-center text-sm text-ink/55 transition hover:bg-rice; }
 .method-local-nav a[aria-current="page"] { @apply bg-ink text-rice; }
 .method-page-heading { @apply flex flex-col gap-4 rounded-2xl border border-gold/30 bg-white/70 px-6 py-6 shadow-scroll sm:flex-row sm:items-center sm:justify-between md:px-8; }
+.method-page-hero { @apply overflow-hidden rounded-3xl border border-ink/10 text-rice shadow-scroll; background: radial-gradient(circle at 82% 12%, rgba(201, 163, 92, 0.22), transparent 28%), radial-gradient(circle at 8% 100%, rgba(181, 59, 42, 0.18), transparent 34%), #26312d; }
+.method-page-meta { @apply flex items-center justify-between border-b border-white/10 px-5 py-3 text-[10px] tracking-[0.2em] text-rice/55 md:px-8; }
+.method-page-meta b { @apply rounded-full border border-gold/35 bg-gold/10 px-3 py-1 font-medium tracking-normal text-gold; }
+.method-page-intro { @apply grid gap-6 px-5 py-7 md:grid-cols-[minmax(0,1fr)_14rem] md:items-end md:px-8 md:py-9; }
+.method-page-intro h1 { @apply font-serif text-4xl font-normal tracking-tight md:text-5xl; }
+.method-page-intro p { @apply mt-3 max-w-2xl text-sm leading-7 text-rice/65; }
+.method-saved-link { @apply flex items-center rounded-2xl border border-white/15 bg-white/5 px-4 py-3 transition hover:border-gold/40 hover:bg-white/10; }
+.method-saved-link > span { @apply text-[10px] text-rice/45; }
+.method-saved-link > b { @apply ml-3 text-xs font-medium text-rice/80; }
+.method-saved-link > i { @apply ml-auto not-italic text-gold; }
+.method-reading-path { @apply grid border-t border-white/10 sm:grid-cols-3; }
+.method-reading-path li { @apply flex items-center gap-3 border-b border-white/10 px-5 py-3 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 md:px-8; }
+.method-reading-path span { @apply font-serif text-sm text-gold; }
+.method-reading-path b { @apply text-xs font-medium text-rice/65; }
 
 .plate-shell { @apply grid overflow-hidden rounded-2xl border border-mist bg-white/80 shadow-scroll lg:grid-cols-[minmax(0,1fr)_18rem]; }
 .plate-main { @apply min-w-0 p-5 md:p-7; }
@@ -143,6 +157,7 @@ html, body {
 .bazi-observations-head { @apply flex flex-wrap items-end justify-between gap-2 border-b border-gold/30 bg-white/65 px-4 py-4; }
 .bazi-observations-head h2 { @apply mt-1 font-serif text-xl; }
 .bazi-observations-head > small { @apply text-[10px] text-ink/40; }
+.bazi-observation-scope { @apply border-b border-gold/25 bg-gold/5 px-4 py-2 text-[11px] leading-5 text-ink/50; }
 .bazi-observation-grid { @apply grid gap-px bg-mist lg:grid-cols-3; }
 .bazi-observation-card { @apply min-w-0 bg-white/80 p-4; }
 .bazi-observation-card > header { @apply flex items-center gap-3; }
@@ -156,6 +171,9 @@ html, body {
 .bazi-observation-points .is-action { @apply border-gold/45 bg-gold/5 text-ink/65; }
 .bazi-observation-evidence { @apply mt-3 border-t border-dashed border-gold/40 pt-3 text-[11px] leading-5 text-ink/45; }
 .bazi-observation-evidence summary { @apply w-fit cursor-pointer text-cinnabar/80; }
+.bazi-observation-evidence section { @apply mt-3 rounded-lg bg-rice/45 px-3 py-2; }
+.bazi-observation-evidence h4 { @apply font-medium text-ink/65; }
+.bazi-observation-evidence section > p { @apply mt-0.5 text-[10px] leading-5 text-ink/40; }
 .bazi-observation-evidence ul { @apply mt-2 space-y-2; }
 .bazi-observation-evidence li { @apply flex flex-col border-l border-gold/40 pl-3; }
 .bazi-observation-evidence li b { @apply font-medium text-ink/65; }
@@ -281,6 +299,27 @@ html, body {
 .bazi-professional-head { @apply mb-3 mt-6 flex flex-wrap items-end justify-between gap-2; }
 .bazi-professional-head h2 { @apply mt-1 font-serif text-xl; }
 .bazi-professional-head > small { @apply text-[10px] text-ink/40; }
+.bazi-plate-shell { @apply overflow-visible border-0 bg-transparent shadow-none lg:grid-cols-1; }
+.bazi-plate-shell > .plate-main { @apply p-0; }
+.bazi-plate-shell .plate-section-head { @apply rounded-2xl border border-mist bg-white/75 px-5 py-4 shadow-sm md:px-6; }
+.bazi-plate-shell .bazi-observations { @apply rounded-2xl bg-transparent shadow-scroll; }
+.bazi-plate-shell .bazi-observations-head { @apply px-5 py-5 md:px-6; }
+.bazi-plate-shell .bazi-observation-scope { @apply px-5 py-3 md:px-6; }
+.bazi-plate-shell .bazi-observation-grid { @apply gap-3 bg-rice/60 p-3; }
+.bazi-plate-shell .bazi-observation-card { @apply rounded-xl border border-mist bg-white p-5 shadow-sm; }
+.bazi-plate-shell .bazi-observation-card:first-child { @apply border-gold/45; }
+.bazi-plate-shell .bazi-weekly-action { @apply grid gap-1 rounded-2xl px-5 py-5 shadow-sm md:grid-cols-[13rem_minmax(0,1fr)] md:items-center; }
+.bazi-plate-shell .bazi-weekly-action h2 { @apply md:col-start-1; }
+.bazi-plate-shell .bazi-weekly-action p { @apply md:col-start-2 md:row-span-2 md:row-start-1 md:border-l md:border-cinnabar/15 md:pl-6; }
+.bazi-plate-shell .bazi-professional-head { @apply mt-9 rounded-t-2xl border border-b-0 border-mist bg-white/70 px-5 pb-3 pt-5 md:px-6; }
+.bazi-chart-workbench { @apply grid overflow-hidden rounded-b-2xl border border-mist bg-white/70 shadow-scroll lg:grid-cols-[minmax(0,1fr)_19rem]; }
+.bazi-chart-core { @apply min-w-0 p-4 md:p-6; }
+.bazi-character-inspector { @apply border-t border-mist bg-rice/60 p-5 lg:border-l lg:border-t-0; }
+.bazi-character-inspector > h2 { @apply mt-2 font-serif text-2xl font-normal; }
+.bazi-inspector-mark { @apply mb-5 flex h-24 w-24 items-center justify-center rounded-full border font-serif text-5xl; color: var(--character-tone); background-color: var(--character-soft); border-color: var(--character-edge); }
+.bazi-plate-shell > .plate-main > .plate-tabs { @apply mt-5 rounded-xl border border-mist bg-white/65 p-2; }
+.bazi-plate-shell .bazi-layer-panel { @apply rounded-2xl bg-white/65 shadow-sm; }
+.bazi-plate-shell .bazi-time-comparison { @apply mt-6 rounded-2xl bg-white/70 shadow-sm; }
 
 .compact-field { @apply flex items-center gap-2 text-xs text-ink/55; }
 .compact-field input { @apply rounded-lg border border-mist bg-white px-3 py-2 text-sm text-ink focus:border-cinnabar/40 focus:outline-none focus:ring-2 focus:ring-cinnabar/15; }
@@ -301,6 +340,64 @@ html, body {
 .relation-dimension-grid button i { @apply absolute right-4 top-4 not-italic text-cinnabar; }
 .relation-dimension-grid button[aria-pressed="true"] { @apply border-cinnabar/35 bg-cinnabar/5; }
 .relation-detail { @apply mt-4 rounded-xl border border-mist bg-rice/45 p-5; }
+.relation-plate { @apply overflow-visible border-0 bg-transparent shadow-none lg:grid-cols-1; }
+.relation-plate > .plate-main { @apply p-0; }
+.relationship-setup { @apply grid overflow-hidden rounded-2xl border border-mist bg-white/80 shadow-scroll lg:grid-cols-[minmax(0,0.75fr)_minmax(26rem,1.25fr)]; }
+.relationship-setup-copy { @apply border-b border-mist bg-rice/60 p-5 lg:border-b-0 lg:border-r lg:p-6; }
+.relationship-setup-copy h2 { @apply mt-2 font-serif text-2xl font-normal; }
+.relationship-setup-copy p { @apply mt-3 text-sm leading-7 text-ink/55; }
+.relationship-setup-controls { @apply grid gap-5 p-5 sm:grid-cols-[minmax(0,1fr)_13rem] sm:items-end lg:p-6; }
+.relationship-setup-controls > div > span, .relationship-date-field > span { @apply mb-2 block text-[10px] tracking-wider text-ink/45; }
+.relation-type-picker { @apply flex flex-wrap gap-2; }
+.relation-type-picker button { @apply rounded-full border border-mist bg-white px-4 py-2 text-sm text-ink/60 transition hover:border-gold/60; }
+.relation-type-picker button[aria-pressed="true"] { @apply border-cinnabar/35 bg-cinnabar/5 text-cinnabar; }
+.relationship-date-field input { @apply w-full rounded-xl border border-mist bg-rice/35 px-3 py-2.5 text-sm text-ink outline-none transition focus:border-cinnabar/40 focus:ring-2 focus:ring-cinnabar/10; }
+.relation-empty { @apply mt-5; }
+.relation-summary { @apply mt-5 grid gap-4 rounded-2xl border border-gold/30 bg-white/75 p-5 shadow-sm md:grid-cols-[minmax(0,1fr)_13rem] md:p-6; }
+.relation-summary h2 { @apply font-normal; }
+.relation-summary p { @apply mt-2 text-sm leading-7 text-ink/60; }
+.relation-summary > div > small { @apply mt-3 block text-xs leading-6 text-ink/45; }
+.relation-input-summary { @apply grid grid-cols-[auto_1fr] content-center gap-x-3 gap-y-2 rounded-xl border border-mist bg-white/60 p-4 text-xs; }
+.relation-input-summary span { @apply text-ink/45; }
+.relation-input-summary b { @apply font-normal text-ink/70; }
+.relationship-card-grid { @apply mt-5 grid gap-4 lg:grid-cols-2; }
+.relationship-card { @apply min-w-0 rounded-2xl border border-mist bg-white/80 p-5 shadow-sm md:p-6; }
+.relationship-card:first-child { @apply border-gold/45 lg:col-span-2; }
+.relationship-card > header { @apply flex items-center gap-3 border-b border-mist pb-4; }
+.relationship-card > header > span { @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cinnabar/25 font-serif text-sm text-cinnabar; }
+.relationship-card > header small { @apply text-[9px] tracking-[0.16em] text-cinnabar; }
+.relationship-card h2 { @apply mt-0.5 font-serif text-xl font-normal; }
+.relationship-conclusion { @apply mt-3 text-sm font-medium leading-7 text-ink/75; }
+.relationship-card dl { @apply mt-4 space-y-3; }
+.relationship-card:first-child dl { @apply md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-0 md:space-y-0; }
+.relationship-card dl > div { @apply border-t border-mist/70 pt-3; }
+.relationship-card dt { @apply text-xs text-ink/40; }
+.relationship-card dd { @apply mt-1 text-sm leading-6 text-ink/65; }
+.relationship-evidence { @apply mt-4 border-t border-mist pt-3 text-xs; }
+.relationship-evidence summary { @apply cursor-pointer text-cinnabar; }
+.relationship-evidence > div { @apply mt-3 space-y-2 rounded-xl bg-rice/45 p-3; }
+.relationship-evidence > div > b { @apply text-ink/65; }
+.relationship-evidence p { @apply flex flex-col gap-1 border-t border-mist/70 pt-2 leading-5 text-ink/60 first:border-0 first:pt-0; }
+.relationship-evidence strong { @apply text-[10px] font-normal text-cinnabar/80; }
+.relationship-evidence small { @apply leading-5 text-ink/45; }
+.relationship-card-boundary { @apply mt-3 rounded-xl border border-dashed border-mist p-3 leading-5 text-ink/45; }
+.relationship-card-boundary strong { @apply mr-2 text-[10px] font-normal text-cinnabar/80; }
+.relationship-joint-action { @apply mt-5 grid rounded-2xl border border-cinnabar/25 bg-cinnabar/5 p-5 shadow-sm md:grid-cols-[14rem_minmax(0,1fr)] md:items-center md:p-6; }
+.relationship-joint-action h2 { @apply mt-2 font-serif text-2xl font-normal; }
+.relationship-joint-action p { @apply mt-3 text-sm leading-7 text-ink/70 md:col-start-2 md:row-start-1 md:border-l md:border-cinnabar/15 md:pl-6; }
+.relationship-joint-action > small { @apply mt-2 block text-xs text-ink/45 md:col-start-2 md:pl-6; }
+.relationship-professional, .relationship-facts { @apply mt-6 rounded-2xl border border-mist bg-white/70 p-5 shadow-sm md:p-6; }
+.relationship-professional > h2, .relationship-facts > h2 { @apply mb-4 mt-2 font-serif text-xl font-normal; }
+.relationship-fact-grid { @apply grid gap-3 md:grid-cols-3; }
+.relationship-fact-grid article, .relationship-branch-list article { @apply rounded-xl border border-mist bg-rice/35 p-4; }
+.relationship-fact-grid b { @apply block text-xs font-normal text-ink/45; }
+.relationship-fact-grid strong { @apply mt-2 block font-serif text-xl font-normal; }
+.relationship-fact-grid p, .relationship-branch-list p { @apply mt-2 text-xs leading-6 text-ink/55; }
+.relationship-branch-list { @apply grid gap-3 sm:grid-cols-2; }
+.relationship-branch-list b { @apply font-serif font-normal; }
+.relationship-method { @apply mt-5 rounded-2xl border border-mist bg-white/60 p-5 text-sm shadow-sm; }
+.relationship-method summary { @apply cursor-pointer text-cinnabar; }
+.relationship-method p { @apply mt-3 leading-7 text-ink/55; }
 
 .home-grid-wrap { @apply grid gap-5 md:grid-cols-[minmax(0,1.35fr)_minmax(13rem,0.65fr)] md:items-stretch; }
 .home-direction-grid { @apply grid aspect-square max-h-[32rem] grid-cols-3 border-l border-t border-ink/15; }

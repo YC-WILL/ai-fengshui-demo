@@ -3,7 +3,7 @@ import { BaziWorkspace } from "@/components/MethodWorkspaces";
 
 export default function BaziPage() {
   return (
-    <MethodPageShell current="bazi" title="八字盘" basis="四柱 · 日主 · 月令 · 藏干 · 十神" lead="从四柱明字开始，逐层查看日主、五行、月令、藏干与十神。年柱按立春交接、月柱按节气交接时刻切换；未知出生时间时，时柱保持空白。">
+    <MethodPageShell current="bazi" title="八字盘" basis="四柱 · 日主 · 月令 · 藏干 · 十神" status="1.0 已冻结" stages={["先看三项生活观察", "再看专业命盘", "最后对照时间"]} lead="先从三项生活观察认识这张生辰盘，再展开查看四柱、日主、月令、藏干与十神依据。年柱按立春交接、月柱按节气交接时刻切换；未知出生时间时，时柱保持空白。">
       <BaziWorkspace />
     </MethodPageShell>
   );
