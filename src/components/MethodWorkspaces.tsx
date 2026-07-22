@@ -224,7 +224,7 @@ export function BaziWorkspace() {
 
         {!boundaryUncertainty && activeTimeLayer && <div className="bazi-time-comparison">
           <div className="bazi-time-head">
-            <div><span className="section-kicker">本命之上 · 时间对照</span><h3>今天、这个月和这一年，分别照到生活的哪一面</h3></div>
+            <div><span className="section-kicker">传统解释 · 时间对照</span><h3>今天、这个月和这一年，分别照到生活的哪一面</h3></div>
             <small>只比较结构，不判断吉凶</small>
           </div>
           <div className="bazi-time-tabs" aria-label="本命时间对照">
@@ -257,7 +257,7 @@ export function BaziWorkspace() {
                 <div><span>明字未见</span><b>{mainline.elementOverview.absentVisible.length ? mainline.elementOverview.absentVisible.join("、") : "五行均有出现"}</b></div>
                 <p>{mainline.elementOverview.summary}</p>
               </div>
-              <div className="layer-story"><span>放进你的生活里</span><b>这些五行通常怎样被你用出来</b><p>{mainline.elementOverview.interpretation}</p><small>本盘证据：明字五行数量 + 地支藏干；不以数量直接代替旺衰。</small></div>
+              <div className="layer-story"><span>生活观察</span><b>可以怎样核对这些五行意象</b><p>{mainline.elementOverview.interpretation}</p><small>本盘证据：明字五行数量 + 地支藏干；不以数量直接代替旺衰。若现实经历不符合，不把它当作性格结论。</small></div>
               <div className="element-structure-bar" aria-label="五行结构">
                 {ELEMENTS.filter(element => chart.elementDistribution.counts[element] > 0).map(element => (
                   <i key={element} className={ELEMENT_CLASS[element]} style={{ width: `${chart.elementDistribution.ratios[element] * 100}%` }} />
@@ -280,7 +280,7 @@ export function BaziWorkspace() {
                 <div><b>日主来到怎样的季节</b><p>{mainline.monthReading.image}</p></div>
               </div>
               <div className="hidden-stem-line"><b>月令藏干</b>{structure.monthCommand.hiddenStems.map(hidden => <span key={hidden.stem}>{hidden.qiLevel}·{hidden.stem}{hidden.element}<small>{hidden.name}</small></span>)}</div>
-              <div className="layer-story"><span>事情刚放到桌上时</span><b>月令如何影响你的第一反应</b><p>{mainline.monthReading.interpretation}</p><small>本盘证据：{structure.monthCommand.branch}月令 · 本气{structure.monthCommand.hiddenStems[0]?.stem}{structure.monthCommand.hiddenStems[0]?.name}。</small></div>
+              <div className="layer-story"><span>生活观察</span><b>月令意象可以怎样核对</b><p>{mainline.monthReading.interpretation}</p><small>本盘证据：{structure.monthCommand.branch}月令 · 本气{structure.monthCommand.hiddenStems[0]?.stem}{structure.monthCommand.hiddenStems[0]?.name}。这不是人格定论。</small></div>
               <p className="bazi-method-note">月柱以十二节的实际交接时刻切换，并按出生地法定时区 {chart.calculation.timezone} 换算。若出生时间未知且当天恰逢交节，月柱仍需在确认时刻后复核；当前不做经度真太阳时校正。</p>
             </div>
           )}

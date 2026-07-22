@@ -395,7 +395,7 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
   const temperament = temperamentMeaning(monthCategory, primary, secondary);
   const workingStyle = `另一条可对照的线索是“${secondary.label}”：${visibilityInLife(secondary)}。可以观察自己在相关情境中是否会${POWER_BEHAVIOR_SCENE[secondary.id]}；若现实经历不符合，不应把它当作性格结论。`;
   const monthImage = `想象${DAY_MASTER_IMAGE[structure.dayMaster.stem]}来到${MONTH_SCENE[structure.monthCommand.branch]}。四周先给它的，是“${POWER_CATEGORY[monthCategory].label}”这层做事气候。`;
-  const monthInterpretation = `事情刚放到你桌上时，这更像你会${POWER_BEHAVIOR_SCENE[monthCategory]}。它不是凭一个字猜出来的，而是由${structure.monthCommand.branch}月令的本气${monthMain.stem}${monthMain.name}相对日主${structure.dayMaster.stem}形成。`;
+  const monthInterpretation = `传统上可以观察自己在相关情境中是否会${POWER_BEHAVIOR_SCENE[monthCategory]}。这条线索来自${structure.monthCommand.branch}月令的本气${monthMain.stem}${monthMain.name}相对日主${structure.dayMaster.stem}形成；若现实经历不符合，不应把它当作性格结论。`;
   const tenGodHeadline = `本次先观察“${primary.label}”与“${secondary.label}”两组盘面线索`;
   const tenGodInterpretation = `第一条取自月令本气，第二条取自已知天干或藏干的位置。传统上分别归入${primary.traditional}与${secondary.traditional}。这里用于帮助核对结构，不表示两股力量有固定先后，也不据此给人格下结论。`;
 
@@ -433,7 +433,7 @@ export function buildBaziMainline(chart: BaziChart): BaziMainline {
     },
     incompleteNote: chart.hour
       ? undefined
-      : "出生时间未知，以上只使用年柱、月柱、日柱；时柱及其藏干没有参与主线判断。"
+      : "出生时间未知，以上只使用年柱、月柱、日柱；时柱及其藏干没有参与结构观察。"
   };
 }
 
