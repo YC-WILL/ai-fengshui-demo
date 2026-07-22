@@ -15,10 +15,10 @@ export default function HomePage() {
     <div className="space-y-8">
       <SolarTermTimeline data={solarTerms} />
 
-      <section className="home-intro">
+      <section className="home-intro" aria-labelledby="home-method-title">
         <div>
           <div className="section-kicker">今日 · {solarTerms.current.name}</div>
-          <h1 className="mt-2 font-serif text-3xl md:text-4xl">把传统方法，做成可以反复使用的四张盘</h1>
+          <h2 id="home-method-title" className="mt-2 font-serif text-3xl md:text-4xl">把传统方法，做成可以反复使用的四张盘</h2>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-ink/60">不是读完即走的长报告。先建立自己的盘，再保存关系、住宅与事项，让每一次回来都有上下文。</p>
         </div>
         <div className="home-intro-mark" aria-hidden>安</div>

@@ -316,15 +316,22 @@ html, body {
   .home-direction-grid button { @apply min-h-20; }
 }
 
-/* 二十四节气是首页的时间骨架；默认紧凑，全年信息按需展开。 */
+/* 二十四节气是首页首屏；每天按北京时间换日期，交节后换图景。 */
 .solar-term-card {
-  @apply rounded-xl border border-gold/30 bg-white/75 px-5 py-4 shadow-scroll;
+  @apply overflow-hidden rounded-2xl border border-gold/35 bg-white/80 shadow-scroll;
   background:
     radial-gradient(circle at 8% 0%, rgba(181, 59, 42, 0.06), transparent 28%),
     rgba(255, 255, 255, 0.78);
 }
+.solar-term-hero { @apply grid min-h-[26rem] md:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)]; }
+.solar-term-scene { @apply relative min-h-72 overflow-hidden bg-mist md:min-h-[26rem]; }
+.solar-term-scene::after { @apply pointer-events-none absolute inset-0; content: ""; box-shadow: inset -28px 0 50px rgba(247, 243, 234, 0.14), inset 0 -30px 50px rgba(36, 32, 28, 0.08); }
+.solar-term-scene svg { @apply absolute inset-0 h-full w-full; }
+.solar-term-scene span { @apply absolute bottom-4 left-4 rounded-full border border-white/55 bg-white/70 px-3 py-1 text-[10px] tracking-[0.18em] text-ink/55 backdrop-blur; }
+.solar-term-copy { @apply flex flex-col justify-between gap-8 bg-[rgba(255,253,248,0.9)] p-6 md:p-8; }
 .solar-term-progress { @apply h-1.5 overflow-hidden rounded-full bg-mist; }
 .solar-term-progress > span { @apply block h-full rounded-full bg-cinnabar/75; }
+.solar-term-year-list { @apply border-t border-mist bg-white/70 px-5 py-4 md:px-7; }
 .solar-term-grid { @apply grid grid-cols-3 gap-1.5 sm:grid-cols-6 md:grid-cols-8; }
 .solar-term-grid li { @apply flex min-w-0 items-center gap-1.5 rounded-md border border-transparent bg-rice/60 px-2 py-1.5; }
 .solar-term-grid li.is-current { @apply border-cinnabar/35 bg-cinnabar/5 text-cinnabar; }

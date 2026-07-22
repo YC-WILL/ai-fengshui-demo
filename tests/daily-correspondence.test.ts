@@ -17,6 +17,11 @@ describe("daily correspondence", () => {
 
   it("uses the active solar term and its month branch", () => {
     expect(currentSolarTerm("2026-07-20")).toMatchObject({ name: "小暑", monthBranch: "未" });
+    expect(solarTermTimeline("2026-07-22")).toMatchObject({
+      date: "2026-07-22",
+      current: { name: "小暑", date: "2026-07-07" },
+      next: { name: "大暑", date: "2026-07-23" }
+    });
     expect(currentSolarTerm("2026-02-10")).toMatchObject({ name: "立春", monthBranch: "寅" });
   });
 

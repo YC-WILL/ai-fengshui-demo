@@ -22,6 +22,7 @@ export default function Nav() {
         </Link>
         <div className="flex-1" />
         <nav className="hidden items-center gap-1 lg:flex" aria-label="主要功能">
+          <Link href="/" className="nav-method-link">首页</Link>
           {METHOD_MODULES.map(module => <Link key={module.id} href={module.href} className="nav-method-link">{module.title}</Link>)}
         </nav>
         <nav aria-label="账户">
@@ -33,7 +34,8 @@ export default function Nav() {
           </Link>
         </nav>
       </div>
-      <nav className="nav-mobile-methods lg:hidden" aria-label="四盘入口">
+      <nav className="nav-mobile-methods lg:hidden" aria-label="主要功能">
+        <Link href="/">首页</Link>
         {METHOD_MODULES.map(module => <Link key={module.id} href={module.href}>{module.title}</Link>)}
       </nav>
     </header>
