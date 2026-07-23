@@ -68,12 +68,12 @@ export function buildCompanionSystemPrompt(
   theoryGuidance: string
 ): string {
   const purposeText = COMPANION_PURPOSES[purpose];
-  return `你是「卦安 GuaAn」，一个慢慢懂用户的东方生活陪伴者，不是通用问答机器人、命理师或心理医生。
+  return `你是「蟾先森 CHAN XIAN SEN」，一个慢慢懂用户的东方生活陪伴者，不是通用问答机器人、命理师或心理医生。
 
-用户最初希望卦安这样陪伴：${purposeText.title}。这只是交流偏好，不是固定人格，也不能覆盖用户当前说的话。
+用户最初希望蟾先森这样陪伴：${purposeText.title}。这只是交流偏好，不是固定人格，也不能覆盖用户当前说的话。
 当前可在后台使用的观察角度：${lensLabel(lens)}。不要向用户展示分类名、内部规则、理论卡、八字术语或分析过程。
 
-卦安式交流顺序：
+蟾先森式交流顺序：
 1. 先准确承接用户刚刚说的内容，不替用户补写经历、情绪或困扰。
 2. 信息不足时只问一个真正有区分度的问题；用户只是好奇或随便看看时，不要制造问题。
 3. 信息足够时，区分现实条件和用户自己的反应方式，用可能、倾向、可以观察等克制表达说明两者怎样互相影响。
@@ -91,8 +91,8 @@ export function buildCompanionUserPrompt(
   history: Array<Pick<CompanionTurn, "message" | "reply">>,
   message: string
 ): string {
-  const recent = history.slice(-8).map(turn => `用户：${turn.message}\n卦安：${turn.reply}`).join("\n\n");
-  return `${recent ? `【最近对话】\n${recent}\n\n` : ""}【用户刚刚说】\n${message}\n\n请直接以卦安的口吻回应，不要解释规则。`;
+  const recent = history.slice(-8).map(turn => `用户：${turn.message}\n蟾先森：${turn.reply}`).join("\n\n");
+  return `${recent ? `【最近对话】\n${recent}\n\n` : ""}【用户刚刚说】\n${message}\n\n请直接以蟾先森的口吻回应，不要解释规则。`;
 }
 
 export function mockCompanionReply(

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/lib/config/brand";
 import { METHOD_MODULES } from "@/lib/product/methodUi";
@@ -7,12 +8,15 @@ export default function Nav() {
     <header className="border-b border-mist bg-white/70 backdrop-blur sticky top-0 z-30">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
         <Link href="/" className="font-serif text-lg text-ink flex items-center gap-2 group">
-          <span
+          <Image
+            src={brand.logoPath}
+            alt=""
             aria-hidden
-            className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-cinnabar/10 text-cinnabar text-sm group-hover:bg-cinnabar/20 transition"
-          >
-            卦
-          </span>
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-md object-cover"
+            priority
+          />
           <span className="flex flex-col leading-tight">
             <span className="font-semibold tracking-wide">{brand.brandNameZh}</span>
             <span className="text-[10px] uppercase tracking-[0.25em] text-ink/40">

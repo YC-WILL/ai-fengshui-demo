@@ -213,5 +213,5 @@ export const BAZI_SCENE_METHOD_RULES = [
   }))
 ];
 
-export const BAZI_SCENE_SOURCE_TITLE = "卦安依据传统十神与柱位结构原创整理";
+export const BAZI_SCENE_SOURCE_TITLE = "蟾先森依据传统十神与柱位结构原创整理";
 export const BAZI_SCENE_SOURCE_URL = "https://zh.wikisource.org/wiki/三命通會_(四庫全書本)/卷01";

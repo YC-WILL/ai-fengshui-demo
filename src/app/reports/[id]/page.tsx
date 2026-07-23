@@ -43,7 +43,7 @@ export default async function ReportPage({ params }: { params: { id: string } })
         )}
         {isMemberReportType(reportType) && membership.active && (
           <span className="text-[11px] px-2 py-0.5 rounded-full bg-jade/15 text-jade border border-jade/30">
-            卦安常伴会员
+            蟾先森常伴会员
           </span>
         )}
         <span className="text-xs text-ink/50">

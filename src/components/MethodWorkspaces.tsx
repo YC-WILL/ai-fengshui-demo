@@ -666,7 +666,7 @@ export function TimingWorkspace({ today }: { today: string }) {
           <h2>{selection?.status === "insufficient" ? "资料不足，暂不生成候选" : "当前范围暂无候选"}</h2>
           <p>{selection?.status === "insufficient"
             ? selection.insufficientReason
-            : "现有事项规则与排除条件下没有可继续核对的日期，卦安不会为了凑够3天降低规则。"}</p>
+            : "现有事项规则与排除条件下没有可继续核对的日期，蟾先森不会为了凑够3天降低规则。"}</p>
           {selection?.status === "ready" && range === 7 && <button type="button" className="btn-secondary" onClick={() => setRange(30)}>改看未来30天</button>}
         </div>}
       </section>

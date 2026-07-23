@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/lib/config/brand";
 import DailySignDraw from "@/components/DailySignDraw";
@@ -18,12 +19,14 @@ export default function Hero() {
       <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-center">
         <div className="max-w-2xl">
           <div className="flex items-center gap-3 mb-3">
-            <span
+            <Image
+              src={brand.logoPath}
+              alt=""
               aria-hidden
-              className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-cinnabar/10 text-cinnabar font-serif text-xl"
-            >
-              卦
-            </span>
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-lg object-cover"
+            />
             <span className="text-xs tracking-[0.3em] uppercase text-ink/50">
               {brand.brandNameEn}
             </span>

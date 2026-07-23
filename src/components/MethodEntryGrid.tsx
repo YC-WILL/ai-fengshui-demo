@@ -6,7 +6,7 @@ export default function MethodEntryGrid() {
     <section aria-labelledby="method-entry-title">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <div className="section-kicker">卦安四盘</div>
+          <div className="section-kicker">蟾先森四盘</div>
           <h2 id="method-entry-title" className="mt-1 font-serif text-2xl">从现在想看的方向进入</h2>
         </div>
         <span className="hidden text-xs text-ink/45 sm:block">各自成盘 · 可以保存 · 持续更新</span>

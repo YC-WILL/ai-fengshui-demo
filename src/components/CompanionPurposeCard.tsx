@@ -53,13 +53,13 @@ export default function CompanionPurposeCard({ initialPurpose }: { initialPurpos
     <section id="purpose" className="card scroll-mt-24 border-gold/35 bg-gradient-to-br from-white to-rice/80">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="text-xs tracking-[0.22em] text-cinnabar/65">我来到卦安的初心</div>
+          <div className="text-xs tracking-[0.22em] text-cinnabar/65">我来到蟾先森的初心</div>
           <h3 className="mt-1 font-serif text-xl">
             {purpose ? COMPANION_PURPOSES[purpose].title : "还没有选择"}
           </h3>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
             {purpose
-              ? `${COMPANION_PURPOSES[purpose].description} 这会帮助卦安更自然地陪你，但不会限制你以后可以聊什么。`
+              ? `${COMPANION_PURPOSES[purpose].description} 这会帮助蟾先森更自然地陪你，但不会限制你以后可以聊什么。`
               : "完成第一次选择后，这里会保存你希望怎样被陪伴。"}
           </p>
         </div>

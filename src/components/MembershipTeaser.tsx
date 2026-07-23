@@ -14,7 +14,7 @@ export default function MembershipTeaser() {
   return (
     <section className="card border-gold/40">
       <div className="flex items-baseline justify-between flex-wrap gap-3 mb-3">
-        <h3 className="font-serif text-xl">免费使用 / 卦安常伴</h3>
+        <h3 className="font-serif text-xl">免费使用 / 蟾先森常伴</h3>
         <span className="text-xs text-ink/50">基础内容免费完整 · 会员提供持续陪伴</span>
       </div>
       <ul className="grid sm:grid-cols-2 gap-3">
@@ -28,7 +28,7 @@ export default function MembershipTeaser() {
       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
         <span>月度常伴 ¥{monthly}</span>
         <span>年度常伴 ¥{annual}</span>
-        <Link href="/me" className="text-cinnabar hover:underline">了解卦安常伴</Link>
+        <Link href="/me" className="text-cinnabar hover:underline">了解蟾先森常伴</Link>
         <span className="text-xs text-ink/40">当前为 mock 会员体验，不会真实扣款。</span>
       </div>
     </section>

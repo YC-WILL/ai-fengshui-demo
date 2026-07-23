@@ -324,7 +324,7 @@ model TraditionalInterpretationCard {
   @@index([isActive])
 }
 
-// ----------------- 卦安专业求签理论 -----------------
+// ----------------- 蟾先森专业求签理论 -----------------
 // 签系、方向、四时与问题场景分层保存；经典正文继续引用周易规范表。
 model SignSystem {
   id            String   @id

@@ -105,7 +105,7 @@ console.log(`[zhouyi] wrote ${hexagrams.length} hexagrams and ${hexagrams.reduce
 async function fetchPage(page, params) {
   for (let attempt = 0; attempt < 6; attempt += 1) {
     const response = await fetch(`${API_URL}?${params}`, {
-      headers: { "user-agent": "GuaAn/1.0 (structured Zhouyi preservation; source attribution included)" }
+      headers: { "user-agent": "ChanXianSen/1.0 (structured Zhouyi preservation; source attribution included)" }
     });
     if (response.ok) return response.json();
     if (response.status !== 429 && response.status < 500) {

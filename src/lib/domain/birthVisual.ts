@@ -81,6 +81,6 @@ export function buildBirthVisual(profile: BirthProfileInput, dateKey: string): B
       count: counts[element],
       ratio: total > 0 ? counts[element] / total : 0
     })),
-    methodNote: `以生辰日干${birthChart.dayMaster}（${STEM_ELEMENT[birthChart.dayMaster]}）定下卦为体，以今日天干${todayChart.dayMaster}（${STEM_ELEMENT[todayChart.dayMaster]}）定上卦为用。此为卦安固定展示口径，不替代其他起卦法；出生在立春或交节日期附近时，年、月柱仍需按具体时刻复核。`
+    methodNote: `以生辰日干${birthChart.dayMaster}（${STEM_ELEMENT[birthChart.dayMaster]}）定下卦为体，以今日天干${todayChart.dayMaster}（${STEM_ELEMENT[todayChart.dayMaster]}）定上卦为用。此为蟾先森固定展示口径，不替代其他起卦法；出生在立春或交节日期附近时，年、月柱仍需按具体时刻复核。`
   };
 }

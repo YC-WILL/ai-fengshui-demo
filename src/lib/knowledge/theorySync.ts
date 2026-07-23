@@ -18,7 +18,7 @@ function persistenceData(card: TheoryCard) {
     action: card.action,
     review: card.review,
     sourceType: "传统典籍整理",
-    sourceNote: `${card.source}；卦安依据公开古籍作原创释义，不逐字复刻原文。`,
+    sourceNote: `${card.source}；蟾先森依据公开古籍作原创释义，不逐字复刻原文。`,
     license: "内部原创释义",
     isActive: true
   };

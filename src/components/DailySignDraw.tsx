@@ -364,7 +364,7 @@ function SignResult(props: {
       <div className={`daily-sign-slip-result ${props.sign.repeated ? "is-restored" : ""}`}>
         <div className="daily-sign-slip" aria-label={`${snapshot.title}，${snapshot.conclusion}`}>
           <div className="flex items-center justify-center gap-2 text-[11px] tracking-[0.2em] text-ink/45">
-            <span>卦安</span><span className="text-cinnabar/70">·</span><span>{props.sign.periodLabel}</span>
+            <span>蟾先森</span><span className="text-cinnabar/70">·</span><span>{props.sign.periodLabel}</span>
           </div>
           <div className="daily-sign-word">{snapshot.title}</div>
           <div className="mx-auto my-4 h-px w-12 bg-gold/60" />

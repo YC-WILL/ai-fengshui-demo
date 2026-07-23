@@ -68,7 +68,7 @@ export default function CompanionExperience() {
         setTurns(historyJson.data?.turns ?? []);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "暂时无法进入卦安，请稍后再试。");
+      setError(err instanceof Error ? err.message : "暂时无法进入蟾先森，请稍后再试。");
     } finally {
       setLoading(false);
     }
@@ -106,9 +106,9 @@ export default function CompanionExperience() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ message: nextMessage })
       });
-      const json = await readJsonResponse<ChatResponse>(response, "卦安陪伴");
+      const json = await readJsonResponse<ChatResponse>(response, "蟾先森陪伴");
       if (!response.ok || !json.ok || !json.data?.turn) {
-        throw new Error(json.error ?? "卦安刚才没有接住这句话。");
+        throw new Error(json.error ?? "蟾先森刚才没有接住这句话。");
       }
       setTurns(current => [...current, json.data!.turn]);
     } catch (err) {
@@ -136,7 +136,7 @@ export default function CompanionExperience() {
       <section className="companion-shell flex min-h-[32rem] items-center justify-center" aria-busy="true">
         <div className="text-center text-sm text-ink/55">
           <div className="mx-auto mb-3 h-8 w-8 animate-pulse rounded-full bg-cinnabar/15" />
-          卦安正在把门轻轻打开……
+          蟾先森正在把门轻轻打开……
         </div>
       </section>
     );
@@ -147,7 +147,7 @@ export default function CompanionExperience() {
       <section className="companion-shell companion-onboarding">
         <div className="mx-auto max-w-3xl text-center">
           <div className="mb-4 text-xs tracking-[0.3em] text-cinnabar/70">初次见面</div>
-          <h1 className="font-serif text-3xl leading-tight md:text-4xl">你希望卦安以后主要怎样陪你？</h1>
+          <h1 className="font-serif text-3xl leading-tight md:text-4xl">你希望蟾先森以后主要怎样陪你？</h1>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-ink/60">
             先选一个比较接近的。这只是我们认识彼此的开始，不会限制以后可以聊什么。
           </p>
@@ -184,7 +184,7 @@ export default function CompanionExperience() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="text-xs tracking-[0.24em] text-cinnabar/70">有事来聊，无事来坐</div>
-            <h1 className="mt-1 font-serif text-2xl">卦安陪你慢慢说</h1>
+            <h1 className="mt-1 font-serif text-2xl">蟾先森陪你慢慢说</h1>
           </div>
           <Link href="/me#purpose" className="text-xs text-ink/50 hover:text-cinnabar">
             初心：{purposeInfo.title} · 查看
@@ -224,7 +224,7 @@ export default function CompanionExperience() {
       </div>
 
       <form onSubmit={submit} className="border-t border-mist bg-white/65 p-4 md:px-7 md:py-5">
-        <label htmlFor="companion-message" className="sr-only">想和卦安说的话</label>
+        <label htmlFor="companion-message" className="sr-only">想和蟾先森说的话</label>
         <textarea
           id="companion-message"
           value={message}
@@ -238,7 +238,7 @@ export default function CompanionExperience() {
         <div className="mt-2 flex items-center justify-between gap-3">
           <span className="text-xs text-ink/40">对话会留在“我的”里，方便下次接着聊。</span>
           <button type="submit" className="btn-primary" disabled={sending || !message.trim()}>
-            {sending ? "听你说着…" : "说给卦安听"}
+            {sending ? "听你说着…" : "说给蟾先森听"}
           </button>
         </div>
         {error && <ErrorNotice message={error} />}

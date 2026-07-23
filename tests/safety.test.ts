@@ -78,10 +78,10 @@ describe("safetyFilter · 低风险软化", () => {
 });
 
 describe("safetyFilter · 收尾", () => {
-  it("appends GuaAn-branded disclaimer when not present", () => {
+  it("appends ChanXianSen-branded disclaimer when not present", () => {
     const r = safetyFilter("这是一段安全的报告内容。");
     expect(r.text).toContain("免责声明");
-    expect(r.text).toContain("卦安");
+    expect(r.text).toContain("蟾先森");
   });
 
   it("does not double-append disclaimer", () => {

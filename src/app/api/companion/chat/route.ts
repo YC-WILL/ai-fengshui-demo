@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     const purpose = await getCompanionPurpose(user.id);
     if (!purpose) {
       return NextResponse.json(
-        { ok: false, error: "请先选一下你希望卦安怎样陪你。" },
+        { ok: false, error: "请先选一下你希望蟾先森怎样陪你。" },
         { status: 409 }
       );
     }
@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
     const message = error instanceof Error ? error.message : "unknown";
     console.error("[companion/chat] failed", { message: message.slice(0, 200) });
     return NextResponse.json(
-      { ok: false, error: "卦安刚才没有接住这句话，请稍后再说一次。" },
+      { ok: false, error: "蟾先森刚才没有接住这句话，请稍后再说一次。" },
       { status: 503 }
     );
   }

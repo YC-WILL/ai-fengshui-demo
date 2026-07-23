@@ -1,5 +1,5 @@
 // ============================================================
-// 品牌配置（卦安 GuaAn · 单一来源）
+// 品牌配置（蟾先森 CHAN XIAN SEN · 单一来源）
 //
 // 所有用户可见的品牌名、副标题、宣传语、disclaimer 短语一律
 // 从这里读取；新增/替换品牌只需改本文件。
@@ -12,9 +12,10 @@
 // ============================================================
 
 export const brand = {
-  brandNameZh: "卦安",
-  brandNameEn: "GuaAn",
-  brandFullName: "卦安 GuaAn",
+  brandNameZh: "蟾先森",
+  brandNameEn: "CHAN XIAN SEN",
+  brandFullName: "蟾先森 CHAN XIAN SEN",
+  logoPath: "/assets/chan-xiansen-logo.png",
   taglineZh: "AI 国学生活顾问",
   subtitleZh:
     "以生辰为体、今日为用，看见传统历法中的每日相应。",
@@ -24,7 +25,7 @@ export const brand = {
   brandMicroDisclaimer: "传统文化生活参考 · 非算命非改运",
   // SEO 描述
   seoDescription:
-    "卦安 GuaAn · AI 国学生活顾问。以个人生辰为基础，对照每日干支、五行与节气，呈现可核验的传统文化结构。"
+    "蟾先森 CHAN XIAN SEN · AI 国学生活顾问。以个人生辰为基础，对照每日干支、五行与节气，呈现可核验的传统文化结构。"
 } as const;
 
 export type Brand = typeof brand;

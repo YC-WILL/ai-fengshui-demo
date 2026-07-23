@@ -2,7 +2,7 @@
   "name": "ai-guoxue-life-advisor",
   "version": "0.1.0",
   "private": true,
-  "description": "卦安 GuaAn · AI 国学生活顾问 — 黄历、八字、关系、住宅空间与择日参考报告平台",
+  "description": "蟾先森 CHAN XIAN SEN · AI 国学生活顾问 — 黄历、八字、关系、住宅空间与择日参考报告平台",
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/sync-bazi-scenes-on-vercel.mjs",

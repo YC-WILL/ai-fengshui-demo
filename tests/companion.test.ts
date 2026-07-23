@@ -35,7 +35,7 @@ describe("companion conversation", () => {
   it("uses only limited recent history", () => {
     const history = Array.from({ length: 10 }, (_, index) => ({
       message: `用户消息${index}`,
-      reply: `卦安回复${index}`
+      reply: `蟾先森回复${index}`
     }));
     const prompt = buildCompanionUserPrompt(history, "今天的话");
     expect(prompt).not.toContain("用户消息0");

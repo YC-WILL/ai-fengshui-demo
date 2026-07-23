@@ -296,7 +296,7 @@ function removeModelDisclaimerSections(text: string): string {
     .join("\n")
     .replace(/^\s*(?:\*\*)?免责声明(?:\*\*)?\s*$/gim, "")
     .replace(/仅供(?:文化参考、)?生活规划启发与娱乐参考[^\n。]*。?/g, "")
-    .replace(/本报告由[「"]?卦安[^\n。]*自动生成[^\n。]*。?/g, "")
+    .replace(/本报告由[「"]?蟾先森[^\n。]*自动生成[^\n。]*。?/g, "")
     .replace(/\n{3,}/g, "\n\n");
 }
 

@@ -38,7 +38,7 @@ export default function MembershipCard() {
 
   return (
     <section className="card border-gold/40 bg-gradient-to-br from-mist/40 to-white mt-4">
-      <div className="text-xs tracking-[0.18em] text-gold/90 mb-1">卦安常伴</div>
+      <div className="text-xs tracking-[0.18em] text-gold/90 mb-1">蟾先森常伴</div>
       <h2 className="font-serif text-xl mb-2">免费内容已经完整，会员陪你继续细看</h2>
       <p className="text-sm text-ink/70 leading-6">
         会员不是购买一份更神秘的结论，而是获得更深入的场景说明、持续记录和后续陪伴。

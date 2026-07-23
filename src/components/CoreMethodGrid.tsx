@@ -47,7 +47,7 @@ export default function CoreMethodGrid({ today }: { today: string }) {
     <section aria-labelledby="core-methods-title">
       <div className="mb-3 flex items-end justify-between gap-3">
         <div>
-          <div className="text-[11px] tracking-[0.22em] text-cinnabar">卦安的方法</div>
+          <div className="text-[11px] tracking-[0.22em] text-cinnabar">蟾先森的方法</div>
           <h2 id="core-methods-title" className="mt-1 font-serif text-xl">从你要看的事开始</h2>
         </div>
         <span className="text-[11px] text-ink/45">选择后在本页展开</span>
@@ -113,6 +113,6 @@ function DatePanel({ birthDate, event, setEvent, range, setRange, dates }: {
   </div>;
 }
 
-function MissingBirth() { return <p className="text-sm text-ink/55">先在上方保存生辰，卦安才能把这项方法与你关联；不需要描述具体困扰。</p>; }
+function MissingBirth() { return <p className="text-sm text-ink/55">先在上方保存生辰，蟾先森才能把这项方法与你关联；不需要描述具体困扰。</p>; }
 function StructurePill({ value, sub }: { value: string; sub: string }) { return <div><div className="font-serif text-xl">{value}</div><div className="text-xs text-ink/45">{sub}</div></div>; }
 function TrigramLines({ binary }: { binary: string }) { return <div className="flex w-12 flex-col-reverse gap-1" aria-hidden>{[...binary].map((line, index) => line === "1" ? <i key={index} className="h-1 bg-black" /> : <span key={index} className="flex justify-between"><i className="h-1 w-[42%] bg-black" /><i className="h-1 w-[42%] bg-black" /></span>)}</div>; }

@@ -6,10 +6,10 @@ export const SIGN_SYSTEM_ID = "guaan-yi-sign-64";
 export const SIGN_SYSTEM = {
   id: SIGN_SYSTEM_ID,
   code: "guaan_yi_sign_64",
-  name: "卦安易签六十四签",
+  name: "蟾先森易签六十四签",
   version: SIGN_THEORY_VERSION,
   description: "面向早签、午签、下午签与晚签的日常方向签系；抽签后可围绕同一签象继续交互解签。",
-  theoryBasis: "以《周易》六十四卦的卦辞、彖传与大象传为经典依据；四时落点、方向与行动框架为卦安原创整理。",
+  theoryBasis: "以《周易》六十四卦的卦辞、彖传与大象传为经典依据；四时落点、方向与行动框架为蟾先森原创整理。",
   drawCount: 64,
   drawPolicy: {
     probability: "uniform",
@@ -211,7 +211,7 @@ export const SIGN_ENTRIES = zhouyiCatalog.hexagrams.map((hexagram, index) => {
     primaryDirectionCode,
     secondaryDirectionCode,
     contentStatus: "foundation",
-    sourceNote: "经典正文引用对应《周易》卦辞、彖传与大象传；方向与阶段映射为卦安第一版结构化整理，正式展示前需逐签审校。",
+    sourceNote: "经典正文引用对应《周易》卦辞、彖传与大象传；方向与阶段映射为蟾先森第一版结构化整理，正式展示前需逐签审校。",
     version: SIGN_THEORY_VERSION,
     isActive: true
   };
@@ -242,5 +242,5 @@ export const SIGN_METHOD_RULES = SIGN_METHOD_RULE_SPECS.map(([code, title, rule,
 }));
 
 if (ENTRY_SPECS.length !== 64 || SIGN_ENTRIES.length !== 64) {
-  throw new Error("卦安易签必须完整映射六十四卦");
+  throw new Error("蟾先森易签必须完整映射六十四卦");
 }

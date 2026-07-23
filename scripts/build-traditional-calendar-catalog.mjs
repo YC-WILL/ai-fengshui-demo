@@ -259,7 +259,7 @@ function interpretation(id, category, code, title, summary, detail) {
     id, version: VERSION, category, code, title, summary, detail,
     allowedUse: "仅解释可计算的传统结构与关系，不推断具体事件结果。",
     forbiddenUse: "不得用于疾病、灾难、寿命、财富或关系结果预测，不得制造恐惧。",
-    sourceTitle: "卦安依据传统结构原创整理",
+    sourceTitle: "蟾先森依据传统结构原创整理",
     sourceUrl: SOURCES.sanming.url,
     isActive: true
   });
