@@ -12,7 +12,7 @@ import type {
 } from "@/lib/domain/signInterpretation";
 import { fetchReport, readJsonResponse } from "@/lib/reports/client";
 
-type DrawPhase = "ready" | "loading" | "shaking" | "revealed";
+type DrawPhase = "ready" | "shaking" | "revealed";
 
 interface SignDraw {
   id: string;
@@ -83,44 +83,20 @@ export default function DailySignDraw() {
 
   const periodLabel = sign?.periodLabel ?? (period ? SIGN_PERIOD_LABEL[period] : "今日安签");
 
-  const openCylinder = async () => {
+  const openCylinder = () => {
     setOpen(true);
     setSign(null);
     setInterpretation(null);
     setQuestion("");
     setFollowUp("");
     setError(null);
-    setPhase("loading");
-    try {
-      const response = await fetchReport("/api/signs/current", { cache: "no-store" });
-      const payload = await readJsonResponse<{
-        ok?: boolean;
-        error?: string;
-        data?: { draw: SignDraw | null };
-      }>(response, "安签服务");
-      if (!response.ok || !payload.ok) throw new Error(payload.error ?? "暂时无法查看本时段安签");
-      if (payload.data?.draw) {
-        setSign(payload.data.draw);
-        setPeriod(payload.data.draw.period);
-        setPhase("ready");
-      } else {
-        setPhase("ready");
-      }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "安签服务暂时不可用");
-      setPhase("ready");
-    }
+    setPhase("ready");
   };
 
   const shakeAndDraw = async () => {
     if (phase === "shaking") return;
     setError(null);
     setPhase("shaking");
-    if (sign) {
-      await new Promise(resolve => window.setTimeout(resolve, 1100));
-      setPhase("revealed");
-      return;
-    }
     try {
       const [response] = await Promise.all([
         fetchReport("/api/signs/draw", {
@@ -239,27 +215,16 @@ export default function DailySignDraw() {
               ×
             </button>
 
-            {phase === "loading" ? (
-              <div className="py-16 text-center" role="status">
-                <div id="daily-sign-dialog-title" className="font-serif text-2xl text-ink">正在查看本时段原签</div>
-                <p className="mt-3 text-sm text-ink/55">若已经求过，会直接回到同一支签。</p>
-              </div>
-            ) : phase !== "revealed" ? (
+            {phase !== "revealed" ? (
               <div className="text-center">
-                <div id="daily-sign-dialog-title" className="font-serif text-2xl text-ink">
-                  {sign ? `取回你的${periodLabel}` : `摇一摇${periodLabel}`}
-                </div>
-                <p className="mt-2 text-sm leading-6 text-ink/55">
-                  {sign
-                    ? "这支签已经落定。再摇一次签筒，完整取回本时段原签。"
-                    : "轻轻点一下签筒，为这个时段留下唯一一支正式签。"}
-                </p>
+                <div id="daily-sign-dialog-title" className="font-serif text-2xl text-ink">摇一摇{periodLabel}</div>
+                <p className="mt-2 text-sm leading-6 text-ink/55">轻轻点一下签筒，为这个时段取出正式签。</p>
                 <button
                   type="button"
                   onClick={shakeAndDraw}
                   disabled={phase === "shaking"}
                   className={`daily-sign-cylinder-button ${phase === "shaking" ? "is-shaking" : ""}`}
-                  aria-label={phase === "shaking" ? "正在摇签" : sign ? "点击签筒取回原签" : "点击签筒摇一摇"}
+                  aria-label={phase === "shaking" ? "正在摇签" : "点击签筒摇一摇"}
                 >
                   <span className="daily-sign-sticks" aria-hidden="true">
                     {STICKS.map(index => (
@@ -269,9 +234,7 @@ export default function DailySignDraw() {
                   <span className="daily-sign-cylinder" aria-hidden="true"><span>卦安</span></span>
                 </button>
                 <div className="mt-2 font-medium text-cinnabar">
-                  {phase === "shaking"
-                    ? sign ? "签声轻响，正在取回原签……" : "签声轻响，正在定签……"
-                    : sign ? "点击签筒 · 取回原签" : "点击签筒 · 摇一摇"}
+                  {phase === "shaking" ? "签声轻响，正在定签……" : "点击签筒 · 摇一摇"}
                 </div>
                 {error && <p className="mt-3 text-sm text-cinnabar" role="alert">{error}</p>}
                 <p className="mt-4 text-[11px] text-ink/40">服务端定签 · 不问吉凶 · 本时段不重复换签</p>

@@ -13,10 +13,12 @@ describe("daily sign ritual animation", () => {
     expect(styles).toContain("@keyframes daily-sign-slip-drop");
   });
 
-  it("restores an existing sign without offering or triggering a redraw", () => {
+  it("keeps original-sign lookup invisible and lets the draw endpoint return it", () => {
     expect(component).toContain("取回本时段原签，不重新抽取");
-    expect(component).toContain("完整取回本时段原签");
-    expect(component).toMatch(/if \(sign\) \{[\s\S]*setPhase\(\"revealed\"\);[\s\S]*return;/);
+    expect(component).not.toContain("正在查看本时段原签");
+    expect(component).not.toContain("/api/signs/current");
+    expect(component).not.toContain("点击签筒取回原签");
+    expect(component).toContain("fetchReport(\"/api/signs/draw\"");
     expect(component).not.toContain("再求一签");
   });
 
