@@ -8,7 +8,7 @@ import { COMPANION_PROFILE_REPORT_TYPE, COMPANION_TURN_REPORT_TYPE } from "@/lib
 export async function GET() {
   try {
     const user = await getOrCreateUser();
-    const [reports, signs] = await Promise.all([
+    const [reports, signs, legacySigns] = await Promise.all([
       prisma.report.findMany({
         where: {
           userId: user.id,
@@ -20,6 +20,11 @@ export async function GET() {
           id: true, reportType: true, status: true, isPaid: true,
           createdAt: true
         }
+      }),
+      prisma.signDraw.findMany({
+        where: { userId: user.id },
+        orderBy: { drawnAt: "desc" },
+        select: { id: true, signSnapshot: true, drawnAt: true, signDate: true, period: true }
       }),
       prisma.report.findMany({
         where: { userId: user.id, reportType: "daily_sign" },
@@ -33,6 +38,7 @@ export async function GET() {
         user: { id: user.id, email: user.email, nickname: user.nickname },
         reports,
         signs,
+        legacySigns,
         membership: getMembershipStatus()
       }
     });

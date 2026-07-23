@@ -12,11 +12,13 @@ interface SignTheme {
 }
 
 export const SIGN_PERIOD_LABEL: Record<SignPeriod, string> = {
-  morning: "上午签",
-  noon: "中午签",
+  morning: "早签",
+  noon: "午签",
   afternoon: "下午签",
   evening: "晚签"
 };
+
+export const SIGN_TIMEZONE = "Asia/Shanghai";
 
 const SIGN_LIBRARY: Record<SignPeriod, readonly SignTheme[]> = {
   morning: [
@@ -77,21 +79,28 @@ const SIGN_LIBRARY: Record<SignPeriod, readonly SignTheme[]> = {
   ]
 };
 
-export function getSignPeriod(date: Date): SignPeriod {
-  const hour = date.getHours();
+export function getSignPeriod(date: Date, timezone = SIGN_TIMEZONE): SignPeriod {
+  const { hour } = signTimeParts(date, timezone);
   if (hour >= 6 && hour <= 10) return "morning";
   if (hour >= 11 && hour <= 12) return "noon";
   if (hour >= 13 && hour <= 16) return "afternoon";
   return "evening";
 }
 
-export function getSignDateKey(date: Date): string {
-  const anchored = new Date(date);
-  if (anchored.getHours() < 6) anchored.setDate(anchored.getDate() - 1);
-  const year = anchored.getFullYear();
-  const month = String(anchored.getMonth() + 1).padStart(2, "0");
-  const day = String(anchored.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+export function getSignDateKey(date: Date, timezone = SIGN_TIMEZONE): string {
+  const parts = signTimeParts(date, timezone);
+  const localDateKey = `${parts.year}-${String(parts.month).padStart(2, "0")}-${String(parts.day).padStart(2, "0")}`;
+  return parts.hour < 6 ? offsetDateKey(localDateKey, -1) : localDateKey;
+}
+
+export function resolveSignMoment(date: Date, timezone = SIGN_TIMEZONE) {
+  const period = getSignPeriod(date, timezone);
+  return {
+    period,
+    periodLabel: SIGN_PERIOD_LABEL[period],
+    signDate: getSignDateKey(date, timezone),
+    timezone
+  };
 }
 
 export function getSignCandidates(period: SignPeriod): DailySign[] {
@@ -107,7 +116,7 @@ export function getSignCandidates(period: SignPeriod): DailySign[] {
 export function pickSignCandidate(
   period: SignPeriod,
   recentIds: readonly string[] = [],
-  random: () => number = Math.random
+  random: () => number = secureRandomFraction
 ): DailySign {
   const candidates = getSignCandidates(period);
   const recentWords = new Set(
@@ -122,4 +131,37 @@ export function pickSignCandidate(
   if (available.length === 0) available = candidates;
   const value = Math.max(0, Math.min(0.999999999, random()));
   return available[Math.floor(value * available.length)];
+}
+
+function signTimeParts(date: Date, timezone: string) {
+  const values = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      hourCycle: "h23"
+    }).formatToParts(date)
+      .filter(part => part.type !== "literal")
+      .map(part => [part.type, Number(part.value)])
+  );
+  return {
+    year: values.year,
+    month: values.month,
+    day: values.day,
+    hour: values.hour
+  };
+}
+
+function offsetDateKey(dateKey: string, offset: number) {
+  const date = new Date(`${dateKey}T12:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + offset);
+  return date.toISOString().slice(0, 10);
+}
+
+function secureRandomFraction() {
+  const value = new Uint32Array(1);
+  globalThis.crypto.getRandomValues(value);
+  return value[0] / 0x1_0000_0000;
 }

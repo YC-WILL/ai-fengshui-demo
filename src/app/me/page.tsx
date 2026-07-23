@@ -7,6 +7,7 @@ import DeleteAccountButton from "./DeleteAccountButton";
 import BirthProfileCard from "./BirthProfileCard";
 import { buildBirthVisual } from "@/lib/domain/birthVisual";
 import { dateKeyInTimeZone } from "@/lib/time";
+import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,12 @@ export default async function MePage() {
         timezone: user.profile.timezone
       }, dateKeyInTimeZone())
     : null;
-  const [signRecords, hexagram] = await Promise.all([
+  const [formalSignRecords, legacySignRecords, hexagram] = await Promise.all([
+    prisma.signDraw.findMany({
+      where: { userId: user.id },
+      orderBy: { drawnAt: "desc" },
+      select: { id: true, signSnapshot: true, drawnAt: true }
+    }),
     prisma.report.findMany({
       where: { userId: user.id, reportType: "daily_sign" },
       orderBy: { createdAt: "desc" },
@@ -37,10 +43,16 @@ export default async function MePage() {
         })
       : Promise.resolve(null)
   ]);
-  const signs = signRecords.flatMap(record => {
-    const snapshot = parseSignSnapshot(record.aiResult);
-    return snapshot ? [{ ...record, ...snapshot }] : [];
-  });
+  const signs = [
+    ...formalSignRecords.flatMap(record => {
+      const snapshot = parseFormalSignSnapshot(record.signSnapshot);
+      return snapshot ? [{ id: record.id, createdAt: record.drawnAt, ...snapshot }] : [];
+    }),
+    ...legacySignRecords.flatMap(record => {
+      const snapshot = parseLegacySignSnapshot(record.aiResult);
+      return snapshot ? [{ ...record, ...snapshot }] : [];
+    })
+  ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   return (
     <div className="space-y-6">
@@ -72,7 +84,7 @@ export default async function MePage() {
             <h3 className="font-serif text-lg">我的求签</h3>
             <p className="mt-1 text-xs text-ink/50">每一次求得的安签都会留在这里，按时间倒序保存。</p>
           </div>
-          <Link href="/#daily-sign" className="text-sm text-cinnabar hover:underline">再求一签 →</Link>
+          <Link href="/#daily-sign" className="text-sm text-cinnabar hover:underline">查看当前时段 →</Link>
         </div>
         {signs.length === 0 ? (
           <div className="text-sm text-ink/60">
@@ -83,7 +95,7 @@ export default async function MePage() {
             {signs.map(sign => (
               <li key={sign.id} className="rounded-xl border border-gold/35 bg-rice/70 p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="font-serif text-2xl tracking-[0.18em] text-cinnabar">{sign.word}</span>
+                  <span className="font-serif text-xl text-cinnabar">{sign.title}</span>
                   <span className="text-xs text-ink/45">{sign.periodLabel}</span>
                 </div>
                 <p className="mt-2 text-sm leading-6 text-ink/75">{sign.message}</p>
@@ -107,8 +119,8 @@ export default async function MePage() {
   );
 }
 
-function parseSignSnapshot(value: string | null): {
-  word: string;
+function parseLegacySignSnapshot(value: string | null): {
+  title: string;
   message: string;
   periodLabel: string;
 } | null {
@@ -120,10 +132,31 @@ function parseSignSnapshot(value: string | null): {
       typeof parsed.message === "string" &&
       typeof parsed.periodLabel === "string"
     ) {
-      return { word: parsed.word, message: parsed.message, periodLabel: parsed.periodLabel };
+      return { title: parsed.word, message: parsed.message, periodLabel: parsed.periodLabel };
     }
   } catch {
     return null;
+  }
+  return null;
+}
+
+function parseFormalSignSnapshot(value: Prisma.JsonValue): {
+  title: string;
+  message: string;
+  periodLabel: string;
+} | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const parsed = value as Record<string, unknown>;
+  if (
+    typeof parsed.title === "string" &&
+    typeof parsed.conclusion === "string" &&
+    typeof parsed.periodLabel === "string"
+  ) {
+    return {
+      title: parsed.title,
+      message: parsed.conclusion,
+      periodLabel: parsed.periodLabel
+    };
   }
   return null;
 }

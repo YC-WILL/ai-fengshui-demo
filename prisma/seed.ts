@@ -17,6 +17,8 @@ import { QIMEN_CATALOG_VERSION } from "../src/lib/knowledge/qimenCatalog";
 import { syncQimenKnowledge } from "../src/lib/knowledge/qimenSync";
 import { BAZI_SCENE_CATALOG_VERSION } from "../src/lib/knowledge/baziSceneCatalog";
 import { syncBaziSceneKnowledge } from "../src/lib/knowledge/baziSceneSync";
+import { SIGN_THEORY_VERSION } from "../src/lib/knowledge/signTheoryCatalog";
+import { syncSignTheory } from "../src/lib/knowledge/signTheorySync";
 
 const prisma = new PrismaClient();
 
@@ -55,6 +57,10 @@ async function main() {
   console.log(`[seed] syncing Qimen foundation ${QIMEN_CATALOG_VERSION}...`);
   const qimenCount = await syncQimenKnowledge(prisma);
   console.log(`[seed] ${qimenCount.entities} Qimen entities, ${qimenCount.relations} relations, ${qimenCount.methodRules} method rules, ${qimenCount.interpretations} interpretations written.`);
+
+  console.log(`[seed] syncing sign theory foundation ${SIGN_THEORY_VERSION}...`);
+  const signTheoryCount = await syncSignTheory(prisma);
+  console.log(`[seed] ${signTheoryCount.entries} signs, ${signTheoryCount.periods} periods, ${signTheoryCount.directions} directions, ${signTheoryCount.domains} domains and ${signTheoryCount.methodRules} rules written.`);
 }
 
 main()

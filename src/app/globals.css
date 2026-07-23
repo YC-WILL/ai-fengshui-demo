@@ -666,6 +666,22 @@ html, body {
 }
 
 /* 首页今日安签：米纸、细金线与朱砂印记。 */
+.daily-sign-entry {
+  @apply relative overflow-hidden rounded-2xl border border-cinnabar/25 px-5 py-6 text-center shadow-scroll;
+  background:
+    radial-gradient(circle at 50% -12%, rgba(181, 59, 42, 0.13), transparent 40%),
+    linear-gradient(180deg, rgba(255, 250, 241, 0.96), rgba(255, 255, 255, 0.82));
+}
+.daily-sign-entry::after {
+  content: "签";
+  @apply pointer-events-none absolute -bottom-8 -right-2 font-serif text-[7rem] leading-none text-cinnabar/5;
+}
+.daily-sign-entry-meta { @apply mb-4 flex items-center justify-between text-[10px] tracking-[0.16em] text-cinnabar/70; }
+.daily-sign-entry-meta > span:last-child { @apply rounded-full border border-cinnabar/20 bg-white/50 px-2.5 py-1 tracking-normal; }
+.daily-sign-entry-seal { @apply mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full border border-cinnabar/35 bg-cinnabar/5 font-serif text-lg text-cinnabar shadow-sm; }
+.daily-sign-entry-action {
+  @apply relative z-10 mt-5 inline-flex min-w-36 items-center justify-center rounded-full bg-cinnabar px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-cinnabar/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/35 focus-visible:ring-offset-2;
+}
 .daily-sign-slip {
   @apply relative mx-auto min-h-72 w-full max-w-xs overflow-hidden rounded-b-2xl rounded-t-md border border-gold/55 px-7 py-6 shadow-scroll;
   background:
@@ -700,7 +716,7 @@ html, body {
   @apply fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink/35 p-4 backdrop-blur-sm;
 }
 .daily-sign-dialog {
-  @apply relative w-full max-w-md rounded-2xl border border-mist bg-rice px-6 py-7 shadow-2xl;
+  @apply relative my-auto max-h-[calc(100vh-2rem)] w-full max-w-2xl overflow-y-auto rounded-2xl border border-mist bg-rice px-5 py-6 shadow-2xl md:px-7;
 }
 .daily-sign-cylinder-button {
   @apply relative mx-auto mt-6 block h-72 w-52 cursor-pointer bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/50 focus-visible:ring-offset-4 focus-visible:ring-offset-rice disabled:cursor-wait;
@@ -761,6 +777,69 @@ html, body {
     animation-duration: 800ms;
     animation-iteration-count: 1;
   }
+}
+
+.daily-sign-result-heading {
+  @apply mb-4 flex flex-wrap items-center justify-between gap-2 text-[11px] tracking-[0.12em] text-ink/50;
+}
+.daily-sign-result-heading > span:last-child {
+  @apply rounded-full border border-cinnabar/20 bg-cinnabar/5 px-2.5 py-1 tracking-normal text-cinnabar;
+}
+.daily-sign-result-core {
+  @apply grid grid-cols-[3.5rem_1fr] items-start gap-4 rounded-2xl border border-gold/35 bg-white/55 p-4;
+}
+.daily-sign-hexagram {
+  @apply flex h-14 w-14 items-center justify-center rounded-xl bg-ink font-serif text-3xl text-rice;
+}
+.daily-sign-content-notice {
+  @apply mt-3 rounded-xl border border-gold/35 bg-gold/5 px-3 py-2 text-xs leading-5 text-ink/60;
+}
+.daily-sign-facts {
+  @apply mt-4 grid gap-3 md:grid-cols-2;
+}
+.daily-sign-facts > div,
+.daily-sign-reply > div {
+  @apply rounded-xl border border-mist bg-white/55 p-3;
+}
+.daily-sign-facts span,
+.daily-sign-reply span {
+  @apply text-[11px] font-medium tracking-[0.1em] text-cinnabar;
+}
+.daily-sign-facts p,
+.daily-sign-reply p,
+.daily-sign-reply li {
+  @apply mt-1 text-sm leading-6 text-ink/75;
+}
+.daily-sign-evidence {
+  @apply mt-4 rounded-xl border border-mist bg-white/40 p-3 text-sm text-ink/70;
+}
+.daily-sign-evidence summary {
+  @apply cursor-pointer font-medium text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/30;
+}
+.daily-sign-evidence strong { @apply text-sm font-medium text-ink; }
+.daily-sign-evidence p { @apply mt-1 text-sm leading-6 text-ink/70; }
+.daily-sign-evidence small { @apply mt-1 block text-xs leading-5 text-ink/45; }
+.daily-sign-interpretation {
+  @apply mt-6 space-y-4 border-t border-gold/30 pt-5;
+}
+.daily-sign-domain-list {
+  @apply flex flex-wrap gap-2;
+}
+.daily-sign-domain-list button {
+  @apply rounded-full border border-mist bg-white/55 px-3 py-2 text-xs text-ink/65 transition hover:border-cinnabar/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/30;
+}
+.daily-sign-domain-list button.is-active {
+  @apply border-cinnabar/40 bg-cinnabar/10 text-cinnabar;
+}
+.daily-sign-question {
+  @apply w-full resize-y rounded-xl border border-mist bg-white/70 px-3 py-3 text-sm leading-6 text-ink outline-none placeholder:text-ink/35 focus:border-cinnabar/40 focus:ring-2 focus:ring-cinnabar/10;
+}
+.daily-sign-reply {
+  @apply grid gap-3;
+}
+.daily-sign-reply ol { @apply mt-1 space-y-1; }
+.daily-sign-risk {
+  @apply rounded-xl border border-cinnabar/30 bg-cinnabar/5 px-3 py-2 text-sm leading-6 text-cinnabar;
 }
 
 /* 静心木蟾：按力度给出沉静、可辨认的动作回应。 */

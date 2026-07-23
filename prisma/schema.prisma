@@ -27,15 +27,17 @@ model User {
   reports  Report[]
   payments Payment[]
   logs     ModelLog[]
+  signDraws                  SignDraw[]
+  signInterpretationSessions SignInterpretationSession[]
 }
 
 // ----------------- 用户档案 -----------------
 model UserProfile {
   id            String   @id @default(cuid())
   userId        String   @unique
-  gender        String?  // male | female | other
-  birthDate     String?  // ISO yyyy-MM-dd
-  birthTime     String?  // HH:mm
+  gender        String? // male | female | other
+  birthDate     String? // ISO yyyy-MM-dd
+  birthTime     String? // HH:mm
   birthLocation String?
   timezone      String?  @default("Asia/Shanghai")
   createdAt     DateTime @default(now())
@@ -46,20 +48,20 @@ model UserProfile {
 
 // ----------------- 报告 -----------------
 model Report {
-  id            String   @id @default(cuid())
-  userId        String
-  reportType    String   // see ReportType in src/lib/types.ts
-  inputData     String   // JSON string
-  ruleResult    String?  // JSON string
-  aiResult      String?  // markdown
-  safetyResult  String?  // JSON string
-  isPaid        Boolean  @default(false)
-  paymentId     String?
-  status        String   @default("draft") // draft | generated | blocked | paid | failed
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(cuid())
+  userId       String
+  reportType   String // see ReportType in src/lib/types.ts
+  inputData    String // JSON string
+  ruleResult   String? // JSON string
+  aiResult     String? // markdown
+  safetyResult String? // JSON string
+  isPaid       Boolean  @default(false)
+  paymentId    String?
+  status       String   @default("draft") // draft | generated | blocked | paid | failed
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   payments Payment[]
   logs     ModelLog[]
 
@@ -73,9 +75,9 @@ model Payment {
   id        String   @id @default(cuid())
   userId    String
   reportId  String
-  amount    Int      // 分
+  amount    Int // 分
   currency  String   @default("CNY")
-  provider  String   // mock | wechat | alipay
+  provider  String // mock | wechat | alipay
   status    String   @default("pending") // pending | success | failed | refunded
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -97,9 +99,9 @@ model ModelLog {
   reasoningEffort  String?
   promptTokens     Int?
   completionTokens Int?
-  rawRequest       String?  // JSON; 视 LOG_AI_RAW_PAYLOAD 决定是否落库
-  rawResponse      String?  // JSON
-  safetyFlags      String?  // JSON
+  rawRequest       String? // JSON; 视 LOG_AI_RAW_PAYLOAD 决定是否落库
+  rawResponse      String? // JSON
+  safetyFlags      String? // JSON
   createdAt        DateTime @default(now())
 
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -113,32 +115,32 @@ model ModelLog {
 model ContentSafetyRule {
   id        String   @id @default(cuid())
   ruleName  String
-  pattern   String   // 正则字符串
-  severity  String   // low | medium | high
-  action    String   // soften | rewrite | block
+  pattern   String // 正则字符串
+  severity  String // low | medium | high
+  action    String // soften | rewrite | block
   createdAt DateTime @default(now())
 }
 
 // ----------------- 理论知识卡 -----------------
 // 心理学用于行为与行动参考，风水用于传统文化视角；不作为诊断或结果保证。
 model TheoryCard {
-  id           String   @id
-  version      String
-  module       String   // self | relationship | home | date
-  psychology   String
-  fengshui     String
-  mechanism    String
-  whenToUse    String   // JSON array
-  allowed      String
-  forbidden    String
-  action       String
-  review       String
-  sourceType   String   @default("自主整理")
-  sourceNote   String?
-  license      String?
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id         String   @id
+  version    String
+  module     String // self | relationship | home | date
+  psychology String
+  fengshui   String
+  mechanism  String
+  whenToUse  String // JSON array
+  allowed    String
+  forbidden  String
+  action     String
+  review     String
+  sourceType String   @default("自主整理")
+  sourceNote String?
+  license    String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([module])
   @@index([version])
@@ -171,31 +173,32 @@ model ZhouyiTrigram {
 }
 
 model ZhouyiHexagram {
-  number          Int      @id // 文王卦序 1–64
-  name            String   @unique
-  symbol          String   @unique
-  binary          String   @unique // 自初爻至上爻
-  lowerTrigramId  String
-  upperTrigramId  String
-  judgment        String   // 卦辞
-  tuan            String   // 彖传
-  image           String   // 大象传
-  wenyan          String?  // 乾、坤文言
-  extraLineLabel  String?  // 用九 / 用六
-  extraLineText   String?
-  extraLineImage  String?
-  sourceUrl       String
-  sourceRevision  String
-  sourceLicense   String
-  version         String
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  number         Int      @id // 文王卦序 1–64
+  name           String   @unique
+  symbol         String   @unique
+  binary         String   @unique // 自初爻至上爻
+  lowerTrigramId String
+  upperTrigramId String
+  judgment       String // 卦辞
+  tuan           String // 彖传
+  image          String // 大象传
+  wenyan         String? // 乾、坤文言
+  extraLineLabel String? // 用九 / 用六
+  extraLineText  String?
+  extraLineImage String?
+  sourceUrl      String
+  sourceRevision String
+  sourceLicense  String
+  version        String
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  lowerTrigram    ZhouyiTrigram @relation("ZhouyiLowerTrigram", fields: [lowerTrigramId], references: [id])
-  upperTrigram    ZhouyiTrigram @relation("ZhouyiUpperTrigram", fields: [upperTrigramId], references: [id])
-  lines           ZhouyiLine[]  @relation("ZhouyiHexagramLines")
-  changedFromLines ZhouyiLine[] @relation("ZhouyiLineChangeTarget")
+  lowerTrigram     ZhouyiTrigram @relation("ZhouyiLowerTrigram", fields: [lowerTrigramId], references: [id])
+  upperTrigram     ZhouyiTrigram @relation("ZhouyiUpperTrigram", fields: [upperTrigramId], references: [id])
+  lines            ZhouyiLine[]  @relation("ZhouyiHexagramLines")
+  changedFromLines ZhouyiLine[]  @relation("ZhouyiLineChangeTarget")
+  signEntries      SignEntry[]
 
   @@index([lowerTrigramId])
   @@index([upperTrigramId])
@@ -204,26 +207,26 @@ model ZhouyiHexagram {
 }
 
 model ZhouyiLine {
-  id                       String   @id // 例如 01-1
-  hexagramNumber           Int
-  position                 Int      // 初爻为 1，上爻为 6
-  label                    String
-  lineType                 String   // yin | yang
-  text                     String   // 爻辞
-  imageText                String   // 小象传
-  isCentral                Boolean  // 二、五为中
-  isInProperPosition       Boolean  // 阳居奇位、阴居偶位
-  correspondingPosition    Int      // 1↔4、2↔5、3↔6
-  hasCorrespondence        Boolean  // 对应两爻阴阳相异
-  changesToHexagramNumber  Int
-  version                  String
-  sourceUrl                String
-  sourceRevision           String
-  isActive                 Boolean  @default(true)
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  id                      String   @id // 例如 01-1
+  hexagramNumber          Int
+  position                Int // 初爻为 1，上爻为 6
+  label                   String
+  lineType                String // yin | yang
+  text                    String // 爻辞
+  imageText               String // 小象传
+  isCentral               Boolean // 二、五为中
+  isInProperPosition      Boolean // 阳居奇位、阴居偶位
+  correspondingPosition   Int // 1↔4、2↔5、3↔6
+  hasCorrespondence       Boolean // 对应两爻阴阳相异
+  changesToHexagramNumber Int
+  version                 String
+  sourceUrl               String
+  sourceRevision          String
+  isActive                Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
-  hexagram        ZhouyiHexagram @relation("ZhouyiHexagramLines", fields: [hexagramNumber], references: [number], onDelete: Cascade)
+  hexagram          ZhouyiHexagram @relation("ZhouyiHexagramLines", fields: [hexagramNumber], references: [number], onDelete: Cascade)
   changesToHexagram ZhouyiHexagram @relation("ZhouyiLineChangeTarget", fields: [changesToHexagramNumber], references: [number])
 
   @@unique([hexagramNumber, position])
@@ -319,4 +322,199 @@ model TraditionalInterpretationCard {
   @@index([category])
   @@index([version])
   @@index([isActive])
+}
+
+// ----------------- 卦安专业求签理论 -----------------
+// 签系、方向、四时与问题场景分层保存；经典正文继续引用周易规范表。
+model SignSystem {
+  id            String   @id
+  code          String   @unique
+  name          String
+  version       String
+  description   String
+  theoryBasis   String
+  drawCount     Int
+  drawPolicy    Json
+  contentStatus String   @default("foundation")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  entries        SignEntry[]
+  periodProfiles SignPeriodProfile[]
+  methodRules    SignMethodRule[]
+
+  @@index([version])
+  @@index([isActive])
+}
+
+model SignDirection {
+  id              String   @id
+  code            String   @unique
+  name            String
+  meaning         String
+  criteria        Json
+  actionPrinciple String
+  caution         String
+  version         String
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([version])
+  @@index([isActive])
+}
+
+model SignDomain {
+  id                  String   @id
+  code                String   @unique
+  name                String
+  description         String
+  clarifyingQuestions Json
+  allowedUse          String
+  forbiddenUse        String
+  version             String
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  interpretationSessions SignInterpretationSession[]
+
+  @@index([version])
+  @@index([isActive])
+}
+
+model SignPeriodProfile {
+  id                String   @id
+  systemId          String
+  code              String
+  name              String
+  sequence          Int
+  startMinute       Int
+  endMinute         Int
+  crossesMidnight   Boolean  @default(false)
+  dateAnchorHour    Int      @default(6)
+  focus             String
+  guidingQuestion   String
+  directionEmphasis Json
+  actionHorizon     String
+  version           String
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  system SignSystem @relation(fields: [systemId], references: [id], onDelete: Cascade)
+
+  @@unique([systemId, code, version])
+  @@index([systemId, sequence])
+  @@index([version])
+  @@index([isActive])
+}
+
+model SignEntry {
+  id                     String   @id
+  systemId               String
+  number                 Int
+  hexagramNumber         Int
+  title                  String
+  signType               String
+  stage                  String
+  primaryDirectionCode   String
+  secondaryDirectionCode String?
+  contentStatus          String   @default("foundation")
+  sourceNote             String
+  version                String
+  isActive               Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  system   SignSystem     @relation(fields: [systemId], references: [id], onDelete: Cascade)
+  hexagram ZhouyiHexagram @relation(fields: [hexagramNumber], references: [number])
+  draws     SignDraw[]
+
+  @@unique([systemId, number])
+  @@unique([systemId, hexagramNumber])
+  @@index([primaryDirectionCode])
+  @@index([stage])
+  @@index([version])
+  @@index([isActive])
+}
+
+model SignMethodRule {
+  id          String   @id
+  systemId    String
+  step        Int
+  code        String
+  title       String
+  rule        Json
+  explanation String
+  version     String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  system SignSystem @relation(fields: [systemId], references: [id], onDelete: Cascade)
+
+  @@unique([systemId, code, version])
+  @@index([systemId, step])
+  @@index([version])
+  @@index([isActive])
+}
+
+// ----------------- 正式求签记录与解签会话 -----------------
+// 知识内容保存在 SignEntry 等理论表；这里只保存用户本次抽签事实与对话。
+model SignDraw {
+  id               String   @id @default(cuid())
+  userId           String
+  signEntryId      String
+  signDate         String
+  period           String
+  timezone         String   @default("Asia/Shanghai")
+  randomIndex      Int
+  algorithmVersion String
+  catalogVersion   String
+  signSnapshot     Json
+  drawnAt          DateTime
+  createdAt        DateTime @default(now())
+
+  user     User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  signEntry SignEntry                  @relation(fields: [signEntryId], references: [id])
+  sessions SignInterpretationSession[]
+
+  @@unique([userId, signDate, period])
+  @@index([userId, drawnAt])
+  @@index([signEntryId])
+}
+
+model SignInterpretationSession {
+  id              String   @id @default(cuid())
+  drawId          String
+  userId          String
+  domainId        String
+  initialQuestion String
+  status          String   @default("active")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  draw   SignDraw                 @relation(fields: [drawId], references: [id], onDelete: Cascade)
+  user   User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  domain SignDomain               @relation(fields: [domainId], references: [id])
+  turns  SignInterpretationTurn[]
+
+  @@index([userId, createdAt])
+  @@index([drawId])
+  @@index([domainId])
+}
+
+model SignInterpretationTurn {
+  id           String   @id @default(cuid())
+  sessionId    String
+  role         String
+  content      String
+  responseData Json?
+  createdAt    DateTime @default(now())
+
+  session SignInterpretationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
 }

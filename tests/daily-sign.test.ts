@@ -8,7 +8,7 @@ import {
 } from "@/lib/domain/dailySign";
 
 function at(hour: number, minute = 0) {
-  return new Date(2026, 6, 14, hour, minute, 0);
+  return new Date(Date.UTC(2026, 6, 14, hour - 8, minute, 0));
 }
 
 describe("daily sign", () => {

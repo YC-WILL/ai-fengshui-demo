@@ -1,68 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { getOrCreateUser } from "@/lib/auth";
-import { prisma } from "@/lib/db";
-import {
-  pickSignCandidate,
-  SIGN_PERIOD_LABEL,
-  type SignPeriod
-} from "@/lib/domain/dailySign";
-
-const requestSchema = z.object({
-  period: z.enum(["morning", "noon", "afternoon", "evening"])
-});
+import { signErrorResponse } from "@/lib/signs/http";
+import { drawSignForUser } from "@/lib/signs/service";
+import { drawSignRequestSchema } from "@/lib/signs/validation";
 
 export async function POST(req: NextRequest) {
-  const body = await req.json().catch(() => null);
-  const parsed = requestSchema.safeParse(body);
+  const body = await req.json().catch(() => ({}));
+  const parsed = drawSignRequestSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ ok: false, error: "当前时段信息不正确" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, error: "签号和时段由服务端确定，请刷新后重试。" },
+      { status: 400 }
+    );
   }
 
   try {
     const user = await getOrCreateUser();
-    const period = parsed.data.period as SignPeriod;
-    const recent = await prisma.report.findMany({
-    where: { userId: user.id, reportType: "daily_sign" },
-    orderBy: { createdAt: "desc" },
-    take: 24,
-    select: { ruleResult: true }
-    });
-    const recentIds = recent.flatMap(item => {
-    try {
-      const parsedResult = JSON.parse(item.ruleResult ?? "{}") as { signId?: unknown };
-      return typeof parsedResult.signId === "string" ? [parsedResult.signId] : [];
-    } catch {
-      return [];
-    }
-    });
-    const sign = pickSignCandidate(period, recentIds);
-    const periodLabel = SIGN_PERIOD_LABEL[period];
-    const snapshot = { word: sign.word, message: sign.message, period, periodLabel };
-
-    const record = await prisma.report.create({
-    data: {
-      userId: user.id,
-      reportType: "daily_sign",
-      inputData: JSON.stringify({ period }),
-      ruleResult: JSON.stringify({ signId: sign.id }),
-      aiResult: JSON.stringify(snapshot),
-      safetyResult: JSON.stringify({ curated: true, predictive: false }),
-      status: "generated",
-      isPaid: true
-    }
-    });
-
-    return NextResponse.json({
-      ok: true,
-      data: { id: record.id, ...snapshot, createdAt: record.createdAt.toISOString() }
-    });
+    const draw = await drawSignForUser(user.id);
+    return NextResponse.json({ ok: true, data: draw });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "服务暂时不可用";
-    const databaseError = /prisma|database|datasource|DATABASE_URL|connect|P100/i.test(message);
-    return NextResponse.json({
-      ok: false,
-      error: databaseError ? "安签保存服务暂时不可用，请稍后再试。" : "安签暂时没有摇出结果，请稍后再试。"
-    }, { status: databaseError ? 503 : 500 });
+    return signErrorResponse(error);
   }
 }

@@ -20,9 +20,11 @@
     "db:seed:traditional-calendar": "tsx prisma/seed-traditional-calendar.ts",
     "db:seed:bazi-scenes": "tsx prisma/seed-bazi-scenes.ts",
     "db:seed:qimen": "tsx prisma/seed-qimen.ts",
+    "db:seed:sign-theory": "tsx prisma/seed-sign-theory.ts",
     "data:zhouyi": "node scripts/fetch-zhouyi-canon.mjs",
     "data:traditional-calendar": "node scripts/build-traditional-calendar-catalog.mjs",
     "data:qimen": "node scripts/build-qimen-catalog.mjs",
+    "data:sign-theory": "tsx scripts/build-sign-theory-catalog.ts",
     "setup": "npm install && npm run db:generate && npm run db:push && npm run db:seed"
   },
   "prisma": {
