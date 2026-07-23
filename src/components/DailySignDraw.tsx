@@ -10,6 +10,7 @@ import type {
   SignInterpretationReply,
   SignSnapshot
 } from "@/lib/domain/signInterpretation";
+import { preloadImages } from "@/lib/client/imagePreload";
 import { fetchReport, readJsonResponse } from "@/lib/reports/client";
 
 type DrawPhase = "ready" | "shaking" | "dropping" | "materializing" | "revealed";
@@ -37,6 +38,10 @@ const DRAW_ANIMATION_MS = {
   dropping: 1000,
   materializing: 1000
 } as const;
+const SIGN_DRAW_ASSETS = [
+  "/images/sign-draw/cylinder-v2.png",
+  "/images/sign-draw/stick-v2.png"
+] as const;
 
 function waitForAnimation(duration: number) {
   return new Promise<void>(resolve => window.setTimeout(resolve, duration));
@@ -67,6 +72,7 @@ export default function DailySignDraw() {
   useEffect(() => {
     let current = getSignPeriod(new Date());
     setPeriod(current);
+    void preloadImages(SIGN_DRAW_ASSETS);
     const timer = window.setInterval(() => {
       const next = getSignPeriod(new Date());
       if (next !== current) {
@@ -93,7 +99,8 @@ export default function DailySignDraw() {
   const periodLabel = sign?.periodLabel ?? (period ? SIGN_PERIOD_LABEL[period] : "今日安签");
   const isAnimating = phase === "shaking" || phase === "dropping" || phase === "materializing";
 
-  const openCylinder = () => {
+  const openCylinder = async () => {
+    await preloadImages(SIGN_DRAW_ASSETS);
     setOpen(true);
     setSign(null);
     setInterpretation(null);
@@ -245,6 +252,7 @@ export default function DailySignDraw() {
                         src="/images/sign-draw/cylinder-v2.png"
                         alt=""
                         draggable={false}
+                        fetchPriority="high"
                         className="daily-sign-cylinder-art"
                       />
                       {phase === "dropping" && (
@@ -252,13 +260,14 @@ export default function DailySignDraw() {
                           src="/images/sign-draw/stick-v2.png"
                           alt=""
                           draggable={false}
+                          fetchPriority="high"
                           className="daily-sign-falling-stick"
                         />
                       )}
                     </button>
                   ) : sign ? (
                     <div className="daily-sign-materializing" aria-label={`${sign.snapshot.title}正在显现`}>
-                      <img src="/images/sign-draw/stick-v2.png" alt="" draggable={false} />
+                      <img src="/images/sign-draw/stick-v2.png" alt="" draggable={false} fetchPriority="high" />
                       <div>
                         <span>{sign.periodLabel} · 第{sign.snapshot.number}签</span>
                         <strong>{sign.snapshot.title}</strong>

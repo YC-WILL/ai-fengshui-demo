@@ -6,6 +6,9 @@ import {
   woodenToadVibration,
   woodenToadVolume
 } from "@/lib/domain/woodenToad";
+import { readFileSync } from "node:fs";
+
+const component = readFileSync("src/components/WoodenToad.tsx", "utf8");
 
 describe("wooden toad feedback", () => {
   it("makes longer holds stronger", () => {
@@ -33,5 +36,14 @@ describe("wooden toad feedback", () => {
     [0.2, 0.6, 0.9].forEach(intensity => {
       expect(woodenToadReaction(intensity).reply).not.toMatch(/疼|痛|受伤|生气/);
     });
+  });
+
+  it("preloads and decodes the toad artwork before opening the dialog", () => {
+    expect(component).toContain("WOODEN_TOAD_ASSETS");
+    expect(component).toContain("void preloadImages(WOODEN_TOAD_ASSETS)");
+    expect(component).toContain("await preloadImages(WOODEN_TOAD_ASSETS)");
+    expect(component.indexOf("await preloadImages(WOODEN_TOAD_ASSETS)")).toBeLessThan(
+      component.indexOf("setOpen(true)")
+    );
   });
 });

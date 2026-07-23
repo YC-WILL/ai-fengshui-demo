@@ -37,6 +37,15 @@ describe("daily sign ritual animation", () => {
     expect(styles).not.toContain("daily-sign-shake 180ms ease-in-out infinite");
   });
 
+  it("preloads and decodes the cylinder and stick before opening the dialog", () => {
+    expect(component).toContain("SIGN_DRAW_ASSETS");
+    expect(component).toContain("void preloadImages(SIGN_DRAW_ASSETS)");
+    expect(component).toContain("await preloadImages(SIGN_DRAW_ASSETS)");
+    expect(component.indexOf("await preloadImages(SIGN_DRAW_ASSETS)")).toBeLessThan(
+      component.indexOf("setOpen(true)")
+    );
+  });
+
   it("keeps original-sign lookup invisible and lets the draw endpoint return it", () => {
     expect(component).toContain("取回本时段原签，不重新抽取");
     expect(component).not.toContain("正在查看本时段原签");

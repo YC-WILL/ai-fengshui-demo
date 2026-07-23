@@ -10,12 +10,18 @@ import {
   woodenToadVolume
 } from "@/lib/domain/woodenToad";
 import { MeditatingToadArt, ToadMalletArt } from "@/components/MeditatingToadArt";
+import { preloadImages } from "@/lib/client/imagePreload";
 
 type WoodenToadDisplayMood = "neutral" | WoodenToadMood;
 
 type AudioWindow = Window & {
   webkitAudioContext?: typeof AudioContext;
 };
+
+const WOODEN_TOAD_ASSETS = [
+  "/assets/meditating-toad-reference.png",
+  "/assets/toad-snack-plate.png"
+] as const;
 
 export default function WoodenToad() {
   const [open, setOpen] = useState(false);
@@ -36,12 +42,18 @@ export default function WoodenToad() {
 
   useEffect(() => {
     setHapticsSupported(typeof navigator !== "undefined" && typeof navigator.vibrate === "function");
+    void preloadImages(WOODEN_TOAD_ASSETS);
     return () => {
       if (powerTimer.current) window.clearInterval(powerTimer.current);
       if (reactionTimer.current) window.clearTimeout(reactionTimer.current);
       void audioContext.current?.close();
     };
   }, []);
+
+  const openToad = async () => {
+    await preloadImages(WOODEN_TOAD_ASSETS);
+    setOpen(true);
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -155,7 +167,7 @@ export default function WoodenToad() {
           <div className="font-serif text-base text-ink">静一静，敲敲木蟾</div>
           <p className="mt-0.5 text-xs text-ink/50">它静静坐在这里，也会认真回应你的每一次轻敲</p>
         </div>
-        <button type="button" className="wooden-toad-entry-action" onClick={() => setOpen(true)}>
+        <button type="button" className="wooden-toad-entry-action" onClick={openToad}>
           敲一下
         </button>
       </div>
