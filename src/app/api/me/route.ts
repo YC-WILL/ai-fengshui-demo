@@ -25,7 +25,7 @@ export async function GET() {
         where: { userId: user.id },
         orderBy: { drawnAt: "desc" },
         select: { id: true, signSnapshot: true, drawnAt: true, signDate: true, period: true }
-      }),
+      }).catch(() => []),
       prisma.report.findMany({
         where: { userId: user.id, reportType: "daily_sign" },
         orderBy: { createdAt: "desc" },

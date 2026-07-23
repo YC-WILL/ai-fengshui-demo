@@ -26,7 +26,7 @@ export default async function MePage() {
       where: { userId: user.id },
       orderBy: { drawnAt: "desc" },
       select: { id: true, signSnapshot: true, drawnAt: true }
-    }),
+    }).catch(() => []),
     prisma.report.findMany({
       where: { userId: user.id, reportType: "daily_sign" },
       orderBy: { createdAt: "desc" },
