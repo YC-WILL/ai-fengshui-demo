@@ -34,8 +34,8 @@ interface InterpretationResult {
 
 const DRAW_ANIMATION_MS = {
   shaking: 1200,
-  dropping: 900,
-  materializing: 900
+  dropping: 1000,
+  materializing: 1000
 } as const;
 
 function waitForAnimation(duration: number) {
@@ -267,7 +267,7 @@ export default function DailySignDraw() {
                     </div>
                   ) : null}
                 </div>
-                <div className="daily-sign-stage-message font-medium text-cinnabar" aria-live="polite">
+                <div key={phase} className="daily-sign-stage-message font-medium text-cinnabar" aria-live="polite">
                   {phase === "ready" && "点击签筒 · 摇一摇"}
                   {phase === "shaking" && "签声轻响，正在摇签……"}
                   {phase === "dropping" && "一支签已经落出……"}

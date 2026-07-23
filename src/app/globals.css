@@ -946,6 +946,7 @@ html, body {
 }
 .daily-sign-ritual-stage {
   @apply relative mx-auto mt-4 h-[22rem] w-full max-w-sm overflow-hidden;
+  contain: layout paint;
 }
 .daily-sign-cylinder-button {
   @apply relative mx-auto block h-full w-full cursor-pointer bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-cinnabar/50 focus-visible:ring-offset-2 focus-visible:ring-offset-rice disabled:cursor-wait;
@@ -954,25 +955,36 @@ html, body {
   @apply pointer-events-none absolute left-1/2 top-1/2 h-[21rem] w-auto max-w-none select-none object-contain;
   transform: translate(-50%, -50%);
   filter: drop-shadow(0 1.15rem 1rem rgba(68, 42, 25, 0.16));
+  backface-visibility: hidden;
+  transition: filter 260ms ease;
+  will-change: transform;
 }
 .daily-sign-cylinder-button:hover:not(:disabled) .daily-sign-cylinder-art {
   filter: brightness(1.025) drop-shadow(0 1.15rem 1rem rgba(68, 42, 25, 0.18));
 }
 .daily-sign-ritual-stage.is-shaking .daily-sign-cylinder-art {
-  animation: daily-sign-shake 180ms ease-in-out infinite;
+  animation: daily-sign-shake 1200ms linear both;
+}
+.daily-sign-ritual-stage.is-dropping .daily-sign-cylinder-art {
+  animation: daily-sign-cylinder-settle 1000ms cubic-bezier(0.22, 0.8, 0.3, 1) both;
 }
 .daily-sign-falling-stick {
   @apply pointer-events-none absolute left-1/2 top-[5.5rem] z-20 h-[15rem] w-auto max-w-none select-none object-contain;
   transform-origin: 50% 18%;
-  animation: daily-sign-stick-fall 900ms cubic-bezier(0.2, 0.78, 0.28, 1) both;
+  animation: daily-sign-stick-fall 1000ms linear both;
   filter: drop-shadow(0 0.7rem 0.55rem rgba(68, 42, 25, 0.2));
+  backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 .daily-sign-stage-message {
   @apply -mt-1 min-h-6 text-center text-sm;
+  animation: daily-sign-caption-in 320ms ease-out both;
 }
 .daily-sign-materializing {
   @apply mx-auto grid h-full max-w-sm grid-cols-[5.5rem_1fr] items-center gap-5 rounded-2xl border border-gold/35 bg-white/45 px-5 py-5 text-left;
-  animation: daily-sign-materialize 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: daily-sign-materialize 1000ms cubic-bezier(0.16, 0.84, 0.28, 1) both;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 .daily-sign-materializing img {
   @apply h-[17rem] w-auto max-w-none select-none justify-self-center object-contain;
@@ -989,26 +1001,46 @@ html, body {
 }
 
 @keyframes daily-sign-shake {
-  0%, 100% { transform: translate(-50%, -50%) rotate(0); }
-  25% { transform: translate(calc(-50% - 0.45rem), -50%) rotate(-2.2deg); }
-  75% { transform: translate(calc(-50% + 0.45rem), -50%) rotate(2.2deg); }
+  0%, 100% { transform: translate3d(-50%, -50%, 0) rotate(0); }
+  8% { transform: translate3d(calc(-50% - 0.18rem), -50%, 0) rotate(-1.1deg); }
+  18% { transform: translate3d(calc(-50% + 0.38rem), -50%, 0) rotate(2.2deg); }
+  30% { transform: translate3d(calc(-50% - 0.5rem), -50%, 0) rotate(-2.8deg); }
+  43% { transform: translate3d(calc(-50% + 0.48rem), -50%, 0) rotate(2.7deg); }
+  56% { transform: translate3d(calc(-50% - 0.36rem), -50%, 0) rotate(-2deg); }
+  69% { transform: translate3d(calc(-50% + 0.26rem), -50%, 0) rotate(1.35deg); }
+  82% { transform: translate3d(calc(-50% - 0.13rem), -50%, 0) rotate(-0.65deg); }
+  92% { transform: translate3d(calc(-50% + 0.05rem), -50%, 0) rotate(0.22deg); }
+}
+@keyframes daily-sign-cylinder-settle {
+  0%, 100% { transform: translate3d(-50%, -50%, 0) scale(1); }
+  24% { transform: translate3d(-50%, calc(-50% + 0.12rem), 0) scale(0.992); }
+  58% { transform: translate3d(-50%, calc(-50% - 0.05rem), 0) scale(1.004); }
 }
 @keyframes daily-sign-stick-fall {
-  0% { opacity: 0; transform: translate(-50%, -3.4rem) rotate(-3deg) scale(0.72); }
-  12% { opacity: 1; }
-  48% { transform: translate(-8%, -0.6rem) rotate(10deg) scale(0.78); }
-  100% { opacity: 1; transform: translate(42%, 8.5rem) rotate(72deg) scale(0.82); }
+  0% { opacity: 0.15; transform: translate3d(-50%, -3rem, 0) rotate(-3deg) scale(0.72); }
+  12% { opacity: 0.78; }
+  20% { opacity: 1; transform: translate3d(-50%, -5rem, 0) rotate(-5deg) scale(0.74); }
+  36% { transform: translate3d(-26%, -3.5rem, 0) rotate(2deg) scale(0.76); }
+  68% { transform: translate3d(25%, 5.2rem, 0) rotate(43deg) scale(0.81); }
+  88% { transform: translate3d(40%, 8.65rem, 0) rotate(74deg) scale(0.82); }
+  94% { transform: translate3d(41%, 8.15rem, 0) rotate(69deg) scale(0.82); }
+  100% { opacity: 1; transform: translate3d(42%, 8.5rem, 0) rotate(72deg) scale(0.82); }
 }
 @keyframes daily-sign-materialize {
-  0% { opacity: 0.08; filter: blur(8px); transform: translateY(0.8rem) scale(0.96); }
-  62% { opacity: 0.76; filter: blur(1.5px); }
-  100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+  0% { opacity: 0.08; transform: translate3d(0, 0.85rem, 0) scale(0.965); }
+  38% { opacity: 0.46; }
+  78% { opacity: 0.94; transform: translate3d(0, -0.06rem, 0) scale(1.002); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes daily-sign-caption-in {
+  from { opacity: 0; transform: translate3d(0, 0.2rem, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .daily-sign-ritual-stage.is-shaking .daily-sign-cylinder-art,
   .daily-sign-falling-stick {
-    animation-duration: 900ms;
+    animation-duration: 1000ms;
     animation-iteration-count: 1;
   }
   .daily-sign-materializing {

@@ -22,11 +22,19 @@ describe("daily sign ritual animation", () => {
 
   it("keeps every animation stage visible for a fixed minimum duration", () => {
     expect(component).toContain("shaking: 1200");
-    expect(component).toContain("dropping: 900");
-    expect(component).toContain("materializing: 900");
+    expect(component).toContain("dropping: 1000");
+    expect(component).toContain("materializing: 1000");
     expect(component).toContain("await waitForAnimation(DRAW_ANIMATION_MS.shaking)");
     expect(component).toContain("await waitForAnimation(DRAW_ANIMATION_MS.dropping)");
     expect(component).toContain("await waitForAnimation(DRAW_ANIMATION_MS.materializing)");
+  });
+
+  it("uses composed transforms and eased settling instead of a repeating hard shake", () => {
+    expect(styles).toContain("@keyframes daily-sign-cylinder-settle");
+    expect(styles).toContain("@keyframes daily-sign-caption-in");
+    expect(styles).toContain("translate3d");
+    expect(styles).toContain("will-change: transform");
+    expect(styles).not.toContain("daily-sign-shake 180ms ease-in-out infinite");
   });
 
   it("keeps original-sign lookup invisible and lets the draw endpoint return it", () => {
