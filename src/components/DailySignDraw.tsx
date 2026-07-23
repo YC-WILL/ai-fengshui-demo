@@ -310,6 +310,22 @@ function SignResult(props: {
         <span>{props.sign.periodLabel} · 第{snapshot.number}签</span>
         <span>{props.sign.repeated ? "本时段原签" : "刚刚得签"}</span>
       </div>
+      <div className={`daily-sign-slip-result ${props.sign.repeated ? "is-restored" : ""}`}>
+        <div className="daily-sign-slip" aria-label={`${snapshot.title}，${snapshot.conclusion}`}>
+          <div className="flex items-center justify-center gap-2 text-[11px] tracking-[0.2em] text-ink/45">
+            <span>卦安</span><span className="text-cinnabar/70">·</span><span>{props.sign.periodLabel}</span>
+          </div>
+          <div className="daily-sign-word">{snapshot.title}</div>
+          <div className="mx-auto my-4 h-px w-12 bg-gold/60" />
+          <p className="text-center text-sm leading-7 text-ink/75">{snapshot.conclusion}</p>
+          <div className="mt-5 flex justify-center">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-cinnabar/40 font-serif text-sm text-cinnabar">安</span>
+          </div>
+        </div>
+        <p className="mt-2 text-center text-[11px] text-ink/45">
+          {props.sign.repeated ? "取回本时段原签，不重新抽取" : "签条已落定，继续往下看完整签意"}
+        </p>
+      </div>
       <div className="daily-sign-result-core">
         <div className="daily-sign-hexagram" aria-hidden>{snapshot.symbol}</div>
         <div>
