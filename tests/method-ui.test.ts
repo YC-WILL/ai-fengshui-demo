@@ -42,4 +42,18 @@ describe("four plate product UI", () => {
     expect(relationshipWorkspace.indexOf("relationship-card-grid")).toBeLessThan(relationshipWorkspace.indexOf("relationship-joint-action"));
     expect(relationshipWorkspace.indexOf("relationship-joint-action")).toBeLessThan(relationshipWorkspace.indexOf("relationship-professional"));
   });
+
+  it("presents the first home plate stage as reality input, one priority and one action", () => {
+    const homePage = readFileSync("src/app/fengshui/page.tsx", "utf8");
+    const workspaces = readFileSync("src/components/MethodWorkspaces.tsx", "utf8");
+    const homeWorkspace = workspaces.slice(workspaces.indexOf("export function HomeWorkspace"), workspaces.indexOf("export function TimingWorkspace"));
+
+    expect(homePage).toContain('status="1.0 第一阶段"');
+    expect(homePage).toContain("填写三处现实情况");
+    expect(homePage).toContain("先处理一处");
+    expect(homePage).toContain("今天完成一个动作");
+    expect(homeWorkspace.indexOf("home-input-panel")).toBeLessThan(homeWorkspace.indexOf("home-priority-result"));
+    expect(homeWorkspace.indexOf("home-priority-result")).toBeLessThan(homeWorkspace.indexOf("home-professional-placeholder"));
+    expect(homeWorkspace).not.toMatch(/HOME_DIRECTIONS|住宅方位|重新校准/);
+  });
 });

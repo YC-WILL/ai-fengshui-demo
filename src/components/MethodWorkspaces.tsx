@@ -6,7 +6,15 @@ import { computeBazi } from "@/lib/domain/bazi";
 import { buildBaziObservationCards, buildBaziWeeklyAction } from "@/lib/domain/baziObservations";
 import { TEN_GOD_PLAIN_MEANING, buildBaziMainline, buildBaziStructure, explainBaziCharacter, hiddenLayerReading, type BaziCharacterKind } from "@/lib/domain/baziStructure";
 import { buildBaziTimeLayers, type BaziTimeLayerId } from "@/lib/domain/baziTimeComparison";
-import { HOME_DIRECTIONS, selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
+import { selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
+import {
+  HOME_AREA_DEFINITIONS,
+  buildHomeSpaceAssessment,
+  getHomeIssueDefinition,
+  type HomeAreaId,
+  type HomeIssueId,
+  type HomeSpaceInput
+} from "@/lib/domain/homeSpaceObservations";
 import {
   RELATIONSHIP_TYPES,
   buildPairInteractionFacts,
@@ -419,49 +427,122 @@ export function RelationWorkspace() {
   );
 }
 
-const ROOMS = [
-  { direction: "东南", name: "书房" }, { direction: "南", name: "阳台" }, { direction: "西南", name: "未标记" },
-  { direction: "东", name: "大门" }, { direction: "中心", name: "定位点" }, { direction: "西", name: "厨房" },
-  { direction: "东北", name: "收纳" }, { direction: "北", name: "卧室" }, { direction: "西北", name: "客厅" }
-] as const;
+const ROOMS = HOME_AREA_DEFINITIONS;
 
 export function HomeWorkspace() {
-  const [selected, setSelected] = useState("东");
-  const selectedRoom = ROOMS.find(room => room.direction === selected)!;
-  const direction = HOME_DIRECTIONS.find(item => item.direction === selected);
+  const [input, setInput] = useState<HomeSpaceInput>({});
+  const assessment = useMemo(() => buildHomeSpaceAssessment(input), [input]);
+
+  function toggleIssue(area: HomeAreaId, issueId: HomeIssueId) {
+    setInput(current => {
+      const selected = current[area]?.issues ?? [];
+      const nextIssues = selected.includes(issueId)
+        ? selected.filter(item => item !== issueId)
+        : [...selected, issueId];
+      if (nextIssues.length === 0) {
+        const next = { ...current };
+        delete next[area];
+        return next;
+      }
+      return { ...current, [area]: { reviewed: true, issues: nextIssues } };
+    });
+  }
+
+  function toggleNoIssue(area: HomeAreaId) {
+    setInput(current => {
+      if (current[area]?.reviewed && current[area]?.issues.length === 0) {
+        const next = { ...current };
+        delete next[area];
+        return next;
+      }
+      return { ...current, [area]: { reviewed: true, issues: [] } };
+    });
+  }
+
   return (
-    <section className="plate-shell">
-      <div className="plate-main">
-        <div className="plate-section-head">
-          <div><span>住宅方位</span><small>先校准朝向，再标记真实空间</small></div>
-          <button type="button" className="btn-secondary" disabled>重新校准 · 下一步接通</button>
-        </div>
-        <div className="home-grid-wrap">
-          <div className="home-direction-grid">
-            {ROOMS.map(room => (
-              <button key={room.direction} type="button" aria-pressed={selected === room.direction} onClick={() => setSelected(room.direction)}>
-                <b>{room.direction}</b><span>{room.name}</span>
-              </button>
-            ))}
+    <section className="home-space-workspace">
+      <section className="home-input-panel" aria-labelledby="home-input-title">
+        <div className="home-space-section-head">
+          <div>
+            <span className="section-kicker">先只看真实空间</span>
+            <h2 id="home-input-title">这三处现在是什么情况</h2>
+            <p>只填写你确认过的情况，可以只填一处；没有填写的区域不会参与判断。</p>
           </div>
-          <div className="home-selected">
-            <Trigram binary={direction?.binary ?? "111"} />
-            <div className="section-kicker">当前方位</div>
-            <h2 className="mt-2 font-serif text-3xl">{selectedRoom.direction}{direction ? ` · ${direction.trigram}卦` : ""}</h2>
-            <p className="mt-2 text-sm leading-6 text-ink/55">{direction ? `五行属${direction.element}。` : "住宅中心用于校准八方。"} 当前标记为“{selectedRoom.name}”。</p>
-          </div>
+          <div className="home-coverage-count"><b>{assessment.reviewedAreas.length}</b><span>/ 3 处已填写</span></div>
         </div>
-        <div className="reality-checks">
-          <div><b>采光</b><span>上午 / 下午</span></div><div><b>通风</b><span>是否形成对流</span></div><div><b>噪音</b><span>来源与时段</span></div><div><b>动线</b><span>高频通行位置</span></div>
+        <div className="home-area-grid">
+          {ROOMS.map((area, index) => {
+            const areaInput = input[area.id];
+            const isReviewedClear = areaInput?.reviewed === true && areaInput.issues.length === 0;
+            return <fieldset className="home-area-card" key={area.id}>
+              <legend className="sr-only">{area.label}</legend>
+              <header>
+                <span>0{index + 1}</span>
+                <div><h3>{area.label}</h3><p>{area.prompt}</p></div>
+                <b className={areaInput ? "is-reviewed" : ""}>{areaInput ? "已填写" : "资料不足"}</b>
+              </header>
+              <div className="home-issue-list">
+                {area.issueIds.map(issueId => {
+                  const issue = getHomeIssueDefinition(issueId)!;
+                  return <label key={issueId}>
+                    <input
+                      type="checkbox"
+                      checked={areaInput?.issues.includes(issueId) ?? false}
+                      onChange={() => toggleIssue(area.id, issueId)}
+                    />
+                    <span>{issue.label}</span>
+                  </label>;
+                })}
+              </div>
+              <label className="home-no-issue">
+                <input type="checkbox" checked={isReviewedClear} onChange={() => toggleNoIssue(area.id)} />
+                <span>已检查，没有上述情况</span>
+              </label>
+            </fieldset>;
+          })}
         </div>
-      </div>
-      <aside className="plate-aside">
-        <div className="section-kicker">传统与现实并看</div>
-        <h2 className="mt-2 font-serif text-2xl">这个位置先看什么</h2>
-        <p className="mt-3 text-sm leading-7 text-ink/60">方位给出传统结构坐标；真正影响居住的采光、通风、潮湿、噪音和安全问题必须单独核对。</p>
-        <div className="plate-evidence"><b>当前依据</b><span>{direction ? `${direction.direction}方对应后天八卦${direction.trigram}，五行属${direction.element}` : "住宅中心点"}</span></div>
-        <div className="member-extension"><span>会员层</span><b>多套住宅与户型图层</b><small>增加户型保存、房间标记和前后变化记录。</small></div>
-      </aside>
+      </section>
+
+      <section className={`home-priority-result is-${assessment.status}${assessment.priority?.priority === 1 ? " is-safety" : ""}`} aria-live="polite">
+        <div className="home-priority-copy">
+          <span className="section-kicker">当前最值得先处理</span>
+          {assessment.status === "insufficient" && <>
+            <h2>资料不足，暂不判断</h2>
+            <p>至少确认一处区域后，这里才会根据你的实际填写选择优先项。</p>
+          </>}
+          {assessment.status === "clear" && <>
+            <h2>已填写区域暂未见明显问题</h2>
+            <p>不需要为了得到结论而调整空间；未填写区域仍保持“资料不足”。</p>
+          </>}
+          {assessment.priority && <>
+            <div className="home-priority-meta"><b>{assessment.priority.priorityLabel}</b><span>{assessment.priority.areaLabel}</span></div>
+            <h2>{assessment.priority.title}</h2>
+            <p>{assessment.priority.reason}</p>
+            <div className="home-input-evidence"><b>来自你的填写</b><span>{assessment.priority.source}</span></div>
+          </>}
+          <small>{assessment.coverageNote}</small>
+        </div>
+        <div className="home-action-card">
+          <span className="section-kicker">今天可以完成</span>
+          {assessment.action ? <>
+            <h2>{assessment.action.durationMinutes}分钟内可以开始</h2>
+            <p>{assessment.action.text}</p>
+            <div><b>完成标准</b><span>{assessment.action.doneWhen}</span></div>
+            {assessment.action.requiresProfessional && <small>这是安全状态：暂停相关使用，交由物业或合格专业人员处理，不自行拆改。</small>}
+          </> : assessment.status === "clear" ? <>
+            <h2>今天不需要额外调整</h2>
+            <p>保留现在的使用方式即可；补充其他区域后再重新判断。</p>
+          </> : <>
+            <h2>先完成一处填写</h2>
+            <p>从你每天最常经过或使用的一处开始，确认是否存在上面的具体情况。</p>
+          </>}
+        </div>
+      </section>
+
+      <section className="home-professional-placeholder" aria-labelledby="home-professional-title">
+        <div><span className="section-kicker">专业结构区</span><h2 id="home-professional-title">门、主、灶与方位观察将在后续阶段展开</h2></div>
+        <p>今天的优先判断只来自你填写的现实空间情况，暂不展开方位判断、住宅评分或物品建议。</p>
+      </section>
     </section>
   );
 }
@@ -502,10 +583,6 @@ export function TimingWorkspace({ today }: { today: string }) {
 
 function PersonNode({ label, pillar, element, muted }: { label: string; pillar: string; element?: Element; muted?: boolean }) {
   return <div className={`person-node ${muted ? "is-muted" : ""}`}><span>{label}</span><strong>{pillar}</strong><small>{element ? `日干属${element}` : "待填写"}</small></div>;
-}
-
-function Trigram({ binary }: { binary: string }) {
-  return <div className="trigram-lines" aria-hidden>{[...binary].reverse().map((line, index) => line === "1" ? <i key={index} /> : <span key={index}><i /><i /></span>)}</div>;
 }
 
 function CandidateDate({ value, index, active, onClick }: { value: CoreDateCandidate; index: number; active: boolean; onClick: () => void }) {

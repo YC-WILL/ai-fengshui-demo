@@ -22,9 +22,9 @@ export const METHOD_MODULES = [
     href: "/fengshui",
     eyebrow: "安居",
     title: "宅居盘",
-    subtitle: "把方向落到真实空间",
-    description: "从朝向和八卦方位开始，再把采光、通风、噪音与动线放回住宅判断。",
-    basis: "八方 · 八卦 · 五行"
+    subtitle: "先照顾真实居住问题",
+    description: "从入户、主要休息区与厨房的实际情况开始，先处理安全、长期居住条件与日常动线。",
+    basis: "安全 · 居住条件 · 动线"
   },
   {
     id: "timing",

@@ -399,21 +399,50 @@ html, body {
 .relationship-method summary { @apply cursor-pointer text-cinnabar; }
 .relationship-method p { @apply mt-3 leading-7 text-ink/55; }
 
-.home-grid-wrap { @apply grid gap-5 md:grid-cols-[minmax(0,1.35fr)_minmax(13rem,0.65fr)] md:items-stretch; }
-.home-direction-grid { @apply grid aspect-square max-h-[32rem] grid-cols-3 border-l border-t border-ink/15; }
-.home-direction-grid button { @apply flex min-h-24 flex-col items-center justify-center border-b border-r border-ink/15 bg-rice/35 p-2 transition hover:bg-white; }
-.home-direction-grid button b { @apply font-serif font-normal; }
-.home-direction-grid button span { @apply mt-1 text-xs text-ink/45; }
-.home-direction-grid button[aria-pressed="true"] { @apply bg-cinnabar/5 text-cinnabar outline outline-1 -outline-offset-2 outline-cinnabar/40; }
-.home-selected { @apply flex flex-col items-center justify-center rounded-xl border border-gold/35 bg-white/60 p-5 text-center; }
-.trigram-lines { @apply mb-6 flex w-16 flex-col gap-2; }
-.trigram-lines > i { @apply block h-1 bg-black; }
-.trigram-lines > span { @apply flex justify-between; }
-.trigram-lines > span i { @apply block h-1 w-[42%] bg-black; }
-.reality-checks { @apply mt-4 grid gap-2 grid-cols-2 sm:grid-cols-4; }
-.reality-checks div { @apply flex flex-col rounded-lg border border-mist bg-white/60 p-3; }
-.reality-checks b { @apply text-sm font-medium; }
-.reality-checks span { @apply mt-1 text-[11px] text-ink/45; }
+.home-space-workspace { @apply space-y-5; }
+.home-input-panel { @apply overflow-hidden rounded-2xl border border-mist bg-white/75 shadow-scroll; }
+.home-space-section-head { @apply flex flex-col gap-4 border-b border-mist bg-rice/55 px-5 py-5 sm:flex-row sm:items-end sm:justify-between md:px-6; }
+.home-space-section-head h2 { @apply mt-2 font-serif text-2xl font-normal; }
+.home-space-section-head p { @apply mt-2 max-w-2xl text-sm leading-6 text-ink/55; }
+.home-coverage-count { @apply flex shrink-0 items-baseline gap-1 rounded-xl border border-gold/35 bg-white/70 px-4 py-3; }
+.home-coverage-count b { @apply font-serif text-2xl font-normal text-cinnabar; }
+.home-coverage-count span { @apply text-xs text-ink/45; }
+.home-area-grid { @apply grid gap-px bg-mist lg:grid-cols-3; }
+.home-area-card { @apply min-w-0 bg-white/85 p-5 md:p-6; }
+.home-area-card > header { @apply grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-start gap-3 border-b border-mist pb-4; }
+.home-area-card > header > span { @apply flex h-8 w-8 items-center justify-center rounded-full border border-cinnabar/25 font-serif text-xs text-cinnabar; }
+.home-area-card h3 { @apply font-serif text-xl font-normal; }
+.home-area-card header p { @apply mt-1 text-[11px] leading-5 text-ink/45; }
+.home-area-card header > b { @apply rounded-full border border-mist px-2 py-1 text-[9px] font-medium text-ink/35; }
+.home-area-card header > b.is-reviewed { @apply border-jade/30 bg-jade/5 text-jade; }
+.home-issue-list { @apply mt-4 grid gap-2; }
+.home-issue-list label, .home-no-issue { @apply flex cursor-pointer items-center gap-3 rounded-lg border border-mist bg-rice/25 px-3 py-2.5 text-sm text-ink/60 transition hover:bg-rice/55; }
+.home-issue-list input, .home-no-issue input { @apply h-4 w-4 shrink-0 accent-cinnabar; }
+.home-issue-list label:has(input:checked) { @apply border-cinnabar/30 bg-cinnabar/5 text-ink/75; }
+.home-no-issue { @apply mt-4 border-dashed text-xs; }
+.home-no-issue:has(input:checked) { @apply border-jade/35 bg-jade/5 text-jade; }
+.home-priority-result { @apply grid overflow-hidden rounded-2xl border border-mist bg-white/75 shadow-scroll lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]; }
+.home-priority-copy { @apply p-5 md:p-7; }
+.home-priority-copy h2 { @apply mt-2 font-serif text-2xl font-normal; }
+.home-priority-copy > p { @apply mt-3 max-w-2xl text-sm leading-7 text-ink/60; }
+.home-priority-copy > small { @apply mt-5 block border-t border-mist pt-4 text-[11px] leading-5 text-ink/40; }
+.home-priority-meta { @apply mt-3 flex flex-wrap gap-2; }
+.home-priority-meta b, .home-priority-meta span { @apply rounded-full border border-gold/35 bg-gold/5 px-3 py-1 text-[10px] font-medium text-ink/55; }
+.home-priority-result.is-safety { @apply border-cinnabar/35; }
+.home-priority-result.is-safety .home-priority-meta b { @apply border-cinnabar/35 bg-cinnabar/5 text-cinnabar; }
+.home-input-evidence { @apply mt-4 flex flex-col gap-1 rounded-xl border border-mist bg-rice/45 p-4; }
+.home-input-evidence b { @apply text-[10px] font-medium tracking-wider text-cinnabar; }
+.home-input-evidence span { @apply text-xs leading-5 text-ink/55; }
+.home-action-card { @apply border-t border-mist bg-rice/60 p-5 md:p-7 lg:border-l lg:border-t-0; }
+.home-action-card h2 { @apply mt-2 font-serif text-xl font-normal; }
+.home-action-card > p { @apply mt-3 text-sm leading-7 text-ink/65; }
+.home-action-card > div { @apply mt-4 flex flex-col gap-1 rounded-xl border border-gold/35 bg-white/70 p-4; }
+.home-action-card > div b { @apply text-[10px] font-medium tracking-wider text-cinnabar; }
+.home-action-card > div span { @apply text-xs leading-6 text-ink/60; }
+.home-action-card > small { @apply mt-4 block rounded-xl border border-cinnabar/25 bg-cinnabar/5 p-3 text-xs leading-6 text-ink/55; }
+.home-professional-placeholder { @apply flex flex-col gap-4 rounded-2xl border border-dashed border-gold/45 bg-white/55 p-5 md:flex-row md:items-center md:justify-between md:p-6; }
+.home-professional-placeholder h2 { @apply mt-2 font-serif text-xl font-normal; }
+.home-professional-placeholder p { @apply max-w-xl text-xs leading-6 text-ink/45 md:text-right; }
 
 .event-chips { @apply flex flex-wrap gap-2; }
 .candidate-list { @apply mt-5 grid gap-3 sm:grid-cols-3; }
@@ -452,7 +481,9 @@ html, body {
   .person-node { @apply min-h-28 p-2; }
   .person-node strong { @apply text-xl; }
   .pair-bridge { @apply min-w-0; }
-  .home-direction-grid button { @apply min-h-20; }
+  .home-area-card { @apply p-4; }
+  .home-area-card > header { @apply grid-cols-[2rem_minmax(0,1fr)] gap-2; }
+  .home-area-card > header > b { @apply col-start-2 row-start-2 w-fit; }
 }
 
 /* 二十四节气是首页首屏；以文字层级呈现当天与交节位置。 */
