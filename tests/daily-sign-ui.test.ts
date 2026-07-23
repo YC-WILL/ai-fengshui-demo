@@ -5,12 +5,28 @@ const component = readFileSync("src/components/DailySignDraw.tsx", "utf8");
 const styles = readFileSync("src/app/globals.css", "utf8");
 
 describe("daily sign ritual animation", () => {
-  it("keeps the cylinder shake and the falling sign slip", () => {
-    expect(component).toContain("is-shaking");
-    expect(component).toContain("daily-sign-slip-result");
-    expect(component).toContain("daily-sign-slip");
+  it("shows the redesigned cylinder and the complete staged draw ritual", () => {
+    expect(component).toContain("/images/sign-draw/cylinder-v2.png");
+    expect(component).toContain("/images/sign-draw/stick-v2.png");
+    expect(component).toContain('setPhase("shaking")');
+    expect(component).toContain('setPhase("dropping")');
+    expect(component).toContain('setPhase("materializing")');
+    expect(component).toContain('setPhase("revealed")');
+    expect(component.indexOf('setPhase("shaking")')).toBeLessThan(component.indexOf('setPhase("dropping")'));
+    expect(component.indexOf('setPhase("dropping")')).toBeLessThan(component.indexOf('setPhase("materializing")'));
+    expect(component.indexOf('setPhase("materializing")')).toBeLessThan(component.indexOf('setPhase("revealed")'));
     expect(styles).toContain("@keyframes daily-sign-shake");
-    expect(styles).toContain("@keyframes daily-sign-slip-drop");
+    expect(styles).toContain("@keyframes daily-sign-stick-fall");
+    expect(styles).toContain("@keyframes daily-sign-materialize");
+  });
+
+  it("keeps every animation stage visible for a fixed minimum duration", () => {
+    expect(component).toContain("shaking: 1200");
+    expect(component).toContain("dropping: 900");
+    expect(component).toContain("materializing: 900");
+    expect(component).toContain("await waitForAnimation(DRAW_ANIMATION_MS.shaking)");
+    expect(component).toContain("await waitForAnimation(DRAW_ANIMATION_MS.dropping)");
+    expect(component).toContain("await waitForAnimation(DRAW_ANIMATION_MS.materializing)");
   });
 
   it("keeps original-sign lookup invisible and lets the draw endpoint return it", () => {
@@ -24,6 +40,6 @@ describe("daily sign ritual animation", () => {
 
   it("respects reduced-motion preferences", () => {
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
-    expect(styles).toMatch(/daily-sign-slip-result[\s\S]*animation: none/);
+    expect(styles).toContain("daily-sign-materialize-reduced");
   });
 });

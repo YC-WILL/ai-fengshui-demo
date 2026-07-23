@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import {
   getSignPeriod,
   SIGN_PERIOD_LABEL,
@@ -12,7 +12,7 @@ import type {
 } from "@/lib/domain/signInterpretation";
 import { fetchReport, readJsonResponse } from "@/lib/reports/client";
 
-type DrawPhase = "ready" | "shaking" | "revealed";
+type DrawPhase = "ready" | "shaking" | "dropping" | "materializing" | "revealed";
 
 interface SignDraw {
   id: string;
@@ -32,7 +32,16 @@ interface InterpretationResult {
   reply: SignInterpretationReply;
 }
 
-const STICKS = Array.from({ length: 13 }, (_, index) => index);
+const DRAW_ANIMATION_MS = {
+  shaking: 1200,
+  dropping: 900,
+  materializing: 900
+} as const;
+
+function waitForAnimation(duration: number) {
+  return new Promise<void>(resolve => window.setTimeout(resolve, duration));
+}
+
 const DOMAINS = [
   ["self_state", "我自己目前的状态"],
   ["career_study", "工作或学习"],
@@ -71,7 +80,7 @@ export default function DailySignDraw() {
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && phase !== "shaking") setOpen(false);
+      if (event.key === "Escape" && (phase === "ready" || phase === "revealed")) setOpen(false);
     };
     document.addEventListener("keydown", onKeyDown);
     document.body.style.overflow = "hidden";
@@ -82,6 +91,7 @@ export default function DailySignDraw() {
   }, [open, phase]);
 
   const periodLabel = sign?.periodLabel ?? (period ? SIGN_PERIOD_LABEL[period] : "今日安签");
+  const isAnimating = phase === "shaking" || phase === "dropping" || phase === "materializing";
 
   const openCylinder = () => {
     setOpen(true);
@@ -94,18 +104,19 @@ export default function DailySignDraw() {
   };
 
   const shakeAndDraw = async () => {
-    if (phase === "shaking") return;
+    if (phase !== "ready") return;
     setError(null);
     setPhase("shaking");
     try {
-      const [response] = await Promise.all([
-        fetchReport("/api/signs/draw", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({})
-        }),
-        new Promise(resolve => window.setTimeout(resolve, 1100))
-      ]);
+      const responsePromise = fetchReport("/api/signs/draw", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({})
+      });
+      await waitForAnimation(DRAW_ANIMATION_MS.shaking);
+      setPhase("dropping");
+      await waitForAnimation(DRAW_ANIMATION_MS.dropping);
+      const response = await responsePromise;
       const payload = await readJsonResponse<{ ok?: boolean; error?: string; data?: SignDraw }>(
         response,
         "安签服务"
@@ -115,6 +126,8 @@ export default function DailySignDraw() {
       }
       setSign(payload.data);
       setPeriod(payload.data.period);
+      setPhase("materializing");
+      await waitForAnimation(DRAW_ANIMATION_MS.materializing);
       setPhase("revealed");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "这次没有摇出签，请稍后再试");
@@ -202,14 +215,14 @@ export default function DailySignDraw() {
 
       {open && (
         <div className="daily-sign-modal" role="presentation" onMouseDown={event => {
-          if (event.target === event.currentTarget && phase !== "shaking") setOpen(false);
+          if (event.target === event.currentTarget && !isAnimating) setOpen(false);
         }}>
           <div role="dialog" aria-modal="true" aria-labelledby="daily-sign-dialog-title" className="daily-sign-dialog">
             <button
               type="button"
               className="absolute right-4 top-3 z-10 text-2xl leading-none text-ink/35 hover:text-ink/70 disabled:opacity-30"
               aria-label="关闭求签"
-              disabled={phase === "shaking"}
+              disabled={isAnimating}
               onClick={() => setOpen(false)}
             >
               ×
@@ -219,22 +232,46 @@ export default function DailySignDraw() {
               <div className="text-center">
                 <div id="daily-sign-dialog-title" className="font-serif text-2xl text-ink">摇一摇{periodLabel}</div>
                 <p className="mt-2 text-sm leading-6 text-ink/55">轻轻点一下签筒，为这个时段取出正式签。</p>
-                <button
-                  type="button"
-                  onClick={shakeAndDraw}
-                  disabled={phase === "shaking"}
-                  className={`daily-sign-cylinder-button ${phase === "shaking" ? "is-shaking" : ""}`}
-                  aria-label={phase === "shaking" ? "正在摇签" : "点击签筒摇一摇"}
-                >
-                  <span className="daily-sign-sticks" aria-hidden="true">
-                    {STICKS.map(index => (
-                      <span key={index} style={{ "--stick-index": index } as CSSProperties} />
-                    ))}
-                  </span>
-                  <span className="daily-sign-cylinder" aria-hidden="true"><span>卦安</span></span>
-                </button>
-                <div className="mt-2 font-medium text-cinnabar">
-                  {phase === "shaking" ? "签声轻响，正在定签……" : "点击签筒 · 摇一摇"}
+                <div className={`daily-sign-ritual-stage is-${phase}`} aria-live="polite">
+                  {phase !== "materializing" ? (
+                    <button
+                      type="button"
+                      onClick={shakeAndDraw}
+                      disabled={phase !== "ready"}
+                      className="daily-sign-cylinder-button"
+                      aria-label={phase === "ready" ? "点击签筒摇一摇" : "正在完成求签动画"}
+                    >
+                      <img
+                        src="/images/sign-draw/cylinder-v2.png"
+                        alt=""
+                        draggable={false}
+                        className="daily-sign-cylinder-art"
+                      />
+                      {phase === "dropping" && (
+                        <img
+                          src="/images/sign-draw/stick-v2.png"
+                          alt=""
+                          draggable={false}
+                          className="daily-sign-falling-stick"
+                        />
+                      )}
+                    </button>
+                  ) : sign ? (
+                    <div className="daily-sign-materializing" aria-label={`${sign.snapshot.title}正在显现`}>
+                      <img src="/images/sign-draw/stick-v2.png" alt="" draggable={false} />
+                      <div>
+                        <span>{sign.periodLabel} · 第{sign.snapshot.number}签</span>
+                        <strong>{sign.snapshot.title}</strong>
+                        <p>{sign.snapshot.conclusion}</p>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+                <div className="daily-sign-stage-message font-medium text-cinnabar" aria-live="polite">
+                  {phase === "ready" && "点击签筒 · 摇一摇"}
+                  {phase === "shaking" && "签声轻响，正在摇签……"}
+                  {phase === "dropping" && "一支签已经落出……"}
+                  {phase === "materializing" && "签意渐渐显现……"}
                 </div>
                 {error && <p className="mt-3 text-sm text-cinnabar" role="alert">{error}</p>}
                 <p className="mt-4 text-[11px] text-ink/40">服务端定签 · 不问吉凶 · 本时段不重复换签</p>
