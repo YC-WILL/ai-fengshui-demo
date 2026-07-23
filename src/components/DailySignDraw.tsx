@@ -102,7 +102,7 @@ export default function DailySignDraw() {
       if (payload.data?.draw) {
         setSign(payload.data.draw);
         setPeriod(payload.data.draw.period);
-        setPhase("revealed");
+        setPhase("ready");
       } else {
         setPhase("ready");
       }
@@ -116,6 +116,11 @@ export default function DailySignDraw() {
     if (phase === "shaking") return;
     setError(null);
     setPhase("shaking");
+    if (sign) {
+      await new Promise(resolve => window.setTimeout(resolve, 1100));
+      setPhase("revealed");
+      return;
+    }
     try {
       const [response] = await Promise.all([
         fetchReport("/api/signs/draw", {
@@ -241,14 +246,20 @@ export default function DailySignDraw() {
               </div>
             ) : phase !== "revealed" ? (
               <div className="text-center">
-                <div id="daily-sign-dialog-title" className="font-serif text-2xl text-ink">摇一摇{periodLabel}</div>
-                <p className="mt-2 text-sm leading-6 text-ink/55">轻轻点一下签筒，为这个时段留下唯一一支正式签。</p>
+                <div id="daily-sign-dialog-title" className="font-serif text-2xl text-ink">
+                  {sign ? `取回你的${periodLabel}` : `摇一摇${periodLabel}`}
+                </div>
+                <p className="mt-2 text-sm leading-6 text-ink/55">
+                  {sign
+                    ? "这支签已经落定。再摇一次签筒，完整取回本时段原签。"
+                    : "轻轻点一下签筒，为这个时段留下唯一一支正式签。"}
+                </p>
                 <button
                   type="button"
                   onClick={shakeAndDraw}
                   disabled={phase === "shaking"}
                   className={`daily-sign-cylinder-button ${phase === "shaking" ? "is-shaking" : ""}`}
-                  aria-label={phase === "shaking" ? "正在摇签" : "点击签筒摇一摇"}
+                  aria-label={phase === "shaking" ? "正在摇签" : sign ? "点击签筒取回原签" : "点击签筒摇一摇"}
                 >
                   <span className="daily-sign-sticks" aria-hidden="true">
                     {STICKS.map(index => (
@@ -258,7 +269,9 @@ export default function DailySignDraw() {
                   <span className="daily-sign-cylinder" aria-hidden="true"><span>卦安</span></span>
                 </button>
                 <div className="mt-2 font-medium text-cinnabar">
-                  {phase === "shaking" ? "签声轻响，正在定签……" : "点击签筒 · 摇一摇"}
+                  {phase === "shaking"
+                    ? sign ? "签声轻响，正在取回原签……" : "签声轻响，正在定签……"
+                    : sign ? "点击签筒 · 取回原签" : "点击签筒 · 摇一摇"}
                 </div>
                 {error && <p className="mt-3 text-sm text-cinnabar" role="alert">{error}</p>}
                 <p className="mt-4 text-[11px] text-ink/40">服务端定签 · 不问吉凶 · 本时段不重复换签</p>

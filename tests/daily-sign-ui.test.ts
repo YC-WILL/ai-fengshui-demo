@@ -15,6 +15,8 @@ describe("daily sign ritual animation", () => {
 
   it("restores an existing sign without offering or triggering a redraw", () => {
     expect(component).toContain("取回本时段原签，不重新抽取");
+    expect(component).toContain("完整取回本时段原签");
+    expect(component).toMatch(/if \(sign\) \{[\s\S]*setPhase\(\"revealed\"\);[\s\S]*return;/);
     expect(component).not.toContain("再求一签");
   });
 
