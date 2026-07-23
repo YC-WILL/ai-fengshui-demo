@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import { computeBazi } from "@/lib/domain/bazi";
 import { buildBaziObservationCards, buildBaziWeeklyAction } from "@/lib/domain/baziObservations";
 import { TEN_GOD_PLAIN_MEANING, buildBaziMainline, buildBaziStructure, explainBaziCharacter, hiddenLayerReading, type BaziCharacterKind } from "@/lib/domain/baziStructure";
 import { buildBaziTimeLayers, type BaziTimeLayerId } from "@/lib/domain/baziTimeComparison";
-import { selectCoreDates, type CoreDateCandidate } from "@/lib/domain/coreMethods";
+import { buildTimingSelection, type TimingCandidate } from "@/lib/domain/timingSelection";
 import {
   HOME_AREA_DEFINITIONS,
   buildHomeSpaceAssessment,
+  getHomeAreaStatus,
   getHomeIssueDefinition,
   type HomeAreaId,
   type HomeIssueId,
@@ -432,6 +433,22 @@ const ROOMS = HOME_AREA_DEFINITIONS;
 export function HomeWorkspace() {
   const [input, setInput] = useState<HomeSpaceInput>({});
   const assessment = useMemo(() => buildHomeSpaceAssessment(input), [input]);
+  const missingAreaLabels = assessment.missingAreas
+    .map(areaId => ROOMS.find(area => area.id === areaId)?.label)
+    .filter(Boolean)
+    .join("、");
+  const allAreasReviewed = assessment.missingAreas.length === 0;
+
+  function scrollToHomeResult(event: MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
+    const target = document.getElementById("home-priority-result");
+    if (!target) return;
+    target.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start"
+    });
+    target.focus({ preventScroll: true });
+  }
 
   function toggleIssue(area: HomeAreaId, issueId: HomeIssueId) {
     setInput(current => {
@@ -468,18 +485,35 @@ export function HomeWorkspace() {
             <h2 id="home-input-title">这三处现在是什么情况</h2>
             <p>只填写你确认过的情况，可以只填一处；没有填写的区域不会参与判断。</p>
           </div>
+        </div>
+        <div className="home-coverage-overview">
           <div className="home-coverage-count"><b>{assessment.reviewedAreas.length}</b><span>/ 3 处已填写</span></div>
+          <div className={`home-live-summary is-${assessment.status}`} role="status" aria-live="polite" aria-atomic="true">
+            {assessment.status === "insufficient" && <><span>当前结果</span><b>资料不足</b><small>确认一处后再判断</small></>}
+            {assessment.status === "clear" && <>
+              <span>当前结果</span>
+              <b>{allAreasReviewed ? "三处已检查正常" : "已检查区域暂未见问题"}</b>
+              <small>{allAreasReviewed ? "今天不需要额外调整" : `${missingAreaLabels}资料不足`}</small>
+              <a href="#home-priority-result" onClick={scrollToHomeResult}>查看结果</a>
+            </>}
+            {assessment.priority && <>
+              <span>{assessment.priority.priorityLabel}</span>
+              <b>{assessment.priority.areaLabel} · {assessment.priority.issueLabel}</b>
+              <a href="#home-priority-result" onClick={scrollToHomeResult}>查看处理建议</a>
+            </>}
+          </div>
         </div>
         <div className="home-area-grid">
           {ROOMS.map((area, index) => {
             const areaInput = input[area.id];
             const isReviewedClear = areaInput?.reviewed === true && areaInput.issues.length === 0;
+            const areaStatus = getHomeAreaStatus(input, area.id);
             return <fieldset className="home-area-card" key={area.id}>
               <legend className="sr-only">{area.label}</legend>
               <header>
                 <span>0{index + 1}</span>
                 <div><h3>{area.label}</h3><p>{area.prompt}</p></div>
-                <b className={areaInput ? "is-reviewed" : ""}>{areaInput ? "已填写" : "资料不足"}</b>
+                <b className={`is-${areaStatus.state}`}>{areaStatus.label}</b>
               </header>
               <div className="home-issue-list">
                 {area.issueIds.map(issueId => {
@@ -503,7 +537,11 @@ export function HomeWorkspace() {
         </div>
       </section>
 
-      <section className={`home-priority-result is-${assessment.status}${assessment.priority?.priority === 1 ? " is-safety" : ""}`} aria-live="polite">
+      <section
+        id="home-priority-result"
+        tabIndex={-1}
+        className={`home-priority-result is-${assessment.status}${assessment.priority?.priority === 1 ? " is-safety" : ""}`}
+      >
         <div className="home-priority-copy">
           <span className="section-kicker">当前最值得先处理</span>
           {assessment.status === "insufficient" && <>
@@ -511,14 +549,17 @@ export function HomeWorkspace() {
             <p>至少确认一处区域后，这里才会根据你的实际填写选择优先项。</p>
           </>}
           {assessment.status === "clear" && <>
-            <h2>已填写区域暂未见明显问题</h2>
-            <p>不需要为了得到结论而调整空间；未填写区域仍保持“资料不足”。</p>
+            <h2>{allAreasReviewed ? "三处均已检查，暂未见上述问题" : "已检查区域暂未见上述问题"}</h2>
+            <p>{allAreasReviewed
+              ? "三处都不需要为了得到结论而调整，今天可以保持现状。"
+              : `${missingAreaLabels}尚未填写，不参与本次判断，也不会补写结论。`}</p>
           </>}
           {assessment.priority && <>
             <div className="home-priority-meta"><b>{assessment.priority.priorityLabel}</b><span>{assessment.priority.areaLabel}</span></div>
             <h2>{assessment.priority.title}</h2>
             <p>{assessment.priority.reason}</p>
             <div className="home-input-evidence"><b>来自你的填写</b><span>{assessment.priority.source}</span></div>
+            {assessment.selectionNote && <p className="home-selection-note">{assessment.selectionNote}</p>}
           </>}
           <small>{assessment.coverageNote}</small>
         </div>
@@ -531,7 +572,9 @@ export function HomeWorkspace() {
             {assessment.action.requiresProfessional && <small>这是安全状态：暂停相关使用，交由物业或合格专业人员处理，不自行拆改。</small>}
           </> : assessment.status === "clear" ? <>
             <h2>今天不需要额外调整</h2>
-            <p>保留现在的使用方式即可；补充其他区域后再重新判断。</p>
+            <p>{allAreasReviewed
+              ? "三处均已检查，保留现在的使用方式即可。"
+              : `已检查区域可以保持现状；${missingAreaLabels}继续保留为资料不足。`}</p>
           </> : <>
             <h2>先完成一处填写</h2>
             <p>从你每天最常经过或使用的一处开始，确认是否存在上面的具体情况。</p>
@@ -551,32 +594,126 @@ export function TimingWorkspace({ today }: { today: string }) {
   const profile = useBirthProfile();
   const [event, setEvent] = useState<DateSelectionEvent>("moving");
   const [range, setRange] = useState<7 | 30>(30);
-  const candidates = useMemo(() => profile ? selectCoreDates(profile.birthDate, today, range, event) : [], [event, profile, range, today]);
+  const selection = useMemo(() => profile ? buildTimingSelection({
+    event,
+    startDate: today,
+    rangeDays: range,
+    birthDate: profile.birthDate,
+    birthTime: profile.birthTime,
+    birthLocation: profile.birthLocation,
+    timezone: profile.timezone,
+    unknownTime: profile.unknownTime
+  }) : null, [event, profile, range, today]);
+  const candidates = selection?.candidates ?? [];
+  const firstCandidateDate = candidates[0]?.date ?? null;
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  useEffect(() => { setSelectedDate(candidates[0]?.date ?? null); }, [event, range, candidates]);
-  if (!profile) return <ProfileGate profile={profile} />;
+  useEffect(() => {
+    setSelectedDate(firstCandidateDate);
+  }, [event, range, firstCandidateDate]);
+  if (profile === undefined) return <ProfileGate profile={profile} />;
+  if (!profile) return <section className="timing-missing-profile">
+    <span className="plate-seal" aria-hidden>时</span>
+    <div>
+      <span className="section-kicker">资料不足</span>
+      <h2>需要先保存出生日期</h2>
+      <p>当前候选会用出生日期得到的日干和年支作有限参照；没有这项资料时不生成伪造候选。</p>
+    </div>
+    <Link className="btn-primary" href="/me#birth-profile">去保存</Link>
+  </section>;
   const selected = candidates.find(item => item.date === selectedDate) ?? candidates[0];
 
   return (
-    <section className="plate-shell">
-      <div className="plate-main">
-        <div className="plate-section-head">
-          <div><span>先定事项</span><small>不同事项使用不同筛选与准备内容</small></div>
-          <div className="plate-tabs compact"><button type="button" aria-pressed={range === 7} onClick={() => setRange(7)}>未来 7 天</button><button type="button" aria-pressed={range === 30} onClick={() => setRange(30)}>未来 30 天</button></div>
+    <section className="timing-workspace">
+      <section className="timing-controls" aria-labelledby="timing-input-title">
+        <div className="timing-section-head">
+          <span className="section-kicker">01 · 选择事项与范围</span>
+          <h2 id="timing-input-title">先确定这次要安排什么</h2>
+          <p>候选会使用已保存出生日期作有限参照；不同事项采用各自公开的筛选条件。</p>
         </div>
-        <div className="event-chips">{DATE_EVENTS.map(item => <button key={item.id} type="button" aria-pressed={event === item.id} onClick={() => setEvent(item.id)}>{item.label}</button>)}</div>
-        <div className="candidate-list">
-          {candidates.length ? candidates.map((candidate, index) => <CandidateDate key={candidate.date} value={candidate} index={index} active={selected?.date === candidate.date} onClick={() => setSelectedDate(candidate.date)} />) : <div className="plate-empty"><div><h2 className="font-serif text-xl">当前范围暂无候选</h2><p className="mt-1 text-sm text-ink/55">可以扩大时间范围，卦安不会为了凑数强行推荐日期。</p></div></div>}
+        <div className="timing-input-grid">
+          <div>
+            <b>事项类型</b>
+            <div className="event-chips" aria-label="事项类型">{DATE_EVENTS.map(item => <button key={item.id} type="button" aria-pressed={event === item.id} onClick={() => setEvent(item.id)}>{item.label}</button>)}</div>
+          </div>
+          <div>
+            <b>时间范围</b>
+            <div className="plate-tabs compact" aria-label="时间范围">
+              <button type="button" aria-pressed={range === 7} onClick={() => setRange(7)}>未来 7 天</button>
+              <button type="button" aria-pressed={range === 30} onClick={() => setRange(30)}>未来 30 天</button>
+            </div>
+          </div>
         </div>
-        {selected && <div className="timing-detail"><div><span className="section-kicker">候选依据</span><h2 className="mt-2 font-serif text-xl">{formatDate(selected.date)} · {selected.ganzhiDay}</h2><p className="mt-2 text-sm leading-7 text-ink/60">{selected.reason}。候选只表示当前规则下较适合继续核对，不表示事情结果。</p></div><PreparationList event={event} /></div>}
-      </div>
-      <aside className="plate-aside">
-        <div className="section-kicker">本次择时</div>
-        <h2 className="mt-2 font-serif text-2xl">{DATE_EVENTS.find(item => item.id === event)?.label}</h2>
-        <p className="mt-3 text-sm leading-7 text-ink/60">免费层保留少量明确候选和必要准备，不用“凶日”制造焦虑，也不把现实条件藏在付费后。</p>
-        <button type="button" className="btn-primary mt-5" disabled>保存入口 · 下一步接通</button>
-        <div className="member-extension"><span>会员层</span><b>更多候选与多人合参</b><small>增加替代日期、完整比较和参与人资料复用。</small></div>
-      </aside>
+        <p className="timing-profile-scope">{selection?.profileScope}</p>
+      </section>
+
+      <section className="timing-candidates" aria-labelledby="timing-candidates-title">
+        <div className="timing-section-head">
+          <span className="section-kicker">02 · 少量候选</span>
+          <h2 id="timing-candidates-title">{selection?.eventLabel} · {range}天内找到{candidates.length}个候选</h2>
+          <p>{selection ? `${formatDate(selection.startDate)}至${formatDate(selection.endDate)}` : ""}，最多展示3天，不为凑数降低规则。</p>
+        </div>
+        {candidates.length ? <div className="timing-candidate-grid">
+          {candidates.map((candidate, index) => (
+            <TimingCandidateCard
+              key={candidate.date}
+              value={candidate}
+              index={index}
+              active={selected?.date === candidate.date}
+              onClick={() => setSelectedDate(candidate.date)}
+            />
+          ))}
+        </div> : <div className="timing-empty" role="status">
+          <h2>{selection?.status === "insufficient" ? "资料不足，暂不生成候选" : "当前范围暂无候选"}</h2>
+          <p>{selection?.status === "insufficient"
+            ? selection.insufficientReason
+            : "现有事项规则与排除条件下没有可继续核对的日期，卦安不会为了凑够3天降低规则。"}</p>
+          {selection?.status === "ready" && range === 7 && <button type="button" className="btn-secondary" onClick={() => setRange(30)}>改看未来30天</button>}
+        </div>}
+      </section>
+
+      {candidates.length > 0 && <section className="timing-comparison" aria-labelledby="timing-comparison-title">
+        <div className="timing-section-head">
+          <span className="section-kicker">03 · 快速比较</span>
+          <h2 id="timing-comparison-title">先看三天真正不同在哪里</h2>
+          <p>只比较时间距离、事项规则、现实准备和当前限制，页面不设置日期评分。</p>
+        </div>
+        <div className="timing-comparison-list">
+          {candidates.map(candidate => <article key={candidate.date} className={selected?.date === candidate.date ? "is-selected" : ""}>
+            <header><b>{formatDate(candidate.date)}</b><span>{candidate.weekday} · {candidate.distanceLabel}</span></header>
+            <dl>
+              <div><dt>事项对应</dt><dd>{candidate.arrangementFit}</dd></div>
+              <div><dt>提前准备</dt><dd>{candidate.confirmBefore}</dd></div>
+              <div><dt>当前限制</dt><dd>{candidate.limitation}</dd></div>
+            </dl>
+          </article>)}
+        </div>
+      </section>}
+
+      {selected && selection && <section className="timing-selected-detail" aria-labelledby="timing-selected-title">
+        <div className="timing-selected-copy">
+          <span className="section-kicker">04 · 选中日期</span>
+          <h2 id="timing-selected-title">{formatDate(selected.date)} · {selected.weekday}</h2>
+          <p>{selected.whyCandidate}</p>
+          <div className="timing-confirmation"><b>现实中仍需确认</b><span>{selected.confirmBefore}</span></div>
+        </div>
+        <div className="timing-action">
+          <span className="section-kicker">事前准备动作</span>
+          <h2>{selected.action.durationMinutes}分钟内可以开始</h2>
+          <p>{selected.action.text}</p>
+          <div><b>完成标准</b><span>{selected.action.doneWhen}</span></div>
+        </div>
+        <details className="timing-evidence">
+          <summary>展开专业历法依据与方法边界</summary>
+          <div>
+            {selected.evidence.map(item => <article key={item.id}>
+              <b>{item.fact}</b>
+              <span>{item.source}</span>
+              <p>{item.explanation}</p>
+            </article>)}
+            <p className="timing-boundary">{selection.boundary}</p>
+          </div>
+        </details>
+      </section>}
     </section>
   );
 }
@@ -585,20 +722,17 @@ function PersonNode({ label, pillar, element, muted }: { label: string; pillar: 
   return <div className={`person-node ${muted ? "is-muted" : ""}`}><span>{label}</span><strong>{pillar}</strong><small>{element ? `日干属${element}` : "待填写"}</small></div>;
 }
 
-function CandidateDate({ value, index, active, onClick }: { value: CoreDateCandidate; index: number; active: boolean; onClick: () => void }) {
-  return <button type="button" aria-pressed={active} onClick={onClick}><span>候选 {index + 1}</span><strong>{formatDate(value.date)}</strong><small>{value.ganzhiDay} · {value.reason}</small></button>;
-}
-
-function PreparationList({ event }: { event: DateSelectionEvent }) {
-  const lists: Record<DateSelectionEvent, string[]> = {
-    wedding: ["确认核心参与人时间", "核对场地与交通", "预留天气替代方案"],
-    moving: ["确认物业与电梯", "先查水电燃气", "贵重物品单独打包"],
-    opening: ["确认人员与物料", "检查证照与设备", "准备客流应对方案"],
-    signing: ["复核主体和条款", "确认授权与附件", "保留修改后的终稿"],
-    travel: ["核对证件与班次", "查看天气和交通", "留下紧急联系方式"],
-    renovation_start: ["确认施工图与报价", "核对物业要求", "电路燃气请专业人员处理"]
-  };
-  return <div className="preparation-list"><b>现实准备</b><ol>{lists[event].map(item => <li key={item}>{item}</li>)}</ol></div>;
+function TimingCandidateCard({ value, index, active, onClick }: { value: TimingCandidate; index: number; active: boolean; onClick: () => void }) {
+  return <button type="button" aria-pressed={active} onClick={onClick}>
+    <span>候选 {index + 1}</span>
+    <strong>{formatDate(value.date)}</strong>
+    <small>{value.weekday} · {value.distanceLabel} · {value.ganzhiDay}</small>
+    <p>{value.whyCandidate}</p>
+    <dl>
+      <div><dt>更方便安排</dt><dd>{value.arrangementFit}</dd></div>
+      <div><dt>提前确认</dt><dd>{value.confirmBefore}</dd></div>
+    </dl>
+  </button>;
 }
 
 function formatDate(date: string) {

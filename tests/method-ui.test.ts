@@ -52,8 +52,37 @@ describe("four plate product UI", () => {
     expect(homePage).toContain("填写三处现实情况");
     expect(homePage).toContain("先处理一处");
     expect(homePage).toContain("今天完成一个动作");
-    expect(homeWorkspace.indexOf("home-input-panel")).toBeLessThan(homeWorkspace.indexOf("home-priority-result"));
-    expect(homeWorkspace.indexOf("home-priority-result")).toBeLessThan(homeWorkspace.indexOf("home-professional-placeholder"));
+    const detailedResult = homeWorkspace.indexOf('className={`home-priority-result');
+    expect(homeWorkspace.indexOf("home-input-panel")).toBeLessThan(detailedResult);
+    expect(detailedResult).toBeLessThan(homeWorkspace.indexOf("home-professional-placeholder"));
+    expect(homeWorkspace).toContain('role="status"');
+    expect(homeWorkspace).toContain('aria-live="polite"');
+    expect(homeWorkspace).toContain('href="#home-priority-result"');
+    expect(homeWorkspace).toContain('id="home-priority-result"');
+    expect(homeWorkspace).toContain("查看处理建议");
+    expect(homeWorkspace).toContain("三处均已检查，暂未见上述问题");
+    expect(homeWorkspace).not.toMatch(/未填写区域仍保持|补充其他区域后再重新判断/);
     expect(homeWorkspace).not.toMatch(/HOME_DIRECTIONS|住宅方位|重新校准/);
+  });
+
+  it("presents timing as input, candidates, comparison, selected action and evidence", () => {
+    const timingPage = readFileSync("src/app/date-selection/page.tsx", "utf8");
+    const workspaces = readFileSync("src/components/MethodWorkspaces.tsx", "utf8");
+    const timingWorkspace = workspaces.slice(workspaces.indexOf("export function TimingWorkspace"));
+
+    expect(timingPage).toContain('status="1.0 第一阶段"');
+    expect(timingPage).toContain("选择事项与范围");
+    expect(timingPage).toContain("比较少量候选");
+    expect(timingPage).toContain("确认日期并准备");
+    expect(timingWorkspace.indexOf("timing-controls")).toBeLessThan(timingWorkspace.indexOf("timing-candidates"));
+    expect(timingWorkspace.indexOf("timing-candidates")).toBeLessThan(timingWorkspace.indexOf("timing-comparison"));
+    expect(timingWorkspace.indexOf("timing-comparison")).toBeLessThan(timingWorkspace.indexOf("timing-selected-detail"));
+    expect(timingWorkspace.indexOf("timing-selected-detail")).toBeLessThan(timingWorkspace.indexOf("timing-evidence"));
+    expect(timingWorkspace).toContain("当前范围暂无候选");
+    expect(timingWorkspace).toContain("不为凑数降低规则");
+    expect(timingWorkspace).toContain("展开专业历法依据与方法边界");
+    expect(timingWorkspace).toContain("setSelectedDate(firstCandidateDate)");
+    expect(timingWorkspace).toContain("[event, range, firstCandidateDate]");
+    expect(timingWorkspace).not.toMatch(/吉凶分数|能量分数|幸运指数|成功概率|红黑榜|最佳|必选|错过/);
   });
 });

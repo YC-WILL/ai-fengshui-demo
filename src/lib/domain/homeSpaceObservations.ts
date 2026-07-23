@@ -60,7 +60,15 @@ export interface HomeSpaceAssessment {
   coverageNote: string;
   facts: HomeSpaceFact[];
   priority: HomePriorityItem | null;
+  otherTopPriorityCount: number;
+  selectionNote: string | null;
   action: HomeSpaceAction | null;
+}
+
+export interface HomeAreaStatus {
+  state: "insufficient" | "clear" | "issues";
+  label: string;
+  issueCount: number;
 }
 
 interface HomeIssueDefinition {
@@ -337,10 +345,27 @@ const ISSUE_DEFINITIONS: HomeIssueDefinition[] = [
 
 const AREA_LABELS = Object.fromEntries(HOME_AREA_DEFINITIONS.map(area => [area.id, area.label])) as Record<HomeAreaId, string>;
 const ISSUE_BY_ID = new Map(ISSUE_DEFINITIONS.map(issue => [issue.id, issue]));
-const ISSUE_ORDER = new Map(ISSUE_DEFINITIONS.map((issue, index) => [issue.id, index]));
+const PAGE_ISSUE_ORDER = new Map(
+  HOME_AREA_DEFINITIONS.flatMap(area => area.issueIds).map((issueId, index) => [issueId, index])
+);
 
 export function getHomeIssueDefinition(issueId: HomeIssueId) {
   return ISSUE_BY_ID.get(issueId);
+}
+
+export function getHomeAreaStatus(input: HomeSpaceInput, area: HomeAreaId): HomeAreaStatus {
+  const areaInput = input[area];
+  if (!areaInput?.reviewed) {
+    return { state: "insufficient", label: "资料不足", issueCount: 0 };
+  }
+  if (areaInput.issues.length === 0) {
+    return { state: "clear", label: "已检查正常", issueCount: 0 };
+  }
+  return {
+    state: "issues",
+    label: `发现${areaInput.issues.length}项`,
+    issueCount: areaInput.issues.length
+  };
 }
 
 export function buildHomeSpaceAssessment(input: HomeSpaceInput): HomeSpaceAssessment {
@@ -359,6 +384,8 @@ export function buildHomeSpaceAssessment(input: HomeSpaceInput): HomeSpaceAssess
       coverageNote: "三处都还没有填写，暂时没有依据判断先处理哪里。",
       facts: [],
       priority: null,
+      otherTopPriorityCount: 0,
+      selectionNote: null,
       action: null
     };
   }
@@ -382,7 +409,7 @@ export function buildHomeSpaceAssessment(input: HomeSpaceInput): HomeSpaceAssess
     });
   }).sort((first, second) => (
     first.priority - second.priority
-    || (ISSUE_ORDER.get(first.issueId) ?? 999) - (ISSUE_ORDER.get(second.issueId) ?? 999)
+    || (PAGE_ISSUE_ORDER.get(first.issueId) ?? 999) - (PAGE_ISSUE_ORDER.get(second.issueId) ?? 999)
   ));
 
   const missingLabels = missingAreas.map(area => AREA_LABELS[area]);
@@ -398,11 +425,14 @@ export function buildHomeSpaceAssessment(input: HomeSpaceInput): HomeSpaceAssess
       coverageNote,
       facts,
       priority: null,
+      otherTopPriorityCount: 0,
+      selectionNote: null,
       action: null
     };
   }
 
   const first = facts[0];
+  const otherTopPriorityCount = facts.filter(fact => fact.priority === first.priority).length - 1;
   const definition = ISSUE_BY_ID.get(first.issueId)!;
   const priority: HomePriorityItem = {
     ...first,
@@ -416,6 +446,10 @@ export function buildHomeSpaceAssessment(input: HomeSpaceInput): HomeSpaceAssess
     coverageNote,
     facts,
     priority,
+    otherTopPriorityCount,
+    selectionNote: otherTopPriorityCount > 0
+      ? `另有${otherTopPriorityCount}项同级问题，本次按检查顺序先展示这一项；其他已填写问题没有被忽略。`
+      : null,
     action: {
       sourceFactId: first.id,
       sourceArea: first.area,

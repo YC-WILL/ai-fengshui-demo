@@ -400,21 +400,30 @@ html, body {
 .relationship-method p { @apply mt-3 leading-7 text-ink/55; }
 
 .home-space-workspace { @apply space-y-5; }
-.home-input-panel { @apply overflow-hidden rounded-2xl border border-mist bg-white/75 shadow-scroll; }
-.home-space-section-head { @apply flex flex-col gap-4 border-b border-mist bg-rice/55 px-5 py-5 sm:flex-row sm:items-end sm:justify-between md:px-6; }
+.home-input-panel { @apply rounded-2xl border border-mist bg-white/75 shadow-scroll; }
+.home-space-section-head { @apply rounded-t-2xl border-b border-mist bg-rice/55 px-5 py-5 md:px-6; }
 .home-space-section-head h2 { @apply mt-2 font-serif text-2xl font-normal; }
 .home-space-section-head p { @apply mt-2 max-w-2xl text-sm leading-6 text-ink/55; }
-.home-coverage-count { @apply flex shrink-0 items-baseline gap-1 rounded-xl border border-gold/35 bg-white/70 px-4 py-3; }
+.home-coverage-overview { @apply flex items-stretch gap-2 border-b border-mist bg-white/90 px-4 py-3 md:px-6; }
+.home-coverage-count { @apply flex min-w-28 shrink-0 items-center gap-1 rounded-xl border border-gold/35 bg-rice/35 px-4 py-2; }
 .home-coverage-count b { @apply font-serif text-2xl font-normal text-cinnabar; }
 .home-coverage-count span { @apply text-xs text-ink/45; }
-.home-area-grid { @apply grid gap-px bg-mist lg:grid-cols-3; }
+.home-live-summary { @apply relative grid min-h-16 min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 rounded-xl border border-mist bg-white/70 px-4 py-2; }
+.home-live-summary > span { @apply col-start-1 text-[9px] tracking-wider text-ink/40; }
+.home-live-summary > b { @apply col-start-1 mt-0.5 text-xs font-medium text-ink/70; }
+.home-live-summary > small { @apply col-start-1 mt-0.5 text-[10px] leading-4 text-ink/40; }
+.home-live-summary > a { @apply col-start-2 row-span-3 row-start-1 rounded-lg border border-cinnabar/25 px-3 py-2 text-[10px] text-cinnabar transition hover:bg-cinnabar/5 focus:outline-none focus:ring-2 focus:ring-cinnabar/20; }
+.home-live-summary.is-priority { @apply border-gold/45 bg-gold/5; }
+.home-live-summary.is-clear { @apply border-jade/30 bg-jade/5; }
+.home-area-grid { @apply grid overflow-hidden rounded-b-2xl gap-px bg-mist lg:grid-cols-3; }
 .home-area-card { @apply min-w-0 bg-white/85 p-5 md:p-6; }
 .home-area-card > header { @apply grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-start gap-3 border-b border-mist pb-4; }
 .home-area-card > header > span { @apply flex h-8 w-8 items-center justify-center rounded-full border border-cinnabar/25 font-serif text-xs text-cinnabar; }
 .home-area-card h3 { @apply font-serif text-xl font-normal; }
 .home-area-card header p { @apply mt-1 text-[11px] leading-5 text-ink/45; }
 .home-area-card header > b { @apply rounded-full border border-mist px-2 py-1 text-[9px] font-medium text-ink/35; }
-.home-area-card header > b.is-reviewed { @apply border-jade/30 bg-jade/5 text-jade; }
+.home-area-card header > b.is-clear { @apply border-jade/30 bg-jade/5 text-jade; }
+.home-area-card header > b.is-issues { @apply border-cinnabar/30 bg-cinnabar/5 text-cinnabar; }
 .home-issue-list { @apply mt-4 grid gap-2; }
 .home-issue-list label, .home-no-issue { @apply flex cursor-pointer items-center gap-3 rounded-lg border border-mist bg-rice/25 px-3 py-2.5 text-sm text-ink/60 transition hover:bg-rice/55; }
 .home-issue-list input, .home-no-issue input { @apply h-4 w-4 shrink-0 accent-cinnabar; }
@@ -422,6 +431,7 @@ html, body {
 .home-no-issue { @apply mt-4 border-dashed text-xs; }
 .home-no-issue:has(input:checked) { @apply border-jade/35 bg-jade/5 text-jade; }
 .home-priority-result { @apply grid overflow-hidden rounded-2xl border border-mist bg-white/75 shadow-scroll lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]; }
+.home-priority-result:focus { @apply outline-none ring-2 ring-cinnabar/20 ring-offset-2 ring-offset-rice; }
 .home-priority-copy { @apply p-5 md:p-7; }
 .home-priority-copy h2 { @apply mt-2 font-serif text-2xl font-normal; }
 .home-priority-copy > p { @apply mt-3 max-w-2xl text-sm leading-7 text-ink/60; }
@@ -433,6 +443,7 @@ html, body {
 .home-input-evidence { @apply mt-4 flex flex-col gap-1 rounded-xl border border-mist bg-rice/45 p-4; }
 .home-input-evidence b { @apply text-[10px] font-medium tracking-wider text-cinnabar; }
 .home-input-evidence span { @apply text-xs leading-5 text-ink/55; }
+.home-selection-note { @apply mt-3 rounded-xl border border-dashed border-gold/40 bg-gold/5 px-4 py-3 text-xs leading-6 text-ink/50; }
 .home-action-card { @apply border-t border-mist bg-rice/60 p-5 md:p-7 lg:border-l lg:border-t-0; }
 .home-action-card h2 { @apply mt-2 font-serif text-xl font-normal; }
 .home-action-card > p { @apply mt-3 text-sm leading-7 text-ink/65; }
@@ -455,6 +466,60 @@ html, body {
 .preparation-list { @apply border-t border-mist pt-4 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0; }
 .preparation-list > b { @apply text-sm; }
 .preparation-list ol { @apply mt-2 list-decimal space-y-1 pl-4 text-xs leading-5 text-ink/55; }
+
+.timing-workspace { @apply space-y-5; }
+.timing-missing-profile { @apply flex flex-col items-start gap-4 rounded-2xl border border-gold/35 bg-white/75 p-6 shadow-scroll sm:flex-row sm:items-center; }
+.timing-missing-profile > div { @apply min-w-0 flex-1; }
+.timing-missing-profile h2 { @apply mt-1 font-serif text-xl font-normal; }
+.timing-missing-profile p { @apply mt-2 max-w-2xl text-sm leading-7 text-ink/55; }
+.timing-controls, .timing-candidates, .timing-comparison, .timing-selected-detail { @apply overflow-hidden rounded-2xl border border-mist bg-white/75 shadow-scroll; }
+.timing-section-head { @apply border-b border-mist bg-rice/55 px-5 py-5 md:px-6; }
+.timing-section-head h2 { @apply mt-2 font-serif text-2xl font-normal; }
+.timing-section-head p { @apply mt-2 max-w-3xl text-sm leading-6 text-ink/55; }
+.timing-input-grid { @apply grid gap-5 p-5 md:grid-cols-[minmax(0,1fr)_17rem] md:items-end md:p-6; }
+.timing-input-grid > div > b { @apply mb-3 block text-xs font-medium text-ink/55; }
+.timing-input-grid .plate-tabs { @apply m-0; }
+.timing-profile-scope { @apply border-t border-mist bg-rice/35 px-5 py-3 text-xs leading-6 text-ink/45 md:px-6; }
+.timing-candidate-grid { @apply grid gap-3 p-4 md:grid-cols-3 md:p-5; }
+.timing-candidate-grid > button { @apply flex min-w-0 flex-col items-start rounded-xl border border-mist bg-white p-4 text-left transition hover:border-gold/55 focus:outline-none focus:ring-2 focus:ring-cinnabar/15; }
+.timing-candidate-grid > button > span { @apply text-[10px] tracking-wider text-cinnabar; }
+.timing-candidate-grid > button > strong { @apply mt-2 font-serif text-2xl font-normal; }
+.timing-candidate-grid > button > small { @apply mt-1 text-[11px] text-ink/45; }
+.timing-candidate-grid > button > p { @apply mt-4 text-xs leading-6 text-ink/60; }
+.timing-candidate-grid > button dl { @apply mt-4 w-full space-y-3 border-t border-mist pt-3; }
+.timing-candidate-grid > button dl > div { @apply grid gap-1; }
+.timing-candidate-grid > button dt { @apply text-[10px] text-ink/40; }
+.timing-candidate-grid > button dd { @apply text-xs leading-5 text-ink/60; }
+.timing-candidate-grid > button[aria-pressed="true"] { @apply border-cinnabar/40 bg-cinnabar/5 shadow-sm; }
+.timing-empty { @apply flex flex-col items-start gap-3 p-6 md:p-8; }
+.timing-empty h2 { @apply font-serif text-xl font-normal; }
+.timing-empty p { @apply max-w-2xl text-sm leading-7 text-ink/55; }
+.timing-comparison-list { @apply grid gap-px bg-mist md:grid-cols-3; }
+.timing-comparison-list article { @apply min-w-0 bg-white/90 p-5; }
+.timing-comparison-list article.is-selected { @apply bg-cinnabar/5; }
+.timing-comparison-list header { @apply flex flex-wrap items-baseline justify-between gap-2 border-b border-mist pb-3; }
+.timing-comparison-list header b { @apply font-serif text-lg font-normal; }
+.timing-comparison-list header span { @apply text-[10px] text-cinnabar; }
+.timing-comparison-list dl { @apply mt-3 space-y-3; }
+.timing-comparison-list dl > div { @apply grid gap-1; }
+.timing-comparison-list dt { @apply text-[10px] text-ink/40; }
+.timing-comparison-list dd { @apply text-xs leading-5 text-ink/60; }
+.timing-selected-detail { @apply grid lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]; }
+.timing-selected-copy, .timing-action { @apply p-5 md:p-7; }
+.timing-selected-copy h2, .timing-action h2 { @apply mt-2 font-serif text-2xl font-normal; }
+.timing-selected-copy > p, .timing-action > p { @apply mt-3 text-sm leading-7 text-ink/65; }
+.timing-confirmation, .timing-action > div { @apply mt-5 grid gap-1 rounded-xl border border-mist bg-rice/45 p-4; }
+.timing-confirmation b, .timing-action > div b { @apply text-[10px] font-medium tracking-wider text-cinnabar; }
+.timing-confirmation span, .timing-action > div span { @apply text-xs leading-6 text-ink/60; }
+.timing-action { @apply border-t border-mist bg-rice/55 lg:border-l lg:border-t-0; }
+.timing-evidence { @apply border-t border-mist px-5 py-4 lg:col-span-2 md:px-7; }
+.timing-evidence summary { @apply cursor-pointer text-xs text-cinnabar; }
+.timing-evidence > div { @apply mt-4 grid gap-3 md:grid-cols-2; }
+.timing-evidence article { @apply rounded-xl border border-mist bg-rice/35 p-4; }
+.timing-evidence article b { @apply block text-xs font-medium leading-5 text-ink/70; }
+.timing-evidence article span { @apply mt-2 block text-[10px] text-cinnabar/75; }
+.timing-evidence article p { @apply mt-2 text-xs leading-5 text-ink/50; }
+.timing-boundary { @apply rounded-xl border border-dashed border-gold/45 bg-gold/5 p-4 text-xs leading-6 text-ink/55 md:col-span-2; }
 
 @media (max-width: 520px) {
   .plate-main, .plate-aside { @apply p-4; }
@@ -481,6 +546,8 @@ html, body {
   .person-node { @apply min-h-28 p-2; }
   .person-node strong { @apply text-xl; }
   .pair-bridge { @apply min-w-0; }
+  .home-coverage-overview { @apply sticky top-2 z-20 flex-col shadow-sm; }
+  .home-coverage-count { @apply min-h-12 w-full; }
   .home-area-card { @apply p-4; }
   .home-area-card > header { @apply grid-cols-[2rem_minmax(0,1fr)] gap-2; }
   .home-area-card > header > b { @apply col-start-2 row-start-2 w-fit; }

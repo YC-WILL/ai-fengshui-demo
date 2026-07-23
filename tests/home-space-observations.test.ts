@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   HOME_AREA_DEFINITIONS,
   buildHomeSpaceAssessment,
+  getHomeAreaStatus,
   type HomeAreaId,
   type HomeIssueId,
   type HomeSpaceInput
@@ -52,6 +53,41 @@ describe("home space observations", () => {
     expect(result.facts).toEqual([]);
     expect(result.priority).toBeNull();
     expect(result.action).toBeNull();
+    expect(result.coverageNote).toBe("入户、主要休息区和厨房均已填写，本次排序只使用这些现实情况。");
+    expect(result.coverageNote).not.toMatch(/未填写区域|补充其他区域/);
+  });
+
+  it("lists the two missing areas when only one reviewed area is normal", () => {
+    const result = buildHomeSpaceAssessment({ rest: area() });
+
+    expect(result.status).toBe("clear");
+    expect(result.reviewedAreas).toEqual(["rest"]);
+    expect(result.missingAreas).toEqual(["entry", "kitchen"]);
+    expect(result.coverageNote).toContain("已根据主要休息区判断");
+    expect(result.coverageNote).toContain("入户、厨房资料不足");
+  });
+
+  it("distinguishes insufficient, clear and issue-count area states", () => {
+    const input: HomeSpaceInput = {
+      rest: area(),
+      kitchen: area("kitchen_backtracking", "kitchen_passage_blocked")
+    };
+
+    expect(getHomeAreaStatus(input, "entry")).toEqual({
+      state: "insufficient",
+      label: "资料不足",
+      issueCount: 0
+    });
+    expect(getHomeAreaStatus(input, "rest")).toEqual({
+      state: "clear",
+      label: "已检查正常",
+      issueCount: 0
+    });
+    expect(getHomeAreaStatus(input, "kitchen")).toEqual({
+      state: "issues",
+      label: "发现2项",
+      issueCount: 2
+    });
   });
 
   it.each([
@@ -106,6 +142,31 @@ describe("home space observations", () => {
     expect(result.action?.text).toMatch(/物业|合格专业人员/);
   });
 
+  it("uses area order and then option order when top problems share a priority", () => {
+    const acrossAreas = buildHomeSpaceAssessment({
+      kitchen: area("kitchen_backtracking"),
+      rest: area("rest_bump_passage"),
+      entry: area("entry_clutter")
+    });
+    const insideRestArea = buildHomeSpaceAssessment({
+      rest: area("rest_damp_mold", "rest_persistent_noise", "rest_night_strong_light")
+    });
+
+    expect(acrossAreas.priority?.issueId).toBe("entry_clutter");
+    expect(insideRestArea.priority?.issueId).toBe("rest_persistent_noise");
+  });
+
+  it("reports the actual number of other top-priority problems", () => {
+    const result = buildHomeSpaceAssessment({
+      rest: area("rest_persistent_noise", "rest_night_strong_light"),
+      kitchen: area("kitchen_poor_exhaust", "kitchen_backtracking")
+    });
+
+    expect(result.priority?.priority).toBe(2);
+    expect(result.otherTopPriorityCount).toBe(2);
+    expect(result.selectionNote).toBe("另有2项同级问题，本次按检查顺序先展示这一项；其他已填写问题没有被忽略。");
+  });
+
   it("changes the priority for an explainable reason after one input is removed", () => {
     const before = buildHomeSpaceAssessment({
       entry: area("entry_emergency_exit_blocked"),
@@ -119,6 +180,29 @@ describe("home space observations", () => {
     expect(before.priority?.issueId).toBe("entry_emergency_exit_blocked");
     expect(after.priority?.issueId).toBe("rest_persistent_noise");
     expect(after.facts.some(fact => fact.issueId === "entry_emergency_exit_blocked")).toBe(false);
+  });
+
+  it("keeps the five-step counterfactual sequence stable", () => {
+    const noiseOnly = buildHomeSpaceAssessment({ rest: area("rest_persistent_noise") });
+    const withSafety = buildHomeSpaceAssessment({
+      entry: area("entry_emergency_exit_blocked"),
+      rest: area("rest_persistent_noise")
+    });
+    const safetyRemoved = buildHomeSpaceAssessment({
+      rest: area("rest_persistent_noise")
+    });
+    const cleared = buildHomeSpaceAssessment({});
+    const allNormal = buildHomeSpaceAssessment({
+      entry: area(),
+      rest: area(),
+      kitchen: area()
+    });
+
+    expect(noiseOnly.priority?.issueId).toBe("rest_persistent_noise");
+    expect(withSafety.priority?.issueId).toBe("entry_emergency_exit_blocked");
+    expect(safetyRemoved.priority?.issueId).toBe("rest_persistent_noise");
+    expect(cleared.status).toBe("insufficient");
+    expect(allNormal.status).toBe("clear");
   });
 
   it("ties the only action to the selected priority fact", () => {
