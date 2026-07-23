@@ -39,8 +39,11 @@ export default function MeActions({
   }
 
   return (
-    <section className="card">
-      <h3 className="font-serif text-lg mb-2">账户信息</h3>
+    <section className="me-account-card">
+      <div className="mb-4">
+        <span>账户信息</span>
+        <h3>跨设备找回你的记录</h3>
+      </div>
       <div className="grid md:grid-cols-2 gap-3">
         <div>
           <label className="field-label">邮箱（可选，用于跨设备找回）</label>
