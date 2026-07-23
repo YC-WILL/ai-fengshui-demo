@@ -57,10 +57,18 @@ html, body {
 .nav-mobile-methods::-webkit-scrollbar { display: none; }
 .nav-mobile-methods a { @apply shrink-0 rounded-full px-3 py-1 text-xs text-ink/60; }
 
-.home-intro { @apply flex items-center justify-between gap-6 rounded-2xl border border-gold/30 bg-white/70 px-6 py-7 shadow-scroll md:px-8; }
-.home-intro-mark { @apply hidden h-20 w-20 shrink-0 items-center justify-center rounded-full border border-cinnabar/30 font-serif text-3xl text-cinnabar md:flex; }
 .method-entry-grid { @apply grid gap-3 sm:grid-cols-2 lg:grid-cols-4; }
-.method-entry-card { @apply flex min-h-64 flex-col justify-between gap-5 rounded-2xl border border-mist bg-white/80 p-5 shadow-scroll transition hover:-translate-y-0.5 hover:border-gold/55 hover:bg-white; }
+.method-entry-card {
+  @apply relative flex min-h-64 flex-col justify-between gap-5 overflow-hidden rounded-2xl border border-mist bg-white/80 p-5 shadow-scroll transition hover:-translate-y-0.5 hover:bg-white;
+  --plate-accent: #b53b2a;
+}
+.method-entry-card::before { content: ""; @apply absolute inset-x-0 top-0 h-1; background: var(--plate-accent); opacity: 0.78; }
+.method-entry-card:hover { border-color: color-mix(in srgb, var(--plate-accent) 42%, #e9e2d4); }
+.method-entry-bazi { --plate-accent: #b53b2a; }
+.method-entry-relation { --plate-accent: #5c7f6b; }
+.method-entry-home { --plate-accent: #a67832; }
+.method-entry-timing { --plate-accent: #496b78; }
+.method-entry-card > div:first-child > span:last-child { color: var(--plate-accent); }
 .method-entry-index { @apply font-serif text-sm text-ink/30; }
 
 .method-local-nav { @apply flex gap-1 overflow-x-auto rounded-xl border border-mist bg-white/60 p-1.5 shadow-sm; scrollbar-width: none; }
@@ -73,7 +81,9 @@ html, body {
 .method-page-meta b { @apply rounded-full border border-gold/35 bg-gold/10 px-3 py-1 font-medium tracking-normal text-gold; }
 .method-page-intro { @apply grid gap-6 px-5 py-7 md:grid-cols-[minmax(0,1fr)_14rem] md:items-end md:px-8 md:py-9; }
 .method-page-intro h1 { @apply font-serif text-4xl font-normal tracking-tight md:text-5xl; }
-.method-page-intro p { @apply mt-3 max-w-2xl text-sm leading-7 text-rice/65; }
+.method-page-lead { @apply mt-5 max-w-2xl border-l border-white/20 pl-4; }
+.method-page-lead > span { @apply text-[10px] font-medium tracking-[0.18em] text-gold/80; }
+.method-page-intro .method-page-lead p { @apply mt-1 text-sm leading-7 text-rice/70; }
 .method-saved-link { @apply flex items-center rounded-2xl border border-white/15 bg-white/5 px-4 py-3 transition hover:border-gold/40 hover:bg-white/10; }
 .method-saved-link > span { @apply text-[10px] text-rice/45; }
 .method-saved-link > b { @apply ml-3 text-xs font-medium text-rice/80; }
@@ -82,6 +92,42 @@ html, body {
 .method-reading-path li { @apply flex items-center gap-3 border-b border-white/10 px-5 py-3 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 md:px-8; }
 .method-reading-path span { @apply font-serif text-sm text-gold; }
 .method-reading-path b { @apply text-xs font-medium text-rice/65; }
+
+/* 四盘共享阅读层级：各盘只用一个低饱和识别色，结论、行动、依据保持固定位置。 */
+.method-page {
+  --plate-accent: #b53b2a;
+  --plate-accent-soft: rgba(181, 59, 42, 0.07);
+  --plate-accent-line: rgba(181, 59, 42, 0.28);
+}
+.method-page-relation {
+  --plate-accent: #4f7562;
+  --plate-accent-soft: rgba(79, 117, 98, 0.08);
+  --plate-accent-line: rgba(79, 117, 98, 0.3);
+}
+.method-page-home {
+  --plate-accent: #946d2f;
+  --plate-accent-soft: rgba(148, 109, 47, 0.08);
+  --plate-accent-line: rgba(148, 109, 47, 0.3);
+}
+.method-page-timing {
+  --plate-accent: #466875;
+  --plate-accent-soft: rgba(70, 104, 117, 0.08);
+  --plate-accent-line: rgba(70, 104, 117, 0.3);
+}
+.method-page .section-kicker { color: var(--plate-accent); }
+.method-page .method-page-hero {
+  background:
+    radial-gradient(circle at 82% 12%, var(--plate-accent-line), transparent 30%),
+    radial-gradient(circle at 8% 100%, rgba(201, 163, 92, 0.12), transparent 34%),
+    #202724;
+}
+.method-page .method-page-meta b { color: #ead09d; }
+.method-page .method-reading-path li { @apply relative py-4; }
+.method-page .method-reading-path span {
+  @apply flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-white/5 text-xs;
+  color: #ead09d;
+}
+.method-page .method-reading-path b { @apply text-[13px] text-rice/75; }
 
 .plate-shell { @apply grid overflow-hidden rounded-2xl border border-mist bg-white/80 shadow-scroll lg:grid-cols-[minmax(0,1fr)_18rem]; }
 .plate-main { @apply min-w-0 p-5 md:p-7; }
@@ -521,6 +567,171 @@ html, body {
 .timing-evidence article p { @apply mt-2 text-xs leading-5 text-ink/50; }
 .timing-boundary { @apply rounded-xl border border-dashed border-gold/45 bg-gold/5 p-4 text-xs leading-6 text-ink/55 md:col-span-2; }
 
+/* 大段内容的统一信息密度：标题可扫读，正文可阅读，专业依据主动收起。 */
+.method-page :is(
+  .bazi-observations-head,
+  .bazi-mainline-head,
+  .relationship-setup-copy,
+  .home-space-section-head,
+  .timing-section-head
+) {
+  @apply relative;
+  background:
+    linear-gradient(90deg, var(--plate-accent-soft), rgba(255, 255, 255, 0.72) 42%),
+    rgba(255, 255, 255, 0.72);
+}
+.method-page :is(
+  .bazi-observations-head,
+  .bazi-mainline-head,
+  .relationship-setup-copy,
+  .home-space-section-head,
+  .timing-section-head
+)::before {
+  content: "";
+  @apply absolute bottom-5 left-0 top-5 w-1 rounded-r-full;
+  background: var(--plate-accent);
+}
+
+.method-page :is(
+  .bazi-observation-card,
+  .relationship-card,
+  .home-area-card,
+  .timing-candidate-grid > button
+) {
+  @apply relative;
+}
+.method-page :is(
+  .bazi-observation-card,
+  .relationship-card,
+  .timing-candidate-grid > button
+)::after {
+  content: "";
+  @apply absolute inset-x-4 top-0 h-px;
+  background: var(--plate-accent-line);
+}
+.method-page :is(
+  .bazi-observation-conclusion,
+  .relationship-conclusion,
+  .home-priority-copy > p,
+  .timing-selected-copy > p
+) {
+  @apply text-[15px] leading-8 text-ink/75;
+}
+
+.method-page :is(
+  .bazi-observation-points > p,
+  .relationship-card dl > div,
+  .timing-candidate-grid dl > div,
+  .timing-comparison-list dl > div
+) {
+  @apply rounded-lg px-3 py-2;
+  background: rgba(247, 243, 236, 0.58);
+}
+.method-page :is(
+  .relationship-card dt,
+  .timing-candidate-grid dt,
+  .timing-comparison-list dt
+) {
+  @apply text-[11px] font-medium tracking-wide text-ink/45;
+}
+.method-page :is(
+  .relationship-card dd,
+  .timing-candidate-grid dd,
+  .timing-comparison-list dd
+) {
+  @apply mt-1 text-[13px] leading-6 text-ink/70;
+}
+
+.method-page :is(
+  .bazi-weekly-action,
+  .relationship-joint-action,
+  .home-action-card,
+  .timing-action
+) {
+  background:
+    linear-gradient(135deg, var(--plate-accent-soft), rgba(247, 243, 236, 0.82));
+  border-color: var(--plate-accent-line);
+}
+.method-page :is(
+  .bazi-weekly-action,
+  .relationship-joint-action,
+  .home-action-card,
+  .timing-action
+) .section-kicker {
+  @apply inline-flex w-fit rounded-full border px-2.5 py-1;
+  border-color: var(--plate-accent-line);
+  background: rgba(255, 255, 255, 0.6);
+}
+.method-page :is(
+  .bazi-weekly-action,
+  .relationship-joint-action,
+  .home-action-card,
+  .timing-action
+) h2 {
+  @apply text-2xl;
+}
+.method-page :is(
+  .bazi-weekly-action,
+  .relationship-joint-action,
+  .home-action-card,
+  .timing-action
+) p {
+  @apply text-[15px] leading-8 text-ink/75;
+}
+
+.method-page :is(
+  .bazi-observation-evidence,
+  .relationship-evidence,
+  .relationship-method,
+  .timing-evidence
+) {
+  @apply text-ink/50;
+}
+.method-page :is(
+  .bazi-observation-evidence,
+  .relationship-evidence,
+  .relationship-method,
+  .timing-evidence
+) > summary {
+  @apply flex w-fit cursor-pointer items-center gap-2 rounded-full border border-mist bg-white/75 px-3 py-1.5 text-xs font-medium;
+  color: var(--plate-accent);
+  list-style: none;
+}
+.method-page :is(
+  .bazi-observation-evidence,
+  .relationship-evidence,
+  .relationship-method,
+  .timing-evidence
+) > summary::-webkit-details-marker { display: none; }
+.method-page :is(
+  .bazi-observation-evidence,
+  .relationship-evidence,
+  .relationship-method,
+  .timing-evidence
+) > summary::after {
+  content: "＋";
+  @apply text-[11px];
+}
+.method-page :is(
+  .bazi-observation-evidence,
+  .relationship-evidence,
+  .relationship-method,
+  .timing-evidence
+)[open] > summary::after { content: "－"; }
+
+.method-page .relationship-professional,
+.method-page .relationship-facts,
+.method-page .bazi-professional-head,
+.method-page .home-professional-placeholder {
+  @apply border-dashed;
+  background: rgba(255, 255, 255, 0.52);
+}
+.method-page .relationship-professional::before,
+.method-page .relationship-facts::before {
+  content: "专业结构";
+  @apply mb-2 inline-flex rounded-full border border-mist bg-rice/70 px-2.5 py-1 text-[10px] tracking-wider text-ink/45;
+}
+
 @media (max-width: 520px) {
   .plate-main, .plate-aside { @apply p-4; }
   .plate-profile-summary { @apply w-full; }
@@ -555,27 +766,42 @@ html, body {
 
 /* 二十四节气是首页首屏；以文字层级呈现当天与交节位置。 */
 .solar-term-card {
-  @apply overflow-hidden rounded-2xl border border-gold/35 bg-white/80 shadow-scroll;
+  @apply relative overflow-hidden rounded-3xl border border-white/10 text-rice shadow-scroll;
   background:
-    radial-gradient(circle at 8% 0%, rgba(181, 59, 42, 0.06), transparent 28%),
-    rgba(255, 255, 255, 0.78);
+    radial-gradient(circle at 84% 10%, rgba(201, 163, 92, 0.2), transparent 28%),
+    radial-gradient(circle at 5% 100%, rgba(181, 59, 42, 0.15), transparent 34%),
+    #202724;
 }
+.solar-term-card::before { content: ""; @apply absolute inset-y-6 left-0 z-10 w-1 rounded-r-full bg-gold/80; }
 .solar-term-hero { @apply grid min-h-72 md:grid-cols-[minmax(0,1fr)_16rem]; }
-.solar-term-copy { @apply flex flex-col justify-between gap-8 bg-[rgba(255,253,248,0.88)] p-6 md:p-8; }
-.solar-term-rhythm { @apply relative flex min-h-48 flex-col justify-center overflow-hidden border-t border-gold/25 bg-rice/75 p-6 md:border-l md:border-t-0 md:p-8; }
-.solar-term-rhythm > span { @apply text-[11px] tracking-[0.24em] text-cinnabar; }
+.solar-term-copy { @apply flex flex-col justify-between gap-8 p-6 md:p-8; }
+.solar-term-copy .section-kicker { @apply text-gold; }
+.solar-term-label { @apply mt-3 text-xs tracking-[0.24em] text-rice/45; }
+.solar-term-title { @apply mt-1 font-serif text-4xl font-normal text-rice md:text-5xl; }
+.solar-term-note { @apply mt-3 font-serif text-lg leading-8 text-rice/75; }
+.solar-term-boundary { @apply flex items-center justify-between gap-3 text-xs text-rice/60; }
+.solar-term-updated { @apply mt-2 text-[11px] leading-5 text-rice/40; }
+.solar-term-rhythm {
+  @apply relative flex min-h-48 flex-col justify-center overflow-hidden border-t border-white/10 p-6 text-rice md:border-l md:border-t-0 md:p-8;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.035), rgba(201,163,92,0.08));
+}
+.solar-term-rhythm > span { @apply text-[11px] tracking-[0.24em] text-gold; }
 .solar-term-rhythm > div { @apply relative z-10 mt-3 flex items-baseline; }
-.solar-term-rhythm strong { @apply font-serif text-6xl font-normal text-ink; }
-.solar-term-rhythm small { @apply ml-2 text-xs text-ink/45; }
-.solar-term-rhythm p { @apply relative z-10 mt-2 text-xs text-ink/50; }
+.solar-term-rhythm strong { @apply font-serif text-6xl font-normal text-rice; }
+.solar-term-rhythm small { @apply ml-2 text-xs text-rice/45; }
+.solar-term-rhythm p { @apply relative z-10 mt-2 text-xs text-rice/55; }
 .solar-term-rhythm i { @apply absolute -bottom-8 -right-3 font-serif text-[9rem] not-italic leading-none text-gold/10; }
-.solar-term-progress { @apply h-1.5 overflow-hidden rounded-full bg-mist; }
-.solar-term-progress > span { @apply block h-full rounded-full bg-cinnabar/75; }
-.solar-term-year-list { @apply border-t border-mist bg-white/70 px-5 py-4 md:px-7; }
+.solar-term-progress { @apply h-1.5 overflow-hidden rounded-full bg-white/10; }
+.solar-term-progress > span { @apply block h-full rounded-full bg-gold/80; }
+.solar-term-year-list { @apply border-t border-white/10 bg-black/10 px-5 py-4 md:px-7; }
+.solar-term-year-list > summary { @apply w-fit cursor-pointer text-xs text-gold; }
 .solar-term-grid { @apply grid grid-cols-3 gap-1.5 sm:grid-cols-6 md:grid-cols-8; }
-.solar-term-grid li { @apply flex min-w-0 items-center gap-1.5 rounded-md border border-transparent bg-rice/60 px-2 py-1.5; }
-.solar-term-grid li.is-current { @apply border-cinnabar/35 bg-cinnabar/5 text-cinnabar; }
-.solar-term-season { @apply inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-gold/35 text-[9px] text-ink/45; }
+.solar-term-grid li { @apply flex min-w-0 items-center gap-1.5 rounded-md border border-transparent bg-white/5 px-2 py-1.5 text-rice/65; }
+.solar-term-grid li.is-current { @apply border-gold/35 bg-gold/10 text-gold; }
+.solar-term-grid time { @apply text-[10px] text-rice/35; }
+.solar-term-season { @apply inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-gold/25 text-[9px] text-rice/40; }
+.solar-term-year-note { @apply mt-3 text-[11px] leading-5 text-rice/35; }
 
 .core-method-button { @apply flex min-h-24 flex-col items-start justify-between rounded-xl border border-mist bg-white/75 px-4 py-3 text-left text-xs text-ink/50 shadow-sm transition hover:border-gold/50 hover:bg-white; }
 .core-method-button.is-active { @apply border-cinnabar/35 bg-cinnabar/5 text-cinnabar; }
@@ -843,6 +1069,32 @@ html, body {
 }
 
 /* 静心木蟾：按力度给出沉静、可辨认的动作回应。 */
+.wooden-toad-entry {
+  @apply relative flex items-center gap-3 overflow-hidden rounded-2xl border px-4 py-4 shadow-sm;
+  border-color: rgba(92, 127, 107, 0.28);
+  background:
+    radial-gradient(circle at 0% 100%, rgba(92, 127, 107, 0.13), transparent 48%),
+    rgba(255, 255, 255, 0.72);
+}
+.wooden-toad-entry::after {
+  content: "";
+  @apply pointer-events-none absolute -bottom-7 -left-5 h-20 w-20 rounded-full border;
+  border-color: rgba(92, 127, 107, 0.12);
+}
+.wooden-toad-entry-mark {
+  @apply relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border font-serif text-base;
+  color: #4f7562;
+  border-color: rgba(92, 127, 107, 0.28);
+  background: rgba(92, 127, 107, 0.08);
+}
+.wooden-toad-entry-kicker { @apply mb-1 block text-[9px] font-medium tracking-[0.16em]; color: #4f7562; }
+.wooden-toad-entry-action {
+  @apply relative z-10 shrink-0 rounded-full border px-3.5 py-2 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-jade/25;
+  color: #3f6652;
+  border-color: rgba(92, 127, 107, 0.35);
+  background: rgba(255, 255, 255, 0.78);
+}
+.wooden-toad-entry-action:hover { background: rgba(92, 127, 107, 0.09); }
 .wooden-toad-dialog {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

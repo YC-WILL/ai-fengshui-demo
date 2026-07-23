@@ -19,7 +19,7 @@ export default function MethodPageShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-5">
+    <div className={`method-page method-page-${current} space-y-5`}>
       <nav className="method-local-nav" aria-label="四盘切换">
         {METHOD_MODULES.map(module => (
           <Link key={module.id} href={module.href} aria-current={module.id === current ? "page" : undefined}>
@@ -35,7 +35,10 @@ export default function MethodPageShell({
         <div className="method-page-intro">
           <div>
             <h1>{title}</h1>
-            <p>{lead}</p>
+            <div className="method-page-lead">
+              <span>这一盘怎么看</span>
+              <p>{lead}</p>
+            </div>
           </div>
           <Link href="/me" className="method-saved-link"><span>我的记录</span><b>查看已保存内容</b><i aria-hidden>→</i></Link>
         </div>

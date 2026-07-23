@@ -148,12 +148,14 @@ export default function WoodenToad() {
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-4 rounded-xl border border-mist bg-white/45 px-4 py-3">
-        <div>
+      <div className="wooden-toad-entry">
+        <div className="wooden-toad-entry-mark" aria-hidden>静</div>
+        <div className="min-w-0 flex-1">
+          <span className="wooden-toad-entry-kicker">安定动作</span>
           <div className="font-serif text-base text-ink">静一静，敲敲木蟾</div>
           <p className="mt-0.5 text-xs text-ink/50">它静静坐在这里，也会认真回应你的每一次轻敲</p>
         </div>
-        <button type="button" className="btn-secondary shrink-0" onClick={() => setOpen(true)}>
+        <button type="button" className="wooden-toad-entry-action" onClick={() => setOpen(true)}>
           敲一下
         </button>
       </div>

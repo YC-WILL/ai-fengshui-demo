@@ -13,7 +13,7 @@ export default function MethodEntryGrid() {
       </div>
       <div className="method-entry-grid">
         {METHOD_MODULES.map((module, index) => (
-          <Link key={module.id} href={module.href} className="method-entry-card group">
+          <Link key={module.id} href={module.href} className={`method-entry-card method-entry-${module.id} group`}>
             <div className="flex items-start justify-between gap-3">
               <span className="method-entry-index">0{index + 1}</span>
               <span className="text-[11px] tracking-[0.18em] text-cinnabar">{module.eyebrow}</span>
