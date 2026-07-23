@@ -13,7 +13,7 @@ import type {
 import { preloadImages } from "@/lib/client/imagePreload";
 import { fetchReport, readJsonResponse } from "@/lib/reports/client";
 
-type DrawPhase = "ready" | "shaking" | "dropping" | "materializing" | "revealed";
+type DrawPhase = "ready" | "shaking" | "dropping" | "materializing" | "materialized" | "revealed";
 
 interface SignDraw {
   id: string;
@@ -36,7 +36,8 @@ interface InterpretationResult {
 const DRAW_ANIMATION_MS = {
   shaking: 1200,
   dropping: 1000,
-  materializingFallback: 1800
+  materializingFallback: 1800,
+  materializedHold: 3000
 } as const;
 const SIGN_DRAW_ASSETS = [
   "/images/sign-draw/cylinder-v2.png",
@@ -97,7 +98,11 @@ export default function DailySignDraw() {
   }, [open, phase]);
 
   const periodLabel = sign?.periodLabel ?? (period ? SIGN_PERIOD_LABEL[period] : "今日安签");
-  const isAnimating = phase === "shaking" || phase === "dropping" || phase === "materializing";
+  const isAnimating =
+    phase === "shaking" ||
+    phase === "dropping" ||
+    phase === "materializing" ||
+    phase === "materialized";
 
   const openCylinder = async () => {
     await preloadImages(SIGN_DRAW_ASSETS);
@@ -141,15 +146,22 @@ export default function DailySignDraw() {
   };
 
   useEffect(() => {
-    if (phase !== "materializing") return;
-    const fallback = window.setTimeout(() => {
-      setPhase(current => current === "materializing" ? "revealed" : current);
-    }, DRAW_ANIMATION_MS.materializingFallback);
-    return () => window.clearTimeout(fallback);
+    if (phase === "materializing") {
+      const fallback = window.setTimeout(() => {
+        setPhase(current => current === "materializing" ? "materialized" : current);
+      }, DRAW_ANIMATION_MS.materializingFallback);
+      return () => window.clearTimeout(fallback);
+    }
+    if (phase === "materialized") {
+      const hold = window.setTimeout(() => {
+        setPhase(current => current === "materialized" ? "revealed" : current);
+      }, DRAW_ANIMATION_MS.materializedHold);
+      return () => window.clearTimeout(hold);
+    }
   }, [phase]);
 
   const finishMaterializing = () => {
-    setPhase(current => current === "materializing" ? "revealed" : current);
+    setPhase(current => current === "materializing" ? "materialized" : current);
   };
 
   const startInterpretation = async () => {
@@ -250,7 +262,7 @@ export default function DailySignDraw() {
                 <div id="daily-sign-dialog-title" className="font-serif text-2xl text-ink">摇一摇{periodLabel}</div>
                 <p className="mt-2 text-sm leading-6 text-ink/55">轻轻点一下签筒，为这个时段取出正式签。</p>
                 <div className={`daily-sign-ritual-stage is-${phase}`} aria-live="polite">
-                  {phase !== "materializing" ? (
+                  {phase !== "materializing" && phase !== "materialized" ? (
                     <button
                       type="button"
                       onClick={shakeAndDraw}
@@ -297,6 +309,7 @@ export default function DailySignDraw() {
                   {phase === "shaking" && "签声轻响，正在摇签……"}
                   {phase === "dropping" && "一支签已经落出……"}
                   {phase === "materializing" && "签意渐渐显现……"}
+                  {phase === "materialized" && "签意已经落定"}
                 </div>
                 {error && <p className="mt-3 text-sm text-cinnabar" role="alert">{error}</p>}
                 <p className="mt-4 text-[11px] text-ink/40">服务端定签 · 不问吉凶 · 本时段不重复换签</p>
