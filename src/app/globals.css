@@ -982,13 +982,19 @@ html, body {
 }
 .daily-sign-materializing {
   @apply mx-auto grid h-full max-w-sm grid-cols-[5.5rem_1fr] items-center gap-5 rounded-2xl border border-gold/35 bg-white/45 px-5 py-5 text-left;
-  animation: daily-sign-materialize 1000ms cubic-bezier(0.16, 0.84, 0.28, 1) both;
-  backface-visibility: hidden;
-  will-change: transform, opacity;
+  contain: layout paint;
 }
 .daily-sign-materializing img {
   @apply h-[17rem] w-auto max-w-none select-none justify-self-center object-contain;
-  filter: drop-shadow(0 0.65rem 0.6rem rgba(68, 42, 25, 0.16));
+  animation: daily-sign-stick-materialize 1100ms linear both;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: opacity;
+}
+.daily-sign-materializing > div {
+  animation: daily-sign-details-materialize 620ms ease-out 420ms both;
+  backface-visibility: hidden;
+  will-change: opacity, transform;
 }
 .daily-sign-materializing span {
   @apply text-[10px] tracking-[0.12em] text-cinnabar;
@@ -1026,11 +1032,13 @@ html, body {
   94% { transform: translate3d(41%, 8.15rem, 0) rotate(69deg) scale(0.82); }
   100% { opacity: 1; transform: translate3d(42%, 8.5rem, 0) rotate(72deg) scale(0.82); }
 }
-@keyframes daily-sign-materialize {
-  0% { opacity: 0.08; transform: translate3d(0, 0.85rem, 0) scale(0.965); }
-  38% { opacity: 0.46; }
-  78% { opacity: 0.94; transform: translate3d(0, -0.06rem, 0) scale(1.002); }
-  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+@keyframes daily-sign-stick-materialize {
+  from { opacity: 0.06; }
+  to { opacity: 1; }
+}
+@keyframes daily-sign-details-materialize {
+  from { opacity: 0; transform: translate3d(0, 0.3rem, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 @keyframes daily-sign-caption-in {
   from { opacity: 0; transform: translate3d(0, 0.2rem, 0); }
@@ -1043,13 +1051,13 @@ html, body {
     animation-duration: 1000ms;
     animation-iteration-count: 1;
   }
-  .daily-sign-materializing {
-    animation-name: daily-sign-materialize-reduced;
+  .daily-sign-materializing img {
+    animation-duration: 800ms;
   }
-}
-@keyframes daily-sign-materialize-reduced {
-  from { opacity: 0.2; }
-  to { opacity: 1; }
+  .daily-sign-materializing > div {
+    animation-duration: 500ms;
+    animation-delay: 250ms;
+  }
 }
 
 .daily-sign-result-heading {

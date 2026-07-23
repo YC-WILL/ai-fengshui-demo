@@ -11,22 +11,28 @@ describe("daily sign ritual animation", () => {
     expect(component).toContain('setPhase("shaking")');
     expect(component).toContain('setPhase("dropping")');
     expect(component).toContain('setPhase("materializing")');
-    expect(component).toContain('setPhase("revealed")');
+    expect(component).toContain('current === "materializing" ? "revealed" : current');
     expect(component.indexOf('setPhase("shaking")')).toBeLessThan(component.indexOf('setPhase("dropping")'));
     expect(component.indexOf('setPhase("dropping")')).toBeLessThan(component.indexOf('setPhase("materializing")'));
-    expect(component.indexOf('setPhase("materializing")')).toBeLessThan(component.indexOf('setPhase("revealed")'));
     expect(styles).toContain("@keyframes daily-sign-shake");
     expect(styles).toContain("@keyframes daily-sign-stick-fall");
-    expect(styles).toContain("@keyframes daily-sign-materialize");
+    expect(styles).toContain("@keyframes daily-sign-stick-materialize");
   });
 
   it("keeps every animation stage visible for a fixed minimum duration", () => {
     expect(component).toContain("shaking: 1200");
     expect(component).toContain("dropping: 1000");
-    expect(component).toContain("materializing: 1000");
+    expect(component).toContain("materializingFallback: 1800");
     expect(component).toContain("await waitForAnimation(DRAW_ANIMATION_MS.shaking)");
     expect(component).toContain("await waitForAnimation(DRAW_ANIMATION_MS.dropping)");
-    expect(component).toContain("await waitForAnimation(DRAW_ANIMATION_MS.materializing)");
+    expect(component).not.toContain("await waitForAnimation(DRAW_ANIMATION_MS.materializing)");
+  });
+
+  it("reveals the result only after the lightweight stick fade really finishes", () => {
+    expect(component).toContain("onAnimationEnd={finishMaterializing}");
+    expect(styles).toContain("animation: daily-sign-stick-materialize 1100ms linear both");
+    expect(styles).toContain("will-change: opacity");
+    expect(styles).not.toContain("filter: blur");
   });
 
   it("uses composed transforms and eased settling instead of a repeating hard shake", () => {
@@ -57,6 +63,6 @@ describe("daily sign ritual animation", () => {
 
   it("respects reduced-motion preferences", () => {
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
-    expect(styles).toContain("daily-sign-materialize-reduced");
+    expect(styles).toMatch(/daily-sign-materializing img[\s\S]*animation-duration: 800ms/);
   });
 });

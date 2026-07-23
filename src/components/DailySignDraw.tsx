@@ -36,7 +36,7 @@ interface InterpretationResult {
 const DRAW_ANIMATION_MS = {
   shaking: 1200,
   dropping: 1000,
-  materializing: 1000
+  materializingFallback: 1800
 } as const;
 const SIGN_DRAW_ASSETS = [
   "/images/sign-draw/cylinder-v2.png",
@@ -134,12 +134,22 @@ export default function DailySignDraw() {
       setSign(payload.data);
       setPeriod(payload.data.period);
       setPhase("materializing");
-      await waitForAnimation(DRAW_ANIMATION_MS.materializing);
-      setPhase("revealed");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "这次没有摇出签，请稍后再试");
       setPhase("ready");
     }
+  };
+
+  useEffect(() => {
+    if (phase !== "materializing") return;
+    const fallback = window.setTimeout(() => {
+      setPhase(current => current === "materializing" ? "revealed" : current);
+    }, DRAW_ANIMATION_MS.materializingFallback);
+    return () => window.clearTimeout(fallback);
+  }, [phase]);
+
+  const finishMaterializing = () => {
+    setPhase(current => current === "materializing" ? "revealed" : current);
   };
 
   const startInterpretation = async () => {
@@ -267,7 +277,13 @@ export default function DailySignDraw() {
                     </button>
                   ) : sign ? (
                     <div className="daily-sign-materializing" aria-label={`${sign.snapshot.title}正在显现`}>
-                      <img src="/images/sign-draw/stick-v2.png" alt="" draggable={false} fetchPriority="high" />
+                      <img
+                        src="/images/sign-draw/stick-v2.png"
+                        alt=""
+                        draggable={false}
+                        fetchPriority="high"
+                        onAnimationEnd={finishMaterializing}
+                      />
                       <div>
                         <span>{sign.periodLabel} · 第{sign.snapshot.number}签</span>
                         <strong>{sign.snapshot.title}</strong>
