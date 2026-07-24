@@ -9,6 +9,36 @@ describe("four plate product UI", () => {
     expect(METHOD_MODULES.every(module => module.basis.length > 0 && module.description.length > 0)).toBe(true);
   });
 
+  it("lets users choose a plate from a real-life question without overstating save support", () => {
+    const entryGrid = readFileSync("src/components/MethodEntryGrid.tsx", "utf8");
+
+    expect(METHOD_MODULES.map(module => module.subtitle)).toEqual([
+      "我想看清自己的做事方式",
+      "我想理清两个人怎样相处",
+      "我想先处理家里的实际困扰",
+      "我想为一件事比较几个日期"
+    ]);
+    expect(entryGrid).toContain("你现在更想解决哪件事");
+    expect(entryGrid).toContain("开始查看");
+    expect(entryGrid).toContain("随时返回总览");
+    expect(entryGrid).not.toContain("可以保存");
+  });
+
+  it("keeps every plate inside one input-result-exit loop", () => {
+    const shell = readFileSync("src/components/MethodPageShell.tsx", "utf8");
+    const workspaces = readFileSync("src/components/MethodWorkspaces.tsx", "utf8");
+
+    expect(shell).toContain('href="/#method-entry-title"');
+    expect(shell).toContain("返回四盘总览");
+    expect(shell).toContain("重新调整当前输入");
+    expect(shell).toContain('id={`${current}-input`}');
+    expect(shell).toContain("查看个人资料");
+    expect(workspaces).toContain("基础资料暂时没读到");
+    expect(workspaces).toContain("重新读取");
+    expect(workspaces).toContain('error={error} onRetry={retry} onSaved={payload => setContext(payload)}');
+    expect(workspaces).not.toContain('href="/me#birth-profile"');
+  });
+
   it("uses structure dimensions instead of scores for relationships", () => {
     expect(RELATION_DIMENSIONS).toHaveLength(4);
     expect(JSON.stringify(RELATION_DIMENSIONS)).not.toMatch(/评分|匹配分|适不适合|注定|保证/);

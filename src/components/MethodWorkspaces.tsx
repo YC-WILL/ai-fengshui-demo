@@ -62,42 +62,73 @@ const ELEMENT_TONE_CLASS: Record<Element, string> = {
 
 function useBirthContext() {
   const [context, setContext] = useState<BirthContext | null | undefined>(undefined);
+  const [error, setError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let active = true;
+    setError(false);
     fetch("/api/today-correspondence", { cache: "no-store" })
-      .then(response => response.json())
-      .then(body => active && setContext(body?.data ?? null))
-      .catch(() => active && setContext(null));
+      .then(response => {
+        if (!response.ok) throw new Error("Birth profile request failed");
+        return response.json();
+      })
+      .then(body => {
+        if (!active) return;
+        setContext(body?.data ?? null);
+        setError(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setContext(null);
+        setError(true);
+      });
     return () => { active = false; };
-  }, []);
-  return { context, setContext };
+  }, [attempt]);
+  return {
+    context,
+    setContext,
+    error,
+    retry: () => {
+      setContext(undefined);
+      setError(false);
+      setAttempt(value => value + 1);
+    }
+  };
 }
 
-function useBirthProfile() {
-  const { context } = useBirthContext();
-  return context === undefined ? undefined : context?.profile ?? null;
-}
-
-function ProfileGate({ profile, onSaved }: { profile: BirthProfile | null | undefined; onSaved?: (context: BirthContext) => void }) {
+function ProfileGate({
+  profile,
+  error = false,
+  onRetry,
+  onSaved
+}: {
+  profile: BirthProfile | null | undefined;
+  error?: boolean;
+  onRetry?: () => void;
+  onSaved: (context: BirthContext) => void;
+}) {
   if (profile === undefined) return <div className="plate-loading" aria-label="正在读取生辰资料" />;
   if (profile) return null;
-  if (onSaved) {
-    return <div className="plate-profile-onboarding"><BirthProfileForm context="plate" onSaved={payload => onSaved(payload)} /></div>;
-  }
-  return (
-    <div className="plate-empty">
-      <span className="plate-seal" aria-hidden>生</span>
-      <div>
-        <h2 className="font-serif text-xl">先保存一份生辰</h2>
-        <p className="mt-1 text-sm leading-6 text-ink/55">四盘共用这一份基础资料，不需要重复填写，也不需要描述具体困扰。</p>
+  if (error) {
+    return (
+      <div className="plate-empty" role="alert">
+        <span className="plate-seal" aria-hidden>再</span>
+        <div>
+          <h2 className="font-serif text-xl">基础资料暂时没读到</h2>
+          <p className="mt-1 text-sm leading-6 text-ink/55">可以重新读取；如果仍未恢复，也可以先返回四盘总览。</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button className="btn-primary" type="button" onClick={onRetry}>重新读取</button>
+          <Link className="btn-secondary" href="/#method-entry-title">返回四盘总览</Link>
+        </div>
       </div>
-      <Link className="btn-primary" href="/me#birth-profile">去保存</Link>
-    </div>
-  );
+    );
+  }
+  return <div className="plate-profile-onboarding"><BirthProfileForm context="plate" onSaved={payload => onSaved(payload)} /></div>;
 }
 
 export function BaziWorkspace() {
-  const { context, setContext } = useBirthContext();
+  const { context, setContext, error, retry } = useBirthContext();
   const profile = context === undefined ? undefined : context?.profile ?? null;
   const chart = useMemo(() => profile ? computeBazi({
     gender: profile.gender,
@@ -119,7 +150,9 @@ export function BaziWorkspace() {
   const [timeLayer, setTimeLayer] = useState<BaziTimeLayerId>("today");
   const [editingProfile, setEditingProfile] = useState(false);
 
-  if (!profile || !chart || !structure || !mainline) return <ProfileGate profile={profile} onSaved={payload => setContext(payload)} />;
+  if (!profile || !chart || !structure || !mainline) {
+    return <ProfileGate profile={profile} error={error} onRetry={retry} onSaved={payload => setContext(payload)} />;
+  }
   const selectedStructure = structure.pillars[selectedCharacter.pillar];
   const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind, structure);
   const activeTimeLayer = timeLayers.find(item => item.id === timeLayer) ?? timeLayers[0];
@@ -345,7 +378,8 @@ export function BaziWorkspace() {
 }
 
 export function RelationWorkspace() {
-  const profile = useBirthProfile();
+  const { context, setContext, error, retry } = useBirthContext();
+  const profile = context === undefined ? undefined : context?.profile ?? null;
   const [otherDate, setOtherDate] = useState("");
   const [relationshipType, setRelationshipType] = useState<RelationshipType>("partner");
   const firstChart = useMemo(() => profile ? computeBazi({
@@ -366,7 +400,9 @@ export function RelationWorkspace() {
   const facts = useMemo(() => firstChart && secondChart ? buildPairInteractionFacts(firstChart, secondChart) : null, [firstChart, secondChart]);
   const cards = useMemo(() => buildRelationshipObservationCards(facts, relationshipType), [facts, relationshipType]);
   const jointAction = useMemo(() => buildRelationshipJointAction(cards), [cards]);
-  if (!profile) return <ProfileGate profile={profile} />;
+  if (!profile) {
+    return <ProfileGate profile={profile} error={error} onRetry={retry} onSaved={payload => setContext(payload)} />;
+  }
 
   return (
     <section className="plate-shell relation-plate">
@@ -591,7 +627,8 @@ export function HomeWorkspace() {
 }
 
 export function TimingWorkspace({ today }: { today: string }) {
-  const profile = useBirthProfile();
+  const { context, setContext, error, retry } = useBirthContext();
+  const profile = context === undefined ? undefined : context?.profile ?? null;
   const [event, setEvent] = useState<DateSelectionEvent>("moving");
   const [range, setRange] = useState<7 | 30>(30);
   const selection = useMemo(() => profile ? buildTimingSelection({
@@ -610,16 +647,9 @@ export function TimingWorkspace({ today }: { today: string }) {
   useEffect(() => {
     setSelectedDate(firstCandidateDate);
   }, [event, range, firstCandidateDate]);
-  if (profile === undefined) return <ProfileGate profile={profile} />;
-  if (!profile) return <section className="timing-missing-profile">
-    <span className="plate-seal" aria-hidden>时</span>
-    <div>
-      <span className="section-kicker">资料不足</span>
-      <h2>需要先保存出生日期</h2>
-      <p>当前候选会用出生日期得到的日干和年支作有限参照；没有这项资料时不生成伪造候选。</p>
-    </div>
-    <Link className="btn-primary" href="/me#birth-profile">去保存</Link>
-  </section>;
+  if (!profile) {
+    return <ProfileGate profile={profile} error={error} onRetry={retry} onSaved={payload => setContext(payload)} />;
+  }
   const selected = candidates.find(item => item.date === selectedDate) ?? candidates[0];
 
   return (

@@ -76,6 +76,12 @@ html, body {
 .method-local-nav a { @apply min-w-24 shrink-0 rounded-lg px-4 py-2 text-center text-sm text-ink/55 transition hover:bg-rice; }
 .method-local-nav a[aria-current="page"] { @apply bg-ink text-rice; }
 .method-page-heading { @apply flex flex-col gap-4 rounded-2xl border border-gold/30 bg-white/70 px-6 py-6 shadow-scroll sm:flex-row sm:items-center sm:justify-between md:px-8; }
+.method-workspace-anchor { scroll-margin-top: 7rem; }
+.method-completion-actions { @apply flex flex-col gap-4 rounded-2xl border border-mist bg-white/70 p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between md:p-6; }
+.method-completion-actions > div { @apply min-w-0; }
+.method-completion-actions h2 { @apply mt-1 font-serif text-xl font-normal; }
+.method-completion-actions p { @apply mt-2 text-sm leading-6 text-ink/55; }
+.method-completion-actions nav { @apply flex shrink-0 flex-wrap gap-2; }
 .method-page-hero { @apply overflow-hidden rounded-3xl border border-ink/10 text-rice shadow-scroll; background: radial-gradient(circle at 82% 12%, rgba(201, 163, 92, 0.22), transparent 28%), radial-gradient(circle at 8% 100%, rgba(181, 59, 42, 0.18), transparent 34%), #26312d; }
 .method-page-meta { @apply flex items-center justify-between border-b border-white/10 px-5 py-3 text-[10px] tracking-[0.2em] text-rice/55 md:px-8; }
 .method-page-meta b { @apply rounded-full border border-gold/35 bg-gold/10 px-3 py-1 font-medium tracking-normal text-gold; }
@@ -733,6 +739,8 @@ html, body {
 }
 
 @media (max-width: 520px) {
+  .method-completion-actions nav { @apply w-full flex-col; }
+  .method-completion-actions nav a { @apply w-full; }
   .plate-main, .plate-aside { @apply p-4; }
   .plate-profile-summary { @apply w-full; }
   .plate-inline-profile-editor, .plate-profile-onboarding { @apply p-1; }

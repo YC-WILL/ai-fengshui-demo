@@ -7,9 +7,9 @@ export default function MethodEntryGrid() {
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
           <div className="section-kicker">蟾先森四盘</div>
-          <h2 id="method-entry-title" className="mt-1 font-serif text-2xl">从现在想看的方向进入</h2>
+          <h2 id="method-entry-title" className="mt-1 font-serif text-2xl">你现在更想解决哪件事</h2>
         </div>
-        <span className="hidden text-xs text-ink/45 sm:block">各自成盘 · 可以保存 · 持续更新</span>
+        <span className="hidden text-xs text-ink/45 sm:block">按实际问题进入 · 随时返回总览</span>
       </div>
       <div className="method-entry-grid">
         {METHOD_MODULES.map((module, index) => (
@@ -25,7 +25,7 @@ export default function MethodEntryGrid() {
             <p className="text-xs leading-6 text-ink/55">{module.description}</p>
             <div className="flex items-center justify-between border-t border-mist pt-3 text-xs">
               <span className="text-ink/45">{module.basis}</span>
-              <span className="text-cinnabar transition group-hover:translate-x-1">入盘 →</span>
+              <span className="text-cinnabar transition group-hover:translate-x-1">开始查看 →</span>
             </div>
           </Link>
         ))}
