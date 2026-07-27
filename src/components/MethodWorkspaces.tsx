@@ -27,8 +27,16 @@ import type { Element } from "@/lib/domain/elements";
 import { DATE_EVENTS } from "@/lib/product/methodUi";
 import type { DateSelectionEvent } from "@/lib/types";
 import { BirthProfileForm } from "@/components/TodayCorrespondence";
+import { PlateSaveControl, stablePlateSaveKey } from "@/components/PlateSaveControl";
 import { profileGenderLabel } from "@/lib/profileGender";
 import type { Gender } from "@/lib/types";
+import PlateContinuationNotice from "@/components/PlateContinuationNotice";
+import {
+  cloneHomeInput,
+  resolveTimingCandidatePreference,
+  type PlateContinuation,
+  type TimingContinuationInitial
+} from "@/lib/plateContinuation";
 
 interface BirthProfile {
   gender: Gender;
@@ -127,7 +135,11 @@ function ProfileGate({
   return <div className="plate-profile-onboarding"><BirthProfileForm context="plate" onSaved={payload => onSaved(payload)} /></div>;
 }
 
-export function BaziWorkspace() {
+export function BaziWorkspace({
+  continuation = null
+}: {
+  continuation?: Extract<PlateContinuation, { plateType: "BAZI" }> | null;
+}) {
   const { context, setContext, error, retry } = useBirthContext();
   const profile = context === undefined ? undefined : context?.profile ?? null;
   const chart = useMemo(() => profile ? computeBazi({
@@ -151,16 +163,34 @@ export function BaziWorkspace() {
   const [editingProfile, setEditingProfile] = useState(false);
 
   if (!profile || !chart || !structure || !mainline) {
-    return <ProfileGate profile={profile} error={error} onRetry={retry} onSaved={payload => setContext(payload)} />;
+    return <>
+      {continuation && <PlateContinuationNotice
+        sourceId={continuation.sourceId}
+        message="你正在从一条历史记录继续。这里使用当前保存的生辰资料和当前计算规则，结果可能与当时不同。"
+      />}
+      <ProfileGate profile={profile} error={error} onRetry={retry} onSaved={payload => setContext(payload)} />
+    </>;
   }
   const selectedStructure = structure.pillars[selectedCharacter.pillar];
   const characterExplanation = explainBaziCharacter(selectedStructure, chart.dayMaster, selectedCharacter.kind, structure);
   const activeTimeLayer = timeLayers.find(item => item.id === timeLayer) ?? timeLayers[0];
   const boundaryUncertainty = chart.calculation.uncertainty;
+  const baziSaveResetKey = stablePlateSaveKey({
+    gender: profile.gender,
+    birthDate: profile.birthDate,
+    birthTime: profile.birthTime,
+    birthLocation: profile.birthLocation,
+    timezone: profile.timezone,
+    unknownTime: profile.unknownTime
+  });
 
   return (
     <section className="plate-shell bazi-plate-shell">
       <div className="plate-main">
+        {continuation && <PlateContinuationNotice
+          sourceId={continuation.sourceId}
+          message="你正在从一条历史记录继续。这里使用当前保存的生辰资料和当前计算规则，结果可能与当时不同。"
+        />}
         <div className="plate-section-head">
           <div><span>你的八字盘</span><small>先对照具体生活情境，再查看盘面依据</small></div>
           <button type="button" className="plate-profile-summary" aria-expanded={editingProfile} onClick={() => setEditingProfile(value => !value)}>
@@ -372,16 +402,31 @@ export function BaziWorkspace() {
           </div>
           <p className="bazi-time-footnote">时间层只提示某类主题较容易被看见；它不会改写本命盘，也不表示当天必定发生某件事。</p>
         </div>}
+
+        <PlateSaveControl
+          plateType="BAZI"
+          input={{}}
+          resetKey={baziSaveResetKey}
+          disabled={!profile || !chart || !structure || !mainline}
+          disabledReason="基础资料和八字结果准备好后才能保存"
+        />
       </div>
     </section>
   );
 }
 
-export function RelationWorkspace() {
+export function RelationWorkspace({
+  continuation = null
+}: {
+  continuation?: Extract<PlateContinuation, { plateType: "RELATION" }> | null;
+}) {
   const { context, setContext, error, retry } = useBirthContext();
   const profile = context === undefined ? undefined : context?.profile ?? null;
-  const [otherDate, setOtherDate] = useState("");
-  const [relationshipType, setRelationshipType] = useState<RelationshipType>("partner");
+  const [otherDate, setOtherDate] = useState(continuation?.input.otherBirthDate ?? "");
+  const [otherNickname, setOtherNickname] = useState(continuation?.input.otherNickname ?? "");
+  const [relationshipType, setRelationshipType] = useState<RelationshipType>(
+    continuation?.input.relationshipType ?? "partner"
+  );
   const firstChart = useMemo(() => profile ? computeBazi({
     gender: profile.gender,
     birthDate: profile.birthDate,
@@ -401,17 +446,28 @@ export function RelationWorkspace() {
   const cards = useMemo(() => buildRelationshipObservationCards(facts, relationshipType), [facts, relationshipType]);
   const jointAction = useMemo(() => buildRelationshipJointAction(cards), [cards]);
   if (!profile) {
-    return <ProfileGate profile={profile} error={error} onRetry={retry} onSaved={payload => setContext(payload)} />;
+    return <>
+      {continuation && <PlateContinuationNotice
+        sourceId={continuation.sourceId}
+        message="已带入当时的关系类型和对方资料；本人部分使用当前保存的生辰资料。"
+      />}
+      <ProfileGate profile={profile} error={error} onRetry={retry} onSaved={payload => setContext(payload)} />
+    </>;
   }
 
   return (
     <section className="plate-shell relation-plate">
       <div className="plate-main">
+        {continuation && <PlateContinuationNotice
+          sourceId={continuation.sourceId}
+          message="已带入当时的关系类型和对方资料；本人部分使用当前保存的生辰资料。"
+        />}
         <section className="relationship-setup" aria-labelledby="relationship-setup-title">
           <div className="relationship-setup-copy"><span className="section-kicker">起一张关系盘</span><h2 id="relationship-setup-title">两个人的结构怎样相遇</h2><p>选择你们的关系场景，再填写另一人的出生日期。这里不做评分，只观察日柱之间的双向作用。</p></div>
           <div className="relationship-setup-controls">
             <div><span>你们是什么关系</span><div className="relation-type-picker" aria-label="关系类型">{RELATIONSHIP_TYPES.map(item => <button key={item.id} type="button" aria-pressed={relationshipType === item.id} onClick={() => setRelationshipType(item.id)}>{item.label}</button>)}</div></div>
             <label className="relationship-date-field"><span>另一人的出生日期</span><input type="date" value={otherDate} onChange={event => setOtherDate(event.target.value)} /></label>
+            <label className="relationship-date-field"><span>称呼或昵称（可选）</span><input type="text" maxLength={40} value={otherNickname} onChange={event => setOtherNickname(event.target.value)} placeholder="只用于辨认这条记录" /></label>
           </div>
         </section>
 
@@ -459,6 +515,24 @@ export function RelationWorkspace() {
 
           <details className="relationship-method"><summary>查看本次方法与边界</summary><p>{facts.boundary}</p><p>六合、六冲、六害、六破与刑是传统结构名称，不等于现实事件，也不替代你们对真实沟通和处境的判断。</p></details>
         </>}
+
+        <PlateSaveControl
+          plateType="RELATION"
+          input={{
+            relationshipType,
+            otherBirthDate: otherDate,
+            ...(otherNickname.trim() ? { otherNickname: otherNickname.trim() } : {})
+          }}
+          resetKey={stablePlateSaveKey({
+            profile,
+            relationshipType,
+            otherBirthDate: otherDate,
+            otherNickname: otherNickname.trim() || undefined
+          })}
+          disabled={!facts}
+          disabledReason="填写有效的另一人出生日期并生成互动结果后才能保存"
+          relationPrivacyNote="只有点击保存后，另一人的出生日期和可选昵称才会保存到当前浏览器对应的账号记录中。"
+        />
       </div>
     </section>
   );
@@ -466,8 +540,14 @@ export function RelationWorkspace() {
 
 const ROOMS = HOME_AREA_DEFINITIONS;
 
-export function HomeWorkspace() {
-  const [input, setInput] = useState<HomeSpaceInput>({});
+export function HomeWorkspace({
+  continuation = null
+}: {
+  continuation?: Extract<PlateContinuation, { plateType: "HOME" }> | null;
+}) {
+  const [input, setInput] = useState<HomeSpaceInput>(
+    () => cloneHomeInput(continuation?.input.areas ?? {})
+  );
   const assessment = useMemo(() => buildHomeSpaceAssessment(input), [input]);
   const missingAreaLabels = assessment.missingAreas
     .map(areaId => ROOMS.find(area => area.id === areaId)?.label)
@@ -514,6 +594,10 @@ export function HomeWorkspace() {
 
   return (
     <section className="home-space-workspace">
+      {continuation && <PlateContinuationNotice
+        sourceId={continuation.sourceId}
+        message="已带入当时填写的空间情况，当前结果按现行规则计算。"
+      />}
       <section className="home-input-panel" aria-labelledby="home-input-title">
         <div className="home-space-section-head">
           <div>
@@ -622,38 +706,77 @@ export function HomeWorkspace() {
         <div><span className="section-kicker">专业结构区</span><h2 id="home-professional-title">门、主、灶与方位观察将在后续阶段展开</h2></div>
         <p>今天的优先判断只来自你填写的现实空间情况，暂不展开方位判断、住宅评分或物品建议。</p>
       </section>
+
+      <PlateSaveControl
+        plateType="HOME"
+        input={{ areas: input }}
+        resetKey={stablePlateSaveKey({ areas: input })}
+        disabled={assessment.reviewedAreas.length === 0}
+        disabledReason="至少确认一处真实空间情况后才能保存"
+      />
     </section>
   );
 }
 
-export function TimingWorkspace({ today }: { today: string }) {
+export function TimingWorkspace({
+  today,
+  continuation = null
+}: {
+  today: string;
+  continuation?: TimingContinuationInitial | null;
+}) {
   const { context, setContext, error, retry } = useBirthContext();
   const profile = context === undefined ? undefined : context?.profile ?? null;
-  const [event, setEvent] = useState<DateSelectionEvent>("moving");
-  const [range, setRange] = useState<7 | 30>(30);
+  const [event, setEvent] = useState<DateSelectionEvent>(continuation?.event ?? "moving");
+  const [range, setRange] = useState<7 | 30>(continuation?.rangeDays ?? 30);
+  const startDate = continuation?.startDate ?? today;
   const selection = useMemo(() => profile ? buildTimingSelection({
     event,
-    startDate: today,
+    startDate,
     rangeDays: range,
     birthDate: profile.birthDate,
     birthTime: profile.birthTime,
     birthLocation: profile.birthLocation,
     timezone: profile.timezone,
     unknownTime: profile.unknownTime
-  }) : null, [event, profile, range, today]);
+  }) : null, [event, profile, range, startDate]);
   const candidates = selection?.candidates ?? [];
   const firstCandidateDate = candidates[0]?.date ?? null;
+  const candidateDateKey = candidates.map(candidate => candidate.date).join("|");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [preferredSelectedDate, setPreferredSelectedDate] = useState<string | null>(
+    continuation?.preferredSelectedDate ?? null
+  );
+  const [continuationWarning, setContinuationWarning] = useState<string | null>(null);
   useEffect(() => {
-    setSelectedDate(firstCandidateDate);
-  }, [event, range, firstCandidateDate]);
+    if (!selection) {
+      return;
+    }
+    const preference = resolveTimingCandidatePreference(
+      candidateDateKey ? candidateDateKey.split("|") : [],
+      preferredSelectedDate
+    );
+    setSelectedDate(preference.selectedDate);
+    setContinuationWarning(preference.warning);
+  }, [event, range, startDate, firstCandidateDate, candidateDateKey, preferredSelectedDate, selection]);
   if (!profile) {
-    return <ProfileGate profile={profile} error={error} onRetry={retry} onSaved={payload => setContext(payload)} />;
+    return <>
+      {continuation && <PlateContinuationNotice
+        sourceId={continuation.sourceId}
+        message={timingContinuationMessage(continuation)}
+      />}
+      <ProfileGate profile={profile} error={error} onRetry={retry} onSaved={payload => setContext(payload)} />
+    </>;
   }
   const selected = candidates.find(item => item.date === selectedDate) ?? candidates[0];
 
   return (
     <section className="timing-workspace">
+      {continuation && <PlateContinuationNotice
+        sourceId={continuation.sourceId}
+        message={timingContinuationMessage(continuation)}
+        warning={continuationWarning}
+      />}
       <section className="timing-controls" aria-labelledby="timing-input-title">
         <div className="timing-section-head">
           <span className="section-kicker">01 · 选择事项与范围</span>
@@ -663,17 +786,30 @@ export function TimingWorkspace({ today }: { today: string }) {
         <div className="timing-input-grid">
           <div>
             <b>事项类型</b>
-            <div className="event-chips" aria-label="事项类型">{DATE_EVENTS.map(item => <button key={item.id} type="button" aria-pressed={event === item.id} onClick={() => setEvent(item.id)}>{item.label}</button>)}</div>
+            <div className="event-chips" aria-label="事项类型">{DATE_EVENTS.map(item => <button key={item.id} type="button" aria-pressed={event === item.id} onClick={() => {
+              setPreferredSelectedDate(null);
+              setContinuationWarning(null);
+              setEvent(item.id);
+            }}>{item.label}</button>)}</div>
           </div>
           <div>
             <b>时间范围</b>
             <div className="plate-tabs compact" aria-label="时间范围">
-              <button type="button" aria-pressed={range === 7} onClick={() => setRange(7)}>未来 7 天</button>
-              <button type="button" aria-pressed={range === 30} onClick={() => setRange(30)}>未来 30 天</button>
+              <button type="button" aria-pressed={range === 7} onClick={() => {
+                setPreferredSelectedDate(null);
+                setContinuationWarning(null);
+                setRange(7);
+              }}>未来 7 天</button>
+              <button type="button" aria-pressed={range === 30} onClick={() => {
+                setPreferredSelectedDate(null);
+                setContinuationWarning(null);
+                setRange(30);
+              }}>未来 30 天</button>
             </div>
           </div>
         </div>
         <p className="timing-profile-scope">{selection?.profileScope}</p>
+        <p className="timing-start-date">本次实际起始日期：<b>{startDate}</b></p>
       </section>
 
       <section className="timing-candidates" aria-labelledby="timing-candidates-title">
@@ -689,7 +825,10 @@ export function TimingWorkspace({ today }: { today: string }) {
               value={candidate}
               index={index}
               active={selected?.date === candidate.date}
-              onClick={() => setSelectedDate(candidate.date)}
+              onClick={() => {
+                setContinuationWarning(null);
+                setSelectedDate(candidate.date);
+              }}
             />
           ))}
         </div> : <div className="timing-empty" role="status">
@@ -697,7 +836,11 @@ export function TimingWorkspace({ today }: { today: string }) {
           <p>{selection?.status === "insufficient"
             ? selection.insufficientReason
             : "现有事项规则与排除条件下没有可继续核对的日期，蟾先森不会为了凑够3天降低规则。"}</p>
-          {selection?.status === "ready" && range === 7 && <button type="button" className="btn-secondary" onClick={() => setRange(30)}>改看未来30天</button>}
+          {selection?.status === "ready" && range === 7 && <button type="button" className="btn-secondary" onClick={() => {
+            setPreferredSelectedDate(null);
+            setContinuationWarning(null);
+            setRange(30);
+          }}>改看未来30天</button>}
         </div>}
       </section>
 
@@ -744,8 +887,33 @@ export function TimingWorkspace({ today }: { today: string }) {
           </div>
         </details>
       </section>}
+
+      <PlateSaveControl
+        plateType="TIMING"
+        input={{
+          event,
+          startDate,
+          rangeDays: range,
+          ...(selected?.date ? { selectedDate: selected.date } : {})
+        }}
+        resetKey={stablePlateSaveKey({
+          profile,
+          event,
+          startDate,
+          rangeDays: range,
+          selectedDate: selected?.date
+        })}
+        disabled={!profile || !selection}
+        disabledReason="基础资料和日期比较准备好后才能保存"
+      />
     </section>
   );
+}
+
+function timingContinuationMessage(continuation: TimingContinuationInitial): string {
+  return continuation.mode === "original"
+    ? `已带入当时事项与范围，并从原起始日期 ${continuation.startDate} 按现行规则重新比较。`
+    : `已带入当时事项与范围，并从今天 ${continuation.startDate} 按现行规则重新比较。`;
 }
 
 function PersonNode({ label, pillar, element, muted }: { label: string; pillar: string; element?: Element; muted?: boolean }) {

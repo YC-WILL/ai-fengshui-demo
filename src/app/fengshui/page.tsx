@@ -1,7 +1,17 @@
 import MethodPageShell from "@/components/MethodPageShell";
 import { HomeWorkspace } from "@/components/MethodWorkspaces";
+import { getCurrentUserId } from "@/lib/auth";
+import { loadPlateContinuation } from "@/lib/plateContinuation";
+import { notFound } from "next/navigation";
 
-export default function FengShuiPage() {
+export const dynamic = "force-dynamic";
+
+export default async function FengShuiPage({
+  searchParams
+}: {
+  searchParams?: { from?: string | string[] };
+}) {
+  const continuation = await getContinuation(searchParams?.from);
   return (
     <MethodPageShell
       current="home"
@@ -11,7 +21,20 @@ export default function FengShuiPage() {
       status="1.0 第一阶段"
       stages={["填写三处现实情况", "先处理一处", "今天完成一个动作"]}
     >
-      <HomeWorkspace />
+      <HomeWorkspace
+        key={continuation?.sourceId ?? "new-home"}
+        continuation={continuation}
+      />
     </MethodPageShell>
   );
+}
+
+async function getContinuation(from: string | string[] | undefined) {
+  if (from === undefined) return null;
+  if (typeof from !== "string") notFound();
+  const userId = await getCurrentUserId();
+  if (!userId) notFound();
+  const continuation = await loadPlateContinuation(userId, from, "HOME");
+  if (!continuation || continuation.plateType !== "HOME") notFound();
+  return continuation;
 }

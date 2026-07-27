@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { getOrCreateUser, bindEmail } from "@/lib/auth";
+import {
+  bindEmail,
+  getCurrentUserId,
+  getOrCreateUser
+} from "@/lib/auth";
+import {
+  USER_IDENTITY_COOKIE_NAME,
+  expiredIdentityCookieOptions
+} from "@/lib/identityCookie";
 import { getMembershipStatus, MEMBERSHIP_COOKIE_NAME } from "@/lib/membership";
 import { COMPANION_PROFILE_REPORT_TYPE, COMPANION_TURN_REPORT_TYPE } from "@/lib/companion/core";
 
@@ -35,7 +43,7 @@ export async function GET() {
     return NextResponse.json({
       ok: true,
       data: {
-        user: { id: user.id, email: user.email, nickname: user.nickname },
+        user: { email: user.email, nickname: user.nickname },
         reports,
         signs,
         legacySigns,
@@ -70,11 +78,19 @@ export async function PATCH(req: NextRequest) {
 
 // 用户行使「数据删除权」：清空账户下的所有数据（合规层）
 export async function DELETE() {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return NextResponse.json(
+      { ok: false, error: "当前浏览器中没有可删除的使用身份。" },
+      { status: 404 }
+    );
+  }
   try {
-    const user = await getOrCreateUser();
-    await prisma.user.delete({ where: { id: user.id } });
+    await prisma.user.delete({ where: { id: userId } });
     const response = NextResponse.json({ ok: true });
-    response.cookies.delete(MEMBERSHIP_COOKIE_NAME);
+    const expired = expiredIdentityCookieOptions();
+    response.cookies.set(USER_IDENTITY_COOKIE_NAME, "", expired);
+    response.cookies.set(MEMBERSHIP_COOKIE_NAME, "", expired);
     return response;
   } catch {
     return NextResponse.json({ ok: false, error: "账户数据暂时无法删除，请稍后重试。" }, { status: 503 });

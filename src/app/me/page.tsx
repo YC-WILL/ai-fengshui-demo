@@ -6,55 +6,52 @@ import AccountDrawer from "./AccountDrawer";
 import BirthProfileCard from "./BirthProfileCard";
 import { buildBirthVisual } from "@/lib/domain/birthVisual";
 import { dateKeyInTimeZone } from "@/lib/time";
-import { REPORT_TYPE_LABEL } from "@/lib/types";
+import {
+  PLATE_LABELS,
+  formatChinaDateTime,
+  presentPlateArchive,
+  type PlateArchiveItem
+} from "@/lib/platePresentation";
+import type { PlateType } from "@/lib/plateRecords";
+import PlateRecordActions from "./PlateRecordActions";
 
 export const dynamic = "force-dynamic";
 
-// 新一代“我的记录”从此版本开始归档，旧报告与旧签文不进入新界面。
-const RECORDS_V2_START = new Date("2026-07-23T12:40:00.000Z");
+// 求签继续保持原有读取边界；四盘归档只读取 PlateSnapshot。
+const LEGACY_SIGN_START = new Date("2026-07-23T12:40:00.000Z");
+const PLATE_ARCHIVE_LIMIT = 100;
 
 const RECORD_CATEGORIES = [
   {
     id: "bazi",
-    title: "八字记录",
-    mark: "命",
-    eyebrow: "识己",
-    description: "生辰盘、四柱结构与每次生成的八字报告",
-    href: "/bazi",
-    action: "查看八字盘",
-    reportTypes: ["bazi_basic", "bazi_deep"]
+    plateType: "BAZI",
+    description: "明确点击保存的生辰盘、生活观察与当时时间对照",
+    action: "前往八字盘"
   },
   {
     id: "relation",
-    title: "关系记录",
-    mark: "合",
-    eyebrow: "观合",
-    description: "两个人的互动观察与关系报告",
-    href: "/marriage",
-    action: "新建关系盘",
-    reportTypes: ["marriage_basic", "marriage_deep"]
+    plateType: "RELATION",
+    description: "明确点击保存的双方互动观察与关系结构",
+    action: "前往关系盘"
   },
   {
     id: "home",
-    title: "宅居记录",
-    mark: "宅",
-    eyebrow: "安居",
-    description: "住宅情况、处理建议与空间报告",
-    href: "/fengshui",
-    action: "查看宅居盘",
-    reportTypes: ["home_fengshui_basic", "home_fengshui_deep"]
+    plateType: "HOME",
+    description: "明确点击保存的真实空间情况与处理建议",
+    action: "前往宅居盘"
   },
   {
     id: "timing",
-    title: "择日记录",
-    mark: "时",
-    eyebrow: "择时",
-    description: "事项候选、日期比较与择日报告",
-    href: "/date-selection",
-    action: "新建择时盘",
-    reportTypes: ["date_selection_basic", "date_selection"]
+    plateType: "TIMING",
+    description: "明确点击保存的事项、日期范围与当时候选",
+    action: "前往择时盘"
   }
-] as const;
+] as const satisfies ReadonlyArray<{
+  id: string;
+  plateType: PlateType;
+  description: string;
+  action: string;
+}>;
 
 export default async function MePage() {
   const user = await getOrCreateUser();
@@ -68,29 +65,35 @@ export default async function MePage() {
         timezone: user.profile.timezone
       }, dateKeyInTimeZone())
     : null;
-  const [reports, signRecords, hexagram] = await Promise.all([
-    prisma.report.findMany({
-      where: {
-        userId: user.id,
-        createdAt: { gte: RECORDS_V2_START },
-        reportType: {
-          in: RECORD_CATEGORIES.flatMap(category => [...category.reportTypes])
-        }
-      },
+  const [plateSnapshots, plateSnapshotCount, plateCounts, signRecords, hexagram] = await Promise.all([
+    prisma.plateSnapshot.findMany({
+      where: { userId: user.id },
       orderBy: { createdAt: "desc" },
-      take: 60,
+      take: PLATE_ARCHIVE_LIMIT,
       select: {
         id: true,
-        reportType: true,
-        status: true,
+        plateType: true,
+        protocolVersion: true,
+        engineVersion: true,
+        inputSnapshot: true,
+        resultSnapshot: true,
+        resultDate: true,
+        calculatedAt: true,
+        action: { select: { id: true, status: true, createdAt: true } },
         createdAt: true
       }
+    }),
+    prisma.plateSnapshot.count({ where: { userId: user.id } }),
+    prisma.plateSnapshot.groupBy({
+      by: ["plateType"],
+      where: { userId: user.id },
+      _count: { _all: true }
     }),
     prisma.report.findMany({
       where: {
         userId: user.id,
         reportType: "daily_sign",
-        createdAt: { gte: RECORDS_V2_START }
+        createdAt: { gte: LEGACY_SIGN_START }
       },
       orderBy: { createdAt: "desc" },
       select: { id: true, aiResult: true, createdAt: true }
@@ -110,13 +113,15 @@ export default async function MePage() {
     const snapshot = parseLegacySignSnapshot(record.aiResult);
     return snapshot ? [{ ...record, ...snapshot }] : [];
   });
+  const archiveItems = plateSnapshots.map(snapshot => presentPlateArchive(snapshot));
   const categoryRecords = RECORD_CATEGORIES.map(category => {
-    const items = reports.filter(report => category.reportTypes.includes(report.reportType as never));
-    return { ...category, records: items };
+    const labels = PLATE_LABELS[category.plateType];
+    const records = archiveItems.filter(record => record.plateType === category.plateType);
+    const totalCount = plateCounts.find(item => item.plateType === category.plateType)?._count._all ?? 0;
+    return { ...category, ...labels, records, totalCount };
   });
-  const totalRecordCount = categoryRecords.reduce((total, category) => total + category.records.length, 0) + signs.length;
   const latestActivity = [
-    ...categoryRecords.flatMap(category => category.records.map(record => record.createdAt)),
+    ...plateSnapshots.map(record => record.createdAt),
     ...signs.map(sign => sign.createdAt)
   ].sort((a, b) => b.getTime() - a.getTime())[0];
 
@@ -131,8 +136,8 @@ export default async function MePage() {
         </div>
         <div className="me-dashboard-hero-meta">
           <div className="me-dashboard-seal" aria-hidden>安</div>
-          <div><span>已保存</span><strong>{totalRecordCount}</strong><small>条记录</small></div>
-          <div><span>最近更新</span><b>{latestActivity ? formatChinaDateTime(latestActivity, false) : "还没有记录"}</b></div>
+          <div><span>已保存</span><strong>{plateSnapshotCount}</strong><small>条四盘记录</small></div>
+          <div><span>最近更新</span><b>{latestActivity ? formatChinaDateTime(latestActivity) : "还没有记录"}</b></div>
         </div>
       </header>
 
@@ -143,7 +148,7 @@ export default async function MePage() {
             <span className="me-record-overview-copy">
               <small>{category.eyebrow}</small>
               <b>{category.title}</b>
-              <em>{category.records.length} 条</em>
+              <em>{category.totalCount} 条</em>
             </span>
             <i aria-hidden>→</i>
           </Link>
@@ -162,7 +167,7 @@ export default async function MePage() {
       <section className="me-archive" aria-labelledby="me-archive-title">
         <div className="me-section-heading">
           <div><span>四盘归档</span><h2 id="me-archive-title">每一次查看，都留在对应的位置</h2></div>
-          <p>记录按中国时间倒序排列；点击记录可回看完整内容。</p>
+          <p>点击保存后，这次查看会归档在这里；当前显示最近最多 {PLATE_ARCHIVE_LIMIT} 条。</p>
         </div>
         <div className="me-archive-grid">
           {categoryRecords.map(category => (
@@ -170,23 +175,25 @@ export default async function MePage() {
               <header>
                 <span aria-hidden>{category.mark}</span>
                 <div><small>{category.eyebrow}</small><h3>{category.title}</h3></div>
-                <b>{category.records.length}</b>
+                <b>{category.totalCount}</b>
               </header>
               <p>{category.description}</p>
               {category.records.length ? (
                 <ul>
-                  {category.records.slice(0, 4).map(record => (
-                    <li key={record.id}>
-                      <div>
-                        <b>{REPORT_TYPE_LABEL[record.reportType as keyof typeof REPORT_TYPE_LABEL]}</b>
-                        <time dateTime={record.createdAt.toISOString()}>{formatChinaDateTime(record.createdAt)}</time>
-                      </div>
-                      <Link href={`/reports/${record.id}`}>{reportStatusLabel(record.status)} →</Link>
-                    </li>
+                  {category.records.map(record => (
+                    <PlateArchiveRow key={record.id} record={record} />
                   ))}
                 </ul>
               ) : (
-                <div className="me-archive-empty"><span>暂无记录</span><small>从对应盘开始，完成后会自动归档在这里。</small></div>
+                <div className="me-archive-empty">
+                  <span>还没有保存记录</span>
+                  <small>需要在对应盘明确点击“保存这次查看”，记录才会出现在这里。</small>
+                </div>
+              )}
+              {category.totalCount > category.records.length && (
+                <p className="me-archive-limit-note">
+                  这一类共有 {category.totalCount} 条；本页显示最近查询到的 {category.records.length} 条。
+                </p>
               )}
               <Link href={category.href} className="me-archive-action">{category.action}<span aria-hidden>→</span></Link>
             </article>
@@ -245,6 +252,23 @@ export default async function MePage() {
   );
 }
 
+function PlateArchiveRow({ record }: { record: PlateArchiveItem }) {
+  return (
+    <li className={!record.displayable ? "is-unavailable" : undefined}>
+      <div>
+        <b>{record.summary}</b>
+        {record.secondary && <small>{record.secondary}</small>}
+        <time dateTime={record.savedAtIso}>{record.savedAt}</time>
+        {record.actionStatus && <em>{record.actionStatus}</em>}
+      </div>
+      <div className="me-archive-row-actions">
+        <Link href={`/plate-records/${record.id}`}>查看记录</Link>
+        <PlateRecordActions recordId={record.id} context="archive" />
+      </div>
+    </li>
+  );
+}
+
 function formatChinaDate(date: Date): string {
   return date.toLocaleDateString("zh-CN", {
     timeZone: "Asia/Shanghai",
@@ -253,22 +277,6 @@ function formatChinaDate(date: Date): string {
     day: "numeric",
     weekday: "long"
   });
-}
-
-function formatChinaDateTime(date: Date, includeTime = true): string {
-  return date.toLocaleString("zh-CN", {
-    timeZone: "Asia/Shanghai",
-    month: "numeric",
-    day: "numeric",
-    ...(includeTime ? { hour: "2-digit", minute: "2-digit", hour12: false } : {})
-  });
-}
-
-function reportStatusLabel(status: string): string {
-  if (status === "generated" || status === "paid") return "查看";
-  if (status === "blocked") return "查看说明";
-  if (status === "failed") return "未完成";
-  return "整理中";
 }
 
 function parseLegacySignSnapshot(value: string | null): {
