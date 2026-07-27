@@ -111,8 +111,8 @@ describe("four plate product UI", () => {
     expect(timingWorkspace).toContain("当前范围暂无候选");
     expect(timingWorkspace).toContain("不为凑数降低规则");
     expect(timingWorkspace).toContain("展开专业历法依据与方法边界");
-    expect(timingWorkspace).toContain("setSelectedDate(firstCandidateDate)");
-    expect(timingWorkspace).toContain("[event, range, firstCandidateDate]");
+    expect(timingWorkspace).toContain("setSelectedDate(preference.selectedDate)");
+    expect(timingWorkspace).toContain("[event, range, startDate, firstCandidateDate, candidateDateKey, preferredSelectedDate, selection]");
     expect(timingWorkspace).not.toMatch(/吉凶分数|能量分数|幸运指数|成功概率|红黑榜|最佳|必选|错过/);
   });
 });

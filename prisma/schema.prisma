@@ -27,6 +27,7 @@ model User {
   reports  Report[]
   payments Payment[]
   logs     ModelLog[]
+  plateSnapshots             PlateSnapshot[]
   signDraws                  SignDraw[]
   signInterpretationSessions SignInterpretationSession[]
 }
@@ -109,6 +110,56 @@ model ModelLog {
 
   @@index([userId])
   @@index([createdAt])
+}
+
+// ----------------- 四盘记录闭环 -----------------
+// 快照保存当时的输入与计算结果；行动和复盘独立保存，避免覆盖历史结果。
+model PlateSnapshot {
+  id               String   @id @default(uuid()) @db.Uuid
+  requestId        String   @unique @db.Uuid
+  userId           String
+  plateType        String
+  protocolVersion  String
+  engineVersion    String
+  inputSnapshot    Json
+  resultSnapshot   Json
+  resultDate       String?
+  profileUpdatedAt DateTime?
+  calculatedAt     DateTime
+  createdAt        DateTime @default(now())
+
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action PlateAction?
+
+  @@index([userId, createdAt])
+  @@index([userId, plateType, createdAt])
+}
+
+model PlateAction {
+  id            String    @id @default(uuid()) @db.Uuid
+  snapshotId    String    @unique @db.Uuid
+  actionVersion String
+  actionData    Json
+  status        String    @default("pending")
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  snapshot PlateSnapshot       @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  reviews  PlateActionReview[]
+}
+
+model PlateActionReview {
+  id            String   @id @default(uuid()) @db.Uuid
+  requestId     String   @unique @db.Uuid
+  actionId      String   @db.Uuid
+  reviewVersion String
+  reviewData    Json
+  createdAt     DateTime @default(now())
+
+  action PlateAction @relation(fields: [actionId], references: [id], onDelete: Cascade)
+
+  @@index([actionId, createdAt])
 }
 
 // ----------------- 内容安全规则（可热更新） -----------------

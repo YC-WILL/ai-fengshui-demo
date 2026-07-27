@@ -58,7 +58,7 @@ export default function AccountDrawer({
             <MeActions email={email} nickname={nickname} />
             <section className="me-privacy-card">
               <div><span>隐私与数据</span><h3>你的记录，由你决定保留多久</h3></div>
-              <p>可随时删除账户、生辰、四盘报告与求签记录。删除后无法恢复。</p>
+              <p>删除账户会清除当前匿名身份下的生辰资料、四盘记录及其行动与复盘、求签记录、旧报告和其他关联数据；删除后无法在页面中恢复。</p>
               <DeleteAccountButton />
             </section>
           </section>

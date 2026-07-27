@@ -1,46 +1,65 @@
 // ============================================================
-// 匿名/邮箱用户会话
+// 当前浏览器匿名身份
 //
-// MVP 简化方案：cookie 中保存 userId（首次访问自动创建匿名 User）。
-// 用户可在「我的」页面绑定邮箱。生产请替换为真实鉴权（NextAuth、邮箱验证码等）。
+// httpOnly cookie 中保存服务端使用的 userId（首次访问自动创建匿名 User）。
+// 邮箱只是未验证的账户资料，不提供登录、找回或跨设备恢复能力。
 // ============================================================
 
 import { cookies } from "next/headers";
 import { prisma } from "./db";
+import {
+  USER_IDENTITY_COOKIE_NAME,
+  expiredIdentityCookieOptions,
+  identityCookieOptions,
+  isValidUserIdentityId
+} from "./identityCookie";
 
-const COOKIE_NAME = "guoxue_uid";
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 年
+export {
+  USER_IDENTITY_COOKIE_MAX_AGE,
+  USER_IDENTITY_COOKIE_NAME,
+  expiredIdentityCookieOptions,
+  identityCookieOptions
+} from "./identityCookie";
+
+export class IdentityInitializationError extends Error {
+  constructor() {
+    super("当前浏览器身份尚未完成初始化，请刷新页面后重试。");
+    this.name = "IdentityInitializationError";
+  }
+}
+
+export async function ensureUserForIdentity(
+  identityId: string,
+  client: Pick<typeof prisma, "user" | "$executeRaw"> = prisma
+) {
+  if (!isValidUserIdentityId(identityId)) {
+    throw new IdentityInitializationError();
+  }
+
+  await client.$executeRaw`
+    INSERT INTO "User" ("id", "updatedAt")
+    VALUES (${identityId}, CURRENT_TIMESTAMP)
+    ON CONFLICT ("id") DO NOTHING
+  `;
+  const user = await client.user.findUnique({
+    where: { id: identityId },
+    include: { profile: true }
+  });
+  if (user) return user;
+  throw new IdentityInitializationError();
+}
 
 export async function getOrCreateUser() {
   const store = cookies();
-  const existingId = store.get(COOKIE_NAME)?.value;
-
-  if (existingId) {
-    const user = await prisma.user.findUnique({
-      where: { id: existingId },
-      include: { profile: true }
-    });
-    if (user) return user;
-  }
-
-  const user = await prisma.user.create({ data: {}, include: { profile: true } });
-  // Next.js 14: cookies() 在 Server Action / Route Handler 中可写
-  try {
-    store.set(COOKIE_NAME, user.id, {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: COOKIE_MAX_AGE,
-      path: "/"
-    });
-  } catch {
-    // 在 RSC 渲染阶段写 cookie 会抛错；MVP 阶段忽略，下个请求会重新尝试
-  }
-  return user;
+  const identityId = store.get(USER_IDENTITY_COOKIE_NAME)?.value;
+  if (!isValidUserIdentityId(identityId)) throw new IdentityInitializationError();
+  return ensureUserForIdentity(identityId);
 }
 
 export async function getCurrentUserId(): Promise<string | null> {
   const store = cookies();
-  return store.get(COOKIE_NAME)?.value ?? null;
+  const identityId = store.get(USER_IDENTITY_COOKIE_NAME)?.value;
+  return isValidUserIdentityId(identityId) ? identityId : null;
 }
 
 export async function bindEmail(userId: string, email: string) {

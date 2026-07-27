@@ -82,6 +82,17 @@ html, body {
 .method-completion-actions h2 { @apply mt-1 font-serif text-xl font-normal; }
 .method-completion-actions p { @apply mt-2 text-sm leading-6 text-ink/55; }
 .method-completion-actions nav { @apply flex shrink-0 flex-wrap gap-2; }
+.plate-save-control { @apply mt-5 grid gap-5 rounded-2xl border bg-white/75 p-5 shadow-sm md:grid-cols-[minmax(0,1fr)_15rem] md:items-center md:p-6; border-color: var(--plate-accent-line); }
+.plate-save-control.is-success { background: linear-gradient(135deg, var(--plate-accent-soft), rgba(255, 255, 255, 0.82)); }
+.plate-save-copy h2 { @apply mt-2 font-serif text-xl font-normal; }
+.plate-save-copy > p { @apply mt-2 max-w-2xl text-sm leading-6 text-ink/55; }
+.plate-save-privacy { @apply rounded-xl border border-dashed border-gold/40 bg-rice/50 px-3 py-2 text-xs leading-6 text-ink/55; }
+.plate-save-action { @apply flex min-w-0 flex-col items-stretch gap-2 md:items-end; }
+.plate-save-action > button { @apply min-h-11 w-full md:w-auto md:min-w-44; }
+.plate-save-disabled { @apply text-xs leading-5 text-ink/45 md:text-right; }
+.plate-save-feedback { @apply min-h-5 text-xs leading-5 text-ink/55 md:text-right; }
+.plate-save-feedback p[role="alert"] { @apply text-cinnabar; }
+.plate-save-feedback a { color: var(--plate-accent); text-decoration-color: var(--plate-accent-line); @apply mt-1 inline-flex min-h-11 items-center font-medium underline underline-offset-4; }
 .method-page-hero { @apply overflow-hidden rounded-3xl border border-ink/10 text-rice shadow-scroll; background: radial-gradient(circle at 82% 12%, rgba(201, 163, 92, 0.22), transparent 28%), radial-gradient(circle at 8% 100%, rgba(181, 59, 42, 0.18), transparent 34%), #26312d; }
 .method-page-meta { @apply flex items-center justify-between border-b border-white/10 px-5 py-3 text-[10px] tracking-[0.2em] text-rice/55 md:px-8; }
 .method-page-meta b { @apply rounded-full border border-gold/35 bg-gold/10 px-3 py-1 font-medium tracking-normal text-gold; }
@@ -741,6 +752,8 @@ html, body {
 @media (max-width: 520px) {
   .method-completion-actions nav { @apply w-full flex-col; }
   .method-completion-actions nav a { @apply w-full; }
+  .plate-save-control { @apply p-4; }
+  .plate-save-action > button { @apply w-full; }
   .plate-main, .plate-aside { @apply p-4; }
   .plate-profile-summary { @apply w-full; }
   .plate-inline-profile-editor, .plate-profile-onboarding { @apply p-1; }
@@ -950,8 +963,13 @@ html, body {
 .me-archive-card > ul li { @apply flex items-center gap-3 rounded-xl border border-mist/80 bg-white/70 px-3 py-3; }
 .me-archive-card > ul li > div { @apply flex min-w-0 flex-1 flex-col; }
 .me-archive-card > ul li b { @apply truncate text-xs font-medium text-ink/75; }
+.me-archive-card > ul li small { @apply mt-1 truncate text-[10px] text-ink/50; }
 .me-archive-card > ul li time { @apply mt-1 text-[10px] text-ink/40; }
-.me-archive-card > ul li > a { @apply shrink-0 text-[11px]; color: var(--record-accent); }
+.me-archive-card > ul li em { @apply mt-2 w-fit rounded-full border border-mist bg-rice/60 px-2 py-0.5 text-[9px] not-italic text-ink/50; }
+.me-archive-card > ul li.is-unavailable { @apply border-dashed bg-rice/35; }
+.me-archive-row-actions { @apply flex shrink-0 flex-col items-end gap-2; }
+.me-archive-row-actions > a { @apply inline-flex min-h-11 items-center px-2 text-[11px]; color: var(--record-accent); }
+.me-archive-limit-note { @apply mt-3 rounded-lg border border-dashed border-mist bg-rice/40 px-3 py-2 text-[10px] leading-5 text-ink/40; }
 .me-archive-empty { @apply my-auto flex min-h-24 flex-col items-center justify-center rounded-xl border border-dashed border-mist bg-white/45 px-4 text-center; }
 .me-archive-empty span { @apply text-sm text-ink/50; }
 .me-archive-empty small { @apply mt-1 text-[11px] leading-5 text-ink/35; }
@@ -988,6 +1006,210 @@ html, body {
 .me-account-card h3, .me-privacy-card h3 { @apply mt-1 font-serif text-xl font-normal; }
 .me-privacy-card { @apply border-cinnabar/20 bg-cinnabar/5; }
 .me-privacy-card > p { @apply my-4 text-xs leading-6 text-ink/55; }
+
+.plate-record-delete-trigger { @apply inline-flex min-h-11 items-center px-2 text-[10px] text-ink/35 underline decoration-ink/15 underline-offset-2 transition hover:text-cinnabar; }
+.plate-record-delete { @apply max-w-64 rounded-xl border border-cinnabar/20 bg-cinnabar/5 p-3 text-left; }
+.plate-record-delete > p { @apply text-[10px] leading-5 text-ink/55; }
+.plate-record-delete > div { @apply mt-2 flex flex-wrap gap-2; }
+.plate-record-delete-confirm { @apply min-h-11 rounded-md border border-cinnabar/30 bg-white/70 px-3 text-[10px] text-cinnabar disabled:cursor-wait disabled:opacity-50; }
+.plate-record-delete-cancel { @apply min-h-11 rounded-md border border-mist bg-white/70 px-3 text-[10px] text-ink/55 disabled:opacity-50; }
+.plate-record-delete > p[role="alert"] { @apply mt-2 text-cinnabar; }
+
+.plate-continuation-notice {
+  @apply mb-5 grid gap-4 rounded-2xl border border-gold/40 bg-gold/5 p-5 shadow-sm sm:grid-cols-[3rem_minmax(0,1fr)] md:p-6;
+}
+.plate-continuation-mark {
+  @apply flex h-12 w-12 items-center justify-center rounded-full border border-gold/45 bg-white/60 font-serif text-lg text-cinnabar;
+}
+.plate-continuation-notice h2 { @apply mt-1 font-serif text-xl font-normal; }
+.plate-continuation-notice p { @apply mt-2 text-sm leading-7 text-ink/60; }
+.plate-continuation-notice ul { @apply mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-ink/45; }
+.plate-continuation-notice li { @apply before:mr-1 before:text-cinnabar before:content-['·']; }
+.plate-continuation-notice > div:last-child > a { @apply mt-4 inline-flex min-h-11 items-center text-xs text-cinnabar underline underline-offset-4; }
+.plate-continuation-warning { @apply rounded-xl border border-cinnabar/20 bg-cinnabar/5 px-3 py-2 text-cinnabar; }
+.timing-start-date { @apply mt-2 text-xs text-ink/50; }
+.timing-start-date b { @apply font-medium text-ink/70; }
+
+.plate-record-page { --detail-accent: #b53b2a; }
+.plate-record-hero {
+  @apply grid overflow-hidden rounded-3xl border border-ink/10 text-rice shadow-scroll md:grid-cols-[minmax(0,1fr)_18rem];
+  background:
+    radial-gradient(circle at 88% 10%, rgba(201, 163, 92, 0.2), transparent 32%),
+    #202724;
+}
+.plate-record-hero > div:first-child { @apply px-5 py-7 md:px-8 md:py-9; }
+.plate-record-hero > div:first-child > a { @apply text-xs text-rice/55 transition hover:text-gold; }
+.plate-record-hero > div:first-child > span { @apply mt-6 block text-[10px] tracking-[0.2em] text-gold; }
+.plate-record-hero h1 { @apply mt-2 font-serif text-3xl font-normal; }
+.plate-record-hero p { @apply mt-3 text-sm leading-7 text-rice/65; }
+.plate-record-hero-meta { @apply flex flex-col items-start justify-center gap-2 border-t border-white/10 bg-white/5 px-5 py-5 md:border-l md:border-t-0; }
+.plate-record-hero-meta span { @apply text-[10px] tracking-wider text-rice/40; }
+.plate-record-hero-meta time { @apply text-xs text-rice/70; }
+.plate-record-hero-meta b { @apply rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-[10px] font-medium text-gold; }
+
+.plate-detail-content { @apply space-y-4; }
+.plate-detail-section { @apply overflow-hidden rounded-2xl border border-mist bg-white/80 p-5 shadow-sm md:p-6; }
+.plate-detail-heading > span { @apply text-[10px] tracking-[0.18em] text-cinnabar; }
+.plate-detail-heading h2 { @apply mt-1 font-serif text-2xl font-normal; }
+.plate-detail-heading p { @apply mt-2 text-sm leading-7 text-ink/55; }
+.plate-detail-facts { @apply mt-4 grid gap-2 sm:grid-cols-3; }
+.plate-detail-facts p { @apply flex flex-col rounded-xl border border-mist bg-rice/45 p-3 text-xs text-ink/55; }
+.plate-detail-facts b { @apply mb-1 text-[10px] font-medium text-ink/40; }
+.plate-detail-pillars { @apply mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4; }
+.plate-detail-pillars > div { @apply flex min-h-24 flex-col items-center justify-center rounded-xl border border-gold/35 bg-rice/50; }
+.plate-detail-pillars span { @apply text-[10px] text-ink/40; }
+.plate-detail-pillars b { @apply mt-2 font-serif text-xl font-normal; }
+.plate-detail-observations { @apply mt-4 grid gap-3 lg:grid-cols-3; }
+.plate-detail-observations article { @apply min-w-0 rounded-xl border border-mist bg-rice/40 p-4; }
+.plate-detail-observations header { @apply flex items-center gap-2 border-b border-mist pb-3; }
+.plate-detail-observations header span { @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-cinnabar/25 text-[10px] text-cinnabar; }
+.plate-detail-observations h3 { @apply font-serif text-lg font-normal; }
+.plate-detail-observations article > p { @apply mt-3 text-sm leading-7 text-ink/70; }
+.plate-detail-observations dl { @apply mt-3 space-y-2; }
+.plate-detail-observations dl > div { @apply rounded-lg bg-white/55 p-2.5; }
+.plate-detail-observations dt { @apply text-[10px] text-ink/40; }
+.plate-detail-observations dd { @apply mt-1 text-xs leading-6 text-ink/60; }
+.plate-detail-observations article > small { @apply mt-3 block border-t border-dashed border-mist pt-3 text-[10px] leading-5 text-ink/40; }
+.plate-detail-time-grid { @apply mt-4 grid gap-3 md:grid-cols-3; }
+.plate-detail-time-grid article { @apply rounded-xl border border-mist bg-rice/40 p-4; }
+.plate-detail-time-grid span { @apply text-[10px] text-cinnabar; }
+.plate-detail-time-grid b { @apply mt-2 block text-sm font-medium; }
+.plate-detail-time-grid p { @apply mt-2 text-xs leading-6 text-ink/55; }
+.plate-detail-suggestion { @apply rounded-2xl border border-gold/35 bg-gold/5 p-5 shadow-sm md:p-6; }
+.plate-detail-suggestion > span { @apply text-[10px] tracking-[0.18em] text-cinnabar; }
+.plate-detail-suggestion h2 { @apply mt-2 font-serif text-2xl font-normal; }
+.plate-detail-suggestion > p { @apply mt-3 text-sm leading-7 text-ink/70; }
+.plate-detail-suggestion > div { @apply mt-4 rounded-xl border border-gold/30 bg-white/60 p-3; }
+.plate-detail-suggestion > div b { @apply text-[10px] text-cinnabar; }
+.plate-detail-suggestion > div p { @apply mt-1 text-xs leading-6 text-ink/60; }
+.plate-detail-suggestion > small { @apply mt-4 block rounded-xl border border-cinnabar/25 bg-cinnabar/5 p-3 text-xs leading-6 text-ink/60; }
+.plate-detail-suggestion.is-safety { @apply border-cinnabar/35; }
+.plate-detail-pair { @apply mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3; }
+.plate-detail-pair > div { @apply flex min-h-28 flex-col items-center justify-center rounded-xl border border-mist bg-rice/45 text-center; }
+.plate-detail-pair span { @apply text-xs text-ink/45; }
+.plate-detail-pair b { @apply mt-2 font-serif text-2xl font-normal; }
+.plate-detail-pair i { @apply not-italic text-cinnabar/45; }
+.plate-detail-lines { @apply mt-4 grid gap-2; }
+.plate-detail-lines li { @apply rounded-xl border border-mist bg-rice/40 p-3 text-sm leading-7 text-ink/60; }
+.plate-detail-area-grid { @apply mt-4 grid gap-3 md:grid-cols-3; }
+.plate-detail-area-grid article { @apply rounded-xl border border-mist bg-rice/40 p-4; }
+.plate-detail-area-grid h3 { @apply font-serif text-lg font-normal; }
+.plate-detail-area-grid ul { @apply mt-3 list-disc space-y-1 pl-4 text-xs leading-6 text-ink/60; }
+.plate-detail-area-grid p { @apply mt-3 text-xs leading-6 text-ink/50; }
+.plate-detail-priority { @apply mt-4 rounded-xl border border-gold/35 bg-gold/5 p-4; }
+.plate-detail-priority b { @apply text-sm font-medium; }
+.plate-detail-priority p { @apply mt-2 text-sm leading-7 text-ink/60; }
+.plate-detail-note { @apply mt-4 border-t border-dashed border-mist pt-3 text-xs leading-6 text-ink/45; }
+.plate-detail-empty-copy { @apply mt-4 rounded-xl border border-dashed border-mist bg-rice/35 p-4 text-sm leading-7 text-ink/55; }
+.plate-detail-candidates { @apply mt-4 grid gap-3; }
+.plate-detail-candidates article { @apply rounded-xl border border-mist bg-rice/35 p-4 md:p-5; }
+.plate-detail-candidates article.is-selected { @apply border-cinnabar/35 bg-cinnabar/5; }
+.plate-detail-candidates header span { @apply text-[10px] text-cinnabar; }
+.plate-detail-candidates h3 { @apply mt-1 font-serif text-xl font-normal; }
+.plate-detail-candidates article > p { @apply mt-3 text-sm leading-7 text-ink/65; }
+.plate-detail-candidates dl { @apply mt-4 grid gap-2 md:grid-cols-3; }
+.plate-detail-candidates dl > div { @apply rounded-lg border border-mist bg-white/55 p-3; }
+.plate-detail-candidates dt { @apply text-[10px] text-ink/40; }
+.plate-detail-candidates dd { @apply mt-1 text-xs leading-6 text-ink/60; }
+.plate-detail-candidate-action { @apply mt-4 rounded-xl border border-gold/30 bg-white/60 p-4; }
+.plate-detail-candidate-action b { @apply text-xs font-medium; }
+.plate-detail-candidate-action p { @apply mt-2 text-sm leading-7 text-ink/65; }
+.plate-detail-candidate-action small { @apply mt-2 block text-xs leading-6 text-ink/45; }
+.plate-detail-candidates details { @apply mt-4 text-xs text-ink/50; }
+.plate-detail-candidates summary { @apply cursor-pointer text-cinnabar; }
+.plate-detail-candidates details ul { @apply mt-3 list-disc space-y-2 pl-4 leading-6; }
+.plate-detail-unavailable { @apply flex min-h-56 items-center gap-5 rounded-2xl border border-dashed border-gold/45 bg-white/70 p-6 shadow-sm; }
+.plate-detail-unavailable > span { @apply flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-cinnabar/25 font-serif text-xl text-cinnabar; }
+.plate-detail-unavailable h2 { @apply font-serif text-2xl font-normal; }
+.plate-detail-unavailable p { @apply mt-2 text-sm leading-7 text-ink/55; }
+.plate-detail-unavailable small { @apply mt-3 block text-[10px] text-ink/35; }
+.plate-detail-readonly-action { @apply grid gap-4 rounded-2xl border border-mist bg-white/70 p-5 md:grid-cols-[minmax(0,1fr)_minmax(18rem,0.8fr)] md:p-6; }
+.plate-detail-readonly-action span { @apply text-[10px] tracking-[0.18em] text-cinnabar; }
+.plate-detail-readonly-action h2 { @apply mt-1 font-serif text-xl font-normal; }
+.plate-detail-readonly-action p { @apply mt-2 text-xs leading-6 text-ink/50; }
+.plate-detail-readonly-action ul { @apply space-y-2; }
+.plate-detail-readonly-action li { @apply rounded-lg border border-mist bg-rice/40 p-3; }
+.plate-detail-readonly-action li b { @apply text-xs font-medium; }
+.plate-detail-readonly-action li time { @apply mt-2 block text-[10px] text-ink/35; }
+.plate-continuation-actions {
+  @apply grid gap-4 rounded-2xl border border-gold/40 bg-gold/5 p-5 shadow-sm md:grid-cols-[minmax(0,1fr)_minmax(18rem,0.75fr)] md:items-center md:p-6;
+}
+.plate-continuation-actions h2 { @apply mt-1 font-serif text-2xl font-normal; }
+.plate-continuation-actions p { @apply mt-2 text-sm leading-7 text-ink/55; }
+.plate-continuation-actions > div:last-child { @apply flex flex-col gap-2; }
+.plate-continuation-actions a { @apply flex min-h-11 items-center justify-center rounded-xl border border-cinnabar/25 bg-white/70 px-4 py-2 text-center text-xs text-cinnabar transition hover:border-cinnabar/45 hover:bg-white; }
+.plate-continuation-unavailable { @apply flex items-center gap-4 rounded-2xl border border-dashed border-mist bg-white/55 p-5; }
+.plate-continuation-unavailable > span { @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-mist font-serif text-ink/35; }
+.plate-continuation-unavailable h2 { @apply font-serif text-lg font-normal; }
+.plate-continuation-unavailable p { @apply mt-1 text-xs leading-6 text-ink/45; }
+.plate-action-panel { @apply rounded-2xl border border-gold/35 bg-white/75 p-5 shadow-sm md:p-6; }
+.plate-action-panel > header { @apply flex items-start justify-between gap-4; }
+.plate-action-panel h2 { @apply mt-1 font-serif text-2xl font-normal; }
+.plate-action-panel.is-start { @apply grid items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto]; }
+.plate-action-panel.is-start p,
+.plate-action-panel.is-unavailable p { @apply mt-2 text-sm leading-7 text-ink/55; }
+.plate-action-panel.is-start > button { @apply min-h-11; }
+.plate-action-status { @apply shrink-0 rounded-full border border-gold/35 bg-gold/5 px-3 py-1 text-xs text-cinnabar; }
+.plate-action-copy { @apply mt-5 rounded-xl border border-mist bg-rice/40 p-4; }
+.plate-action-copy > small { @apply mb-2 block text-xs text-cinnabar; }
+.plate-action-copy > b { @apply block text-xs font-medium text-ink/60; }
+.plate-action-copy > p { @apply mt-2 text-sm leading-7 text-ink/70; }
+.plate-action-copy > div { @apply mt-3 border-t border-dashed border-mist pt-3; }
+.plate-action-copy > div span { @apply text-[10px] text-ink/40; }
+.plate-action-copy > div p { @apply mt-1 text-xs leading-6 text-ink/60; }
+.plate-action-copy aside { @apply mt-4 rounded-lg border border-cinnabar/25 bg-cinnabar/5 p-3 text-xs leading-6 text-ink/60; }
+.plate-action-controls { @apply mt-4 flex flex-col gap-2 sm:flex-row; }
+.plate-action-controls button { @apply min-h-11; }
+.plate-action-completed-at { @apply mt-4 text-xs text-ink/45; }
+.plate-action-restart { @apply mt-3 min-h-11 px-2 text-xs text-cinnabar underline decoration-cinnabar/25 underline-offset-4; }
+.plate-action-dismissed { @apply mt-4 flex flex-col items-start gap-3 rounded-xl border border-dashed border-mist bg-rice/35 p-4 sm:flex-row sm:items-center sm:justify-between; }
+.plate-action-dismissed p { @apply text-sm leading-7 text-ink/55; }
+.plate-action-dismissed button { @apply min-h-11; }
+.plate-review-history { @apply mt-5 border-t border-mist pt-5; }
+.plate-review-history h3 { @apply font-serif text-lg font-normal; }
+.plate-review-history ol { @apply mt-3 grid gap-2; }
+.plate-review-history li { @apply rounded-xl border border-mist bg-rice/35 p-3; }
+.plate-review-history li b { @apply text-xs font-medium text-cinnabar; }
+.plate-review-history li p { @apply mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-ink/65; }
+.plate-review-history li time { @apply mt-2 block text-[10px] text-ink/35; }
+.plate-review-empty { @apply mt-5 rounded-xl border border-dashed border-mist bg-rice/30 p-3 text-xs leading-6 text-ink/45; }
+.plate-review-form { @apply mt-5 rounded-xl border border-gold/30 bg-gold/5 p-4; }
+.plate-review-form legend { @apply text-sm font-medium; }
+.plate-review-form fieldset > div { @apply mt-3 grid gap-2 sm:grid-cols-3; }
+.plate-review-form fieldset label { @apply flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-mist bg-white/65 px-3 text-xs; }
+.plate-review-form fieldset input { @apply h-4 w-4 accent-cinnabar; }
+.plate-review-note { @apply mt-4 block; }
+.plate-review-note > span { @apply text-xs font-medium; }
+.plate-review-note textarea { @apply mt-2 min-h-24 w-full resize-y rounded-xl border border-mist bg-white/75 px-3 py-2 text-sm leading-6 outline-none focus:border-cinnabar/45; }
+.plate-review-note small { @apply mt-1 block text-right text-[10px] text-ink/35; }
+.plate-review-form > button { @apply mt-3 min-h-11; }
+.plate-action-feedback { @apply min-h-5 text-xs leading-5 text-jade; }
+.plate-action-panel > .plate-action-feedback { @apply mt-3; }
+.plate-action-feedback.is-error { @apply text-cinnabar; }
+.plate-record-basis { @apply rounded-2xl border border-mist bg-white/65 p-5 text-sm shadow-sm; }
+.plate-record-basis summary { @apply cursor-pointer text-cinnabar; }
+.plate-record-basis > div { @apply mt-4 grid gap-2 sm:grid-cols-3; }
+.plate-record-basis p { @apply flex flex-col rounded-lg bg-rice/45 p-3 text-xs text-ink/55; }
+.plate-record-basis b { @apply mb-1 text-[10px] font-medium text-ink/40; }
+.plate-record-footer-actions { @apply flex flex-col items-start justify-between gap-4 rounded-2xl border border-mist bg-white/70 p-5 sm:flex-row sm:items-center; }
+.plate-record-footer-actions > a { @apply min-h-11; }
+.plate-record-footer-actions > .plate-record-delete { @apply sm:text-right; }
+
+@media (max-width: 520px) {
+  .me-archive-card > ul li { @apply flex-col items-stretch; }
+  .me-archive-row-actions { @apply flex-row items-center justify-between; }
+  .me-archive-row-actions > a,
+  .plate-record-delete-trigger { @apply flex min-h-11 items-center px-2; }
+  .plate-record-delete-confirm,
+  .plate-record-delete-cancel { @apply min-h-11 px-3; }
+  .plate-detail-observations { @apply grid-cols-1; }
+  .plate-detail-pair { @apply grid-cols-[1fr_2rem_1fr] gap-1; }
+  .plate-action-controls button,
+  .plate-review-form > button,
+  .plate-action-panel.is-start > button { @apply w-full; }
+  .plate-record-footer-actions { @apply items-stretch; }
+  .plate-record-footer-actions > a { @apply w-full; }
+}
 
 /* 卦安陪伴入口：保持米纸感，不做通用 AI 工具式的冷白聊天框。 */
 .companion-shell {

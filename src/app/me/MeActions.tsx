@@ -42,11 +42,15 @@ export default function MeActions({
     <section className="me-account-card">
       <div className="mb-4">
         <span>账户信息</span>
-        <h3>跨设备找回你的记录</h3>
+        <h3>当前浏览器中的使用身份</h3>
+        <p className="mt-2 text-xs leading-6 text-ink/55">
+          当前记录通过此浏览器中的匿名身份关联。邮箱仅作为未验证的账户资料，不是登录凭证，
+          不能用于找回、跨设备恢复或合并数据。
+        </p>
       </div>
       <div className="grid md:grid-cols-2 gap-3">
         <div>
-          <label className="field-label">邮箱（可选，用于跨设备找回）</label>
+          <label className="field-label">邮箱（可选，仅作为账户资料）</label>
           <input
             type="email"
             className="field-input"
