@@ -4,8 +4,9 @@
 
 - 完整阅读本文件。
 - 非简单任务还必须完整阅读 `docs/PROJECT_CONSTITUTION.md`。
+- 承担产品顾问、开发顾问、内容顾问、阶段规划、反馈验收或方向判断时，必须完整阅读 `docs/CONSULTANT_CONTRACT.md`。
 - 涉及产品方向、当前功能、版本、发布、用户测试或下一阶段判断时，必须同时阅读 `docs/CURRENT_STATE.md`。
-- `docs/PROJECT_CONSTITUTION.md` 是长期产品宪法；`docs/CURRENT_STATE.md` 是可更新的阶段事实。两者不能代替本轮任务的具体范围、验收标准和停止条件。
+- `docs/PROJECT_CONSTITUTION.md` 是长期产品宪法；`docs/CONSULTANT_CONTRACT.md` 规定顾问如何思考、沟通和验收；`docs/CURRENT_STATE.md` 是可更新的阶段事实。三者不能代替本轮任务的具体范围、验收标准和停止条件。
 - 如果代码、页面、数据库与状态文档不一致，以实际核验结果为准，并在任务反馈中指出需要更新的状态文档。
 
 ## 项目定位
