@@ -58,11 +58,10 @@ describe("four plate product UI", () => {
     const relationshipWorkspace = workspaces.slice(workspaces.indexOf("export function RelationWorkspace"), workspaces.indexOf("const ROOMS"));
 
     expect(baziPage).toContain('status="1.0 已冻结"');
-    expect(baziPage).toContain("先看三项生活观察");
-    expect(baziPage).toContain("再看专业命盘");
-    expect(baziPage).toContain("最后对照时间");
-    expect(baziWorkspace.indexOf("bazi-observations")).toBeLessThan(baziWorkspace.indexOf("bazi-chart-workbench"));
-    expect(baziWorkspace.indexOf("bazi-chart-workbench")).toBeLessThan(baziWorkspace.indexOf("bazi-time-comparison"));
+    expect(baziPage).toContain('stages={["八字分析", "专业细盘", "查看口径与来源"]}');
+    expect(baziWorkspace).toContain('aria-label="八字内容层级"');
+    expect(baziWorkspace.indexOf("bazi-view-switch")).toBeLessThan(baziWorkspace.indexOf("bazi-observations"));
+    expect(baziWorkspace.indexOf("bazi-observations")).toBeLessThan(baziWorkspace.indexOf("<ProfessionalBaziPanel"));
 
     expect(relationshipPage).toContain('status="1.0 已冻结"');
     expect(relationshipPage).toContain("先看三种互动");

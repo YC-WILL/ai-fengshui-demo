@@ -6,7 +6,6 @@ import { DEFAULT_BIRTH_TIMEZONE, isSupportedBirthTimezone } from "@/lib/domain/b
 import { computeBazi } from "@/lib/domain/bazi";
 import { buildBaziMainline, buildBaziStructure } from "@/lib/domain/baziStructure";
 import { buildBaziObservationCards, buildBaziWeeklyAction } from "@/lib/domain/baziObservations";
-import { buildBaziTimeLayers } from "@/lib/domain/baziTimeComparison";
 import {
   buildPairInteractionFacts,
   buildRelationshipJointAction,
@@ -14,16 +13,18 @@ import {
 } from "@/lib/domain/relationshipInteractions";
 import { buildHomeSpaceAssessment } from "@/lib/domain/homeSpaceObservations";
 import { buildTimingSelection } from "@/lib/domain/timingSelection";
+import {
+  PLATE_ENGINE_VERSIONS,
+  PLATE_PROTOCOL_VERSION,
+  type PlateType
+} from "@/lib/plateVersions";
+import { buildProfessionalBaziFactsOnServer } from "@/lib/professionalBaziServer";
 
-export const PLATE_PROTOCOL_VERSION = "plate-snapshot-v1";
-export const PLATE_ENGINE_VERSIONS = {
-  BAZI: "bazi-deterministic-v1",
-  RELATION: "relation-deterministic-v1",
-  HOME: "home-deterministic-v1",
-  TIMING: "timing-deterministic-v1"
-} as const;
-
-export type PlateType = keyof typeof PLATE_ENGINE_VERSIONS;
+export {
+  PLATE_ENGINE_VERSIONS,
+  PLATE_PROTOCOL_VERSION,
+  type PlateType
+} from "@/lib/plateVersions";
 
 const dateKeySchema = z.string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "日期必须使用 YYYY-MM-DD 格式")
@@ -301,9 +302,9 @@ async function prepareSnapshot(
       const mainline = buildBaziMainline(chart);
       const observations = buildBaziObservationCards(chart);
       const weeklyAction = buildBaziWeeklyAction(observations);
-      const timeLayers = buildBaziTimeLayers(
+      const { timeLayers, professionalFacts } = buildProfessionalBaziFactsOnServer(
         chart,
-        dateKeyInTimeZone(calculatedAt, "Asia/Shanghai")
+        calculatedAt
       );
       return {
         inputSnapshot: toJsonValue({ input: request.input, profile: profileSnapshot }),
@@ -313,7 +314,8 @@ async function prepareSnapshot(
           mainline,
           observations,
           weeklyAction,
-          timeLayers
+          timeLayers,
+          professionalFacts
         }),
         profileUpdatedAt: profile.updatedAt
       };

@@ -5,7 +5,9 @@ import { prisma } from "@/lib/db";
 import { buildDailyCorrespondence } from "@/lib/domain/dailyCorrespondence";
 import { dateKeyInTimeZone } from "@/lib/time";
 import { DEFAULT_BIRTH_TIMEZONE, isSupportedBirthTimezone } from "@/lib/domain/birthTimezone";
+import { computeBazi } from "@/lib/domain/bazi";
 import { normalizeProfileGender } from "@/lib/profileGender";
+import { buildProfessionalBaziFactsOnServer } from "@/lib/professionalBaziServer";
 
 const profileSchema = z.object({
   gender: z.enum(["male", "female", "other"]).optional().default("other"),
@@ -80,7 +82,7 @@ export async function DELETE() {
   try {
     const user = await getOrCreateUser();
     await prisma.userProfile.deleteMany({ where: { userId: user.id } });
-    return NextResponse.json({ ok: true, data: { profile: null, correspondence: null, sources: [] } });
+    return NextResponse.json({ ok: true, data: { profile: null, correspondence: null, professionalFacts: null, sources: [] } });
   } catch {
     return NextResponse.json({ ok: false, error: "生辰资料暂时无法清除，请稍后再试。" }, { status: 503 });
   }
@@ -89,14 +91,25 @@ export async function DELETE() {
 async function responseForUser(userId: string) {
   const profile = await prisma.userProfile.findUnique({ where: { userId } });
   if (!profile?.birthDate) {
-    return { ok: true, data: { profile: null, correspondence: null, sources: [] } };
+    return { ok: true, data: { profile: null, correspondence: null, professionalFacts: null, sources: [] } };
   }
+  const calculatedAt = new Date();
+  const timezone = profile.timezone ?? DEFAULT_BIRTH_TIMEZONE;
   const correspondence = buildDailyCorrespondence({
     birthDate: profile.birthDate,
     birthTime: profile.birthTime,
     birthLocation: profile.birthLocation,
-    timezone: profile.timezone
-  }, dateKeyInTimeZone());
+    timezone
+  }, dateKeyInTimeZone(calculatedAt));
+  const chart = computeBazi({
+    gender: normalizeProfileGender(profile.gender),
+    birthDate: profile.birthDate,
+    birthTime: profile.birthTime ?? "",
+    birthLocation: profile.birthLocation ?? undefined,
+    timezone,
+    unknownTime: !profile.birthTime
+  });
+  const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, calculatedAt);
   const cardCodes = [
     correspondence.phaseRelation.code,
     correspondence.tenGod.code,
@@ -121,10 +134,11 @@ async function responseForUser(userId: string) {
         birthDate: profile.birthDate,
         birthTime: profile.birthTime,
         birthLocation: profile.birthLocation,
-        timezone: profile.timezone ?? DEFAULT_BIRTH_TIMEZONE,
+        timezone,
         unknownTime: !profile.birthTime
       },
       correspondence,
+      professionalFacts,
       sources: [...cards, ...rules]
     }
   };

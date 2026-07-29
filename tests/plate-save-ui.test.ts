@@ -122,7 +122,7 @@ describe("four plate save integration", () => {
 
   it("mounts exactly one save control after each plate's result content", () => {
     expect(source.match(/<PlateSaveControl/g)).toHaveLength(4);
-    expect(bazi.indexOf("bazi-time-comparison")).toBeLessThan(bazi.indexOf("<PlateSaveControl"));
+    expect(bazi.indexOf("<ProfessionalBaziPanel")).toBeLessThan(bazi.indexOf("<PlateSaveControl"));
     expect(relation.indexOf("relationship-method")).toBeLessThan(relation.indexOf("<PlateSaveControl"));
     expect(home.indexOf("home-professional-placeholder")).toBeLessThan(home.indexOf("<PlateSaveControl"));
     expect(timing.indexOf("timing-selected-detail")).toBeLessThan(timing.indexOf("<PlateSaveControl"));
