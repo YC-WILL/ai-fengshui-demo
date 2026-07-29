@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { DailyCorrespondence } from "@/lib/domain/dailyCorrespondence";
+import type { ProfessionalBaziFactsV1 } from "@/lib/domain/professionalBaziFacts";
 import type { Element } from "@/lib/domain/elements";
 import { BIRTH_TIMEZONE_OPTIONS, DEFAULT_BIRTH_TIMEZONE, defaultBirthTimezoneForLocation } from "@/lib/domain/birthTimezone";
 import { PROFILE_GENDER_OPTIONS, normalizeProfileGender } from "@/lib/profileGender";
@@ -30,6 +31,7 @@ interface SourceItem {
 interface Payload {
   profile: ProfileValue | null;
   correspondence: DailyCorrespondence | null;
+  professionalFacts: ProfessionalBaziFactsV1 | null;
   sources: SourceItem[];
 }
 

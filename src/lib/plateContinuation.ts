@@ -4,7 +4,7 @@ import {
   PLATE_ENGINE_VERSIONS,
   PLATE_PROTOCOL_VERSION,
   type PlateType
-} from "@/lib/plateRecords";
+} from "@/lib/plateVersions";
 import type {
   HomeAreaId,
   HomeIssueId,

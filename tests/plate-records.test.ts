@@ -4,6 +4,8 @@ import {
   createPlateSnapshotForUser,
   deletePlateSnapshotForUser,
   getPlateSnapshotForUser,
+  PLATE_ENGINE_VERSIONS,
+  PLATE_PROTOCOL_VERSION,
   plateRecordRequestSchema,
   PlateRecordError,
   type PlateRecordClient,
@@ -318,9 +320,23 @@ describe("server-side plate calculation", () => {
     const baziResult = results[0].snapshot.resultSnapshot as {
       chart: { inputSnapshot: { birthDate: string } };
       observations: unknown[];
+      professionalFacts: {
+        schemaVersion: { value: string };
+        versions: {
+          protocolVersion: { value: string };
+          engineVersion: { value: string };
+        };
+      };
     };
     expect(baziResult.chart.inputSnapshot.birthDate).toBe("1990-05-20");
     expect(baziResult.observations.length).toBeGreaterThan(0);
+    expect(baziResult.professionalFacts).toMatchObject({
+      schemaVersion: { value: "professional-bazi-facts-v1" },
+      versions: {
+        protocolVersion: { value: PLATE_PROTOCOL_VERSION },
+        engineVersion: { value: PLATE_ENGINE_VERSIONS.BAZI }
+      }
+    });
 
     expect(results[2].snapshot.profileUpdatedAt).toBeNull();
     expect(results[2].snapshot.inputSnapshot).not.toHaveProperty("profile");

@@ -103,26 +103,24 @@ describe("bazi life observation cards", () => {
     expect(first.map(card => card.evidence.map(item => item.fact))).not.toEqual(second.map(card => card.evidence.map(item => item.fact)));
   });
 
-  it("puts life observations before professional facts and removes the personal flow presentation", () => {
+  it("keeps life observations separate from the facts-contract professional view", () => {
     const source = readFileSync(resolve(process.cwd(), "src/components/MethodWorkspaces.tsx"), "utf8");
     const pageSource = readFileSync(resolve(process.cwd(), "src/app/bazi/page.tsx"), "utf8");
+    const viewSwitch = source.indexOf("bazi-view-switch");
     const observations = source.indexOf("这张生辰盘，建议你先观察三件事");
-    const professional = source.indexOf("查看我的专业命盘");
-    const tabs = source.indexOf("八字盘内容层级");
-    const timeComparison = source.indexOf("最后再看 · 时间对照");
+    const professional = source.indexOf("<ProfessionalBaziPanel");
 
+    expect(viewSwitch).toBeGreaterThan(-1);
     expect(observations).toBeGreaterThan(-1);
+    expect(viewSwitch).toBeLessThan(observations);
     expect(observations).toBeLessThan(professional);
-    expect(professional).toBeLessThan(tabs);
-    expect(tabs).toBeLessThan(timeComparison);
     expect(source).not.toMatch(/我的命局主线|这张盘的力量怎样流动|这张盘里的十神怎样接力/);
-    expect(source).toContain("这是通用的十神关系说明，不是本命盘独有的力量流动");
     expect(source).toContain("主要依据");
     expect(source).toContain("辅助线索");
     expect(source).toContain("出生时辰未知，本次观察未使用时柱");
     expect(source).toContain("出生时辰已知，时柱作为补充参照；当前三张生活观察主要依据年月日结构");
     expect(source).not.toContain("<small>{card.confidence}</small>");
-    expect(pageSource).toContain("先从三项生活观察认识这张生辰盘");
+    expect(pageSource).toContain("在八字分析与专业细盘之间切换");
     expect(pageSource).not.toContain("从四柱明字开始");
   });
 

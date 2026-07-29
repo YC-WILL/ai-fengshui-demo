@@ -384,6 +384,132 @@ html, body {
 .bazi-plate-shell .bazi-layer-panel { @apply rounded-2xl bg-white/65 shadow-sm; }
 .bazi-plate-shell .bazi-time-comparison { @apply mt-6 rounded-2xl bg-white/70 shadow-sm; }
 
+.bazi-view-switch { @apply mb-4 mt-4 grid grid-cols-2 gap-1 rounded-2xl border border-mist bg-white/70 p-1 shadow-sm; }
+.bazi-view-switch button { @apply flex min-h-14 flex-col items-center justify-center rounded-xl border border-transparent px-3 py-2 text-ink/50 transition; }
+.bazi-view-switch button span { @apply font-serif text-base; }
+.bazi-view-switch button small { @apply mt-0.5 text-[9px] tracking-wide text-ink/35; }
+.bazi-view-switch button[aria-pressed="true"] { @apply border-cinnabar/25 bg-cinnabar text-white shadow-sm; }
+.bazi-view-switch button[aria-pressed="true"] small { @apply text-white/70; }
+
+.professional-bazi-v1 { @apply space-y-4; }
+.professional-bazi-intro { @apply flex flex-wrap items-end justify-between gap-3 rounded-2xl border border-mist bg-white/75 px-5 py-4 shadow-sm; }
+.professional-bazi-intro h2 { @apply mt-1 font-serif text-2xl font-normal; }
+.professional-bazi-intro p { @apply max-w-xl text-xs leading-6 text-ink/50; }
+.professional-origin,
+.professional-supplement,
+.professional-current-time,
+.professional-source { @apply overflow-hidden rounded-2xl border border-mist bg-white/75 shadow-sm; }
+.professional-origin > header,
+.professional-current-time > header { @apply flex items-end justify-between gap-3 border-b border-mist bg-rice/55 px-4 py-3; }
+.professional-origin > header span,
+.professional-supplement > header span,
+.professional-current-time > header span { @apply text-[10px] tracking-wider text-cinnabar; }
+.professional-origin > header h3,
+.professional-supplement > header h3,
+.professional-current-time > header h3 { @apply mt-0.5 font-serif text-lg font-normal; }
+.professional-origin > header small,
+.professional-current-time > header small { @apply max-w-40 text-right text-[9px] leading-4 text-ink/40; }
+
+.professional-matrix { display: grid; grid-template-columns: minmax(2.65rem,.55fr) repeat(4,minmax(0,1fr)); }
+.professional-matrix-row { display: contents; }
+.professional-matrix-row > * { @apply min-w-0 border-b border-r border-mist/80; }
+.professional-matrix-row > :last-child { @apply border-r-0; }
+.professional-matrix-row:last-child > * { @apply border-b-0; }
+.professional-matrix-corner,
+.professional-matrix-head,
+.professional-matrix-label,
+.professional-matrix-cell { @apply flex min-h-12 items-center justify-center px-1.5 py-2 text-center; }
+.professional-matrix-corner,
+.professional-matrix-label { @apply bg-rice/60 text-[10px] tracking-wider text-ink/45; }
+.professional-matrix-head { @apply flex-col bg-cinnabar/[0.06]; }
+.professional-matrix-head b { @apply font-serif text-sm font-normal text-ink/75; }
+.professional-matrix-head small { @apply mt-0.5 text-[8px] text-ink/35; }
+.professional-matrix-cell { @apply text-xs text-ink/70; }
+.professional-matrix-cell.is-ten-god { @apply min-h-10 text-[11px]; }
+.professional-matrix-cell.is-character { @apply min-h-16 font-serif text-[2rem] font-normal; }
+.professional-matrix-cell.is-muted { @apply min-h-16 break-words bg-rice/25 text-[8px] leading-4 text-ink/35; }
+.professional-matrix-cell.is-candidates { @apply min-h-16 flex-col gap-1 bg-cinnabar/[0.03]; }
+.professional-candidate { @apply flex items-center justify-center gap-0.5 font-serif text-base; }
+.professional-element { color: var(--professional-element); }
+.professional-element-wood { --professional-element: #34724b; }
+.professional-element-fire { --professional-element: #bf3b2c; }
+.professional-element-earth { --professional-element: #9a6b18; }
+.professional-element-metal { --professional-element: #8799ac; }
+.professional-element-water { --professional-element: #287fbe; }
+
+.professional-hidden-cell { @apply flex min-h-16 min-w-0 bg-white text-center transition; }
+.professional-hidden-cell:hover,
+.professional-hidden-cell.is-active { @apply bg-cinnabar/5; }
+.professional-hidden-cell > button { @apply flex min-h-16 w-full min-w-0 flex-col items-center justify-center px-1.5 py-2 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cinnabar/40; }
+.professional-hidden-cell > button > span { @apply flex flex-wrap items-center justify-center gap-1 font-serif text-base; }
+.professional-hidden-cell > button > small { @apply mt-1 text-[8px] text-ink/35; }
+.professional-hidden-detail { @apply border-t border-cinnabar/20 bg-cinnabar/[0.03] px-4 py-4; }
+.professional-hidden-detail > header { @apply flex items-center justify-between gap-3; }
+.professional-hidden-detail > header > div { @apply flex flex-col; }
+.professional-hidden-detail > header span { @apply text-[10px] tracking-wider text-cinnabar; }
+.professional-hidden-detail > header b { @apply mt-0.5 text-sm font-medium text-ink/75; }
+.professional-hidden-detail > header button { @apply rounded-full border border-mist bg-white px-3 py-1.5 text-[11px] text-ink/55; }
+.professional-hidden-detail > div { @apply mt-3 grid gap-2 sm:grid-cols-3; }
+.professional-hidden-detail article { @apply grid grid-cols-[2.5rem_minmax(0,1fr)] items-start gap-3 rounded-xl border border-mist bg-white/90 p-3; }
+.professional-hidden-detail article > b { @apply flex h-10 w-10 items-center justify-center rounded-lg bg-rice font-serif text-2xl font-normal; }
+.professional-hidden-detail dl { @apply grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs; }
+.professional-hidden-detail dl > div { @apply flex min-w-0 items-baseline justify-between gap-1 border-b border-mist/60 pb-1; }
+.professional-hidden-detail dt { @apply shrink-0 text-[11px] text-ink/40; }
+.professional-hidden-detail dd { @apply min-w-0 text-right text-[12px] text-ink/70; }
+.professional-inline-uncertainty { @apply border-t border-cinnabar/15 bg-cinnabar/5 px-4 py-2.5 text-[10px] leading-5 text-ink/55; }
+
+.professional-supplement > header { @apply border-b border-mist bg-rice/55 px-4 py-3; }
+.professional-anchor-grid { @apply grid grid-cols-2 gap-px bg-mist; }
+.professional-anchor-grid article { @apply flex min-h-28 flex-col items-center justify-center bg-white/80 px-3 py-3 text-center; }
+.professional-anchor-grid article > span { @apply text-[10px] tracking-wider text-ink/40; }
+.professional-anchor-grid article > b { @apply mt-1 font-serif text-3xl font-normal; }
+.professional-anchor-grid article > small { @apply mt-1 text-[9px] leading-4 text-ink/45; }
+.professional-element-counts,
+.professional-relations { @apply border-t border-mist px-4 py-3; }
+.professional-element-counts > div,
+.professional-relations > div { @apply flex items-end justify-between gap-2; }
+.professional-element-counts > div b,
+.professional-relations > div b { @apply text-xs font-medium text-ink/70; }
+.professional-element-counts > div small,
+.professional-relations > div small { @apply text-right text-[8px] leading-4 text-ink/35; }
+.professional-element-counts ul { @apply mt-3 grid grid-cols-5 gap-1.5; }
+.professional-element-counts li { @apply flex flex-col items-center rounded-lg border border-mist bg-rice/35 py-2; }
+.professional-element-counts li span { @apply text-[9px]; }
+.professional-element-counts li b { @apply mt-0.5 font-serif text-lg font-normal; }
+.professional-element-counts > p,
+.professional-relations > p { @apply mt-2 text-[10px] leading-5 text-ink/45; }
+.professional-relations ul { @apply mt-2 grid gap-1.5 sm:grid-cols-2; }
+.professional-relations li { @apply rounded-lg border border-mist bg-rice/35 px-3 py-2 text-[10px] text-ink/55; }
+
+.professional-time-grid { @apply grid gap-2 p-3 sm:grid-cols-3; }
+.professional-time-grid article { @apply flex min-h-44 flex-col rounded-xl border border-mist bg-rice/35 p-3; }
+.professional-time-grid article > span { @apply text-[10px] tracking-wider text-cinnabar; }
+.professional-time-grid article > strong { @apply mt-1 flex gap-0.5 font-serif text-3xl font-normal; }
+.professional-time-grid article > small { @apply mt-0.5 text-[9px] text-ink/40; }
+.professional-time-grid article > p { @apply mt-3 border-t border-dashed border-mist pt-2 text-[10px] text-ink/50; }
+.professional-time-grid article > p b { @apply font-medium text-ink/70; }
+.professional-time-grid article ul { @apply mt-2 space-y-1; }
+.professional-time-grid article li { @apply text-[9px] text-ink/45; }
+.professional-time-grid article > em { @apply mt-auto pt-3 text-[8px] not-italic leading-4 text-ink/35; }
+
+.professional-source > summary { @apply flex cursor-pointer items-center justify-between bg-rice/55 px-4 py-4; }
+.professional-source > summary span { @apply font-serif text-base; }
+.professional-source > summary small { @apply text-[9px] text-ink/35; }
+.professional-conventions { @apply grid gap-px border-t border-mist bg-mist sm:grid-cols-2; }
+.professional-conventions p { @apply flex flex-col bg-white/90 px-4 py-3; }
+.professional-conventions b { @apply text-[9px] tracking-wider text-cinnabar; }
+.professional-conventions span { @apply mt-1 text-xs leading-5 text-ink/60; }
+.professional-source-kinds { @apply grid gap-2 border-t border-mist p-4 sm:grid-cols-2; }
+.professional-source-kinds p { @apply rounded-xl border border-mist bg-rice/35 p-3; }
+.professional-source-kinds b { @apply block text-xs font-medium text-ink/70; }
+.professional-source-kinds span { @apply mt-1 block text-[10px] leading-5 text-ink/45; }
+.professional-source-status { @apply mx-4 mb-4 rounded-lg border border-cinnabar/20 bg-cinnabar/5 px-3 py-2 text-[10px] leading-5 text-ink/55; }
+.professional-technical-trace { @apply border-t border-mist px-4 py-3; }
+.professional-technical-trace > summary { @apply cursor-pointer text-[10px] text-cinnabar/80; }
+.professional-technical-trace section { @apply mt-3 flex min-w-0 flex-col gap-1; }
+.professional-technical-trace section > b { @apply text-[9px] font-medium text-ink/50; }
+.professional-technical-trace code { @apply break-all rounded bg-rice px-2 py-1 text-[8px] leading-4 text-ink/45; }
+
 .compact-field { @apply flex items-center gap-2 text-xs text-ink/55; }
 .compact-field input { @apply rounded-lg border border-mist bg-white px-3 py-2 text-sm text-ink focus:border-cinnabar/40 focus:outline-none focus:ring-2 focus:ring-cinnabar/15; }
 .pair-axis { @apply grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-2xl border border-gold/30 bg-rice/40 p-4 md:p-6; }
