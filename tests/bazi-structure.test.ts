@@ -158,7 +158,8 @@ describe("bazi structure evidence", () => {
     expect(mainline.elementOverview.summary).toMatch(/明字|藏干|不等于缺陷/);
     expect(mainline.elementOverview.interpretation).toMatch(/接到新任务|需要推进|事务堆在一起|标准含糊|条件变化/);
     expect(mainline.monthReading.image).toMatch(/想象|时节/);
-    expect(mainline.monthReading.interpretation).toMatch(/事情刚放到你桌上|月令的本气/);
+    expect(mainline.monthReading.interpretation).toMatch(/传统结构事实|项目的现代解释|现实经历核对/);
+    expect(mainline.monthReading.interpretation).not.toMatch(/^传统上/);
     expect(mainline.tenGodReading.interpretation).toMatch(/日常场景|传统上|不是拿一个十神/);
   });
 

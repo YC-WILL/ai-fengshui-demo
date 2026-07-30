@@ -60,8 +60,11 @@ describe("four plate product UI", () => {
     expect(baziPage).toContain('status="1.0 已冻结"');
     expect(baziPage).toContain('stages={["八字分析", "专业细盘", "查看口径与来源"]}');
     expect(baziWorkspace).toContain('aria-label="八字内容层级"');
-    expect(baziWorkspace.indexOf("bazi-view-switch")).toBeLessThan(baziWorkspace.indexOf("bazi-observations"));
+    expect(baziWorkspace.indexOf("bazi-view-switch")).toBeLessThan(baziWorkspace.indexOf("<BaziMainlinePanel"));
+    expect(baziWorkspace.indexOf("<BaziMainlinePanel")).toBeLessThan(baziWorkspace.indexOf("bazi-life-comparison"));
+    expect(baziWorkspace.indexOf("bazi-life-comparison")).toBeLessThan(baziWorkspace.indexOf("bazi-observations"));
     expect(baziWorkspace.indexOf("bazi-observations")).toBeLessThan(baziWorkspace.indexOf("<ProfessionalBaziPanel"));
+    expect(baziWorkspace).toContain("生活观察与本周行动 · 默认收起");
 
     expect(relationshipPage).toContain('status="1.0 已冻结"');
     expect(relationshipPage).toContain("先看三种互动");
