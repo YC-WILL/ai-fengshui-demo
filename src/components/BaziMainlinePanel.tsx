@@ -68,6 +68,27 @@ function TenGodSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   );
 }
 
+function BranchRelationSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+  if (!theme.branchRelationPositions) return null;
+
+  return (
+    <div className="bazi-branch-relation-summary" aria-label="按柱位整理的本命地支关系">
+      {theme.branchRelationPositions.map(item => (
+        <article key={`${item.firstPillar}-${item.firstBranch}-${item.secondPillar}-${item.secondBranch}`}>
+          <header>
+            <span>{item.firstPillar}<b>{item.firstBranch}</b></span>
+            <i aria-hidden>↔</i>
+            <span>{item.secondPillar}<b>{item.secondBranch}</b></span>
+          </header>
+          <ul aria-label={`${item.firstPillar}${item.firstBranch}与${item.secondPillar}${item.secondBranch}的关系名称`}>
+            {item.relations.map(relation => <li key={relation}>{relation}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  );
+}
+
 function EvidencePanel({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   return (
     <details className="bazi-mainline-evidence">
@@ -137,6 +158,7 @@ function AnalysisTheme({
             <p>{theme.professionalAnalysis.text}</p>
             <ElementSummary theme={theme} />
             <TenGodSummary theme={theme} />
+            <BranchRelationSummary theme={theme} />
           </div>
         </li>
 

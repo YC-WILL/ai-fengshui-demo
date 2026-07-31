@@ -9,7 +9,8 @@ import type {
 export const BAZI_ANALYSIS_THEME_IDS = [
   "day-master-month-command",
   "five-elements",
-  "ten-gods-pillars"
+  "ten-gods-pillars",
+  "natal-branch-relations"
 ] as const;
 
 export const BAZI_MAINLINE_FACT_IDS = [
@@ -47,6 +48,14 @@ export interface BaziTenGodPositionSummary {
   hidden: string[];
 }
 
+export interface BaziBranchRelationPositionSummary {
+  firstPillar: string;
+  firstBranch: string;
+  secondPillar: string;
+  secondBranch: string;
+  relations: string[];
+}
+
 export interface ReadyBaziAnalysisTheme {
   status: "ready";
   id: BaziAnalysisThemeId;
@@ -73,6 +82,7 @@ export interface ReadyBaziAnalysisTheme {
   limitation: string | null;
   elementSummary?: BaziElementSummary;
   tenGodPositions?: BaziTenGodPositionSummary[];
+  branchRelationPositions?: BaziBranchRelationPositionSummary[];
 }
 
 export interface BaziMainlineNarrative {
@@ -473,8 +483,86 @@ function buildTenGodTheme(
   };
 }
 
+const BRANCH_RELATION_IMAGES = {
+  同支: "同一枚地支标签",
+  六合: "一条六合连线",
+  六冲: "一条方向相对的连线",
+  六害: "一处需要复核的错位",
+  六破: "一处连接松动的记号",
+  刑: "一处反复校正的记号"
+} as const;
+
+function buildNatalBranchRelationTheme(
+  facts: ProfessionalBaziFactsV1
+): ReadyBaziAnalysisTheme | null {
+  const confirmedRelations = facts.natalBranchRelations
+    .map((relation, index) => ({ relation, index }))
+    .filter(({ relation }) => relation.certainty === "confirmed");
+  if (!confirmedRelations.length) return null;
+
+  const grouped = new Map<string, BaziBranchRelationPositionSummary>();
+  confirmedRelations.forEach(({ relation }) => {
+    const value = relation.value;
+    const key = `${value.firstPillar}:${value.firstBranch}|${value.secondPillar}:${value.secondBranch}`;
+    const current = grouped.get(key) ?? {
+      firstPillar: value.firstPillar,
+      firstBranch: value.firstBranch,
+      secondPillar: value.secondPillar,
+      secondBranch: value.secondBranch,
+      relations: []
+    };
+    current.relations.push(value.name);
+    grouped.set(key, current);
+  });
+  const positions = [...grouped.values()];
+  const relationEvidence = confirmedRelations.map(({ relation, index }) => evidence(
+    `natalBranchRelations.${index}`,
+    `${relation.value.firstPillar}${relation.value.firstBranch}与${relation.value.secondPillar}${relation.value.secondBranch}`,
+    relation.value.name,
+    relation
+  ));
+  const factIds = relationEvidence.map(item => item.id);
+  const relationText = positions
+    .map(item => `${item.firstPillar}${item.firstBranch}与${item.secondPillar}${item.secondBranch}形成${item.relations.join("、")}`)
+    .join("；");
+  const imageryText = positions
+    .map(item => `${item.firstPillar}${item.firstBranch}与${item.secondPillar}${item.secondBranch}像在盘面上同时标出${item.relations.map(name => BRANCH_RELATION_IMAGES[name as keyof typeof BRANCH_RELATION_IMAGES]).join("、")}`)
+    .join("；");
+  const omitted = omittedPillarNames(facts);
+  const multipleNames = positions.some(item => item.relations.length > 1);
+
+  return {
+    status: "ready",
+    id: "natal-branch-relations",
+    title: "本命地支关系",
+    scope: `${positions.length}组已确认柱位关系 · ${confirmedRelations.length}项登记名称`,
+    professionalAnalysis: {
+      title: "按柱位核对地支之间的登记关系",
+      text: `当前合同中已确认：${relationText}。这里只列出本版已经登记的同支、六合、六冲、六害、六破与刑，不把关系名称转换为吉凶、强弱或现实事件。`,
+      factIds
+    },
+    imagery: {
+      title: "把关系名称看成盘面连线",
+      text: `${imageryText}。这些连线只是帮助记住“哪两个柱位命中了什么名称”，不表示人生中的具体人、事或结果。`,
+      disclaimer: "这是蟾先森为了帮助阅读柱位关系采用的现代意象，不是古籍原句，也不是传统关系结论。",
+      factIds
+    },
+    plainReading: {
+      title: "同一对地支可以并列多个名称",
+      text: `${multipleNames ? "同一对地支可能同时命中多个已登记名称；这些名称来自不同规则条件，当前只并列保存，不自动互相抵消或合并评分。" : "当前每组已确认地支关系只命中一个登记名称；名称本身仍不等于现实中的顺利、冲突或伤害。"} 本主题回答的是“盘内哪些柱位之间存在已登记关系”，不能据此证明性格、家庭、感情、事业或已经发生的经历。`,
+      boundary: "合不等于一定顺利，冲、害、破、刑也不等于一定不好；本轮不判断作用强弱，不加入旺衰、喜忌、格局或事件预测。",
+      factIds
+    },
+    evidence: relationEvidence,
+    limitation: omitted.length
+      ? `${omitted.join("、")}尚未确认，涉及这些柱位的地支关系已经由事实合同排除；当前主题只覆盖其余已确认柱位。`
+      : null,
+    branchRelationPositions: positions
+  };
+}
+
 /**
- * 只从同一份 ProfessionalBaziFactsV1 整理三个普通分析主题。
+ * 只从同一份 ProfessionalBaziFactsV1 整理四个普通分析主题。
  * 本函数不计算新命理事实，不接收独立解释文本，也不会用不确定柱位继续推导。
  */
 export function buildBaziMainlineNarrative(
@@ -485,14 +573,17 @@ export function buildBaziMainlineNarrative(
   const themes = [
     buildDayMasterMonthTheme(facts),
     buildFiveElementTheme(facts),
-    buildTenGodTheme(facts)
+    buildTenGodTheme(facts),
+    buildNatalBranchRelationTheme(facts)
   ].filter((theme): theme is ReadyBaziAnalysisTheme => theme !== null);
 
   if (!themes.length) return null;
+  const countLabels = ["零", "一", "二", "三", "四"];
+  const hasBranchRelations = themes.some(theme => theme.id === "natal-branch-relations");
 
   return {
-    title: "三项基础命盘分析",
-    introduction: "以下内容只整理当前已确认的日主与月令、五行构成、十神与四柱。盘面事实可以复算；形象和白话部分属于蟾先森的现代解释，不用于预测人生结果。",
+    title: `${countLabels[themes.length] ?? themes.length}项基础命盘分析`,
+    introduction: `以下内容只整理当前已确认的日主与月令、五行构成、十神与四柱${hasBranchRelations ? "、本命地支关系" : ""}。盘面事实可以复算；形象和白话部分属于蟾先森的现代解释，不用于预测人生结果。`,
     themes
   };
 }

@@ -345,6 +345,14 @@ html, body {
 .bazi-ten-god-summary header span { @apply font-serif text-base text-cinnabar; }
 .bazi-ten-god-summary small { @apply mt-2 block text-[9px] text-ink/35; }
 .bazi-ten-god-summary p { @apply mt-1 break-words text-[11px] leading-5 text-ink/55; }
+.bazi-branch-relation-summary { @apply mt-4 grid gap-2 sm:grid-cols-2; }
+.bazi-branch-relation-summary article { @apply min-w-0 rounded-xl border border-gold/35 bg-rice/45 p-3; }
+.bazi-branch-relation-summary header { @apply flex items-center justify-between gap-2; }
+.bazi-branch-relation-summary header span { @apply flex min-w-0 items-baseline gap-1 text-[10px] text-ink/45; }
+.bazi-branch-relation-summary header b { @apply font-serif text-lg font-normal text-ink/75; }
+.bazi-branch-relation-summary header i { @apply shrink-0 not-italic text-gold; }
+.bazi-branch-relation-summary ul { @apply mt-3 flex list-none flex-wrap gap-1.5 border-0 p-0; }
+.bazi-branch-relation-summary li { @apply rounded-full border border-cinnabar/20 bg-white/75 px-2 py-1 text-[10px] text-cinnabar/80; }
 .bazi-life-comparison { @apply mt-4 overflow-hidden rounded-2xl border border-mist bg-white/65 shadow-sm; }
 .bazi-life-comparison > summary { @apply flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4; }
 .bazi-life-comparison > summary::-webkit-details-marker { display: none; }

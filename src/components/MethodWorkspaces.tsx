@@ -171,7 +171,7 @@ export function BaziWorkspace({
           message="你正在从一条历史记录继续。这里使用当前保存的生辰资料和当前计算规则，结果可能与当时不同。"
         />}
         <div className="plate-section-head">
-          <div><span>你的八字盘</span><small>先读三项基础结构，再按需查看专业细盘</small></div>
+          <div><span>你的八字盘</span><small>先读已确认的基础结构，再按需查看专业细盘</small></div>
           <button type="button" className="plate-profile-summary" aria-expanded={editingProfile} onClick={() => setEditingProfile(value => !value)}>
             <span>已保存生辰</span><b>{profile.birthDate} · {profileGenderLabel(profile.gender)} · {profile.unknownTime ? "时间未定" : profile.birthTime}</b><em>{editingProfile ? "收起" : "修改"}</em>
           </button>

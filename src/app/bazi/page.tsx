@@ -13,7 +13,7 @@ export default async function BaziPage({
 }) {
   const continuation = await getContinuation(searchParams?.from);
   return (
-    <MethodPageShell current="bazi" title="八字盘" basis="四柱 · 日主 · 月令 · 藏干 · 十神" status="1.0 已冻结" stages={["八字分析", "专业细盘", "查看口径与来源"]} lead="八字分析依次整理日主与月令、五行构成、十神与四柱，再将已确认的专业结构转成形象和白话解释；专业细盘保留当前已核验、可以复算的完整字段。未知出生时间时，时柱保持空白。">
+    <MethodPageShell current="bazi" title="八字盘" basis="四柱 · 日主 · 月令 · 藏干 · 十神" status="1.0 已冻结" stages={["八字分析", "专业细盘", "查看口径与来源"]} lead="八字分析依次整理日主与月令、五行构成、十神与四柱；如有已确认的本命地支关系，也会按柱位单列，再将这些专业结构转成形象和白话解释。专业细盘保留当前已核验、可以复算的完整字段。未知出生时间时，时柱保持空白。">
       <BaziWorkspace
         key={continuation?.sourceId ?? "new-bazi"}
         continuation={continuation}
