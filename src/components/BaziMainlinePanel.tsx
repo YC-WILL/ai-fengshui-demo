@@ -1,8 +1,22 @@
 import React from "react";
 import type {
   BaziMainlineEvidence,
-  BaziMainlineNarrative
+  BaziMainlineNarrative,
+  ReadyBaziAnalysisTheme
 } from "@/lib/domain/baziMainlineNarrative";
+import type { Element } from "@/lib/domain/elements";
+
+const ELEMENTS: Element[] = ["木", "火", "土", "金", "水"];
+
+function elementClass(element: Element) {
+  return `professional-element professional-element-${{
+    木: "wood",
+    火: "fire",
+    土: "earth",
+    金: "metal",
+    水: "water"
+  }[element]}`;
+}
 
 function SourceLabel({ item }: { item: BaziMainlineEvidence }) {
   return item.sourceKind === "traditional-catalog"
@@ -10,40 +24,108 @@ function SourceLabel({ item }: { item: BaziMainlineEvidence }) {
     : <span>项目计算实现</span>;
 }
 
-export default function BaziMainlinePanel({
-  narrative
-}: {
-  narrative: BaziMainlineNarrative;
-}) {
-  if (narrative.status === "uncertain") {
-    return (
-      <section className="bazi-mainline is-uncertain" aria-labelledby="bazi-mainline-title">
-        <header className="bazi-mainline-head">
-          <div>
-            <span className="section-kicker">八字分析</span>
-            <h2 id="bazi-mainline-title">命盘解读</h2>
-          </div>
-          <small>只解释已确认事实</small>
-        </header>
-        <div className="bazi-mainline-uncertain" role="status">
-          <h3>{narrative.title}</h3>
-          {narrative.candidates.length > 0 && (
-            <p>当前候选：{narrative.candidates.join(" 或 ")}</p>
-          )}
-          <p>{narrative.message}</p>
-        </div>
-      </section>
-    );
-  }
+function ElementSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+  if (!theme.elementSummary) return null;
+  const summary = theme.elementSummary;
 
   return (
-    <section className="bazi-mainline" aria-labelledby="bazi-mainline-title">
-      <header className="bazi-mainline-head">
+    <div className="bazi-element-summary" aria-label={`明字五行统计，覆盖${summary.coverageCount}个位置`}>
+      <div className="bazi-element-summary-head">
+        <b>明字数量</b>
+        <small>覆盖 {summary.coverageCount} 个已确认位置</small>
+      </div>
+      <ul>
+        {ELEMENTS.map(element => (
+          <li key={element} className={elementClass(element)}>
+            <span>{element}</span>
+            <b>{summary.counts[element]}</b>
+            <i aria-hidden style={{ width: `${Math.min(100, summary.counts[element] * 18)}%` }} />
+          </li>
+        ))}
+      </ul>
+      <dl>
+        <div><dt>明字出现</dt><dd>{summary.visibleElements.join("、") || "无"}</dd></div>
+        <div><dt>仅藏干出现</dt><dd>{summary.hiddenOnlyElements.join("、") || "无"}</dd></div>
+        <div><dt>当前未见</dt><dd>{summary.notSeenElements.join("、") || "无"}</dd></div>
+      </dl>
+    </div>
+  );
+}
+
+function TenGodSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+  if (!theme.tenGodPositions) return null;
+
+  return (
+    <div className="bazi-ten-god-summary" aria-label="按四柱位置整理的十神">
+      {theme.tenGodPositions.map(item => (
+        <article key={item.position}>
+          <header><b>{item.position}</b><span>{item.visible}</span></header>
+          <small>藏干</small>
+          <p>{item.hidden.join("、") || "当前未见"}</p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function EvidencePanel({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+  return (
+    <details className="bazi-mainline-evidence">
+      <summary>
+        <span>为什么这样说</span>
+        <small>事实依据 · 默认收起</small>
+      </summary>
+      <div className="bazi-mainline-evidence-list">
+        {theme.evidence.map(item => (
+          <article key={item.id}>
+            <div>
+              <b>{item.label}</b>
+              <span>{item.displayValue}</span>
+            </div>
+            <small>{item.fact.sourcePosition} · {item.fact.certainty}</small>
+          </article>
+        ))}
+      </div>
+      <details className="bazi-mainline-technical">
+        <summary>技术追溯</summary>
         <div>
-          <span className="section-kicker">八字分析</span>
-          <h2 id="bazi-mainline-title">命盘解读</h2>
+          {theme.evidence.map(item => (
+            <article key={item.id}>
+              <header>
+                <b>{item.id}</b>
+                <SourceLabel item={item} />
+              </header>
+              <dl>
+                <div><dt>计算口径</dt><dd>{item.fact.calculationConvention}</dd></div>
+                <div><dt>确定性</dt><dd>{item.fact.certainty}</dd></div>
+                <div><dt>规则版本</dt><dd>{item.fact.ruleVersion}</dd></div>
+                <div><dt>规则ID</dt><dd><code>{item.fact.sourceRuleId}</code></dd></div>
+              </dl>
+            </article>
+          ))}
         </div>
-        <small>一条可复核的命盘主线</small>
+      </details>
+    </details>
+  );
+}
+
+function AnalysisTheme({
+  theme,
+  index
+}: {
+  theme: ReadyBaziAnalysisTheme;
+  index: number;
+}) {
+  const titleId = `bazi-analysis-theme-${theme.id}`;
+
+  return (
+    <article className="bazi-analysis-theme" aria-labelledby={titleId}>
+      <header className="bazi-analysis-theme-head">
+        <span aria-hidden>{String(index + 1).padStart(2, "0")}</span>
+        <div>
+          <h3 id={titleId}>{theme.title}</h3>
+          <small>{theme.scope}</small>
+        </div>
       </header>
 
       <ol className="bazi-mainline-layers">
@@ -51,8 +133,10 @@ export default function BaziMainlinePanel({
           <span aria-hidden>01</span>
           <div>
             <small>专业分析</small>
-            <h3>{narrative.professionalAnalysis.title}</h3>
-            <p>{narrative.professionalAnalysis.text}</p>
+            <h4>{theme.professionalAnalysis.title}</h4>
+            <p>{theme.professionalAnalysis.text}</p>
+            <ElementSummary theme={theme} />
+            <TenGodSummary theme={theme} />
           </div>
         </li>
 
@@ -60,9 +144,9 @@ export default function BaziMainlinePanel({
           <span aria-hidden>02</span>
           <div>
             <small>形象解释</small>
-            <h3>{narrative.imagery.title}</h3>
-            <p className="bazi-mainline-disclaimer">{narrative.imagery.disclaimer}</p>
-            <blockquote>{narrative.imagery.text}</blockquote>
+            <h4>{theme.imagery.title}</h4>
+            <p className="bazi-mainline-disclaimer">{theme.imagery.disclaimer}</p>
+            <blockquote>{theme.imagery.text}</blockquote>
           </div>
         </li>
 
@@ -70,56 +154,45 @@ export default function BaziMainlinePanel({
           <span aria-hidden>03</span>
           <div>
             <small>白话解读</small>
-            <h3>{narrative.plainReading.title}</h3>
-            <p>{narrative.plainReading.text}</p>
-            <p className="bazi-mainline-boundary">{narrative.plainReading.boundary}</p>
+            <h4>{theme.plainReading.title}</h4>
+            <p>{theme.plainReading.text}</p>
+            <p className="bazi-mainline-boundary">{theme.plainReading.boundary}</p>
           </div>
         </li>
 
         <li className="bazi-mainline-answer is-evidence">
           <span aria-hidden>04</span>
-          <details className="bazi-mainline-evidence">
-            <summary>
-              <span>为什么这样说</span>
-              <small>事实依据 · 默认收起</small>
-            </summary>
-            <div className="bazi-mainline-evidence-list">
-              {narrative.evidence.map(item => (
-                <article key={item.id}>
-                  <div>
-                    <b>{item.label}</b>
-                    <span>{item.displayValue}</span>
-                  </div>
-                  <small>{item.fact.sourcePosition} · {item.fact.certainty}</small>
-                </article>
-              ))}
-            </div>
-            <details className="bazi-mainline-technical">
-              <summary>技术追溯</summary>
-              <div>
-                {narrative.evidence.map(item => (
-                  <article key={item.id}>
-                    <header>
-                      <b>{item.id}</b>
-                      <SourceLabel item={item} />
-                    </header>
-                    <dl>
-                      <div><dt>计算口径</dt><dd>{item.fact.calculationConvention}</dd></div>
-                      <div><dt>确定性</dt><dd>{item.fact.certainty}</dd></div>
-                      <div><dt>规则版本</dt><dd>{item.fact.ruleVersion}</dd></div>
-                      <div><dt>规则ID</dt><dd><code>{item.fact.sourceRuleId}</code></dd></div>
-                    </dl>
-                  </article>
-                ))}
-              </div>
-            </details>
-          </details>
+          <EvidencePanel theme={theme} />
         </li>
       </ol>
 
-      {narrative.limitation && (
-        <p className="bazi-mainline-note">{narrative.limitation}</p>
+      {theme.limitation && (
+        <p className="bazi-mainline-note">{theme.limitation}</p>
       )}
+    </article>
+  );
+}
+
+export default function BaziMainlinePanel({
+  narrative
+}: {
+  narrative: BaziMainlineNarrative;
+}) {
+  return (
+    <section className="bazi-mainline bazi-foundation-analysis" aria-labelledby="bazi-mainline-title">
+      <header className="bazi-mainline-head">
+        <div>
+          <span className="section-kicker">基础说明与边界</span>
+          <h2 id="bazi-mainline-title">{narrative.title}</h2>
+        </div>
+        <small>事实可复核 · 解释有边界</small>
+      </header>
+      <p className="bazi-analysis-introduction">{narrative.introduction}</p>
+      <div className="bazi-analysis-themes">
+        {narrative.themes.map((theme, index) => (
+          <AnalysisTheme key={theme.id} theme={theme} index={index} />
+        ))}
+      </div>
     </section>
   );
 }

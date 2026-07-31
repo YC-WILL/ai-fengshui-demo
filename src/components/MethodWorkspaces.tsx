@@ -6,7 +6,6 @@ import BaziMainlinePanel from "@/components/BaziMainlinePanel";
 import ProfessionalBaziPanel from "@/components/ProfessionalBaziPanel";
 import { computeBazi } from "@/lib/domain/bazi";
 import { buildBaziMainlineNarrative } from "@/lib/domain/baziMainlineNarrative";
-import { buildBaziObservationCards, buildBaziWeeklyAction } from "@/lib/domain/baziObservations";
 import type { ProfessionalBaziFactsV1 } from "@/lib/domain/professionalBaziFacts";
 import { buildTimingSelection, type TimingCandidate } from "@/lib/domain/timingSelection";
 import {
@@ -137,8 +136,6 @@ export function BaziWorkspace({
     timezone: profile.timezone,
     unknownTime: profile.unknownTime
   }) : null, [profile]);
-  const observationCards = useMemo(() => chart ? buildBaziObservationCards(chart) : [], [chart]);
-  const weeklyAction = useMemo(() => buildBaziWeeklyAction(observationCards), [observationCards]);
   const professionalFacts = context?.professionalFacts ?? null;
   const mainlineNarrative = useMemo(
     () => buildBaziMainlineNarrative(professionalFacts),
@@ -174,7 +171,7 @@ export function BaziWorkspace({
           message="你正在从一条历史记录继续。这里使用当前保存的生辰资料和当前计算规则，结果可能与当时不同。"
         />}
         <div className="plate-section-head">
-          <div><span>你的八字盘</span><small>先读命盘主线，再与生活经历对照</small></div>
+          <div><span>你的八字盘</span><small>先读三项基础结构，再按需查看专业细盘</small></div>
           <button type="button" className="plate-profile-summary" aria-expanded={editingProfile} onClick={() => setEditingProfile(value => !value)}>
             <span>已保存生辰</span><b>{profile.birthDate} · {profileGenderLabel(profile.gender)} · {profile.unknownTime ? "时间未定" : profile.birthTime}</b><em>{editingProfile ? "收起" : "修改"}</em>
           </button>
@@ -207,55 +204,9 @@ export function BaziWorkspace({
           <p>出生当天发生交节。确认大致出生时段后才能确定；在此之前，依赖年柱或月柱的解释暂不展示。</p>
         </div>}
 
-        {baziView === "analysis" && <>
-        {mainlineNarrative && <BaziMainlinePanel narrative={mainlineNarrative} />}
-
-        <details className="bazi-life-comparison">
-          <summary>
-            <span>与我的生活经历对照</span>
-            <small>生活观察与本周行动 · 默认收起</small>
-          </summary>
-          <div className="bazi-life-comparison-body">
-            <section className="bazi-observations" aria-labelledby="bazi-observations-title">
-              <header className="bazi-observations-head">
-                <div><span className="section-kicker">展开后对照</span><h2 id="bazi-observations-title">三项条件式生活观察</h2></div>
-                <small>不替你下固定结论</small>
-              </header>
-              <p className="bazi-observation-scope">{chart.hour
-                ? "出生时辰已知，时柱作为补充参照；当前三张生活观察主要依据年月日结构。"
-                : "出生时辰未知，本次观察未使用时柱。"}</p>
-              <div className="bazi-observation-grid">
-                {observationCards.map((card, index) => {
-                  const primaryEvidence = card.evidence.filter(item => item.role === "primary");
-                  const supportingEvidence = card.evidence.filter(item => item.role === "supporting");
-                  const statusLabel = card.confidence === "完整资料" ? "出生时辰已知" : card.confidence === "部分资料" ? "未含时柱" : "边界待确认";
-                  return <article key={card.id} className={`bazi-observation-card ${card.confidence === "暂不判断" ? "is-pending" : ""}`}>
-                  <header><span>{index + 1}</span><div><h3>{card.title}</h3><small>{statusLabel}</small></div></header>
-                  <p className="bazi-observation-conclusion">{card.conclusion}</p>
-                  {card.confidence !== "暂不判断" ? <div className="bazi-observation-points">
-                    <p><b>什么时候比较明显</b>{card.trigger}</p>
-                    <p><b>可能的优势</b>{card.strength}</p>
-                    <p><b>容易卡住的地方</b>{card.watchout}</p>
-                    <p className="is-action"><b>可以怎么做</b>{card.action}</p>
-                  </div> : <p className="bazi-observation-limitation">{card.limitation}</p>}
-                  {card.confidence !== "暂不判断" && <details className="bazi-observation-evidence">
-                    <summary>为什么这样说</summary>
-                    <section><h4>主要依据</h4><p>这部分确定本卡的主要观察方向。</p><ul>{primaryEvidence.map(item => <li key={`${item.source}-${item.fact}`}><b>{item.source}</b><span>{item.fact}</span><small>{item.explanation}</small></li>)}</ul></section>
-                    {supportingEvidence.length > 0 && <section><h4>辅助线索</h4><p>这部分提供另一项盘面参照；是否改变表层结论，以每条说明为准。</p><ul>{supportingEvidence.map(item => <li key={`${item.source}-${item.fact}`}><b>{item.source}</b><span>{item.fact}</span><small>{item.explanation}</small></li>)}</ul></section>}
-                    {card.limitation && <p>{card.limitation}</p>}
-                  </details>}
-                </article>;})}
-              </div>
-            </section>
-
-            {weeklyAction && <section className="bazi-weekly-action" aria-labelledby="bazi-weekly-action-title">
-              <span>本周可以试试 · 来自“{weeklyAction.sourceTitle}”</span>
-              <h2 id="bazi-weekly-action-title">先做一个 20 分钟内能开始的动作</h2>
-              <p>{weeklyAction.action}</p>
-            </section>}
-          </div>
-        </details>
-        </>}
+        {baziView === "analysis" && mainlineNarrative && (
+          <BaziMainlinePanel narrative={mainlineNarrative} />
+        )}
 
         {baziView === "professional" && professionalFacts && <ProfessionalBaziPanel facts={professionalFacts} />}
 
