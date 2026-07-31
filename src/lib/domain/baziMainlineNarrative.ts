@@ -1,8 +1,16 @@
 import { buildBaziMonthReadingFromFacts } from "./baziStructure";
+import { ALL_ELEMENTS, type Element } from "./elements";
 import type {
   ProfessionalBaziFact,
-  ProfessionalBaziFactsV1
+  ProfessionalBaziFactsV1,
+  ProfessionalBaziPillarFacts
 } from "./professionalBaziFacts";
+
+export const BAZI_ANALYSIS_THEME_IDS = [
+  "day-master-month-command",
+  "five-elements",
+  "ten-gods-pillars"
+] as const;
 
 export const BAZI_MAINLINE_FACT_IDS = [
   "dayMaster.stem",
@@ -14,49 +22,64 @@ export const BAZI_MAINLINE_FACT_IDS = [
   "monthCommand.mainTenGod"
 ] as const;
 
+export type BaziAnalysisThemeId = (typeof BAZI_ANALYSIS_THEME_IDS)[number];
 export type BaziMainlineFactId = (typeof BAZI_MAINLINE_FACT_IDS)[number];
 
 export interface BaziMainlineEvidence {
-  id: BaziMainlineFactId;
+  id: string;
   label: string;
   displayValue: string;
   fact: ProfessionalBaziFact<unknown>;
   sourceKind: "traditional-catalog" | "project-code";
 }
 
-export interface ReadyBaziMainlineNarrative {
+export interface BaziElementSummary {
+  coverageCount: number;
+  counts: Record<Element, number>;
+  visibleElements: Element[];
+  hiddenOnlyElements: Element[];
+  notSeenElements: Element[];
+}
+
+export interface BaziTenGodPositionSummary {
+  position: string;
+  visible: string;
+  hidden: string[];
+}
+
+export interface ReadyBaziAnalysisTheme {
   status: "ready";
+  id: BaziAnalysisThemeId;
+  title: string;
+  scope: string;
   professionalAnalysis: {
     title: string;
     text: string;
-    factIds: BaziMainlineFactId[];
+    factIds: string[];
   };
   imagery: {
     title: string;
     text: string;
     disclaimer: string;
-    factIds: BaziMainlineFactId[];
+    factIds: string[];
   };
   plainReading: {
     title: string;
     text: string;
     boundary: string;
-    factIds: BaziMainlineFactId[];
+    factIds: string[];
   };
   evidence: BaziMainlineEvidence[];
   limitation: string | null;
+  elementSummary?: BaziElementSummary;
+  tenGodPositions?: BaziTenGodPositionSummary[];
 }
 
-export interface UncertainBaziMainlineNarrative {
-  status: "uncertain";
+export interface BaziMainlineNarrative {
   title: string;
-  message: string;
-  candidates: string[];
+  introduction: string;
+  themes: ReadyBaziAnalysisTheme[];
 }
-
-export type BaziMainlineNarrative =
-  | ReadyBaziMainlineNarrative
-  | UncertainBaziMainlineNarrative;
 
 function isConfirmedValue<T>(
   fact: ProfessionalBaziFact<T | null>
@@ -73,7 +96,7 @@ function sourceKind(
 }
 
 function evidence(
-  id: BaziMainlineFactId,
+  id: string,
   label: string,
   displayValue: string,
   fact: ProfessionalBaziFact<unknown>
@@ -81,96 +104,145 @@ function evidence(
   return { id, label, displayValue, fact, sourceKind: sourceKind(fact) };
 }
 
-/**
- * 把现有专业事实合同与现有项目解释模板组合成一条最小阅读主线。
- * 本函数不计算新命理事实；缺少月令核心事实时不生成意象或白话解释。
- */
-export function buildBaziMainlineNarrative(
-  facts: ProfessionalBaziFactsV1 | null
-): BaziMainlineNarrative | null {
-  if (!facts) return null;
+function uniqueEvidence(items: BaziMainlineEvidence[]) {
+  const seen = new Set<string>();
+  return items.filter(item => {
+    if (seen.has(item.id)) return false;
+    seen.add(item.id);
+    return true;
+  });
+}
 
-  const monthCandidates = facts.uncertainty.monthPillarCandidates.value;
-  if (
-    facts.monthCommand.branch.certainty !== "confirmed"
-    || monthCandidates.length > 0
-  ) {
-    return {
-      status: "uncertain",
-      title: "月令当前存在候选，命盘主线暂不继续解释",
-      message: "月柱会随出生时刻候选变化。候选确认前，不选择其中一个继续生成形象解释或白话解读。",
-      candidates: monthCandidates
-    };
-  }
-  const {
-    stem: dayStem,
-    element: dayElement,
-    yinYang: dayYinYang
-  } = facts.dayMaster;
-  const {
-    branch: monthBranch,
-    element: monthElement,
-    mainStem,
-    mainTenGod
-  } = facts.monthCommand;
+function confirmedPillars(facts: ProfessionalBaziFactsV1) {
+  return facts.pillars
+    .map((pillar, index) => ({ pillar, index }))
+    .filter(({ pillar }) => (
+      pillar.ganzhi.certainty === "confirmed"
+      && isConfirmedValue(pillar.stemElement)
+      && isConfirmedValue(pillar.branchElement)
+    ));
+}
 
+function omittedPillarNames(facts: ProfessionalBaziFactsV1) {
+  return facts.pillars
+    .filter(pillar => pillar.ganzhi.certainty !== "confirmed")
+    .map(pillar => pillar.position.value);
+}
+
+function listOrNone(values: readonly string[], none = "无") {
+  return values.length ? values.join("、") : none;
+}
+
+function buildDayMasterMonthTheme(
+  facts: ProfessionalBaziFactsV1
+): ReadyBaziAnalysisTheme | null {
+  const { stem, element, yinYang } = facts.dayMaster;
   if (
-    !isConfirmedValue(dayStem)
-    || !isConfirmedValue(dayElement)
-    || !isConfirmedValue(dayYinYang)
-    || !isConfirmedValue(monthBranch)
-    || !isConfirmedValue(monthElement)
-    || !isConfirmedValue(mainStem)
-    || !isConfirmedValue(mainTenGod)
+    !isConfirmedValue(stem)
+    || !isConfirmedValue(element)
+    || !isConfirmedValue(yinYang)
   ) {
     return null;
   }
 
-  const factIds: BaziMainlineFactId[] = [
-    "dayMaster.stem",
-    "dayMaster.element",
-    "dayMaster.yinYang",
-    "monthCommand.branch",
-    "monthCommand.element",
-    "monthCommand.mainStem",
-    "monthCommand.mainTenGod"
-  ];
-  const evidenceItems: BaziMainlineEvidence[] = [
-    evidence("dayMaster.stem", "日主", dayStem.value, dayStem),
-    evidence("dayMaster.element", "日主五行", dayElement.value, dayElement),
-    evidence("dayMaster.yinYang", "日主阴阳", dayYinYang.value, dayYinYang),
-    evidence("monthCommand.branch", "月令", monthBranch.value, monthBranch),
-    evidence("monthCommand.element", "月令五行", monthElement.value, monthElement),
-    evidence("monthCommand.mainStem", "月令本气", mainStem.value, mainStem),
-    evidence("monthCommand.mainTenGod", "本气十神", mainTenGod.value, mainTenGod)
+  const monthCandidates = facts.uncertainty.monthPillarCandidates.value;
+  const monthFacts = facts.monthCommand;
+  const monthConfirmed = (
+    monthCandidates.length === 0
+    && isConfirmedValue(monthFacts.branch)
+    && isConfirmedValue(monthFacts.element)
+    && isConfirmedValue(monthFacts.mainStem)
+    && isConfirmedValue(monthFacts.mainTenGod)
+  );
+  const baseEvidence = [
+    evidence("dayMaster.stem", "日主", stem.value, stem),
+    evidence("dayMaster.element", "日主五行", element.value, element),
+    evidence("dayMaster.yinYang", "日主阴阳", yinYang.value, yinYang)
   ];
   const yearCandidates = facts.uncertainty.yearPillarCandidates.value;
-  const limitations = [
+  const commonLimitations = [
     facts.input.timeKnown.value
       ? ""
-      : "出生时间未知：本主线没有使用时柱、时柱藏干或由时柱产生的关系。",
+      : "出生时间未知：本主题没有使用时柱及其下级事实。",
     yearCandidates.length
-      ? `年柱存在${yearCandidates.join("、")}两个候选；本主线不使用年柱，所以只解释已确认的日主与月令。`
+      ? `年柱存在${yearCandidates.join("、")}候选；本主题不使用年柱候选继续解释。`
       : ""
   ].filter(Boolean);
+
+  if (!monthConfirmed) {
+    const candidateEvidence = monthCandidates.length
+      ? [evidence(
+          "uncertainty.monthPillarCandidates",
+          "月柱候选",
+          monthCandidates.join(" 或 "),
+          facts.uncertainty.monthPillarCandidates
+        )]
+      : [];
+    const factIds = [...baseEvidence, ...candidateEvidence].map(item => item.id);
+
+    return {
+      status: "ready",
+      id: "day-master-month-command",
+      title: "日主与月令",
+      scope: "先确认稳定坐标，候选部分暂不推导",
+      professionalAnalysis: {
+        title: "日主已确认，月令暂不选取",
+        text: `你的日主为${stem.value}${element.value}（${yinYang.value}）。月柱当前${monthCandidates.length ? `存在${monthCandidates.join("、")}候选` : "缺少可确认事实"}，因此不继续生成月令、本气或本气十神解释。`,
+        factIds
+      },
+      imagery: {
+        title: "先保留一个稳定坐标",
+        text: `可以先把${stem.value}${element.value}日主看作阅读这张盘的固定坐标；月令位置暂时保留候选，不把任何一个候选涂成更可能的答案。`,
+        disclaimer: "这是蟾先森为了帮助理解采用的现代意象，不是古籍原句，也不是传统定论。",
+        factIds: ["dayMaster.stem", "dayMaster.element"]
+      },
+      plainReading: {
+        title: "目前可以读到哪里",
+        text: `现在只能确认以${stem.value}为日主；出生时节及其本气与日主的关系仍待月柱确定。候选确认前，不用通用性格文案补齐这一段。`,
+        boundary: "这是对资料边界的说明，不构成人格、经历或命运判断。",
+        factIds
+      },
+      evidence: [...baseEvidence, ...candidateEvidence],
+      limitation: [
+        "月令依赖月柱，当前存在候选或必要事实不足；本气与本气十神均未参与下级解释。",
+        ...commonLimitations
+      ].join(" ")
+    };
+  }
+
+  const monthBranch = monthFacts.branch.value!;
+  const monthElement = monthFacts.element.value!;
+  const monthMainStem = monthFacts.mainStem.value!;
+  const monthMainTenGod = monthFacts.mainTenGod.value!;
+  const monthEvidence = [
+    evidence("monthCommand.branch", "月令", monthBranch, monthFacts.branch),
+    evidence("monthCommand.element", "月令五行", monthElement, monthFacts.element),
+    evidence("monthCommand.mainStem", "月令本气", monthMainStem, monthFacts.mainStem),
+    evidence("monthCommand.mainTenGod", "本气十神", monthMainTenGod, monthFacts.mainTenGod)
+  ];
+  const allEvidence = [...baseEvidence, ...monthEvidence];
+  const factIds = allEvidence.map(item => item.id);
   const monthReading = buildBaziMonthReadingFromFacts({
-    dayStem: dayStem.value,
-    monthBranch: monthBranch.value,
-    mainStem: mainStem.value,
-    mainTenGod: mainTenGod.value
+    dayStem: stem.value,
+    monthBranch,
+    mainStem: monthMainStem,
+    mainTenGod: monthMainTenGod
   });
 
   return {
     status: "ready",
+    id: "day-master-month-command",
+    title: "日主与月令",
+    scope: "日主、出生时节与月令本气",
     professionalAnalysis: {
       title: "先确认日主与月令",
-      text: `你的日主为${dayStem.value}${dayElement.value}（${dayYinYang.value}），月令为${monthBranch.value}${monthElement.value}。月令本气是${mainStem.value}，相对日主形成${mainTenGod.value}。本轮只确认这组结构，不据此判断旺衰、格局或喜用神。`,
+      text: `你的日主为${stem.value}${element.value}（${yinYang.value}），月令为${monthBranch}${monthElement}。月令本气是${monthMainStem}，相对日主形成${monthMainTenGod}。这里只确认结构，不据此判断旺衰、格局或喜用神。`,
       factIds
     },
     imagery: {
       title: "把日主放进出生时节",
       text: monthReading.image,
-      disclaimer: "下面是蟾先森为了帮助理解采用的现代意象，不是古籍原句，也不是传统定论。",
+      disclaimer: "这是蟾先森为了帮助理解采用的现代意象，不是古籍原句，也不是传统定论。",
       factIds: [
         "dayMaster.stem",
         "dayMaster.element",
@@ -189,7 +261,238 @@ export function buildBaziMainlineNarrative(
         "monthCommand.mainTenGod"
       ]
     },
-    evidence: evidenceItems,
-    limitation: limitations.length ? limitations.join(" ") : null
+    evidence: allEvidence,
+    limitation: commonLimitations.length ? commonLimitations.join(" ") : null
+  };
+}
+
+function buildFiveElementTheme(
+  facts: ProfessionalBaziFactsV1
+): ReadyBaziAnalysisTheme | null {
+  const available = confirmedPillars(facts);
+  if (!available.length) return null;
+
+  const derivedCounts: Record<Element, number> = {
+    木: 0,
+    火: 0,
+    土: 0,
+    金: 0,
+    水: 0
+  };
+  available.forEach(({ pillar }) => {
+    if (pillar.stemElement.value) derivedCounts[pillar.stemElement.value] += 1;
+    if (pillar.branchElement.value) derivedCounts[pillar.branchElement.value] += 1;
+  });
+  const contractCountsReady = ALL_ELEMENTS.every(element => (
+    facts.visibleElementCounts[element].certainty === "confirmed"
+    && facts.visibleElementCounts[element].value !== null
+  ));
+  const counts = contractCountsReady
+    ? Object.fromEntries(ALL_ELEMENTS.map(element => [
+        element,
+        facts.visibleElementCounts[element].value as number
+      ])) as Record<Element, number>
+    : derivedCounts;
+  const coverageCount = Object.values(counts).reduce((total, count) => total + count, 0);
+  if (coverageCount === 0) return null;
+
+  const visibleElements = ALL_ELEMENTS.filter(element => counts[element] > 0);
+  const hiddenElements = new Set<Element>();
+  available.forEach(({ pillar }) => {
+    if (pillar.hiddenStems.certainty !== "confirmed") return;
+    pillar.hiddenStems.value.forEach(item => hiddenElements.add(item.element));
+  });
+  const hiddenOnlyElements = ALL_ELEMENTS.filter(
+    element => counts[element] === 0 && hiddenElements.has(element)
+  );
+  const notSeenElements = ALL_ELEMENTS.filter(
+    element => counts[element] === 0 && !hiddenElements.has(element)
+  );
+  const omitted = omittedPillarNames(facts);
+  const countEvidence = contractCountsReady
+    ? ALL_ELEMENTS.map(element => evidence(
+        `visibleElementCounts.${element}`,
+        `${element}·明字数量`,
+        String(counts[element]),
+        facts.visibleElementCounts[element]
+      ))
+    : available.flatMap(({ pillar, index }) => [
+        evidence(
+          `pillars.${index}.stemElement`,
+          `${pillar.position.value}天干五行`,
+          pillar.stemElement.value!,
+          pillar.stemElement
+        ),
+        evidence(
+          `pillars.${index}.branchElement`,
+          `${pillar.position.value}地支五行`,
+          pillar.branchElement.value!,
+          pillar.branchElement
+        )
+      ]);
+  const hiddenEvidence = available
+    .filter(({ pillar }) => pillar.hiddenStems.certainty === "confirmed")
+    .map(({ pillar, index }) => evidence(
+      `pillars.${index}.hiddenStems`,
+      `${pillar.position.value}藏干五行`,
+      pillar.hiddenStems.value.map(item => `${item.stem}${item.element}`).join("、"),
+      pillar.hiddenStems
+    ));
+  const allEvidence = uniqueEvidence([...countEvidence, ...hiddenEvidence]);
+  const factIds = allEvidence.map(item => item.id);
+  const countText = ALL_ELEMENTS.map(element => `${element}${counts[element]}`).join("、");
+
+  return {
+    status: "ready",
+    id: "five-elements",
+    title: "五行构成",
+    scope: `明字统计覆盖${coverageCount}个已确认位置`,
+    professionalAnalysis: {
+      title: "先整理明字与藏干中的五行",
+      text: `当前已确认明字共${coverageCount}个，统计为：${countText}。明字出现：${listOrNone(visibleElements)}；只在藏干出现：${listOrNone(hiddenOnlyElements)}；当前已确认范围内未见：${listOrNone(notSeenElements)}。`,
+      factIds
+    },
+    imagery: {
+      title: "把表层与内部结构分开看",
+      text: `可以把${coverageCount}个已确认明字位置看作展开在桌面的分类格：${listOrNone(visibleElements)}直接出现在表层；${hiddenOnlyElements.length ? `${hiddenOnlyElements.join("、")}只在藏干的内部结构中出现` : "当前没有只在藏干出现、未在明字显露的五行"}。`,
+      disclaimer: "这是蟾先森为了帮助阅读显隐位置采用的现代意象，不是古籍原句，也不表示五行力量大小。",
+      factIds
+    },
+    plainReading: {
+      title: "数量先用于整理，不用于判强弱",
+      text: `这组数字回答的是“哪些五行出现在当前可确认的明字位置、出现几次”。“当前未见”只表示在本次已确认的明字和藏干范围内没有找到，不等于命里绝对缺失，也不能直接推出旺衰、喜用或吉凶。`,
+      boundary: "明字数量不等于力量或能量，不据此提供补五行、颜色、饰品、方位或改运建议。",
+      factIds
+    },
+    evidence: allEvidence,
+    limitation: omitted.length
+      ? `${omitted.join("、")}未参与本次统计，覆盖范围已相应减少；当前结果不是完整八字八个明字的统计。`
+      : null,
+    elementSummary: {
+      coverageCount,
+      counts,
+      visibleElements,
+      hiddenOnlyElements,
+      notSeenElements
+    }
+  };
+}
+
+function buildTenGodTheme(
+  facts: ProfessionalBaziFactsV1
+): ReadyBaziAnalysisTheme | null {
+  if (!isConfirmedValue(facts.dayMaster.stem)) return null;
+  const available = facts.pillars
+    .map((pillar, index) => ({ pillar, index }))
+    .filter(({ pillar }) => (
+      pillar.ganzhi.certainty === "confirmed"
+      && pillar.visibleTenGod.certainty === "confirmed"
+      && pillar.visibleTenGod.value !== null
+      && pillar.hiddenStems.certainty === "confirmed"
+    ));
+  if (!available.length) return null;
+
+  const positions: BaziTenGodPositionSummary[] = available.map(({ pillar }) => ({
+    position: pillar.position.value,
+    visible: pillar.position.value === "日柱"
+      ? "日主"
+      : String(pillar.visibleTenGod.value),
+    hidden: pillar.hiddenStems.value.map(item => `${item.stem}·${item.tenGod}·${item.qiLevel}`)
+  }));
+  const visibleNames = positions
+    .filter(item => item.position !== "日柱")
+    .map(item => `${item.position}${item.visible}`);
+  const hiddenNames = positions.flatMap(item => (
+    item.hidden.map(value => `${item.position}${value}`)
+  ));
+  const visibleTenGodSet = new Set(
+    available
+      .filter(({ pillar }) => pillar.position.value !== "日柱")
+      .map(({ pillar }) => String(pillar.visibleTenGod.value))
+  );
+  const hiddenTenGodSet = new Set(
+    available.flatMap(({ pillar }) => pillar.hiddenStems.value.map(item => item.tenGod))
+  );
+  const hiddenOnly = [...hiddenTenGodSet].filter(name => !visibleTenGodSet.has(name));
+  const pillarEvidence = available.flatMap(({ pillar, index }) => [
+    evidence(
+      `pillars.${index}.visibleTenGod`,
+      `${pillar.position.value}明干关系`,
+      pillar.position.value === "日柱" ? "日主" : String(pillar.visibleTenGod.value),
+      pillar.visibleTenGod
+    ),
+    evidence(
+      `pillars.${index}.hiddenStems`,
+      `${pillar.position.value}藏干十神`,
+      pillar.hiddenStems.value.map(item => `${item.stem}·${item.tenGod}·${item.qiLevel}`).join("、"),
+      pillar.hiddenStems
+    )
+  ]);
+  const monthMainEvidence = isConfirmedValue(facts.monthCommand.mainTenGod)
+    ? [evidence(
+        "monthCommand.mainTenGod",
+        "月令本气十神",
+        facts.monthCommand.mainTenGod.value,
+        facts.monthCommand.mainTenGod
+      )]
+    : [];
+  const allEvidence = uniqueEvidence([...pillarEvidence, ...monthMainEvidence]);
+  const factIds = allEvidence.map(item => item.id);
+  const omitted = omittedPillarNames(facts);
+  const monthMainText = isConfirmedValue(facts.monthCommand.mainTenGod)
+    ? `月令本气相对日主形成${facts.monthCommand.mainTenGod.value}，在本主题中单独标出，但不称为唯一主导结构。`
+    : "月令当前未确认，因此不使用本气十神继续解释。";
+
+  return {
+    status: "ready",
+    id: "ten-gods-pillars",
+    title: "十神与四柱",
+    scope: "以日主为参照，按柱位整理明干与藏干",
+    professionalAnalysis: {
+      title: "看各位置与日主形成什么关系",
+      text: `已确认明干关系：${listOrNone(visibleNames, "除日主外暂无可确认项")}。日柱天干只标记为“日主”。藏干中可确认：${listOrNone(hiddenNames)}。${monthMainText}`,
+      factIds
+    },
+    imagery: {
+      title: "把十神放回它所在的位置",
+      text: `可以把四柱理解为带有位置标签的栏位：${positions.map(item => `${item.position}明干为${item.visible}`).join("；")}。藏干关系收在各自地支内部，不与明干显露混为一层。`,
+      disclaimer: "这是蟾先森为了帮助阅读位置与显隐采用的现代意象，不是古籍原句，也不把十神标签等同于现实身份。",
+      factIds
+    },
+    plainReading: {
+      title: "十神是相对日主的结构名称",
+      text: `这一主题是在整理盘中不同位置怎样以日主为参照形成关系名称。明干可直接看到${listOrNone([...visibleTenGodSet])}；${hiddenOnly.length ? `${hiddenOnly.join("、")}目前只在藏干中出现` : "当前未增加只藏不显的十神名称"}。这些名称不能单独证明人格、职业、婚姻、财富或已经发生的经历。`,
+      boundary: "十神数量和显隐位置不构成主导性、评分、格局、旺衰、喜用或吉凶判断；现实是否符合仍需用户自行核对。",
+      factIds
+    },
+    evidence: allEvidence,
+    limitation: omitted.length
+      ? `${omitted.join("、")}尚未确认，相关明干十神与藏干均未参与本主题。`
+      : null,
+    tenGodPositions: positions
+  };
+}
+
+/**
+ * 只从同一份 ProfessionalBaziFactsV1 整理三个普通分析主题。
+ * 本函数不计算新命理事实，不接收独立解释文本，也不会用不确定柱位继续推导。
+ */
+export function buildBaziMainlineNarrative(
+  facts: ProfessionalBaziFactsV1 | null
+): BaziMainlineNarrative | null {
+  if (!facts) return null;
+
+  const themes = [
+    buildDayMasterMonthTheme(facts),
+    buildFiveElementTheme(facts),
+    buildTenGodTheme(facts)
+  ].filter((theme): theme is ReadyBaziAnalysisTheme => theme !== null);
+
+  if (!themes.length) return null;
+
+  return {
+    title: "三项基础命盘分析",
+    introduction: "以下内容只整理当前已确认的日主与月令、五行构成、十神与四柱。盘面事实可以复算；形象和白话部分属于蟾先森的现代解释，不用于预测人生结果。",
+    themes
   };
 }

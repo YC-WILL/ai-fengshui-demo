@@ -103,32 +103,24 @@ describe("bazi life observation cards", () => {
     expect(first.map(card => card.evidence.map(item => item.fact))).not.toEqual(second.map(card => card.evidence.map(item => item.fact)));
   });
 
-  it("places life observations after the facts-driven mainline and before the professional view", () => {
+  it("keeps legacy observation calculations compatible but removes them from the Bazi front end", () => {
     const source = readFileSync(resolve(process.cwd(), "src/components/MethodWorkspaces.tsx"), "utf8");
     const pageSource = readFileSync(resolve(process.cwd(), "src/app/bazi/page.tsx"), "utf8");
+    const baziWorkspace = source.slice(
+      source.indexOf("export function BaziWorkspace"),
+      source.indexOf("export function RelationWorkspace")
+    );
     const viewSwitch = source.indexOf("bazi-view-switch");
     const mainline = source.indexOf("<BaziMainlinePanel");
-    const comparison = source.indexOf('className="bazi-life-comparison"');
-    const observations = source.indexOf("三项条件式生活观察");
     const professional = source.indexOf("<ProfessionalBaziPanel");
 
     expect(viewSwitch).toBeGreaterThan(-1);
     expect(mainline).toBeGreaterThan(-1);
-    expect(comparison).toBeGreaterThan(-1);
-    expect(observations).toBeGreaterThan(-1);
     expect(viewSwitch).toBeLessThan(mainline);
-    expect(mainline).toBeLessThan(comparison);
-    expect(comparison).toBeLessThan(observations);
-    expect(observations).toBeLessThan(professional);
-    expect(source).toContain("与我的生活经历对照");
-    expect(source).toContain("生活观察与本周行动 · 默认收起");
-    expect(source).toContain("主要依据");
-    expect(source).toContain("辅助线索");
-    expect(source).toContain("出生时辰未知，本次观察未使用时柱");
-    expect(source).toContain("出生时辰已知，时柱作为补充参照；当前三张生活观察主要依据年月日结构");
-    expect(source).not.toContain("<small>{card.confidence}</small>");
-    expect(pageSource).toContain("八字分析先从一条可追溯的命盘主线开始");
-    expect(pageSource).not.toContain("从四柱明字开始");
+    expect(mainline).toBeLessThan(professional);
+    expect(baziWorkspace).not.toMatch(/buildBaziObservationCards|buildBaziWeeklyAction/);
+    expect(baziWorkspace).not.toMatch(/与我的生活经历对照|三项条件式生活观察|20 分钟内能开始|本周行动/);
+    expect(pageSource).toContain("日主与月令、五行构成、十神与四柱");
   });
 
   it("marks the real evidence roles without claiming full joint inference", () => {

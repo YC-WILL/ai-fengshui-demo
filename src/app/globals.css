@@ -260,13 +260,21 @@ html, body {
 .bazi-mainline-head { @apply flex flex-wrap items-end justify-between gap-2 border-b border-gold/30 bg-white/65 px-4 py-4; }
 .bazi-mainline-head h2 { @apply mt-1 font-serif text-xl; }
 .bazi-mainline-head > small { @apply text-[10px] text-ink/40; }
+.bazi-analysis-introduction { @apply border-b border-gold/25 bg-gold/5 px-4 py-3 text-xs leading-6 text-ink/55; }
+.bazi-analysis-themes { @apply grid; }
+.bazi-analysis-theme { @apply min-w-0 border-b border-gold/35 last:border-b-0; }
+.bazi-analysis-theme-head { @apply flex items-center gap-3 bg-rice/70 px-4 py-4; }
+.bazi-analysis-theme-head > span { @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cinnabar/30 font-serif text-sm text-cinnabar; }
+.bazi-analysis-theme-head h3 { @apply font-serif text-xl text-ink/80; }
+.bazi-analysis-theme-head small { @apply mt-1 block text-[10px] leading-5 text-ink/40; }
 .bazi-mainline-layers { @apply m-0 list-none p-0; }
 .bazi-mainline-answer { @apply grid grid-cols-[2rem_minmax(0,1fr)] gap-3 border-b border-mist px-4 py-4 last:border-b-0; }
 .bazi-mainline-answer > span { @apply flex h-8 w-8 items-center justify-center rounded-full border border-cinnabar/25 font-serif text-sm text-cinnabar; }
 .bazi-mainline-answer > div,
 .bazi-mainline-answer > details { @apply min-w-0; }
 .bazi-mainline-answer > div > small { @apply text-[10px] font-medium tracking-wider text-cinnabar; }
-.bazi-mainline-answer h3 { @apply font-serif text-lg; }
+.bazi-mainline-answer h3,
+.bazi-mainline-answer h4 { @apply font-serif text-lg; }
 .bazi-mainline-answer > div > p { @apply mt-2 text-sm leading-7 text-ink/65; }
 .bazi-mainline-answer details { @apply mt-2 text-[11px] text-ink/45; }
 .bazi-mainline-answer details summary { @apply w-fit cursor-pointer text-cinnabar/80; }
@@ -317,6 +325,26 @@ html, body {
 .bazi-mainline-basis { @apply mt-3 rounded-lg border border-mist bg-white/60 px-3 py-2 text-[11px] leading-5 text-ink/45; }
 .bazi-mainline-basis > p { @apply mt-2; }
 .bazi-mainline-note { @apply border-t border-dashed border-gold/40 px-4 py-3 text-[11px] leading-5 text-ink/50; }
+.bazi-element-summary { @apply mt-4 rounded-xl border border-gold/35 bg-rice/45 p-3; }
+.bazi-element-summary-head { @apply flex items-baseline justify-between gap-3; }
+.bazi-element-summary-head b { @apply text-xs font-medium text-ink/65; }
+.bazi-element-summary-head small { @apply text-[9px] text-ink/40; }
+.bazi-element-summary ul { @apply mt-3 grid grid-cols-5 gap-1.5; }
+.bazi-element-summary li { @apply min-w-0 rounded-lg border border-mist bg-white/75 p-2; }
+.bazi-element-summary li span { @apply block text-[10px]; }
+.bazi-element-summary li b { @apply mt-1 block font-serif text-lg; }
+.bazi-element-summary li i { @apply mt-1 block h-1 min-w-px rounded-full bg-current opacity-45; }
+.bazi-element-summary dl { @apply mt-3 grid gap-1.5 text-[10px] leading-5; }
+.bazi-element-summary dl > div { @apply grid grid-cols-[5rem_minmax(0,1fr)] gap-2; }
+.bazi-element-summary dt { @apply text-ink/40; }
+.bazi-element-summary dd { @apply text-ink/65; }
+.bazi-ten-god-summary { @apply mt-4 grid gap-2 sm:grid-cols-2; }
+.bazi-ten-god-summary article { @apply min-w-0 rounded-xl border border-mist bg-rice/45 p-3; }
+.bazi-ten-god-summary header { @apply flex items-baseline justify-between gap-3; }
+.bazi-ten-god-summary header b { @apply text-xs font-medium text-ink/60; }
+.bazi-ten-god-summary header span { @apply font-serif text-base text-cinnabar; }
+.bazi-ten-god-summary small { @apply mt-2 block text-[9px] text-ink/35; }
+.bazi-ten-god-summary p { @apply mt-1 break-words text-[11px] leading-5 text-ink/55; }
 .bazi-life-comparison { @apply mt-4 overflow-hidden rounded-2xl border border-mist bg-white/65 shadow-sm; }
 .bazi-life-comparison > summary { @apply flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4; }
 .bazi-life-comparison > summary::-webkit-details-marker { display: none; }

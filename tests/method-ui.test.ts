@@ -61,10 +61,11 @@ describe("four plate product UI", () => {
     expect(baziPage).toContain('stages={["八字分析", "专业细盘", "查看口径与来源"]}');
     expect(baziWorkspace).toContain('aria-label="八字内容层级"');
     expect(baziWorkspace.indexOf("bazi-view-switch")).toBeLessThan(baziWorkspace.indexOf("<BaziMainlinePanel"));
-    expect(baziWorkspace.indexOf("<BaziMainlinePanel")).toBeLessThan(baziWorkspace.indexOf("bazi-life-comparison"));
-    expect(baziWorkspace.indexOf("bazi-life-comparison")).toBeLessThan(baziWorkspace.indexOf("bazi-observations"));
-    expect(baziWorkspace.indexOf("bazi-observations")).toBeLessThan(baziWorkspace.indexOf("<ProfessionalBaziPanel"));
-    expect(baziWorkspace).toContain("生活观察与本周行动 · 默认收起");
+    expect(baziWorkspace.indexOf("<BaziMainlinePanel")).toBeLessThan(baziWorkspace.indexOf("<ProfessionalBaziPanel"));
+    expect(baziWorkspace).not.toMatch(/bazi-life-comparison|bazi-observations|bazi-weekly-action/);
+    expect(baziWorkspace).not.toMatch(/与我的生活经历对照|三项条件式生活观察|20 分钟内能开始|本周行动/);
+    expect(baziWorkspace).not.toMatch(/buildBaziObservationCards|buildBaziWeeklyAction/);
+    expect(baziPage).toContain("日主与月令、五行构成、十神与四柱");
 
     expect(relationshipPage).toContain('status="1.0 已冻结"');
     expect(relationshipPage).toContain("先看三种互动");
