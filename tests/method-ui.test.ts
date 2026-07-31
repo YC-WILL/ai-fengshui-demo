@@ -65,7 +65,8 @@ describe("four plate product UI", () => {
     expect(baziWorkspace).not.toMatch(/bazi-life-comparison|bazi-observations|bazi-weekly-action/);
     expect(baziWorkspace).not.toMatch(/与我的生活经历对照|三项条件式生活观察|20 分钟内能开始|本周行动/);
     expect(baziWorkspace).not.toMatch(/buildBaziObservationCards|buildBaziWeeklyAction/);
-    expect(baziPage).toContain("日主与月令、五行构成、十神与四柱");
+    expect(baziPage).toContain("如有已确认的本命地支关系");
+    expect(baziWorkspace).toContain("先读已确认的基础结构");
 
     expect(relationshipPage).toContain('status="1.0 已冻结"');
     expect(relationshipPage).toContain("先看三种互动");

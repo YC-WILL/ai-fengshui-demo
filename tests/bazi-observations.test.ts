@@ -120,7 +120,7 @@ describe("bazi life observation cards", () => {
     expect(mainline).toBeLessThan(professional);
     expect(baziWorkspace).not.toMatch(/buildBaziObservationCards|buildBaziWeeklyAction/);
     expect(baziWorkspace).not.toMatch(/与我的生活经历对照|三项条件式生活观察|20 分钟内能开始|本周行动/);
-    expect(pageSource).toContain("日主与月令、五行构成、十神与四柱");
+    expect(pageSource).toContain("如有已确认的本命地支关系");
   });
 
   it("marks the real evidence roles without claiming full joint inference", () => {
