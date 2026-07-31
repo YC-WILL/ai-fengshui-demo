@@ -60,6 +60,7 @@ describe("Bazi foundation analysis narrative", () => {
     expect(narrative.themes.map(theme => theme.id)).toEqual(BAZI_ANALYSIS_THEME_IDS);
     expect(narrative.title).toBe("四项基础命盘分析");
     narrative.themes.forEach(theme => {
+      expect(theme.scanSummary.text).toBeTruthy();
       expect(theme.professionalAnalysis.text).toBeTruthy();
       expect(theme.imagery.text).toBeTruthy();
       expect(theme.plainReading.text).toBeTruthy();
@@ -74,11 +75,12 @@ describe("Bazi foundation analysis narrative", () => {
 
     expect(theme.professionalAnalysis.text).toContain(`日主为${facts.dayMaster.stem.value}`);
     expect(theme.professionalAnalysis.text).toContain(`月令为${facts.monthCommand.branch.value}`);
-    expect(theme.professionalAnalysis.text).toContain(`本气是${facts.monthCommand.mainStem.value}`);
+    expect(theme.professionalAnalysis.text).toContain(`本气${facts.monthCommand.mainStem.value}`);
     expect(theme.professionalAnalysis.text).toContain(`形成${facts.monthCommand.mainTenGod.value}`);
     expect(theme.imagery.disclaimer).toContain("现代意象");
     expect(theme.imagery.disclaimer).toContain("不是古籍原句");
-    expect(theme.plainReading.boundary).toContain("不证明某段现实经历已经发生");
+    expect(theme.plainReading.boundary).toBeNull();
+    expect(narrativeFor(facts).introduction).toContain("白话解释不证明固定人格或现实经历");
     expect(theme.evidence.map(item => item.id)).toEqual(BAZI_MAINLINE_FACT_IDS);
   });
 
@@ -92,9 +94,10 @@ describe("Bazi foundation analysis narrative", () => {
       Object.entries(facts.visibleElementCounts).map(([element, fact]) => [element, fact.value])
     ));
     expect(Object.values(summary.counts).reduce((sum, count) => sum + count, 0)).toBe(8);
-    expect(theme.professionalAnalysis.text).toContain("当前已确认明字共8个");
-    expect(theme.professionalAnalysis.text).toContain("只在藏干出现");
-    expect(theme.professionalAnalysis.text).toContain("当前已确认范围内未见");
+    expect(theme.professionalAnalysis.text).toContain("覆盖8个已确认明字位置");
+    expect(theme.professionalAnalysis.text).toContain("具体数量");
+    expect(theme.professionalAnalysis.text).not.toMatch(/[木火土金水]\d/);
+    expect(theme.scanSummary.text).toContain("明字出现");
   });
 
   it("does not turn element counts into absence, energy, strength or remedies", () => {
@@ -120,7 +123,8 @@ describe("Bazi foundation analysis narrative", () => {
         pillar.hiddenStems.value.map(item => `${item.stem}·${item.tenGod}·${item.qiLevel}`)
       );
     });
-    expect(theme.professionalAnalysis.text).toContain(`月令本气相对日主形成${facts.monthCommand.mainTenGod.value}`);
+    expect(theme.professionalAnalysis.text).toContain("其结构说明见“日主与月令”");
+    expect(theme.professionalAnalysis.text).not.toContain(`形成${facts.monthCommand.mainTenGod.value}`);
   });
 
   it("does not translate ten gods into fixed identity or life conclusions", () => {
@@ -155,8 +159,9 @@ describe("Bazi foundation analysis narrative", () => {
     expect(theme.evidence.map(item => item.id)).toEqual(
       facts.natalBranchRelations.map((_, index) => `natalBranchRelations.${index}`)
     );
-    expect(theme.professionalAnalysis.text).toContain("年柱申与时柱巳形成六合、六破、刑");
-    expect(theme.professionalAnalysis.text).toContain("月柱辰与日柱酉形成六合");
+    expect(theme.scanSummary.text).toContain("年柱申与时柱巳形成六合、六破、刑");
+    expect(theme.scanSummary.text).toContain("月柱辰与日柱酉形成六合");
+    expect(theme.professionalAnalysis.text).not.toContain("年柱申与时柱巳");
     expect(theme.plainReading.text).toContain("不自动互相抵消或合并评分");
   });
 
@@ -179,6 +184,12 @@ describe("Bazi foundation analysis narrative", () => {
       .not.toContain("natal-branch-relations");
     expect(withoutRelationNarrative.title).toBe("三项基础命盘分析");
     expect(withoutRelationNarrative.introduction).not.toContain("本命地支关系");
+    expect(withoutRelationNarrative.themes.map(theme => theme.scanSummary)).toHaveLength(3);
+    const withoutRelationMarkup = renderToStaticMarkup(
+      createElement(BaziMainlinePanel, { narrative: withoutRelationNarrative })
+    );
+    expect(withoutRelationMarkup).toContain("3项当前可读主题");
+    expect(withoutRelationMarkup).not.toContain("4项当前可读主题");
 
     const uncertainRelations = structuredClone(confirmedFictionalFacts());
     uncertainRelations.natalBranchRelations = uncertainRelations.natalBranchRelations.map(
@@ -208,6 +219,9 @@ describe("Bazi foundation analysis narrative", () => {
     expect(tenGods.limitation).toContain("时柱尚未确认");
     expect(serialized).not.toContain("pillars.3.visibleTenGod");
     expect(serialized).not.toContain("pillars.3.hiddenStems");
+    expect(narrative.themes.every(theme => (
+      theme.scanSummary.factIds.every(id => !id.startsWith("pillars.3."))
+    ))).toBe(true);
   });
 
   it("excludes unknown-hour relations while retaining relations between confirmed pillars", () => {
@@ -257,6 +271,8 @@ describe("Bazi foundation analysis narrative", () => {
       "uncertainty.monthPillarCandidates"
     ]);
     expect(theme.professionalAnalysis.factIds).not.toContain("monthCommand.mainTenGod");
+    expect(theme.scanSummary.factIds).not.toContain("monthCommand.mainTenGod");
+    expect(theme.scanSummary.text).not.toContain(String(facts.monthCommand.mainTenGod.value));
     expect(theme.plainReading.text).not.toContain(String(facts.monthCommand.mainTenGod.value));
   });
 
@@ -304,6 +320,7 @@ describe("Bazi foundation analysis narrative", () => {
     narrative.themes.forEach(theme => {
       const evidenceIds = new Set(theme.evidence.map(item => item.id));
       [
+        ...theme.scanSummary.factIds,
         ...theme.professionalAnalysis.factIds,
         ...theme.imagery.factIds,
         ...theme.plainReading.factIds
@@ -342,12 +359,12 @@ describe("Bazi foundation analysis narrative", () => {
     }));
 
     first.themes.slice(0, 3).forEach((theme, index) => {
-      expect(theme.professionalAnalysis.text)
-        .not.toBe(second.themes[index].professionalAnalysis.text);
+      expect(theme.scanSummary.text)
+        .not.toBe(second.themes[index].scanSummary.text);
     });
   });
 
-  it("renders four vertical four-layer themes with collapsed accessible evidence", () => {
+  it("renders a compact overview and sibling accessible disclosures", () => {
     const markup = renderToStaticMarkup(
       createElement(BaziMainlinePanel, {
         narrative: narrativeFor(confirmedFictionalFacts())
@@ -363,15 +380,24 @@ describe("Bazi foundation analysis narrative", () => {
     expect(elements).toBeLessThan(tenGods);
     expect(tenGods).toBeLessThan(branchRelations);
     expect(markup.match(/专业分析/g)).toHaveLength(4);
-    expect(markup.match(/形象解释/g)).toHaveLength(4);
-    expect(markup.match(/白话解读/g)).toHaveLength(4);
+    expect(markup).toContain("先看这几条");
+    expect(markup).toContain("4项当前可读主题");
+    expect(markup.match(/class="bazi-mainline-understand"/g)).toHaveLength(4);
+    expect(markup.match(/class="bazi-mainline-understand" open=""/g)).toHaveLength(1);
+    expect(markup.match(/看懂这条/g)).toHaveLength(4);
     expect(markup.match(/为什么这样说/g)).toHaveLength(4);
     expect(markup.match(/<details/g)?.length).toBeGreaterThanOrEqual(8);
-    expect(markup).not.toMatch(/<details[^>]* open/);
+    expect(markup.match(/class="bazi-mainline-evidence"/g)).toHaveLength(4);
+    expect(markup).not.toMatch(/class="bazi-mainline-evidence" open/);
+    expect(markup.match(/<\/details><details class="bazi-mainline-evidence"/g)).toHaveLength(4);
     expect(markup).toContain("<summary>");
     expect(markup).toContain("传统规则目录");
     expect(markup).toContain("项目计算实现");
     expect(markup).toContain("覆盖 8 个已确认位置");
     expect(markup).toContain('aria-label="按柱位整理的本命地支关系"');
+    expect(markup).toContain('aria-label="现代意象"');
+    expect(markup).toContain('aria-label="白话解读"');
+    expect(markup.match(/不是古籍原句/g)).toHaveLength(1);
+    expect(markup.match(/不证明固定人格或现实经历/g)).toHaveLength(1);
   });
 });
