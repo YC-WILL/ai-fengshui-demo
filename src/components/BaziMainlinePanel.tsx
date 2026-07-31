@@ -149,44 +149,39 @@ function AnalysisTheme({
         </div>
       </header>
 
-      <ol className="bazi-mainline-layers">
-        <li className="bazi-mainline-answer is-professional">
-          <span aria-hidden>01</span>
-          <div>
-            <small>专业分析</small>
-            <h4>{theme.professionalAnalysis.title}</h4>
-            <p>{theme.professionalAnalysis.text}</p>
-            <ElementSummary theme={theme} />
-            <TenGodSummary theme={theme} />
-            <BranchRelationSummary theme={theme} />
-          </div>
-        </li>
+      <div className="bazi-mainline-professional">
+        <small>专业分析</small>
+        <h4>{theme.professionalAnalysis.title}</h4>
+        <p>{theme.professionalAnalysis.text}</p>
+        <ElementSummary theme={theme} />
+        <TenGodSummary theme={theme} />
+        <BranchRelationSummary theme={theme} />
+      </div>
 
-        <li className="bazi-mainline-answer is-imagery">
-          <span aria-hidden>02</span>
-          <div>
-            <small>形象解释</small>
-            <h4>{theme.imagery.title}</h4>
-            <p className="bazi-mainline-disclaimer">{theme.imagery.disclaimer}</p>
-            <blockquote>{theme.imagery.text}</blockquote>
+      <div className="bazi-mainline-disclosures">
+        <details className="bazi-mainline-understand" open={index === 0}>
+          <summary>
+            <span>看懂这条</span>
+            <small>{index === 0 ? "默认展开" : "按需展开"}</small>
+          </summary>
+          <div className="bazi-mainline-understand-body">
+            <section className="is-imagery" aria-label="现代意象">
+              <small>现代意象</small>
+              <h4>{theme.imagery.title}</h4>
+              <blockquote>{theme.imagery.text}</blockquote>
+            </section>
+            <section className="is-plain" aria-label="白话解读">
+              <small>白话解读</small>
+              <h4>{theme.plainReading.title}</h4>
+              <p>{theme.plainReading.text}</p>
+              {theme.plainReading.boundary && (
+                <p className="bazi-mainline-boundary">{theme.plainReading.boundary}</p>
+              )}
+            </section>
           </div>
-        </li>
-
-        <li className="bazi-mainline-answer is-plain">
-          <span aria-hidden>03</span>
-          <div>
-            <small>白话解读</small>
-            <h4>{theme.plainReading.title}</h4>
-            <p>{theme.plainReading.text}</p>
-            <p className="bazi-mainline-boundary">{theme.plainReading.boundary}</p>
-          </div>
-        </li>
-
-        <li className="bazi-mainline-answer is-evidence">
-          <span aria-hidden>04</span>
-          <EvidencePanel theme={theme} />
-        </li>
-      </ol>
+        </details>
+        <EvidencePanel theme={theme} />
+      </div>
 
       {theme.limitation && (
         <p className="bazi-mainline-note">{theme.limitation}</p>
@@ -210,6 +205,20 @@ export default function BaziMainlinePanel({
         <small>事实可复核 · 解释有边界</small>
       </header>
       <p className="bazi-analysis-introduction">{narrative.introduction}</p>
+      <section className="bazi-analysis-scan" aria-labelledby="bazi-analysis-scan-title">
+        <header>
+          <span id="bazi-analysis-scan-title">先看这几条</span>
+          <small>{narrative.themes.length}项当前可读主题</small>
+        </header>
+        <ol>
+          {narrative.themes.map(theme => (
+            <li key={theme.id}>
+              <b>{theme.title}</b>
+              <p>{theme.scanSummary.text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
       <div className="bazi-analysis-themes">
         {narrative.themes.map((theme, index) => (
           <AnalysisTheme key={theme.id} theme={theme} index={index} />

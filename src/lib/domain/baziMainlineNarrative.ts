@@ -61,6 +61,10 @@ export interface ReadyBaziAnalysisTheme {
   id: BaziAnalysisThemeId;
   title: string;
   scope: string;
+  scanSummary: {
+    text: string;
+    factIds: string[];
+  };
   professionalAnalysis: {
     title: string;
     text: string;
@@ -75,7 +79,7 @@ export interface ReadyBaziAnalysisTheme {
   plainReading: {
     title: string;
     text: string;
-    boundary: string;
+    boundary: string | null;
     factIds: string[];
   };
   evidence: BaziMainlineEvidence[];
@@ -195,6 +199,10 @@ function buildDayMasterMonthTheme(
       id: "day-master-month-command",
       title: "日主与月令",
       scope: "先确认稳定坐标，候选部分暂不推导",
+      scanSummary: {
+        text: `日主${stem.value}${element.value}（${yinYang.value}）已确认；月柱${monthCandidates.length ? `存在${monthCandidates.join("、")}候选` : "暂不能确认"}，不继续解释月令下级结构。`,
+        factIds
+      },
       professionalAnalysis: {
         title: "日主已确认，月令暂不选取",
         text: `你的日主为${stem.value}${element.value}（${yinYang.value}）。月柱当前${monthCandidates.length ? `存在${monthCandidates.join("、")}候选` : "缺少可确认事实"}，因此不继续生成月令、本气或本气十神解释。`,
@@ -209,7 +217,7 @@ function buildDayMasterMonthTheme(
       plainReading: {
         title: "目前可以读到哪里",
         text: `现在只能确认以${stem.value}为日主；出生时节及其本气与日主的关系仍待月柱确定。候选确认前，不用通用性格文案补齐这一段。`,
-        boundary: "这是对资料边界的说明，不构成人格、经历或命运判断。",
+        boundary: null,
         factIds
       },
       evidence: [...baseEvidence, ...candidateEvidence],
@@ -244,9 +252,13 @@ function buildDayMasterMonthTheme(
     id: "day-master-month-command",
     title: "日主与月令",
     scope: "日主、出生时节与月令本气",
+    scanSummary: {
+      text: `日主为${stem.value}${element.value}（${yinYang.value}），月令为${monthBranch}${monthElement}，本气${monthMainStem}相对日主形成${monthMainTenGod}。`,
+      factIds
+    },
     professionalAnalysis: {
       title: "先确认日主与月令",
-      text: `你的日主为${stem.value}${element.value}（${yinYang.value}），月令为${monthBranch}${monthElement}。月令本气是${monthMainStem}，相对日主形成${monthMainTenGod}。这里只确认结构，不据此判断旺衰、格局或喜用神。`,
+      text: `日主为${stem.value}${element.value}（${yinYang.value}），月令为${monthBranch}${monthElement}；月令本气${monthMainStem}相对日主形成${monthMainTenGod}。`,
       factIds
     },
     imagery: {
@@ -263,7 +275,7 @@ function buildDayMasterMonthTheme(
     plainReading: {
       title: "这组结构可以怎样理解",
       text: monthReading.interpretation,
-      boundary: "这是项目基于上述结构提供的条件性白话解释。它不证明某段现实经历已经发生，也不构成固定性格判断。",
+      boundary: null,
       factIds: [
         "dayMaster.stem",
         "monthCommand.branch",
@@ -350,16 +362,20 @@ function buildFiveElementTheme(
     ));
   const allEvidence = uniqueEvidence([...countEvidence, ...hiddenEvidence]);
   const factIds = allEvidence.map(item => item.id);
-  const countText = ALL_ELEMENTS.map(element => `${element}${counts[element]}`).join("、");
+  const visibleSummary = listOrNone(visibleElements);
 
   return {
     status: "ready",
     id: "five-elements",
     title: "五行构成",
     scope: `明字统计覆盖${coverageCount}个已确认位置`,
+    scanSummary: {
+      text: `当前覆盖${coverageCount}个已确认明字位置；明字出现${visibleSummary}${hiddenOnlyElements.length ? `，${hiddenOnlyElements.join("、")}仅在藏干出现` : ""}。`,
+      factIds
+    },
     professionalAnalysis: {
       title: "先整理明字与藏干中的五行",
-      text: `当前已确认明字共${coverageCount}个，统计为：${countText}。明字出现：${listOrNone(visibleElements)}；只在藏干出现：${listOrNone(hiddenOnlyElements)}；当前已确认范围内未见：${listOrNone(notSeenElements)}。`,
+      text: `当前统计覆盖${coverageCount}个已确认明字位置；具体数量与“明字出现／仅藏干出现／当前未见”见下表。`,
       factIds
     },
     imagery: {
@@ -370,7 +386,7 @@ function buildFiveElementTheme(
     },
     plainReading: {
       title: "数量先用于整理，不用于判强弱",
-      text: `这组数字回答的是“哪些五行出现在当前可确认的明字位置、出现几次”。“当前未见”只表示在本次已确认的明字和藏干范围内没有找到，不等于命里绝对缺失，也不能直接推出旺衰、喜用或吉凶。`,
+      text: `明字先帮你看到盘面表层出现了哪些五行，藏干则补充地支内部还保留了哪些类别。显与藏说明的是所在层级不同，不是优劣或强弱。“当前未见”也只限于本次已确认的覆盖范围，不等于命里绝对缺失。`,
       boundary: "明字数量不等于力量或能量，不据此提供补五行、颜色、饰品、方位或改运建议。",
       factIds
     },
@@ -412,9 +428,6 @@ function buildTenGodTheme(
   const visibleNames = positions
     .filter(item => item.position !== "日柱")
     .map(item => `${item.position}${item.visible}`);
-  const hiddenNames = positions.flatMap(item => (
-    item.hidden.map(value => `${item.position}${value}`)
-  ));
   const visibleTenGodSet = new Set(
     available
       .filter(({ pillar }) => pillar.position.value !== "日柱")
@@ -450,7 +463,7 @@ function buildTenGodTheme(
   const factIds = allEvidence.map(item => item.id);
   const omitted = omittedPillarNames(facts);
   const monthMainText = isConfirmedValue(facts.monthCommand.mainTenGod)
-    ? `月令本气相对日主形成${facts.monthCommand.mainTenGod.value}，在本主题中单独标出，但不称为唯一主导结构。`
+    ? "月令本气十神在对应位置保留，其结构说明见“日主与月令”。"
     : "月令当前未确认，因此不使用本气十神继续解释。";
 
   return {
@@ -458,9 +471,13 @@ function buildTenGodTheme(
     id: "ten-gods-pillars",
     title: "十神与四柱",
     scope: "以日主为参照，按柱位整理明干与藏干",
+    scanSummary: {
+      text: `十神已按${positions.length}个确认柱位整理；明干为${listOrNone(visibleNames, "除日主外暂无可确认项")}，日柱保留为“日主”。`,
+      factIds
+    },
     professionalAnalysis: {
       title: "看各位置与日主形成什么关系",
-      text: `已确认明干关系：${listOrNone(visibleNames, "除日主外暂无可确认项")}。日柱天干只标记为“日主”。藏干中可确认：${listOrNone(hiddenNames)}。${monthMainText}`,
+      text: `十神以日主为参照，明干与藏干按已确认柱位分层展示；日柱天干保留为“日主”。${monthMainText}`,
       factIds
     },
     imagery: {
@@ -471,7 +488,7 @@ function buildTenGodTheme(
     },
     plainReading: {
       title: "十神是相对日主的结构名称",
-      text: `这一主题是在整理盘中不同位置怎样以日主为参照形成关系名称。明干可直接看到${listOrNone([...visibleTenGodSet])}；${hiddenOnly.length ? `${hiddenOnly.join("、")}目前只在藏干中出现` : "当前未增加只藏不显的十神名称"}。这些名称不能单独证明人格、职业、婚姻、财富或已经发生的经历。`,
+      text: `十神名称说明某个天干与日主之间的相对关系。明干表示这个名称直接出现在柱面；藏干表示它位于对应地支的内部层。${hiddenOnly.length ? `${hiddenOnly.join("、")}在当前已确认范围内只藏不显。` : "当前没有新增只藏不显的十神名称。"}按柱位展示是为了保留来源位置，不能单独证明人格、职业、婚姻、财富或已经发生的经历。`,
       boundary: "十神数量和显隐位置不构成主导性、评分、格局、旺衰、喜用或吉凶判断；现实是否符合仍需用户自行核对。",
       factIds
     },
@@ -536,9 +553,13 @@ function buildNatalBranchRelationTheme(
     id: "natal-branch-relations",
     title: "本命地支关系",
     scope: `${positions.length}组已确认柱位关系 · ${confirmedRelations.length}项登记名称`,
+    scanSummary: {
+      text: `当前确认${positions.length}组柱位关系：${relationText}。`,
+      factIds
+    },
     professionalAnalysis: {
       title: "按柱位核对地支之间的登记关系",
-      text: `当前合同中已确认：${relationText}。这里只列出本版已经登记的同支、六合、六冲、六害、六破与刑，不把关系名称转换为吉凶、强弱或现实事件。`,
+      text: "下列卡片只呈现事实合同中已确认的柱位关系；同一柱位组合命中的多个登记名称保持并列。",
       factIds
     },
     imagery: {
@@ -583,7 +604,7 @@ export function buildBaziMainlineNarrative(
 
   return {
     title: `${countLabels[themes.length] ?? themes.length}项基础命盘分析`,
-    introduction: `以下内容只整理当前已确认的日主与月令、五行构成、十神与四柱${hasBranchRelations ? "、本命地支关系" : ""}。盘面事实可以复算；形象和白话部分属于蟾先森的现代解释，不用于预测人生结果。`,
+    introduction: `以下只整理当前已确认的日主与月令、五行构成、十神与四柱${hasBranchRelations ? "、本命地支关系" : ""}。现代意象是蟾先森为了帮助理解采用的表达，不是古籍原句；白话解释不证明固定人格或现实经历；当前内容不据此判断旺衰、喜忌、格局、吉凶或人生结果。`,
     themes
   };
 }
