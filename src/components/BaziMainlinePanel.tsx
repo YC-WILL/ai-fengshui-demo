@@ -1,6 +1,5 @@
 import React from "react";
 import type {
-  BaziMainlineEvidence,
   BaziMainlineNarrative,
   ReadyBaziAnalysisTheme
 } from "@/lib/domain/baziMainlineNarrative";
@@ -16,12 +15,6 @@ function elementClass(element: Element) {
     金: "metal",
     水: "water"
   }[element]}`;
-}
-
-function SourceLabel({ item }: { item: BaziMainlineEvidence }) {
-  return item.sourceKind === "traditional-catalog"
-    ? <span>传统规则目录</span>
-    : <span>项目计算实现</span>;
 }
 
 function ElementSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
@@ -89,104 +82,114 @@ function BranchRelationSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   );
 }
 
-function EvidencePanel({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+function Foundation({ narrative }: { narrative: BaziMainlineNarrative }) {
+  const { foundation } = narrative;
+  if (!foundation.dayMaster && foundation.evidence.length === 0) return null;
+
   return (
-    <details className="bazi-mainline-evidence">
-      <summary>
-        <span>为什么这样说</span>
-        <small>事实依据 · 默认收起</small>
-      </summary>
-      <div className="bazi-mainline-evidence-list">
-        {theme.evidence.map(item => (
-          <article key={item.id}>
+    <>
+      <section className="bazi-direct-section bazi-direct-foundation" aria-labelledby="bazi-direct-foundation-title">
+        <h3 id="bazi-direct-foundation-title">基础信息</h3>
+        <dl>
+          {foundation.dayMaster && (
             <div>
-              <b>{item.label}</b>
-              <span>{item.displayValue}</span>
+              <dt>日主</dt>
+              <dd>{foundation.dayMaster.stem}{foundation.dayMaster.element} · {foundation.dayMaster.yinYang}</dd>
             </div>
-            <small>{item.fact.sourcePosition} · {item.fact.certainty}</small>
-          </article>
-        ))}
-      </div>
-      <details className="bazi-mainline-technical">
-        <summary>技术追溯</summary>
-        <div>
-          {theme.evidence.map(item => (
-            <article key={item.id}>
-              <header>
-                <b>{item.id}</b>
-                <SourceLabel item={item} />
-              </header>
-              <dl>
-                <div><dt>计算口径</dt><dd>{item.fact.calculationConvention}</dd></div>
-                <div><dt>确定性</dt><dd>{item.fact.certainty}</dd></div>
-                <div><dt>规则版本</dt><dd>{item.fact.ruleVersion}</dd></div>
-                <div><dt>规则ID</dt><dd><code>{item.fact.sourceRuleId}</code></dd></div>
-              </dl>
-            </article>
-          ))}
-        </div>
-      </details>
-    </details>
+          )}
+          {foundation.monthCommand && (
+            <>
+              <div>
+                <dt>月令</dt>
+                <dd>{foundation.monthCommand.branch}{foundation.monthCommand.element}</dd>
+              </div>
+              <div>
+                <dt>本气</dt>
+                <dd>{foundation.monthCommand.mainStem}{foundation.monthCommand.element} · {foundation.monthCommand.mainTenGod}</dd>
+              </div>
+            </>
+          )}
+          {!foundation.monthCommand && foundation.monthCandidates.length > 0 && (
+            <div>
+              <dt>月柱候选</dt>
+              <dd>{foundation.monthCandidates.join(" 或 ")}</dd>
+            </div>
+          )}
+        </dl>
+        {foundation.limitation && <p className="bazi-mainline-note">{foundation.limitation}</p>}
+      </section>
+
+      {foundation.dayMaster && (
+        <section className="bazi-direct-section bazi-direct-day-master" aria-labelledby="bazi-direct-day-master-title">
+          <h3 id="bazi-direct-day-master-title">日主</h3>
+          <p>你的日主是{foundation.dayMaster.stem}，五行为{foundation.dayMaster.element}，阴阳属{foundation.dayMaster.yinYang}，也称{foundation.dayMaster.yinYang}{foundation.dayMaster.element}。</p>
+          <small className="bazi-direct-basis">
+            盘面依据：日主{foundation.dayMaster.stem}{foundation.dayMaster.element} · {foundation.dayMaster.yinYang}
+            {foundation.monthCommand
+              ? `；月令${foundation.monthCommand.branch}${foundation.monthCommand.element} · 本气${foundation.monthCommand.mainStem} · ${foundation.monthCommand.mainTenGod}`
+              : ""}
+          </small>
+        </section>
+      )}
+    </>
   );
 }
 
-function AnalysisTheme({
-  theme,
-  index
-}: {
-  theme: ReadyBaziAnalysisTheme;
-  index: number;
-}) {
-  const titleId = `bazi-analysis-theme-${theme.id}`;
+function DirectNarrative({ narrative }: { narrative: BaziMainlineNarrative }) {
+  if (narrative.directNarrative.status !== "available") return null;
+  const { entry } = narrative.directNarrative;
+  const foundation = narrative.foundation;
+  if (!foundation.dayMaster || !foundation.monthCommand) return null;
 
   return (
-    <article className="bazi-analysis-theme" aria-labelledby={titleId}>
-      <header className="bazi-analysis-theme-head">
-        <span aria-hidden>{String(index + 1).padStart(2, "0")}</span>
-        <div>
-          <h3 id={titleId}>{theme.title}</h3>
-          <small>{theme.scope}</small>
-        </div>
-      </header>
-
-      <div className="bazi-mainline-professional">
-        <small>专业分析</small>
-        <h4>{theme.professionalAnalysis.title}</h4>
-        <p>{theme.professionalAnalysis.text}</p>
-        <ElementSummary theme={theme} />
-        <TenGodSummary theme={theme} />
-        <BranchRelationSummary theme={theme} />
+    <section className="bazi-direct-section bazi-direct-imagery" aria-labelledby="bazi-direct-imagery-title">
+      <h3 id="bazi-direct-imagery-title">物象</h3>
+      <div className="bazi-direct-narrative" aria-label="蟾先森基于盘面的原创现代解读">
+        {entry.narrative.split("\n\n").map(paragraph => <p key={paragraph}>{paragraph}</p>)}
       </div>
+      <small className="bazi-direct-basis">
+        日主{foundation.dayMaster.stem}{foundation.dayMaster.element} · 月令{foundation.monthCommand.branch}{foundation.monthCommand.element} · 本气{foundation.monthCommand.mainStem}{foundation.monthCommand.element} · {foundation.monthCommand.mainTenGod}
+      </small>
+    </section>
+  );
+}
 
-      <div className="bazi-mainline-disclosures">
-        <details className="bazi-mainline-understand" open={index === 0}>
-          <summary>
-            <span>看懂这条</span>
-            <small>{index === 0 ? "默认展开" : "按需展开"}</small>
-          </summary>
-          <div className="bazi-mainline-understand-body">
-            <section className="is-imagery" aria-label="现代意象">
-              <small>现代意象</small>
-              <h4>{theme.imagery.title}</h4>
-              <blockquote>{theme.imagery.text}</blockquote>
-            </section>
-            <section className="is-plain" aria-label="白话解读">
-              <small>白话解读</small>
-              <h4>{theme.plainReading.title}</h4>
-              <p>{theme.plainReading.text}</p>
-              {theme.plainReading.boundary && (
-                <p className="bazi-mainline-boundary">{theme.plainReading.boundary}</p>
-              )}
-            </section>
-          </div>
-        </details>
-        <EvidencePanel theme={theme} />
-      </div>
+function FactTheme({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+  const presentation = {
+    "five-elements": {
+      title: "五行",
+      description: "这里统计你当前已确认柱位中的天干、地支，并把藏干中的五行单列出来。",
+      basis: "盘面依据：已确认柱位的天干、地支与藏干。"
+    },
+    "ten-gods-pillars": {
+      title: "十神",
+      description: "以下以你的日主为参照，按柱位列出明干与藏干形成的十神。",
+      basis: "盘面依据：日主与各确认柱位的明干、藏干关系。"
+    },
+    "natal-branch-relations": {
+      title: "地支关系",
+      description: "以下只列出已确认柱位之间命中的登记关系；同一组柱位可以并列多个名称。",
+      basis: "盘面依据：事实合同中已确认的本命地支关系与对应柱位。"
+    }
+  } as const;
+  if (theme.id === "day-master-month-command") return null;
+  const copy = presentation[theme.id];
 
+  return (
+    <section className="bazi-direct-section bazi-direct-fact-theme" aria-labelledby={`bazi-direct-${theme.id}`}>
+      <h3 id={`bazi-direct-${theme.id}`}>{copy.title}</h3>
+      <p className="bazi-direct-description">{copy.description}</p>
+      <ElementSummary theme={theme} />
+      <TenGodSummary theme={theme} />
+      <BranchRelationSummary theme={theme} />
+      <small className="bazi-direct-basis">{copy.basis}</small>
+      {theme.boundary && (
+        <p className="bazi-direct-boundary">{theme.boundary}</p>
+      )}
       {theme.limitation && (
         <p className="bazi-mainline-note">{theme.limitation}</p>
       )}
-    </article>
+    </section>
   );
 }
 
@@ -196,32 +199,19 @@ export default function BaziMainlinePanel({
   narrative: BaziMainlineNarrative;
 }) {
   return (
-    <section className="bazi-mainline bazi-foundation-analysis" aria-labelledby="bazi-mainline-title">
+    <section className="bazi-mainline bazi-direct-reading" aria-labelledby="bazi-mainline-title">
       <header className="bazi-mainline-head">
         <div>
-          <span className="section-kicker">基础说明与边界</span>
+          <span className="section-kicker">八字分析</span>
           <h2 id="bazi-mainline-title">{narrative.title}</h2>
         </div>
-        <small>事实可复核 · 解释有边界</small>
       </header>
       <p className="bazi-analysis-introduction">{narrative.introduction}</p>
-      <section className="bazi-analysis-scan" aria-labelledby="bazi-analysis-scan-title">
-        <header>
-          <span id="bazi-analysis-scan-title">先看这几条</span>
-          <small>{narrative.themes.length}项当前可读主题</small>
-        </header>
-        <ol>
-          {narrative.themes.map(theme => (
-            <li key={theme.id}>
-              <b>{theme.title}</b>
-              <p>{theme.scanSummary.text}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-      <div className="bazi-analysis-themes">
-        {narrative.themes.map((theme, index) => (
-          <AnalysisTheme key={theme.id} theme={theme} index={index} />
+      <div className="bazi-direct-sections">
+        <Foundation narrative={narrative} />
+        <DirectNarrative narrative={narrative} />
+        {narrative.themes.map(theme => (
+          <FactTheme key={theme.id} theme={theme} />
         ))}
       </div>
     </section>
