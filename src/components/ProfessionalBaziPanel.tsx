@@ -6,6 +6,7 @@ import {
   type MoonPhaseName
 } from "@/lib/domain/baziBirthMoonPhaseFacts";
 import type { BaziBirthSolarTermFactsV1 } from "@/lib/domain/baziBirthSolarTermFacts";
+import type { BaziBirthXiuFactsV1 } from "@/lib/domain/baziBirthXiuFacts";
 import {
   type ProfessionalBaziFact,
   type ProfessionalBaziFactsV1,
@@ -179,14 +180,48 @@ function MoonPhaseFactsSection({ facts }: { facts: BaziBirthMoonPhaseFactsV1 }) 
   </section>;
 }
 
+function XiuFactsSection({ facts }: { facts: BaziBirthXiuFactsV1 }) {
+  const certaintyLabel = facts.certainty === "confirmed" ? "已确认" : "无法计算";
+
+  return <section className="professional-xiu" aria-labelledby="professional-xiu-title">
+    <header>
+      <div><span>出生历法</span><h3 id="professional-xiu-title">出生日值二十八宿</h3></div>
+      <small>{certaintyLabel}</small>
+    </header>
+    <dl className="professional-xiu-grid">
+      <div><dt>出生时区</dt><dd>{facts.birthTimezone}</dd></div>
+      <div><dt>出生地民用日期</dt><dd>{facts.birthCivilDate}</dd></div>
+      <div><dt>状态</dt><dd>{certaintyLabel}</dd></div>
+      <div><dt>出生时间</dt><dd>{facts.timeKnown ? "已提供" : "未提供；日值按民用日期确定"}</dd></div>
+      {facts.certainty === "confirmed" && <>
+        <div><dt>日值二十八宿</dt><dd><b>{facts.xiu}</b></dd></div>
+        <div><dt>完整组合</dt><dd><b>{facts.xiu}{facts.zheng}{facts.animal}</b></dd></div>
+        <div><dt>七政</dt><dd>{facts.zheng}</dd></div>
+        <div><dt>动物</dt><dd>{facts.animal}</dd></div>
+        <div><dt>四宫</dt><dd>{facts.gong}方</dd></div>
+        <div><dt>四神兽</dt><dd>{facts.shou}</dd></div>
+        <div><dt>出生日支</dt><dd>{facts.dayBranch}</dd></div>
+        <div><dt>星期序号</dt><dd>{facts.weekdayIndex}（0 为星期日）</dd></div>
+      </>}
+      {facts.certainty === "unavailable" && <div><dt>计算失败原因</dt><dd>{facts.unavailableReason === "calculation_failed" ? "计算失败" : "—"}</dd></div>}
+      <div><dt>换日边界</dt><dd>{facts.dayBoundary}</dd></div>
+      <div><dt>算法版本</dt><dd><code>{facts.algorithmVersion}</code></dd></div>
+      <div className="professional-xiu-convention"><dt>计算口径</dt><dd>按出生地民用日期的日支与星期序号查表</dd></div>
+      <div className="professional-xiu-convention"><dt>来源规则</dt><dd><code>{facts.sourceRuleId}</code></dd></div>
+    </dl>
+  </section>;
+}
+
 export default function ProfessionalBaziPanel({
   facts,
   birthSolarTermFacts,
-  birthMoonPhaseFacts
+  birthMoonPhaseFacts,
+  birthXiuFacts
 }: {
   facts: ProfessionalBaziFactsV1;
   birthSolarTermFacts: BaziBirthSolarTermFactsV1;
   birthMoonPhaseFacts: BaziBirthMoonPhaseFactsV1;
+  birthXiuFacts: BaziBirthXiuFactsV1;
 }) {
   const allTraceFacts = traceFacts(facts);
   const catalogSources = [...new Set(allTraceFacts
@@ -303,6 +338,8 @@ export default function ProfessionalBaziPanel({
 
     <MoonPhaseFactsSection facts={birthMoonPhaseFacts} />
 
+    <XiuFactsSection facts={birthXiuFacts} />
+
     <section className="professional-current-time" aria-labelledby="professional-current-time-title">
       <header>
         <div><span>现在进入的时间条件</span><h3 id="professional-current-time-title">当前时间事实</h3></div>
@@ -334,6 +371,8 @@ export default function ProfessionalBaziPanel({
         <p><b>节气算法版本</b><span>{birthSolarTermFacts.algorithmVersion}</span></p>
         <p><b>出生月相</b><span>{birthMoonPhaseFacts.calculationConvention}</span></p>
         <p><b>月相算法版本</b><span>{birthMoonPhaseFacts.algorithmVersion}</span></p>
+        <p><b>出生日值二十八宿</b><span>按出生地民用日期的日支与星期序号查表</span></p>
+        <p><b>日值二十八宿算法版本</b><span>{birthXiuFacts.algorithmVersion}</span></p>
       </div>
       <div className="professional-source-kinds">
         <p><b>传统历法规则</b><span>记录历法口径与传统目录来源。</span></p>
@@ -352,6 +391,8 @@ export default function ProfessionalBaziPanel({
         <section><b>出生月相天文来源规则</b><code>{birthMoonPhaseFacts.astronomySourceRuleId}</code></section>
         <section><b>出生月相八相分类规则</b><code>{birthMoonPhaseFacts.classificationRuleId}</code></section>
         <section><b>出生月相事实版本</b><code>{birthMoonPhaseFacts.schemaVersion}</code></section>
+        <section><b>出生日值二十八宿来源规则</b><code>{birthXiuFacts.sourceRuleId}</code></section>
+        <section><b>出生日值二十八宿事实版本</b><code>{birthXiuFacts.schemaVersion}</code></section>
       </div>
     </section>
   </div>;

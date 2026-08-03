@@ -16,6 +16,8 @@ describe("Professional Bazi V1 UI contract", () => {
     expect(workspace).toContain("birthSolarTermFacts={birthSolarTermFacts}");
     expect(workspace).toContain("buildBaziBirthMoonPhaseFacts(chart)");
     expect(workspace).toContain("birthMoonPhaseFacts={birthMoonPhaseFacts}");
+    expect(workspace).toContain("buildBaziBirthXiuFacts(chart)");
+    expect(workspace).toContain("birthXiuFacts={birthXiuFacts}");
     expect(workspace).toContain("context?.professionalFacts ?? null");
     expect(workspace).not.toContain("buildProfessionalBaziFactsV1");
     expect(workspace).not.toContain("traditionalCalendarCatalog");
@@ -30,6 +32,8 @@ describe("Professional Bazi V1 UI contract", () => {
     expect(panel.indexOf("professional-supplement")).toBeLessThan(panel.indexOf("<SolarTermFactsSection"));
     expect(panel.indexOf("<SolarTermFactsSection")).toBeLessThan(panel.indexOf("<MoonPhaseFactsSection"));
     expect(panel.indexOf("<MoonPhaseFactsSection")).toBeLessThan(panel.indexOf("professional-current-time"));
+    expect(panel.indexOf("<MoonPhaseFactsSection")).toBeLessThan(panel.indexOf("<XiuFactsSection"));
+    expect(panel.indexOf("<XiuFactsSection")).toBeLessThan(panel.indexOf("professional-current-time"));
     expect(panel.indexOf("professional-current-time")).toBeLessThan(panel.indexOf("professional-source"));
     expect(panel.indexOf("professional-source")).toBeLessThan(panel.indexOf("professional-technical-trace"));
     expect(panel).toContain("与原局分区，不视为本命组成");
@@ -82,6 +86,17 @@ describe("Professional Bazi V1 UI contract", () => {
     expect(workspace.indexOf("birthMoonPhaseFacts={birthMoonPhaseFacts}")).toBeGreaterThan(
       workspace.indexOf('baziView === "professional"')
     );
+  });
+
+  it("shows birth daily xiu facts only in the professional layer", () => {
+    expect(panel).toContain("出生日值二十八宿");
+    expect(panel).toContain("birthXiuFacts.sourceRuleId");
+    expect(panel).toContain("birthXiuFacts.algorithmVersion");
+    expect(panel).toContain("birthXiuFacts.schemaVersion");
+    expect(workspace.indexOf("birthXiuFacts={birthXiuFacts}")).toBeGreaterThan(
+      workspace.indexOf('baziView === "professional"')
+    );
+    expect(panel).not.toMatch(/本命星宿|出生时月亮所在星宿|天文月宿位置|月球实际经过某宿/);
   });
 
   it("keeps excluded predictive fields out of the professional panel", () => {
