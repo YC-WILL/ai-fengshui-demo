@@ -5,6 +5,9 @@ import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import BaziMainlinePanel from "@/components/BaziMainlinePanel";
 import ProfessionalBaziPanel from "@/components/ProfessionalBaziPanel";
 import { computeBazi } from "@/lib/domain/bazi";
+import { buildBaziBirthMoonPhaseFacts } from "@/lib/domain/baziBirthMoonPhaseFacts";
+import { buildBaziBirthSolarTermFacts } from "@/lib/domain/baziBirthSolarTermFacts";
+import { buildBaziBirthXiuFacts } from "@/lib/domain/baziBirthXiuFacts";
 import { buildBaziMainlineNarrative } from "@/lib/domain/baziMainlineNarrative";
 import type { ProfessionalBaziFactsV1 } from "@/lib/domain/professionalBaziFacts";
 import { buildTimingSelection, type TimingCandidate } from "@/lib/domain/timingSelection";
@@ -137,9 +140,26 @@ export function BaziWorkspace({
     unknownTime: profile.unknownTime
   }) : null, [profile]);
   const professionalFacts = context?.professionalFacts ?? null;
+  const birthSolarTermFacts = useMemo(
+    () => chart ? buildBaziBirthSolarTermFacts(chart) : null,
+    [chart]
+  );
+  const birthMoonPhaseFacts = useMemo(
+    () => chart ? buildBaziBirthMoonPhaseFacts(chart) : null,
+    [chart]
+  );
+  const birthXiuFacts = useMemo(
+    () => chart ? buildBaziBirthXiuFacts(chart) : null,
+    [chart]
+  );
   const mainlineNarrative = useMemo(
-    () => buildBaziMainlineNarrative(professionalFacts),
-    [professionalFacts]
+    () => buildBaziMainlineNarrative(
+      professionalFacts,
+      birthSolarTermFacts,
+      birthMoonPhaseFacts,
+      birthXiuFacts
+    ),
+    [professionalFacts, birthSolarTermFacts, birthMoonPhaseFacts, birthXiuFacts]
   );
   const [baziView, setBaziView] = useState<"analysis" | "professional">("analysis");
   const [editingProfile, setEditingProfile] = useState(false);
@@ -195,7 +215,7 @@ export function BaziWorkspace({
           </button>
         </nav>
 
-        {boundaryUncertainty && <div className="bazi-boundary-warning" role="status">
+        {boundaryUncertainty && baziView === "professional" && <div className="bazi-boundary-warning" role="status">
           <span>排盘事实尚不能唯一确定</span>
           <b>{[
             boundaryUncertainty.yearCandidates ? `年柱可能为 ${boundaryUncertainty.yearCandidates.map(item => item.pillarLabel).join(" 或 ")}` : "",
@@ -208,7 +228,14 @@ export function BaziWorkspace({
           <BaziMainlinePanel narrative={mainlineNarrative} />
         )}
 
-        {baziView === "professional" && professionalFacts && <ProfessionalBaziPanel facts={professionalFacts} />}
+        {baziView === "professional" && professionalFacts && birthSolarTermFacts && birthMoonPhaseFacts && birthXiuFacts && (
+          <ProfessionalBaziPanel
+            facts={professionalFacts}
+            birthSolarTermFacts={birthSolarTermFacts}
+            birthMoonPhaseFacts={birthMoonPhaseFacts}
+            birthXiuFacts={birthXiuFacts}
+          />
+        )}
 
         <PlateSaveControl
           plateType="BAZI"

@@ -1,10 +1,10 @@
 import React from "react";
 import type {
-  BaziMainlineEvidence,
   BaziMainlineNarrative,
   ReadyBaziAnalysisTheme
 } from "@/lib/domain/baziMainlineNarrative";
 import type { Element } from "@/lib/domain/elements";
+import type { MoonPhaseName } from "@/lib/domain/baziBirthMoonPhaseFacts";
 
 const ELEMENTS: Element[] = ["木", "火", "土", "金", "水"];
 
@@ -16,12 +16,6 @@ function elementClass(element: Element) {
     金: "metal",
     水: "water"
   }[element]}`;
-}
-
-function SourceLabel({ item }: { item: BaziMainlineEvidence }) {
-  return item.sourceKind === "traditional-catalog"
-    ? <span>传统规则目录</span>
-    : <span>项目计算实现</span>;
 }
 
 function ElementSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
@@ -52,16 +46,32 @@ function ElementSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   );
 }
 
+function YinYangSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+  if (!theme.yinYangSummary) return null;
+  const { counts, ratios, coverageCount } = theme.yinYangSummary;
+
+  return (
+    <div className="bazi-yin-yang-summary" aria-label={`阴阳明字统计，共${coverageCount}个明字`}>
+      {(["阳", "阴"] as const).map(yinYang => (
+        <div key={yinYang}>
+          <span><b>{yinYang}</b><small>{counts[yinYang]} 个 · {ratios[yinYang]}%</small></span>
+          <i aria-hidden><em style={{ width: `${ratios[yinYang]}%` }} /></i>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function TenGodSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   if (!theme.tenGodPositions) return null;
 
   return (
-    <div className="bazi-ten-god-summary" aria-label="按四柱位置整理的十神">
+    <div className="bazi-ten-god-summary" aria-label="按盘面柱位整理的十神">
       {theme.tenGodPositions.map(item => (
         <article key={item.position}>
           <header><b>{item.position}</b><span>{item.visible}</span></header>
           <small>藏干</small>
-          <p>{item.hidden.join("、") || "当前未见"}</p>
+          <p>{item.hidden.join("、") || "无"}</p>
         </article>
       ))}
     </div>
@@ -89,104 +99,180 @@ function BranchRelationSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   );
 }
 
-function EvidencePanel({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+function Foundation({ narrative }: { narrative: BaziMainlineNarrative }) {
+  const { foundation } = narrative;
+  if (!foundation.dayMaster && foundation.evidence.length === 0) return null;
+
   return (
-    <details className="bazi-mainline-evidence">
-      <summary>
-        <span>为什么这样说</span>
-        <small>事实依据 · 默认收起</small>
-      </summary>
-      <div className="bazi-mainline-evidence-list">
-        {theme.evidence.map(item => (
-          <article key={item.id}>
+    <>
+      <section className="bazi-direct-section bazi-direct-foundation" aria-labelledby="bazi-direct-foundation-title">
+        <h3 id="bazi-direct-foundation-title">基础信息</h3>
+        <dl>
+          {foundation.dayMaster && (
             <div>
-              <b>{item.label}</b>
-              <span>{item.displayValue}</span>
+              <dt>日主</dt>
+              <dd>{foundation.dayMaster.stem}{foundation.dayMaster.element} · {foundation.dayMaster.yinYang}</dd>
             </div>
-            <small>{item.fact.sourcePosition} · {item.fact.certainty}</small>
-          </article>
-        ))}
-      </div>
-      <details className="bazi-mainline-technical">
-        <summary>技术追溯</summary>
-        <div>
-          {theme.evidence.map(item => (
-            <article key={item.id}>
-              <header>
-                <b>{item.id}</b>
-                <SourceLabel item={item} />
-              </header>
-              <dl>
-                <div><dt>计算口径</dt><dd>{item.fact.calculationConvention}</dd></div>
-                <div><dt>确定性</dt><dd>{item.fact.certainty}</dd></div>
-                <div><dt>规则版本</dt><dd>{item.fact.ruleVersion}</dd></div>
-                <div><dt>规则ID</dt><dd><code>{item.fact.sourceRuleId}</code></dd></div>
-              </dl>
-            </article>
-          ))}
-        </div>
-      </details>
-    </details>
+          )}
+          {foundation.monthCommand && (
+            <>
+              <div>
+                <dt>月令</dt>
+                <dd>{foundation.monthCommand.branch}{foundation.monthCommand.element}</dd>
+              </div>
+              <div>
+                <dt>本气</dt>
+                <dd>{foundation.monthCommand.mainStem}{foundation.monthCommand.element} · {foundation.monthCommand.mainTenGod}</dd>
+              </div>
+            </>
+          )}
+        </dl>
+      </section>
+
+      {foundation.dayMaster && (
+        <section className="bazi-direct-section bazi-direct-day-master" aria-labelledby="bazi-direct-day-master-title">
+          <h3 id="bazi-direct-day-master-title">日主</h3>
+          <p>你的日主是{foundation.dayMaster.stem}，五行为{foundation.dayMaster.element}，阴阳属{foundation.dayMaster.yinYang}，也称{foundation.dayMaster.yinYang}{foundation.dayMaster.element}。</p>
+        </section>
+      )}
+    </>
   );
 }
 
-function AnalysisTheme({
-  theme,
-  index
-}: {
-  theme: ReadyBaziAnalysisTheme;
-  index: number;
-}) {
-  const titleId = `bazi-analysis-theme-${theme.id}`;
+function DirectNarrative({ narrative }: { narrative: BaziMainlineNarrative }) {
+  if (narrative.directNarrative.status !== "available") return null;
+  const { entry } = narrative.directNarrative;
+  const foundation = narrative.foundation;
+  if (!foundation.dayMaster || !foundation.monthCommand) return null;
 
   return (
-    <article className="bazi-analysis-theme" aria-labelledby={titleId}>
-      <header className="bazi-analysis-theme-head">
-        <span aria-hidden>{String(index + 1).padStart(2, "0")}</span>
+    <section className="bazi-direct-section bazi-direct-imagery" aria-labelledby="bazi-direct-imagery-title">
+      <h3 id="bazi-direct-imagery-title">物象</h3>
+      <div className="bazi-direct-narrative" aria-label="命盘物象正文">
+        {entry.narrative.split("\n\n").map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+      </div>
+    </section>
+  );
+}
+
+function SolarTermNarrative({ narrative }: { narrative: BaziMainlineNarrative }) {
+  if (narrative.solarTermNarrative.status !== "available") return null;
+
+  return (
+    <section className="bazi-direct-section bazi-direct-solar-term" aria-labelledby="bazi-direct-solar-term-title">
+      <h3 id="bazi-direct-solar-term-title">节气</h3>
+      <p>{narrative.solarTermNarrative.entry.narrative}</p>
+    </section>
+  );
+}
+
+const MOON_PHASE_GRAPHIC_DESCRIPTIONS: Record<MoonPhaseName, string> = {
+  new_moon: "月面几乎不可见",
+  waxing_crescent: "右侧出现纤细亮面",
+  first_quarter: "右半月面明亮",
+  waxing_gibbous: "右侧大部分月面明亮",
+  full_moon: "整个月面明亮",
+  waning_gibbous: "左侧大部分月面明亮",
+  last_quarter: "左半月面明亮",
+  waning_crescent: "左侧留下纤细亮面"
+};
+
+function MoonPhaseGraphic({ phase, label }: { phase: MoonPhaseName; label: string }) {
+  const clipId = `bazi-moon-disc-${phase}`;
+  const isLightBase = phase === "full_moon"
+    || phase === "waxing_gibbous"
+    || phase === "waning_gibbous";
+
+  return (
+    <svg
+      className="bazi-moon-phase-graphic"
+      viewBox="0 0 100 100"
+      role="img"
+      aria-label={`${label}月相图：${MOON_PHASE_GRAPHIC_DESCRIPTIONS[phase]}`}
+      data-phase={phase}
+    >
+      <title>{`${label}月相图`}</title>
+      <defs><clipPath id={clipId}><circle cx="50" cy="50" r="40" /></clipPath></defs>
+      <circle className={isLightBase ? "is-light" : "is-shadow"} cx="50" cy="50" r="40" />
+      {phase === "waxing_crescent" && <circle className="is-light" cx="80" cy="50" r="40" clipPath={`url(#${clipId})`} />}
+      {phase === "first_quarter" && <rect className="is-light" x="50" y="10" width="40" height="80" clipPath={`url(#${clipId})`} />}
+      {phase === "waxing_gibbous" && <circle className="is-shadow" cx="20" cy="50" r="40" clipPath={`url(#${clipId})`} />}
+      {phase === "waning_gibbous" && <circle className="is-shadow" cx="80" cy="50" r="40" clipPath={`url(#${clipId})`} />}
+      {phase === "last_quarter" && <rect className="is-light" x="10" y="10" width="40" height="80" clipPath={`url(#${clipId})`} />}
+      {phase === "waning_crescent" && <circle className="is-light" cx="20" cy="50" r="40" clipPath={`url(#${clipId})`} />}
+      <circle className="is-outline" cx="50" cy="50" r="40" />
+    </svg>
+  );
+}
+
+function MoonPhaseNarrative({ narrative }: { narrative: BaziMainlineNarrative }) {
+  if (narrative.moonPhaseNarrative.status !== "available") return null;
+  const selection = narrative.moonPhaseNarrative;
+
+  return (
+    <section className="bazi-direct-section bazi-direct-moon-phase" aria-labelledby="bazi-direct-moon-phase-title">
+      <h3 id="bazi-direct-moon-phase-title">月相</h3>
+      <div className="bazi-moon-phase-summary">
+        <MoonPhaseGraphic phase={selection.entry.phase} label={selection.entry.label} />
         <div>
-          <h3 id={titleId}>{theme.title}</h3>
-          <small>{theme.scope}</small>
+          <b>{selection.entry.label}</b>
+          <dl>
+            <div><dt>月龄</dt><dd>{selection.moonAgeDays.toFixed(4)} 日</dd></div>
+            <div><dt>日月黄经差</dt><dd>{selection.elongationDegrees.toFixed(3)}°</dd></div>
+          </dl>
         </div>
-      </header>
-
-      <div className="bazi-mainline-professional">
-        <small>专业分析</small>
-        <h4>{theme.professionalAnalysis.title}</h4>
-        <p>{theme.professionalAnalysis.text}</p>
-        <ElementSummary theme={theme} />
-        <TenGodSummary theme={theme} />
-        <BranchRelationSummary theme={theme} />
       </div>
-
-      <div className="bazi-mainline-disclosures">
-        <details className="bazi-mainline-understand" open={index === 0}>
-          <summary>
-            <span>看懂这条</span>
-            <small>{index === 0 ? "默认展开" : "按需展开"}</small>
-          </summary>
-          <div className="bazi-mainline-understand-body">
-            <section className="is-imagery" aria-label="现代意象">
-              <small>现代意象</small>
-              <h4>{theme.imagery.title}</h4>
-              <blockquote>{theme.imagery.text}</blockquote>
-            </section>
-            <section className="is-plain" aria-label="白话解读">
-              <small>白话解读</small>
-              <h4>{theme.plainReading.title}</h4>
-              <p>{theme.plainReading.text}</p>
-              {theme.plainReading.boundary && (
-                <p className="bazi-mainline-boundary">{theme.plainReading.boundary}</p>
-              )}
-            </section>
-          </div>
-        </details>
-        <EvidencePanel theme={theme} />
+      <div className="bazi-direct-narrative" aria-label="出生月相正文">
+        {selection.entry.narrative.split("\n\n").map(paragraph => <p key={paragraph}>{paragraph}</p>)}
       </div>
+    </section>
+  );
+}
 
-      {theme.limitation && (
-        <p className="bazi-mainline-note">{theme.limitation}</p>
-      )}
-    </article>
+function XiuNarrative({ narrative }: { narrative: BaziMainlineNarrative }) {
+  if (narrative.xiuNarrative.status !== "available") return null;
+
+  return (
+    <section className="bazi-direct-section bazi-direct-xiu" aria-labelledby="bazi-direct-xiu-title">
+      <h3 id="bazi-direct-xiu-title">出生日值二十八宿</h3>
+      <div className="bazi-direct-narrative" aria-label="出生日值二十八宿正文">
+        {narrative.xiuNarrative.entry.narrative.split("\n\n").map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+      </div>
+    </section>
+  );
+}
+
+function FactTheme({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+  const presentation = {
+    "yin-yang": {
+      title: "阴阳",
+      description: "这里统计你的盘面天干和地支中的阴阳明字，不计藏干。"
+    },
+    "five-elements": {
+      title: "五行",
+      description: "五行数量来自你的盘面天干和地支明字，藏干中才出现的五行另行列出。"
+    },
+    "ten-gods-pillars": {
+      title: "十神",
+      description: "以日主为参照，按盘面柱位查看天干所见与地支所藏的十神。"
+    },
+    "natal-branch-relations": {
+      title: "地支关系",
+      description: "下面列出盘面柱位地支之间已经形成的关系，同一组地支可能同时出现多个名称。"
+    }
+  } as const;
+  if (theme.id === "day-master-month-command") return null;
+  const copy = presentation[theme.id];
+
+  return (
+    <section className="bazi-direct-section bazi-direct-fact-theme" aria-labelledby={`bazi-direct-${theme.id}`}>
+      <h3 id={`bazi-direct-${theme.id}`}>{copy.title}</h3>
+      <p className="bazi-direct-description">{copy.description}</p>
+      <YinYangSummary theme={theme} />
+      <ElementSummary theme={theme} />
+      <TenGodSummary theme={theme} />
+      <BranchRelationSummary theme={theme} />
+    </section>
   );
 }
 
@@ -196,32 +282,24 @@ export default function BaziMainlinePanel({
   narrative: BaziMainlineNarrative;
 }) {
   return (
-    <section className="bazi-mainline bazi-foundation-analysis" aria-labelledby="bazi-mainline-title">
+    <section className="bazi-mainline bazi-direct-reading" aria-labelledby="bazi-mainline-title">
       <header className="bazi-mainline-head">
         <div>
-          <span className="section-kicker">基础说明与边界</span>
+          <span className="section-kicker">八字分析</span>
           <h2 id="bazi-mainline-title">{narrative.title}</h2>
         </div>
-        <small>事实可复核 · 解释有边界</small>
       </header>
-      <p className="bazi-analysis-introduction">{narrative.introduction}</p>
-      <section className="bazi-analysis-scan" aria-labelledby="bazi-analysis-scan-title">
-        <header>
-          <span id="bazi-analysis-scan-title">先看这几条</span>
-          <small>{narrative.themes.length}项当前可读主题</small>
-        </header>
-        <ol>
-          {narrative.themes.map(theme => (
-            <li key={theme.id}>
-              <b>{theme.title}</b>
-              <p>{theme.scanSummary.text}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-      <div className="bazi-analysis-themes">
-        {narrative.themes.map((theme, index) => (
-          <AnalysisTheme key={theme.id} theme={theme} index={index} />
+      <div className="bazi-direct-sections">
+        <Foundation narrative={narrative} />
+        <DirectNarrative narrative={narrative} />
+        <SolarTermNarrative narrative={narrative} />
+        {narrative.themes.filter(theme => theme.id === "yin-yang").map(theme => (
+          <FactTheme key={theme.id} theme={theme} />
+        ))}
+        <MoonPhaseNarrative narrative={narrative} />
+        <XiuNarrative narrative={narrative} />
+        {narrative.themes.filter(theme => theme.id !== "yin-yang").map(theme => (
+          <FactTheme key={theme.id} theme={theme} />
         ))}
       </div>
     </section>
