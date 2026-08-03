@@ -45,16 +45,32 @@ function ElementSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   );
 }
 
+function YinYangSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
+  if (!theme.yinYangSummary) return null;
+  const { counts, ratios, coverageCount } = theme.yinYangSummary;
+
+  return (
+    <div className="bazi-yin-yang-summary" aria-label={`阴阳明字统计，共${coverageCount}个明字`}>
+      {(["阳", "阴"] as const).map(yinYang => (
+        <div key={yinYang}>
+          <span><b>{yinYang}</b><small>{counts[yinYang]} 个 · {ratios[yinYang]}%</small></span>
+          <i aria-hidden><em style={{ width: `${ratios[yinYang]}%` }} /></i>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function TenGodSummary({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   if (!theme.tenGodPositions) return null;
 
   return (
-    <div className="bazi-ten-god-summary" aria-label="按四柱位置整理的十神">
+    <div className="bazi-ten-god-summary" aria-label="按盘面柱位整理的十神">
       {theme.tenGodPositions.map(item => (
         <article key={item.position}>
           <header><b>{item.position}</b><span>{item.visible}</span></header>
           <small>藏干</small>
-          <p>{item.hidden.join("、") || "当前未见"}</p>
+          <p>{item.hidden.join("、") || "无"}</p>
         </article>
       ))}
     </div>
@@ -109,26 +125,13 @@ function Foundation({ narrative }: { narrative: BaziMainlineNarrative }) {
               </div>
             </>
           )}
-          {!foundation.monthCommand && foundation.monthCandidates.length > 0 && (
-            <div>
-              <dt>月柱候选</dt>
-              <dd>{foundation.monthCandidates.join(" 或 ")}</dd>
-            </div>
-          )}
         </dl>
-        {foundation.limitation && <p className="bazi-mainline-note">{foundation.limitation}</p>}
       </section>
 
       {foundation.dayMaster && (
         <section className="bazi-direct-section bazi-direct-day-master" aria-labelledby="bazi-direct-day-master-title">
           <h3 id="bazi-direct-day-master-title">日主</h3>
           <p>你的日主是{foundation.dayMaster.stem}，五行为{foundation.dayMaster.element}，阴阳属{foundation.dayMaster.yinYang}，也称{foundation.dayMaster.yinYang}{foundation.dayMaster.element}。</p>
-          <small className="bazi-direct-basis">
-            盘面依据：日主{foundation.dayMaster.stem}{foundation.dayMaster.element} · {foundation.dayMaster.yinYang}
-            {foundation.monthCommand
-              ? `；月令${foundation.monthCommand.branch}${foundation.monthCommand.element} · 本气${foundation.monthCommand.mainStem} · ${foundation.monthCommand.mainTenGod}`
-              : ""}
-          </small>
         </section>
       )}
     </>
@@ -144,32 +147,41 @@ function DirectNarrative({ narrative }: { narrative: BaziMainlineNarrative }) {
   return (
     <section className="bazi-direct-section bazi-direct-imagery" aria-labelledby="bazi-direct-imagery-title">
       <h3 id="bazi-direct-imagery-title">物象</h3>
-      <div className="bazi-direct-narrative" aria-label="蟾先森基于盘面的原创现代解读">
+      <div className="bazi-direct-narrative" aria-label="命盘物象正文">
         {entry.narrative.split("\n\n").map(paragraph => <p key={paragraph}>{paragraph}</p>)}
       </div>
-      <small className="bazi-direct-basis">
-        日主{foundation.dayMaster.stem}{foundation.dayMaster.element} · 月令{foundation.monthCommand.branch}{foundation.monthCommand.element} · 本气{foundation.monthCommand.mainStem}{foundation.monthCommand.element} · {foundation.monthCommand.mainTenGod}
-      </small>
+    </section>
+  );
+}
+
+function SolarTermNarrative({ narrative }: { narrative: BaziMainlineNarrative }) {
+  if (narrative.solarTermNarrative.status !== "available") return null;
+
+  return (
+    <section className="bazi-direct-section bazi-direct-solar-term" aria-labelledby="bazi-direct-solar-term-title">
+      <h3 id="bazi-direct-solar-term-title">节气</h3>
+      <p>{narrative.solarTermNarrative.entry.narrative}</p>
     </section>
   );
 }
 
 function FactTheme({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   const presentation = {
+    "yin-yang": {
+      title: "阴阳",
+      description: "这里统计你的盘面天干和地支中的阴阳明字，不计藏干。"
+    },
     "five-elements": {
       title: "五行",
-      description: "这里统计你当前已确认柱位中的天干、地支，并把藏干中的五行单列出来。",
-      basis: "盘面依据：已确认柱位的天干、地支与藏干。"
+      description: "五行数量来自你的盘面天干和地支明字，藏干中才出现的五行另行列出。"
     },
     "ten-gods-pillars": {
       title: "十神",
-      description: "以下以你的日主为参照，按柱位列出明干与藏干形成的十神。",
-      basis: "盘面依据：日主与各确认柱位的明干、藏干关系。"
+      description: "以日主为参照，按盘面柱位查看天干所见与地支所藏的十神。"
     },
     "natal-branch-relations": {
       title: "地支关系",
-      description: "以下只列出已确认柱位之间命中的登记关系；同一组柱位可以并列多个名称。",
-      basis: "盘面依据：事实合同中已确认的本命地支关系与对应柱位。"
+      description: "下面列出盘面柱位地支之间已经形成的关系，同一组地支可能同时出现多个名称。"
     }
   } as const;
   if (theme.id === "day-master-month-command") return null;
@@ -179,16 +191,10 @@ function FactTheme({ theme }: { theme: ReadyBaziAnalysisTheme }) {
     <section className="bazi-direct-section bazi-direct-fact-theme" aria-labelledby={`bazi-direct-${theme.id}`}>
       <h3 id={`bazi-direct-${theme.id}`}>{copy.title}</h3>
       <p className="bazi-direct-description">{copy.description}</p>
+      <YinYangSummary theme={theme} />
       <ElementSummary theme={theme} />
       <TenGodSummary theme={theme} />
       <BranchRelationSummary theme={theme} />
-      <small className="bazi-direct-basis">{copy.basis}</small>
-      {theme.boundary && (
-        <p className="bazi-direct-boundary">{theme.boundary}</p>
-      )}
-      {theme.limitation && (
-        <p className="bazi-mainline-note">{theme.limitation}</p>
-      )}
     </section>
   );
 }
@@ -206,10 +212,10 @@ export default function BaziMainlinePanel({
           <h2 id="bazi-mainline-title">{narrative.title}</h2>
         </div>
       </header>
-      <p className="bazi-analysis-introduction">{narrative.introduction}</p>
       <div className="bazi-direct-sections">
         <Foundation narrative={narrative} />
         <DirectNarrative narrative={narrative} />
+        <SolarTermNarrative narrative={narrative} />
         {narrative.themes.map(theme => (
           <FactTheme key={theme.id} theme={theme} />
         ))}

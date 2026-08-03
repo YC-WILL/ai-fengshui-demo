@@ -1,14 +1,13 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import ProfessionalBaziPanel, {
-  nextExpandedHiddenPillar
-} from "@/components/ProfessionalBaziPanel";
+import ProfessionalBaziPanel from "@/components/ProfessionalBaziPanel";
 import { computeBazi } from "@/lib/domain/bazi";
+import { buildBaziBirthSolarTermFacts } from "@/lib/domain/baziBirthSolarTermFacts";
 import { buildProfessionalBaziFactsOnServer } from "@/lib/professionalBaziServer";
 
 describe("Professional Bazi mobile matrix render", () => {
-  it("renders a compact semantic table and keeps hidden-stem detail closed initially", () => {
+  it("renders a compact semantic table and all confirmed hidden-stem facts directly", () => {
     const chart = computeBazi({
       gender: "other",
       birthDate: "1988-03-12",
@@ -23,31 +22,59 @@ describe("Professional Bazi mobile matrix render", () => {
     );
 
     const markup = renderToStaticMarkup(
-      createElement(ProfessionalBaziPanel, { facts: professionalFacts })
+      createElement(ProfessionalBaziPanel, {
+        facts: professionalFacts,
+        birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart)
+      })
     );
 
     expect(markup).toContain('role="table"');
     expect(markup.match(/role="row"/g)).toHaveLength(5);
-    expect(markup).toMatch(/<div role="cell" class="professional-hidden-cell [^"]*"><button type="button"/);
-    expect(markup).not.toMatch(/<button[^>]*role="cell"/);
-    expect(markup.match(/aria-label="展开[^"]+藏干详情：[^"]+"/g)).toHaveLength(4);
-    expect(markup.match(/aria-expanded="false"/g)).toHaveLength(4);
-    expect(markup.match(/aria-controls="professional-hidden-detail"/g)).toHaveLength(4);
-    expect(markup).not.toContain('id="professional-hidden-detail"');
+    expect(markup.match(/class="professional-hidden-cell"/g)).toHaveLength(4);
+    expect(markup).toContain('id="professional-hidden-facts-title">藏干事实</h4>');
+    expect(markup).toContain("气序");
+    expect(markup).toContain("十神");
+    expect(markup).toContain("关系");
+    expect(markup).toContain("阴阳");
+    expect(markup).not.toMatch(/<details|<summary|aria-expanded|aria-controls|>展开<|>收起</);
+    expect(markup).not.toMatch(/仅供参考|只负责|只呈现|系统判断|吉凶判断|可能是|大致处于|建议结合实际/);
     expect(markup).not.toContain("7px");
     expect(markup).not.toContain("8px");
   });
 
-  it("keeps at most one expanded pillar and toggles the current pillar closed", () => {
-    expect(nextExpandedHiddenPillar(null, "年柱")).toBe("年柱");
-    expect(nextExpandedHiddenPillar("年柱", "月柱")).toBe("月柱");
-    expect(nextExpandedHiddenPillar("月柱", "月柱")).toBeNull();
-  });
-
-  it("does not render expand buttons for uncertain or unavailable pillars", () => {
+  it("renders confirmed solar-term facts with exact seconds, timezone and trace data", () => {
     const chart = computeBazi({
       gender: "other",
-      birthDate: "2024-02-04",
+      birthDate: "2024-03-05",
+      birthTime: "10:23",
+      birthLocation: "虚构测试城市",
+      timezone: "Asia/Shanghai",
+      unknownTime: false
+    });
+    const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, new Date("2026-07-29T07:18:42.321Z"));
+    const markup = renderToStaticMarkup(createElement(ProfessionalBaziPanel, {
+      facts: professionalFacts,
+      birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart)
+    }));
+
+    expect(markup).toContain("出生节气事实");
+    expect(markup).toContain("惊蛰");
+    expect(markup).toContain("春分");
+    expect(markup).toContain("2024年03月05日 10:22:45（UTC+08:00）");
+    expect(markup).toContain("2024年03月20日 11:06:25（UTC+08:00）");
+    expect(markup).toContain("Asia/Shanghai");
+    expect(markup).toContain("lunar-typescript@1.8.6");
+    expect(markup).toContain("dependency:lunar-typescript:getPrevJieQi:getNextJieQi");
+    const order = ["四柱事实矩阵", "藏干事实", "参照点与结构关系", "出生节气事实", "当前时间事实", "计算口径与来源", "技术追溯"]
+      .map(title => markup.indexOf(`>${title}<`));
+    expect(order.every(position => position > -1)).toBe(true);
+    expect(order).toEqual([...order].sort((first, second) => first - second));
+  });
+
+  it("renders uncertain candidates directly and no hidden-stem controls", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "2024-03-05",
       birthTime: "",
       birthLocation: "虚构测试城市",
       timezone: "Asia/Shanghai",
@@ -59,13 +86,40 @@ describe("Professional Bazi mobile matrix render", () => {
     );
 
     const markup = renderToStaticMarkup(
-      createElement(ProfessionalBaziPanel, { facts: professionalFacts })
+      createElement(ProfessionalBaziPanel, {
+        facts: professionalFacts,
+        birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart)
+      })
     );
 
-    expect(markup.match(/aria-label="展开[^"]+藏干详情：[^"]+"/g)).toHaveLength(1);
-    expect(markup).toContain('aria-label="展开日柱藏干详情：');
-    expect(markup).not.toContain('aria-label="展开年柱藏干详情：');
-    expect(markup).not.toContain('aria-label="展开月柱藏干详情：');
-    expect(markup).not.toContain('aria-label="展开时柱藏干详情：');
+    expect(markup).toContain("交节候选");
+    expect(markup).toContain("交节前节气");
+    expect(markup).toContain("雨水");
+    expect(markup).toContain("交节后节气");
+    expect(markup).toContain("惊蛰");
+    expect(markup).not.toMatch(/<details|<summary|aria-expanded|aria-controls|>展开<|>收起</);
+  });
+
+  it("renders unavailable solar-term facts with a direct reason", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "2024-03-05",
+      birthTime: "10:23",
+      birthLocation: "虚构测试城市",
+      timezone: "Asia/Shanghai",
+      unknownTime: false
+    });
+    const invalidChart = structuredClone(chart);
+    invalidChart.inputSnapshot.birthDate = "invalid";
+    const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, new Date("2026-07-29T07:18:42.321Z"));
+    const markup = renderToStaticMarkup(createElement(ProfessionalBaziPanel, {
+      facts: professionalFacts,
+      birthSolarTermFacts: buildBaziBirthSolarTermFacts(invalidChart)
+    }));
+
+    expect(markup).toContain("确定性");
+    expect(markup).toContain("无法计算");
+    expect(markup).toContain("原因");
+    expect(markup).toContain("计算失败");
   });
 });

@@ -83,7 +83,7 @@ export function pillarForSolarMonth(yearStem: Stem, branch: Branch): Pillar {
   return makePillar((startStemIdx + offsetFromYin) % 10, branchIdx);
 }
 
-interface CivilTime {
+export interface CivilTime {
   year: number;
   month: number;
   day: number;
@@ -114,7 +114,7 @@ function formatterFor(timezone: string) {
   });
 }
 
-function partsInTimezone(instant: Date, timezone: string): CivilTime {
+export function partsInTimezone(instant: Date, timezone: string): CivilTime {
   const parts = Object.fromEntries(
     formatterFor(timezone).formatToParts(instant)
       .filter(part => part.type !== "literal")
@@ -135,7 +135,7 @@ function timezoneOffsetMs(instant: Date, timezone: string): number {
   return Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second) - instant.getTime();
 }
 
-function civilTimeToInstant(civil: CivilTime, timezone: string): Date {
+export function civilTimeToInstant(civil: CivilTime, timezone: string): Date {
   const wallClockUtc = Date.UTC(civil.year, civil.month - 1, civil.day, civil.hour, civil.minute, civil.second);
   let instant = new Date(wallClockUtc - timezoneOffsetMs(new Date(wallClockUtc), timezone));
   instant = new Date(wallClockUtc - timezoneOffsetMs(instant, timezone));

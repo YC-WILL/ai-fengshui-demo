@@ -2,7 +2,12 @@ import {
   selectBaziDirectNarrative,
   type BaziDirectNarrativeSelection
 } from "./baziDirectNarratives";
-import { ALL_ELEMENTS, type Element } from "./elements";
+import type { BaziBirthSolarTermFactsV1 } from "./baziBirthSolarTermFacts";
+import {
+  selectBaziSolarTermNarrative,
+  type BaziSolarTermNarrativeSelection
+} from "./baziSolarTermNarratives";
+import { ALL_ELEMENTS, type Element, type YinYang } from "./elements";
 import type {
   ProfessionalBaziFact,
   ProfessionalBaziFactsV1,
@@ -11,6 +16,7 @@ import type {
 
 export const BAZI_ANALYSIS_THEME_IDS = [
   "day-master-month-command",
+  "yin-yang",
   "five-elements",
   "ten-gods-pillars",
   "natal-branch-relations"
@@ -43,6 +49,12 @@ export interface BaziElementSummary {
   visibleElements: Element[];
   hiddenOnlyElements: Element[];
   notSeenElements: Element[];
+}
+
+export interface BaziYinYangSummary {
+  coverageCount: number;
+  counts: Record<YinYang, number>;
+  ratios: Record<YinYang, number>;
 }
 
 export interface BaziTenGodPositionSummary {
@@ -82,9 +94,9 @@ export interface ReadyBaziAnalysisTheme {
   title: string;
   scope: string;
   factIds: string[];
-  boundary: string | null;
   evidence: BaziMainlineEvidence[];
   limitation: string | null;
+  yinYangSummary?: BaziYinYangSummary;
   elementSummary?: BaziElementSummary;
   tenGodPositions?: BaziTenGodPositionSummary[];
   branchRelationPositions?: BaziBranchRelationPositionSummary[];
@@ -92,9 +104,9 @@ export interface ReadyBaziAnalysisTheme {
 
 export interface BaziMainlineNarrative {
   title: string;
-  introduction: string;
   foundation: BaziFoundationSummary;
   directNarrative: BaziDirectNarrativeSelection;
+  solarTermNarrative: BaziSolarTermNarrativeSelection;
   themes: ReadyBaziAnalysisTheme[];
 }
 
@@ -261,7 +273,6 @@ function buildDayMasterMonthTheme(
       title: "日主与月令",
       scope: "先确认稳定坐标，候选部分暂不推导",
       factIds,
-      boundary: null,
       evidence: [...baseEvidence, ...candidateEvidence],
       limitation: [
         "月令依赖月柱，当前存在候选或必要事实不足；本气与本气十神均未参与下级解释。",
@@ -288,7 +299,6 @@ function buildDayMasterMonthTheme(
     title: "日主与月令",
     scope: "日主、出生时节与月令本气",
     factIds,
-    boundary: null,
     evidence: allEvidence,
     limitation: commonLimitations.length ? commonLimitations.join(" ") : null
   };
@@ -374,7 +384,6 @@ function buildFiveElementTheme(
     title: "五行构成",
     scope: `明字统计覆盖${coverageCount}个已确认位置`,
     factIds,
-    boundary: "明字数量不等于力量或能量，不据此提供补五行、颜色、饰品、方位或改运建议。",
     evidence: allEvidence,
     limitation: omitted.length
       ? `${omitted.join("、")}未参与本次统计，覆盖范围已相应减少；当前结果不是完整八字八个明字的统计。`
@@ -385,6 +394,61 @@ function buildFiveElementTheme(
       visibleElements,
       hiddenOnlyElements,
       notSeenElements
+    }
+  };
+}
+
+function buildYinYangTheme(
+  facts: ProfessionalBaziFactsV1
+): ReadyBaziAnalysisTheme | null {
+  const available = facts.pillars
+    .map((pillar, index) => ({ pillar, index }))
+    .filter(({ pillar }) => (
+      pillar.ganzhi.certainty === "confirmed"
+      && isConfirmedValue(pillar.stemYinYang)
+      && isConfirmedValue(pillar.branchYinYang)
+    ));
+  if (!available.length) return null;
+
+  const counts: Record<YinYang, number> = { 阳: 0, 阴: 0 };
+  available.forEach(({ pillar }) => {
+    counts[pillar.stemYinYang.value!] += 1;
+    counts[pillar.branchYinYang.value!] += 1;
+  });
+  const coverageCount = counts.阳 + counts.阴;
+  if (coverageCount === 0) return null;
+  const yangRatio = Math.round((counts.阳 / coverageCount) * 100);
+
+  const pillarEvidence = available.flatMap(({ pillar, index }) => [
+    evidence(
+      `pillars.${index}.stemYinYang`,
+      `${pillar.position.value}天干阴阳`,
+      pillar.stemYinYang.value!,
+      pillar.stemYinYang
+    ),
+    evidence(
+      `pillars.${index}.branchYinYang`,
+      `${pillar.position.value}地支阴阳`,
+      pillar.branchYinYang.value!,
+      pillar.branchYinYang
+    )
+  ]);
+
+  return {
+    status: "ready",
+    id: "yin-yang",
+    title: "阴阳",
+    scope: `明字统计覆盖${coverageCount}个已确认位置`,
+    factIds: pillarEvidence.map(item => item.id),
+    evidence: pillarEvidence,
+    limitation: null,
+    yinYangSummary: {
+      coverageCount,
+      counts,
+      ratios: {
+        阳: yangRatio,
+        阴: 100 - yangRatio
+      }
     }
   };
 }
@@ -408,7 +472,7 @@ function buildTenGodTheme(
     visible: pillar.position.value === "日柱"
       ? "日主"
       : String(pillar.visibleTenGod.value),
-    hidden: pillar.hiddenStems.value.map(item => `${item.stem}·${item.tenGod}·${item.qiLevel}`)
+    hidden: pillar.hiddenStems.value.map(item => `${item.stem}·${item.tenGod}`)
   }));
   const pillarEvidence = available.flatMap(({ pillar, index }) => [
     evidence(
@@ -441,7 +505,6 @@ function buildTenGodTheme(
     title: "十神与四柱",
     scope: "以日主为参照，按柱位整理明干与藏干",
     factIds,
-    boundary: "十神数量和显隐位置不构成主导性、评分、格局、旺衰、喜用或吉凶判断；现实是否符合仍需用户自行核对。",
     evidence: allEvidence,
     limitation: omitted.length
       ? `${omitted.join("、")}尚未确认，相关明干十神与藏干均未参与本主题。`
@@ -488,7 +551,6 @@ function buildNatalBranchRelationTheme(
     title: "本命地支关系",
     scope: `${positions.length}组已确认柱位关系 · ${confirmedRelations.length}项登记名称`,
     factIds,
-    boundary: "合不等于一定顺利，冲、害、破、刑也不等于一定不好；本轮不判断作用强弱，不加入旺衰、喜忌、格局或事件预测。",
     evidence: relationEvidence,
     limitation: omitted.length
       ? `${omitted.join("、")}尚未确认，涉及这些柱位的地支关系已经由事实合同排除；当前主题只覆盖其余已确认柱位。`
@@ -498,16 +560,18 @@ function buildNatalBranchRelationTheme(
 }
 
 /**
- * 只从同一份 ProfessionalBaziFactsV1 整理四个普通分析主题。
- * 本函数不计算新命理事实，不接收独立解释文本，也不会用不确定柱位继续推导。
+ * 只整理 ProfessionalBaziFactsV1 与独立出生节气事实合同已准入的内容。
+ * 本函数不计算新命理事实，不生成解释文本，也不会用不确定事实继续推导。
  */
 export function buildBaziMainlineNarrative(
-  facts: ProfessionalBaziFactsV1 | null
+  facts: ProfessionalBaziFactsV1 | null,
+  birthSolarTermFacts: BaziBirthSolarTermFactsV1 | null = null
 ): BaziMainlineNarrative | null {
   if (!facts) return null;
 
   const themes = [
     buildDayMasterMonthTheme(facts),
+    buildYinYangTheme(facts),
     buildFiveElementTheme(facts),
     buildTenGodTheme(facts),
     buildNatalBranchRelationTheme(facts)
@@ -517,9 +581,9 @@ export function buildBaziMainlineNarrative(
 
   return {
     title: "命盘解读",
-    introduction: "以下传统结构可以复算；物象和生活表达为蟾先森基于盘面的现代解读。",
     foundation: buildFoundationSummary(facts),
     directNarrative: selectBaziDirectNarrative(facts),
+    solarTermNarrative: selectBaziSolarTermNarrative(birthSolarTermFacts),
     themes
   };
 }
