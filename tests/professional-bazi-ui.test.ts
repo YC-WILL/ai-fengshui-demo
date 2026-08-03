@@ -14,6 +14,8 @@ describe("Professional Bazi V1 UI contract", () => {
     expect(workspace).toContain('boundaryUncertainty && baziView === "professional"');
     expect(workspace).not.toContain('{boundaryUncertainty && <div');
     expect(workspace).toContain("birthSolarTermFacts={birthSolarTermFacts}");
+    expect(workspace).toContain("buildBaziBirthMoonPhaseFacts(chart)");
+    expect(workspace).toContain("birthMoonPhaseFacts={birthMoonPhaseFacts}");
     expect(workspace).toContain("context?.professionalFacts ?? null");
     expect(workspace).not.toContain("buildProfessionalBaziFactsV1");
     expect(workspace).not.toContain("traditionalCalendarCatalog");
@@ -26,7 +28,8 @@ describe("Professional Bazi V1 UI contract", () => {
   it("keeps every professional fact group in one continuous order", () => {
     expect(panel.indexOf("professional-origin")).toBeLessThan(panel.indexOf("professional-supplement"));
     expect(panel.indexOf("professional-supplement")).toBeLessThan(panel.indexOf("<SolarTermFactsSection"));
-    expect(panel.indexOf("<SolarTermFactsSection")).toBeLessThan(panel.indexOf("professional-current-time"));
+    expect(panel.indexOf("<SolarTermFactsSection")).toBeLessThan(panel.indexOf("<MoonPhaseFactsSection"));
+    expect(panel.indexOf("<MoonPhaseFactsSection")).toBeLessThan(panel.indexOf("professional-current-time"));
     expect(panel.indexOf("professional-current-time")).toBeLessThan(panel.indexOf("professional-source"));
     expect(panel.indexOf("professional-source")).toBeLessThan(panel.indexOf("professional-technical-trace"));
     expect(panel).toContain("与原局分区，不视为本命组成");
@@ -68,6 +71,17 @@ describe("Professional Bazi V1 UI contract", () => {
     expect(panel).toContain("技术追溯");
     expect(panel).toContain('startsWith("catalog:")');
     expect(panel).toContain('startsWith("code:")');
+  });
+
+  it("shows moon-phase facts only in the professional layer", () => {
+    expect(panel).toContain("出生月相事实");
+    expect(panel).toContain("birthMoonPhaseFacts.astronomySourceRuleId");
+    expect(panel).toContain("birthMoonPhaseFacts.classificationRuleId");
+    expect(panel).toContain("birthMoonPhaseFacts.algorithmVersion");
+    expect(panel).toContain("MOON_PHASE_LABELS");
+    expect(workspace.indexOf("birthMoonPhaseFacts={birthMoonPhaseFacts}")).toBeGreaterThan(
+      workspace.indexOf('baziView === "professional"')
+    );
   });
 
   it("keeps excluded predictive fields out of the professional panel", () => {

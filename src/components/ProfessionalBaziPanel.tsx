@@ -1,6 +1,10 @@
 "use client";
 
 import React from "react";
+import {
+  type BaziBirthMoonPhaseFactsV1,
+  type MoonPhaseName
+} from "@/lib/domain/baziBirthMoonPhaseFacts";
 import type { BaziBirthSolarTermFactsV1 } from "@/lib/domain/baziBirthSolarTermFacts";
 import {
   type ProfessionalBaziFact,
@@ -17,6 +21,16 @@ import {
 
 const ELEMENTS: Element[] = ["木", "火", "土", "金", "水"];
 const TIME_LABELS = { today: "今日", month: "当月", year: "当前流年" } as const;
+export const MOON_PHASE_LABELS: Record<MoonPhaseName, string> = {
+  new_moon: "朔",
+  waxing_crescent: "蛾眉月（盈）",
+  first_quarter: "上弦",
+  waxing_gibbous: "盈凸月",
+  full_moon: "望",
+  waning_gibbous: "亏凸月",
+  last_quarter: "下弦",
+  waning_crescent: "残月"
+};
 
 function elementClass(element: Element | null | undefined) {
   return element ? `professional-element professional-element-${{
@@ -118,12 +132,61 @@ function SolarTermFactsSection({ facts }: { facts: BaziBirthSolarTermFactsV1 }) 
   </section>;
 }
 
+function moonPhaseLabel(phase: MoonPhaseName) {
+  return MOON_PHASE_LABELS[phase];
+}
+
+function MoonPhaseFactsSection({ facts }: { facts: BaziBirthMoonPhaseFactsV1 }) {
+  const certaintyLabel = facts.certainty === "confirmed"
+    ? "已确认"
+    : facts.certainty === "uncertain"
+      ? "不确定"
+      : "无法计算";
+
+  return <section className="professional-moon-phase" aria-labelledby="professional-moon-phase-title">
+    <header>
+      <div><span>出生天文</span><h3 id="professional-moon-phase-title">出生月相事实</h3></div>
+      <small>{certaintyLabel}</small>
+    </header>
+    <dl className="professional-moon-phase-grid">
+      <div><dt>出生时区</dt><dd>{facts.birthTimezone}</dd></div>
+      <div><dt>状态</dt><dd>{certaintyLabel}</dd></div>
+      {facts.certainty === "confirmed" && <>
+        <div><dt>月相分类</dt><dd><b>{moonPhaseLabel(facts.phase!)}</b><span>{facts.phase}</span></dd></div>
+        <div><dt>日月黄经差</dt><dd>{facts.elongationDegrees!.toFixed(3)}°</dd></div>
+        <div><dt>月龄</dt><dd>{facts.moonAgeDays!.toFixed(4)} 日</dd></div>
+        <div><dt>上一次朔时</dt><dd>{formatSolarTermMoment(facts.previousNewMoonAtUtc, facts.birthTimezone)}</dd></div>
+        <div><dt>下一次朔时</dt><dd>{formatSolarTermMoment(facts.nextNewMoonAtUtc, facts.birthTimezone)}</dd></div>
+        <div><dt>本次朔望月长度</dt><dd>{facts.lunationLengthDays!.toFixed(4)} 日</dd></div>
+      </>}
+      {facts.certainty === "uncertain" && facts.candidates.map((candidate, index) => <div
+        className="professional-moon-phase-candidate"
+        key={candidate.sampledAtUtc}
+      >
+        <dt>{index === 0 ? "当地民用日期起点候选" : "当地民用日期终点候选"}</dt>
+        <dd>
+          <span>采样时刻 · {formatSolarTermMoment(candidate.sampledAtUtc, facts.birthTimezone)}</span>
+          <span>日月黄经差 · {candidate.elongationDegrees.toFixed(3)}°</span>
+          <span>月龄 · {candidate.moonAgeDays.toFixed(4)} 日</span>
+          <span>月相 · {moonPhaseLabel(candidate.phase)}（{candidate.phase}）</span>
+        </dd>
+      </div>)}
+      {facts.certainty === "unavailable" && <div><dt>计算失败原因</dt><dd>{facts.unavailableReason === "calculation_failed" ? "计算失败" : "—"}</dd></div>}
+      <div><dt>算法版本</dt><dd><code>{facts.algorithmVersion}</code></dd></div>
+      <div><dt>天文来源规则</dt><dd><code>{facts.astronomySourceRuleId}</code><span>{facts.calculationConvention}</span></dd></div>
+      <div><dt>八相分类规则</dt><dd><code>{facts.classificationRuleId}</code><span>{facts.phaseClassificationConvention}</span></dd></div>
+    </dl>
+  </section>;
+}
+
 export default function ProfessionalBaziPanel({
   facts,
-  birthSolarTermFacts
+  birthSolarTermFacts,
+  birthMoonPhaseFacts
 }: {
   facts: ProfessionalBaziFactsV1;
   birthSolarTermFacts: BaziBirthSolarTermFactsV1;
+  birthMoonPhaseFacts: BaziBirthMoonPhaseFactsV1;
 }) {
   const allTraceFacts = traceFacts(facts);
   const catalogSources = [...new Set(allTraceFacts
@@ -238,6 +301,8 @@ export default function ProfessionalBaziPanel({
 
     <SolarTermFactsSection facts={birthSolarTermFacts} />
 
+    <MoonPhaseFactsSection facts={birthMoonPhaseFacts} />
+
     <section className="professional-current-time" aria-labelledby="professional-current-time-title">
       <header>
         <div><span>现在进入的时间条件</span><h3 id="professional-current-time-title">当前时间事实</h3></div>
@@ -267,6 +332,8 @@ export default function ProfessionalBaziPanel({
         <p><b>真太阳时</b><span>{facts.calculation.trueSolarTimeApplied.value ? "已使用" : "未使用"}</span></p>
         <p><b>出生节气</b><span>{birthSolarTermFacts.calculationConvention}</span></p>
         <p><b>节气算法版本</b><span>{birthSolarTermFacts.algorithmVersion}</span></p>
+        <p><b>出生月相</b><span>{birthMoonPhaseFacts.calculationConvention}</span></p>
+        <p><b>月相算法版本</b><span>{birthMoonPhaseFacts.algorithmVersion}</span></p>
       </div>
       <div className="professional-source-kinds">
         <p><b>传统历法规则</b><span>记录历法口径与传统目录来源。</span></p>
@@ -277,10 +344,15 @@ export default function ProfessionalBaziPanel({
 
     <section className="professional-technical-trace" aria-labelledby="professional-technical-trace-title">
       <header><span>来源标识</span><h3 id="professional-technical-trace-title">技术追溯</h3></header>
-      <div><section><b>传统目录 ID</b>{catalogSources.map(item => <code key={item}>{item}</code>)}</section>
-      <section><b>项目实现 ID</b>{codeSources.map(item => <code key={item}>{item}</code>)}</section>
-      <section><b>出生节气来源规则</b><code>{birthSolarTermFacts.sourceRuleId}</code></section>
-      <section><b>出生节气事实版本</b><code>{birthSolarTermFacts.schemaVersion}</code></section></div>
+      <div>
+        <section><b>传统目录 ID</b>{catalogSources.map(item => <code key={item}>{item}</code>)}</section>
+        <section><b>项目实现 ID</b>{codeSources.map(item => <code key={item}>{item}</code>)}</section>
+        <section><b>出生节气来源规则</b><code>{birthSolarTermFacts.sourceRuleId}</code></section>
+        <section><b>出生节气事实版本</b><code>{birthSolarTermFacts.schemaVersion}</code></section>
+        <section><b>出生月相天文来源规则</b><code>{birthMoonPhaseFacts.astronomySourceRuleId}</code></section>
+        <section><b>出生月相八相分类规则</b><code>{birthMoonPhaseFacts.classificationRuleId}</code></section>
+        <section><b>出生月相事实版本</b><code>{birthMoonPhaseFacts.schemaVersion}</code></section>
+      </div>
     </section>
   </div>;
 }

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import BaziMainlinePanel from "@/components/BaziMainlinePanel";
 import ProfessionalBaziPanel from "@/components/ProfessionalBaziPanel";
 import { computeBazi } from "@/lib/domain/bazi";
+import { buildBaziBirthMoonPhaseFacts } from "@/lib/domain/baziBirthMoonPhaseFacts";
 import { buildBaziBirthSolarTermFacts } from "@/lib/domain/baziBirthSolarTermFacts";
 import { buildBaziMainlineNarrative } from "@/lib/domain/baziMainlineNarrative";
 import type { ProfessionalBaziFactsV1 } from "@/lib/domain/professionalBaziFacts";
@@ -142,6 +143,10 @@ export function BaziWorkspace({
     () => chart ? buildBaziBirthSolarTermFacts(chart) : null,
     [chart]
   );
+  const birthMoonPhaseFacts = useMemo(
+    () => chart ? buildBaziBirthMoonPhaseFacts(chart) : null,
+    [chart]
+  );
   const mainlineNarrative = useMemo(
     () => buildBaziMainlineNarrative(professionalFacts, birthSolarTermFacts),
     [professionalFacts, birthSolarTermFacts]
@@ -213,8 +218,12 @@ export function BaziWorkspace({
           <BaziMainlinePanel narrative={mainlineNarrative} />
         )}
 
-        {baziView === "professional" && professionalFacts && birthSolarTermFacts && (
-          <ProfessionalBaziPanel facts={professionalFacts} birthSolarTermFacts={birthSolarTermFacts} />
+        {baziView === "professional" && professionalFacts && birthSolarTermFacts && birthMoonPhaseFacts && (
+          <ProfessionalBaziPanel
+            facts={professionalFacts}
+            birthSolarTermFacts={birthSolarTermFacts}
+            birthMoonPhaseFacts={birthMoonPhaseFacts}
+          />
         )}
 
         <PlateSaveControl

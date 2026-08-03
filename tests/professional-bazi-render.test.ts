@@ -1,9 +1,12 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import ProfessionalBaziPanel from "@/components/ProfessionalBaziPanel";
+import ProfessionalBaziPanel, { MOON_PHASE_LABELS } from "@/components/ProfessionalBaziPanel";
+import BaziMainlinePanel from "@/components/BaziMainlinePanel";
 import { computeBazi } from "@/lib/domain/bazi";
+import { buildBaziBirthMoonPhaseFacts } from "@/lib/domain/baziBirthMoonPhaseFacts";
 import { buildBaziBirthSolarTermFacts } from "@/lib/domain/baziBirthSolarTermFacts";
+import { buildBaziMainlineNarrative } from "@/lib/domain/baziMainlineNarrative";
 import { buildProfessionalBaziFactsOnServer } from "@/lib/professionalBaziServer";
 
 describe("Professional Bazi mobile matrix render", () => {
@@ -24,7 +27,8 @@ describe("Professional Bazi mobile matrix render", () => {
     const markup = renderToStaticMarkup(
       createElement(ProfessionalBaziPanel, {
         facts: professionalFacts,
-        birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart)
+        birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart),
+        birthMoonPhaseFacts: buildBaziBirthMoonPhaseFacts(chart)
       })
     );
 
@@ -54,7 +58,8 @@ describe("Professional Bazi mobile matrix render", () => {
     const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, new Date("2026-07-29T07:18:42.321Z"));
     const markup = renderToStaticMarkup(createElement(ProfessionalBaziPanel, {
       facts: professionalFacts,
-      birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart)
+      birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart),
+      birthMoonPhaseFacts: buildBaziBirthMoonPhaseFacts(chart)
     }));
 
     expect(markup).toContain("出生节气事实");
@@ -65,7 +70,7 @@ describe("Professional Bazi mobile matrix render", () => {
     expect(markup).toContain("Asia/Shanghai");
     expect(markup).toContain("lunar-typescript@1.8.6");
     expect(markup).toContain("dependency:lunar-typescript:getPrevJieQi:getNextJieQi");
-    const order = ["四柱事实矩阵", "藏干事实", "参照点与结构关系", "出生节气事实", "当前时间事实", "计算口径与来源", "技术追溯"]
+    const order = ["四柱事实矩阵", "藏干事实", "参照点与结构关系", "出生节气事实", "出生月相事实", "当前时间事实", "计算口径与来源", "技术追溯"]
       .map(title => markup.indexOf(`>${title}<`));
     expect(order.every(position => position > -1)).toBe(true);
     expect(order).toEqual([...order].sort((first, second) => first - second));
@@ -88,7 +93,8 @@ describe("Professional Bazi mobile matrix render", () => {
     const markup = renderToStaticMarkup(
       createElement(ProfessionalBaziPanel, {
         facts: professionalFacts,
-        birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart)
+        birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart),
+        birthMoonPhaseFacts: buildBaziBirthMoonPhaseFacts(chart)
       })
     );
 
@@ -114,12 +120,119 @@ describe("Professional Bazi mobile matrix render", () => {
     const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, new Date("2026-07-29T07:18:42.321Z"));
     const markup = renderToStaticMarkup(createElement(ProfessionalBaziPanel, {
       facts: professionalFacts,
-      birthSolarTermFacts: buildBaziBirthSolarTermFacts(invalidChart)
+      birthSolarTermFacts: buildBaziBirthSolarTermFacts(invalidChart),
+      birthMoonPhaseFacts: buildBaziBirthMoonPhaseFacts(chart)
     }));
 
     expect(markup).toContain("确定性");
     expect(markup).toContain("无法计算");
     expect(markup).toContain("原因");
     expect(markup).toContain("计算失败");
+  });
+
+  it("renders confirmed moon-phase facts and the explicit Chinese phase label", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "2024-03-17",
+      birthTime: "12:11",
+      birthLocation: "虚构月相测试城市",
+      timezone: "Asia/Shanghai",
+      unknownTime: false
+    });
+    const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, new Date("2026-07-29T07:18:42.321Z"));
+    const markup = renderToStaticMarkup(createElement(ProfessionalBaziPanel, {
+      facts: professionalFacts,
+      birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart),
+      birthMoonPhaseFacts: buildBaziBirthMoonPhaseFacts(chart)
+    }));
+
+    expect(MOON_PHASE_LABELS).toEqual({
+      new_moon: "朔",
+      waxing_crescent: "蛾眉月（盈）",
+      first_quarter: "上弦",
+      waxing_gibbous: "盈凸月",
+      full_moon: "望",
+      waning_gibbous: "亏凸月",
+      last_quarter: "下弦",
+      waning_crescent: "残月"
+    });
+    for (const value of [
+      "出生月相事实", "月相分类", "上弦", "first_quarter", "日月黄经差", "90.002°",
+      "月龄", "6.7990 日", "上一次朔时", "下一次朔时", "本次朔望月长度",
+      "29.3892 日", "Asia/Shanghai", "lunar-typescript@1.8.6",
+      "dependency:lunar-typescript:ShouXingUtil:msaLon:msaLonT:dtT",
+      "project:eight-phase-elongation-sectors-v1"
+    ]) expect(markup).toContain(value);
+  });
+
+  it("renders two unknown-time candidates without asserting one moon phase", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "2024-03-12",
+      birthTime: "",
+      birthLocation: "虚构月相测试城市",
+      timezone: "Asia/Shanghai",
+      unknownTime: true
+    });
+    const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, new Date("2026-07-29T07:18:42.321Z"));
+    const markup = renderToStaticMarkup(createElement(ProfessionalBaziPanel, {
+      facts: professionalFacts,
+      birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart),
+      birthMoonPhaseFacts: buildBaziBirthMoonPhaseFacts(chart)
+    }));
+
+    expect(markup).toContain("出生月相事实");
+    expect(markup).toContain("不确定");
+    expect(markup).toContain("当地民用日期起点候选");
+    expect(markup).toContain("当地民用日期终点候选");
+    expect(markup.match(/采样时刻 ·/g)).toHaveLength(2);
+    expect(markup.match(/日月黄经差 ·/g)).toHaveLength(2);
+    expect(markup.match(/月龄 ·/g)).toHaveLength(2);
+    expect(markup).toContain("月相 · 朔（new_moon）");
+    expect(markup).toContain("月相 · 蛾眉月（盈）（waxing_crescent）");
+    expect(markup).not.toContain("<dt>月相分类</dt>");
+  });
+
+  it("renders unavailable moon-phase status with no candidates or inferred phase", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "2024-03-17",
+      birthTime: "12:11",
+      birthLocation: "虚构月相测试城市",
+      timezone: "Asia/Shanghai",
+      unknownTime: false
+    });
+    const invalidChart = structuredClone(chart);
+    invalidChart.inputSnapshot.birthDate = "invalid";
+    const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, new Date("2026-07-29T07:18:42.321Z"));
+    const markup = renderToStaticMarkup(createElement(ProfessionalBaziPanel, {
+      facts: professionalFacts,
+      birthSolarTermFacts: buildBaziBirthSolarTermFacts(chart),
+      birthMoonPhaseFacts: buildBaziBirthMoonPhaseFacts(invalidChart)
+    }));
+
+    expect(markup).toContain("出生月相事实");
+    expect(markup).toContain("无法计算");
+    expect(markup).toContain("计算失败原因");
+    expect(markup).toContain("计算失败");
+    expect(markup).not.toContain("当地民用日期起点候选");
+    expect(markup).not.toContain("<dt>月相分类</dt>");
+  });
+
+  it("keeps all moon-phase facts out of the ordinary analysis markup", () => {
+    const chart = computeBazi({
+      gender: "other",
+      birthDate: "2024-03-17",
+      birthTime: "12:11",
+      birthLocation: "虚构月相测试城市",
+      timezone: "Asia/Shanghai",
+      unknownTime: false
+    });
+    const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, new Date("2026-07-29T07:18:42.321Z"));
+    const narrative = buildBaziMainlineNarrative(professionalFacts, buildBaziBirthSolarTermFacts(chart));
+    expect(narrative).not.toBeNull();
+    const markup = renderToStaticMarkup(createElement(BaziMainlinePanel, { narrative: narrative! }));
+
+    expect(markup).not.toMatch(/出生月相事实|月相分类|日月黄经差|月龄|上一次朔时|下一次朔时|朔望月/);
   });
 });

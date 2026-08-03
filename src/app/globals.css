@@ -447,26 +447,31 @@ html, body {
 .professional-origin,
 .professional-supplement,
 .professional-solar-term,
+.professional-moon-phase,
 .professional-current-time,
 .professional-source,
 .professional-technical-trace { @apply overflow-hidden rounded-2xl border border-mist bg-white/75 shadow-sm; }
 .professional-origin > header,
 .professional-solar-term > header,
+.professional-moon-phase > header,
 .professional-current-time > header { @apply flex items-end justify-between gap-3 border-b border-mist bg-rice/55 px-4 py-3; }
 .professional-origin > header span,
 .professional-supplement > header span,
 .professional-solar-term > header span,
+.professional-moon-phase > header span,
 .professional-source > header span,
 .professional-technical-trace > header span,
 .professional-current-time > header span { @apply text-[10px] tracking-wider text-cinnabar; }
 .professional-origin > header h3,
 .professional-supplement > header h3,
 .professional-solar-term > header h3,
+.professional-moon-phase > header h3,
 .professional-source > header h3,
 .professional-technical-trace > header h3,
 .professional-current-time > header h3 { @apply mt-0.5 font-serif text-lg font-normal; }
 .professional-origin > header small,
 .professional-solar-term > header small,
+.professional-moon-phase > header small,
 .professional-current-time > header small { @apply max-w-40 text-right text-[9px] leading-4 text-ink/40; }
 
 .professional-matrix { display: grid; grid-template-columns: minmax(2.65rem,.55fr) repeat(4,minmax(0,1fr)); }
@@ -542,6 +547,15 @@ html, body {
 .professional-solar-term-grid dd { @apply mt-1 break-words text-sm leading-6 text-ink/70; }
 .professional-solar-term-grid dd b { @apply mr-2 font-serif text-xl font-normal; }
 .professional-solar-term-grid dd span { @apply block text-xs text-ink/55; }
+
+.professional-moon-phase-grid { @apply grid gap-px bg-mist sm:grid-cols-2; }
+.professional-moon-phase-grid > div { @apply flex min-h-20 min-w-0 flex-col justify-center bg-white/90 px-4 py-3; }
+.professional-moon-phase-grid dt { @apply text-[9px] tracking-wider text-cinnabar; }
+.professional-moon-phase-grid dd { @apply mt-1 min-w-0 break-words text-sm leading-6 text-ink/70; }
+.professional-moon-phase-grid dd b { @apply mr-2 font-serif text-xl font-normal; }
+.professional-moon-phase-grid dd span { @apply block text-xs leading-5 text-ink/55; }
+.professional-moon-phase-grid code { @apply break-all rounded bg-rice px-1.5 py-1 text-[9px] leading-4 text-ink/55; }
+.professional-moon-phase-candidate { @apply sm:col-span-2; }
 
 .professional-time-grid { @apply grid gap-2 p-3 sm:grid-cols-3; }
 .professional-time-grid article { @apply flex min-h-44 flex-col rounded-xl border border-mist bg-rice/35 p-3; }
