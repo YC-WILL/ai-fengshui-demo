@@ -156,9 +156,10 @@ export function BaziWorkspace({
     () => buildBaziMainlineNarrative(
       professionalFacts,
       birthSolarTermFacts,
-      birthMoonPhaseFacts
+      birthMoonPhaseFacts,
+      birthXiuFacts
     ),
-    [professionalFacts, birthSolarTermFacts, birthMoonPhaseFacts]
+    [professionalFacts, birthSolarTermFacts, birthMoonPhaseFacts, birthXiuFacts]
   );
   const [baziView, setBaziView] = useState<"analysis" | "professional">("analysis");
   const [editingProfile, setEditingProfile] = useState(false);

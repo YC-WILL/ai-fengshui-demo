@@ -4,6 +4,7 @@ import {
 } from "./baziDirectNarratives";
 import type { BaziBirthSolarTermFactsV1 } from "./baziBirthSolarTermFacts";
 import type { BaziBirthMoonPhaseFactsV1 } from "./baziBirthMoonPhaseFacts";
+import type { BaziBirthXiuFactsV1 } from "./baziBirthXiuFacts";
 import {
   selectBaziMoonPhaseNarrative,
   type BaziMoonPhaseNarrativeSelection
@@ -12,6 +13,10 @@ import {
   selectBaziSolarTermNarrative,
   type BaziSolarTermNarrativeSelection
 } from "./baziSolarTermNarratives";
+import {
+  selectBaziXiuNarrative,
+  type BaziXiuNarrativeSelection
+} from "./baziXiuNarratives";
 import { ALL_ELEMENTS, type Element, type YinYang } from "./elements";
 import type {
   ProfessionalBaziFact,
@@ -113,6 +118,7 @@ export interface BaziMainlineNarrative {
   directNarrative: BaziDirectNarrativeSelection;
   solarTermNarrative: BaziSolarTermNarrativeSelection;
   moonPhaseNarrative: BaziMoonPhaseNarrativeSelection;
+  xiuNarrative: BaziXiuNarrativeSelection;
   themes: ReadyBaziAnalysisTheme[];
 }
 
@@ -566,13 +572,14 @@ function buildNatalBranchRelationTheme(
 }
 
 /**
- * 只整理 ProfessionalBaziFactsV1、独立出生节气事实合同与出生月相事实合同已准入的内容。
+ * 只整理 ProfessionalBaziFactsV1 与独立出生节气、月相、日值二十八宿事实合同已准入的内容。
  * 本函数不计算新命理事实，不生成解释文本，也不会用不确定事实继续推导。
  */
 export function buildBaziMainlineNarrative(
   facts: ProfessionalBaziFactsV1 | null,
   birthSolarTermFacts: BaziBirthSolarTermFactsV1 | null = null,
-  birthMoonPhaseFacts: BaziBirthMoonPhaseFactsV1 | null = null
+  birthMoonPhaseFacts: BaziBirthMoonPhaseFactsV1 | null = null,
+  birthXiuFacts: BaziBirthXiuFactsV1 | null = null
 ): BaziMainlineNarrative | null {
   if (!facts) return null;
 
@@ -592,6 +599,7 @@ export function buildBaziMainlineNarrative(
     directNarrative: selectBaziDirectNarrative(facts),
     solarTermNarrative: selectBaziSolarTermNarrative(birthSolarTermFacts),
     moonPhaseNarrative: selectBaziMoonPhaseNarrative(birthMoonPhaseFacts),
+    xiuNarrative: selectBaziXiuNarrative(birthXiuFacts),
     themes
   };
 }

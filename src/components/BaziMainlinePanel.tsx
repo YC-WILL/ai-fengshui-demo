@@ -229,6 +229,19 @@ function MoonPhaseNarrative({ narrative }: { narrative: BaziMainlineNarrative })
   );
 }
 
+function XiuNarrative({ narrative }: { narrative: BaziMainlineNarrative }) {
+  if (narrative.xiuNarrative.status !== "available") return null;
+
+  return (
+    <section className="bazi-direct-section bazi-direct-xiu" aria-labelledby="bazi-direct-xiu-title">
+      <h3 id="bazi-direct-xiu-title">出生日值二十八宿</h3>
+      <div className="bazi-direct-narrative" aria-label="出生日值二十八宿正文">
+        {narrative.xiuNarrative.entry.narrative.split("\n\n").map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+      </div>
+    </section>
+  );
+}
+
 function FactTheme({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   const presentation = {
     "yin-yang": {
@@ -284,6 +297,7 @@ export default function BaziMainlinePanel({
           <FactTheme key={theme.id} theme={theme} />
         ))}
         <MoonPhaseNarrative narrative={narrative} />
+        <XiuNarrative narrative={narrative} />
         {narrative.themes.filter(theme => theme.id !== "yin-yang").map(theme => (
           <FactTheme key={theme.id} theme={theme} />
         ))}
