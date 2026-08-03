@@ -4,6 +4,7 @@ import type {
   ReadyBaziAnalysisTheme
 } from "@/lib/domain/baziMainlineNarrative";
 import type { Element } from "@/lib/domain/elements";
+import type { MoonPhaseName } from "@/lib/domain/baziBirthMoonPhaseFacts";
 
 const ELEMENTS: Element[] = ["木", "火", "土", "金", "水"];
 
@@ -165,6 +166,69 @@ function SolarTermNarrative({ narrative }: { narrative: BaziMainlineNarrative })
   );
 }
 
+const MOON_PHASE_GRAPHIC_DESCRIPTIONS: Record<MoonPhaseName, string> = {
+  new_moon: "月面几乎不可见",
+  waxing_crescent: "右侧出现纤细亮面",
+  first_quarter: "右半月面明亮",
+  waxing_gibbous: "右侧大部分月面明亮",
+  full_moon: "整个月面明亮",
+  waning_gibbous: "左侧大部分月面明亮",
+  last_quarter: "左半月面明亮",
+  waning_crescent: "左侧留下纤细亮面"
+};
+
+function MoonPhaseGraphic({ phase, label }: { phase: MoonPhaseName; label: string }) {
+  const clipId = `bazi-moon-disc-${phase}`;
+  const isLightBase = phase === "full_moon"
+    || phase === "waxing_gibbous"
+    || phase === "waning_gibbous";
+
+  return (
+    <svg
+      className="bazi-moon-phase-graphic"
+      viewBox="0 0 100 100"
+      role="img"
+      aria-label={`${label}月相图：${MOON_PHASE_GRAPHIC_DESCRIPTIONS[phase]}`}
+      data-phase={phase}
+    >
+      <title>{`${label}月相图`}</title>
+      <defs><clipPath id={clipId}><circle cx="50" cy="50" r="40" /></clipPath></defs>
+      <circle className={isLightBase ? "is-light" : "is-shadow"} cx="50" cy="50" r="40" />
+      {phase === "waxing_crescent" && <circle className="is-light" cx="80" cy="50" r="40" clipPath={`url(#${clipId})`} />}
+      {phase === "first_quarter" && <rect className="is-light" x="50" y="10" width="40" height="80" clipPath={`url(#${clipId})`} />}
+      {phase === "waxing_gibbous" && <circle className="is-shadow" cx="20" cy="50" r="40" clipPath={`url(#${clipId})`} />}
+      {phase === "waning_gibbous" && <circle className="is-shadow" cx="80" cy="50" r="40" clipPath={`url(#${clipId})`} />}
+      {phase === "last_quarter" && <rect className="is-light" x="10" y="10" width="40" height="80" clipPath={`url(#${clipId})`} />}
+      {phase === "waning_crescent" && <circle className="is-light" cx="20" cy="50" r="40" clipPath={`url(#${clipId})`} />}
+      <circle className="is-outline" cx="50" cy="50" r="40" />
+    </svg>
+  );
+}
+
+function MoonPhaseNarrative({ narrative }: { narrative: BaziMainlineNarrative }) {
+  if (narrative.moonPhaseNarrative.status !== "available") return null;
+  const selection = narrative.moonPhaseNarrative;
+
+  return (
+    <section className="bazi-direct-section bazi-direct-moon-phase" aria-labelledby="bazi-direct-moon-phase-title">
+      <h3 id="bazi-direct-moon-phase-title">月相</h3>
+      <div className="bazi-moon-phase-summary">
+        <MoonPhaseGraphic phase={selection.entry.phase} label={selection.entry.label} />
+        <div>
+          <b>{selection.entry.label}</b>
+          <dl>
+            <div><dt>月龄</dt><dd>{selection.moonAgeDays.toFixed(4)} 日</dd></div>
+            <div><dt>日月黄经差</dt><dd>{selection.elongationDegrees.toFixed(3)}°</dd></div>
+          </dl>
+        </div>
+      </div>
+      <div className="bazi-direct-narrative" aria-label="出生月相正文">
+        {selection.entry.narrative.split("\n\n").map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+      </div>
+    </section>
+  );
+}
+
 function FactTheme({ theme }: { theme: ReadyBaziAnalysisTheme }) {
   const presentation = {
     "yin-yang": {
@@ -216,7 +280,11 @@ export default function BaziMainlinePanel({
         <Foundation narrative={narrative} />
         <DirectNarrative narrative={narrative} />
         <SolarTermNarrative narrative={narrative} />
-        {narrative.themes.map(theme => (
+        {narrative.themes.filter(theme => theme.id === "yin-yang").map(theme => (
+          <FactTheme key={theme.id} theme={theme} />
+        ))}
+        <MoonPhaseNarrative narrative={narrative} />
+        {narrative.themes.filter(theme => theme.id !== "yin-yang").map(theme => (
           <FactTheme key={theme.id} theme={theme} />
         ))}
       </div>

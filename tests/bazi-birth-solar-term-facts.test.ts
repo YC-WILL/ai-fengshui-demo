@@ -288,6 +288,6 @@ describe("Bazi birth solar-term reviewed narrative", () => {
     });
     const workspaceSource = readFileSync("src/components/MethodWorkspaces.tsx", "utf8");
     expect(workspaceSource).toContain("buildBaziBirthSolarTermFacts(chart)");
-    expect(workspaceSource).toContain("buildBaziMainlineNarrative(professionalFacts, birthSolarTermFacts)");
+    expect(workspaceSource).toContain("birthMoonPhaseFacts");
   });
 });

@@ -277,6 +277,18 @@ html, body {
 .bazi-direct-narrative p { @apply font-serif text-base leading-8 text-ink/80; }
 .bazi-direct-solar-term { @apply bg-rice/25; }
 .bazi-direct-solar-term > p { @apply mt-4 border-l-2 border-gold/55 pl-4 font-serif text-base leading-8 text-ink/80; }
+.bazi-direct-moon-phase { @apply bg-rice/25; }
+.bazi-moon-phase-summary { @apply mt-4 grid grid-cols-[5.5rem_minmax(0,1fr)] items-center gap-4; }
+.bazi-moon-phase-graphic { @apply h-[5.5rem] w-[5.5rem] shrink-0; }
+.bazi-moon-phase-graphic .is-shadow { fill: #27313a; }
+.bazi-moon-phase-graphic .is-light { fill: #f2e7bd; }
+.bazi-moon-phase-graphic .is-outline { fill: none; stroke: rgba(173, 133, 62, 0.7); stroke-width: 1.5; }
+.bazi-moon-phase-summary > div > b { @apply font-serif text-2xl font-normal text-ink/85; }
+.bazi-moon-phase-summary dl { @apply mt-2 grid gap-1 text-xs; }
+.bazi-moon-phase-summary dl > div { @apply flex flex-wrap items-baseline gap-x-2; }
+.bazi-moon-phase-summary dt { @apply text-ink/40; }
+.bazi-moon-phase-summary dd { @apply text-ink/65; }
+.bazi-direct-moon-phase .bazi-direct-narrative { @apply mt-5; }
 .bazi-direct-description { @apply mt-2 text-[13px] leading-6 text-ink/60; }
 .bazi-mainline-note { @apply mt-3 border-t border-dashed border-gold/40 pt-3 text-[11px] leading-5 text-ink/50; }
 .bazi-yin-yang-summary { @apply mt-4 grid gap-4 sm:grid-cols-2; }

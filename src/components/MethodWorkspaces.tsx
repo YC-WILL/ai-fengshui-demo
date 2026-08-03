@@ -148,8 +148,12 @@ export function BaziWorkspace({
     [chart]
   );
   const mainlineNarrative = useMemo(
-    () => buildBaziMainlineNarrative(professionalFacts, birthSolarTermFacts),
-    [professionalFacts, birthSolarTermFacts]
+    () => buildBaziMainlineNarrative(
+      professionalFacts,
+      birthSolarTermFacts,
+      birthMoonPhaseFacts
+    ),
+    [professionalFacts, birthSolarTermFacts, birthMoonPhaseFacts]
   );
   const [baziView, setBaziView] = useState<"analysis" | "professional">("analysis");
   const [editingProfile, setEditingProfile] = useState(false);

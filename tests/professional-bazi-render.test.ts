@@ -219,7 +219,7 @@ describe("Professional Bazi mobile matrix render", () => {
     expect(markup).not.toContain("<dt>月相分类</dt>");
   });
 
-  it("keeps all moon-phase facts out of the ordinary analysis markup", () => {
+  it("keeps professional moon-phase trace fields out of the ordinary analysis markup", () => {
     const chart = computeBazi({
       gender: "other",
       birthDate: "2024-03-17",
@@ -229,10 +229,17 @@ describe("Professional Bazi mobile matrix render", () => {
       unknownTime: false
     });
     const { professionalFacts } = buildProfessionalBaziFactsOnServer(chart, new Date("2026-07-29T07:18:42.321Z"));
-    const narrative = buildBaziMainlineNarrative(professionalFacts, buildBaziBirthSolarTermFacts(chart));
+    const narrative = buildBaziMainlineNarrative(
+      professionalFacts,
+      buildBaziBirthSolarTermFacts(chart),
+      buildBaziBirthMoonPhaseFacts(chart)
+    );
     expect(narrative).not.toBeNull();
     const markup = renderToStaticMarkup(createElement(BaziMainlinePanel, { narrative: narrative! }));
 
-    expect(markup).not.toMatch(/出生月相事实|月相分类|日月黄经差|月龄|上一次朔时|下一次朔时|朔望月/);
+    expect(markup).toContain(">月相<");
+    expect(markup).toContain("日月黄经差");
+    expect(markup).toContain("月龄");
+    expect(markup).not.toMatch(/出生月相事实|月相分类|上一次朔时|下一次朔时|朔望月|算法版本|天文来源规则|八相分类规则|技术追溯/);
   });
 });

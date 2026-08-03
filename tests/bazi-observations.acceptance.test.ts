@@ -107,7 +107,14 @@ describe("bazi observation acceptance matrix", () => {
     expect(observationSource).not.toMatch(/channelScore|明干.{0,20}[+*]|本气.{0,20}[+*]|中气.{0,20}[+*]|余气.{0,20}[+*]/);
     expect(workspaceSource).not.toMatch(/我的命局主线|这张盘的力量怎样流动|本命盘独有的力量流动[^<]*$/m);
     expect(mainlineSource).not.toMatch(/只呈现可以复算的盘面事实|不含旺衰、喜忌、格局与吉凶判断/);
-    const directReadingOrder = ["<Foundation", "<DirectNarrative", "<SolarTermNarrative", "narrative.themes.map"]
+    const directReadingOrder = [
+      "<Foundation",
+      "<DirectNarrative",
+      "<SolarTermNarrative",
+      'theme.id === "yin-yang"',
+      "<MoonPhaseNarrative",
+      'theme.id !== "yin-yang"'
+    ]
       .map(marker => mainlineSource.indexOf(marker));
     expect(directReadingOrder.every(position => position > -1)).toBe(true);
     expect(directReadingOrder).toEqual([...directReadingOrder].sort((first, second) => first - second));
