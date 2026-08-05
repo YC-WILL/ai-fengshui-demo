@@ -2695,6 +2695,11 @@ export type BaziDirectNarrativeSelection =
         | "combination_not_reviewed";
     };
 
+export type BaziDirectNarrativeFacts = Pick<
+  ProfessionalBaziFactsV1,
+  "dayMaster" | "monthCommand" | "uncertainty"
+>;
+
 function isConfirmedValue<T>(
   fact: ProfessionalBaziFact<T | null>
 ): fact is ProfessionalBaziFact<T> {
@@ -2702,7 +2707,7 @@ function isConfirmedValue<T>(
 }
 
 export function selectBaziDirectNarrative(
-  facts: ProfessionalBaziFactsV1
+  facts: BaziDirectNarrativeFacts
 ): BaziDirectNarrativeSelection {
   if (facts.uncertainty.monthPillarCandidates.value.length > 0) {
     return { status: "not_available", reason: "month_pillar_uncertain" };

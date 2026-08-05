@@ -61,10 +61,31 @@ export interface BaziElementSummary {
   notSeenElements: Element[];
 }
 
+export interface BaziVisibleElementSummary {
+  coverageCount: number;
+  counts: Record<Element, number>;
+  sources: BaziVisibleElementPillarSource[];
+}
+
+export interface BaziVisibleElementPillarSource {
+  pillarIndex: number;
+  position: string;
+  stem: ProfessionalBaziFact<Element>;
+  branch: ProfessionalBaziFact<Element>;
+}
+
 export interface BaziYinYangSummary {
   coverageCount: number;
   counts: Record<YinYang, number>;
   ratios: Record<YinYang, number>;
+  sources: BaziYinYangPillarSource[];
+}
+
+export interface BaziYinYangPillarSource {
+  pillarIndex: number;
+  position: string;
+  stem: ProfessionalBaziFact<YinYang>;
+  branch: ProfessionalBaziFact<YinYang>;
 }
 
 export interface BaziTenGodPositionSummary {
@@ -319,32 +340,27 @@ function buildDayMasterMonthTheme(
 function buildFiveElementTheme(
   facts: ProfessionalBaziFactsV1
 ): ReadyBaziAnalysisTheme | null {
-  const available = confirmedPillars(facts);
-  if (!available.length) return null;
-
-  const derivedCounts: Record<Element, number> = {
-    木: 0,
-    火: 0,
-    土: 0,
-    金: 0,
-    水: 0
-  };
-  available.forEach(({ pillar }) => {
-    if (pillar.stemElement.value) derivedCounts[pillar.stemElement.value] += 1;
-    if (pillar.branchElement.value) derivedCounts[pillar.branchElement.value] += 1;
-  });
+  const visibleSummary = buildConfirmedVisibleElementSummary(facts);
+  if (!visibleSummary) return null;
+  const available = visibleSummary.sources.map(source => ({
+    pillar: facts.pillars[source.pillarIndex],
+    index: source.pillarIndex
+  }));
+  const hasCandidatePillars = (
+    facts.uncertainty.yearPillarCandidates.value.length > 0
+    || facts.uncertainty.monthPillarCandidates.value.length > 0
+  );
   const contractCountsReady = ALL_ELEMENTS.every(element => (
     facts.visibleElementCounts[element].certainty === "confirmed"
     && facts.visibleElementCounts[element].value !== null
-  ));
+  )) && !hasCandidatePillars;
   const counts = contractCountsReady
     ? Object.fromEntries(ALL_ELEMENTS.map(element => [
         element,
         facts.visibleElementCounts[element].value as number
       ])) as Record<Element, number>
-    : derivedCounts;
-  const coverageCount = Object.values(counts).reduce((total, count) => total + count, 0);
-  if (coverageCount === 0) return null;
+    : visibleSummary.counts;
+  const coverageCount = visibleSummary.coverageCount;
 
   const visibleElements = ALL_ELEMENTS.filter(element => counts[element] > 0);
   const hiddenElements = new Set<Element>();
@@ -410,39 +426,109 @@ function buildFiveElementTheme(
   };
 }
 
-function buildYinYangTheme(
-  facts: ProfessionalBaziFactsV1
-): ReadyBaziAnalysisTheme | null {
-  const available = facts.pillars
+export function buildConfirmedVisibleElementSummary(
+  facts: Pick<ProfessionalBaziFactsV1, "pillars" | "uncertainty">
+): BaziVisibleElementSummary | null {
+  const candidatePositions = new Set<string>([
+    ...(facts.uncertainty.yearPillarCandidates.value.length ? ["年柱"] : []),
+    ...(facts.uncertainty.monthPillarCandidates.value.length ? ["月柱"] : [])
+  ]);
+  const sources = facts.pillars
     .map((pillar, index) => ({ pillar, index }))
-    .filter(({ pillar }) => (
-      pillar.ganzhi.certainty === "confirmed"
-      && isConfirmedValue(pillar.stemYinYang)
-      && isConfirmedValue(pillar.branchYinYang)
-    ));
-  if (!available.length) return null;
+    .flatMap(({ pillar, index }): BaziVisibleElementPillarSource[] => {
+      if (
+        candidatePositions.has(pillar.position.value)
+        || pillar.ganzhi.certainty !== "confirmed"
+        || !isConfirmedValue(pillar.stemElement)
+        || !isConfirmedValue(pillar.branchElement)
+      ) return [];
+      return [{
+        pillarIndex: index,
+        position: pillar.position.value,
+        stem: pillar.stemElement,
+        branch: pillar.branchElement
+      }];
+    });
+  if (!sources.length) return null;
+  const counts: Record<Element, number> = {
+    木: 0,
+    火: 0,
+    土: 0,
+    金: 0,
+    水: 0
+  };
+  sources.forEach(source => {
+    counts[source.stem.value] += 1;
+    counts[source.branch.value] += 1;
+  });
+  return {
+    coverageCount: sources.length * 2,
+    counts,
+    sources
+  };
+}
+
+export function buildConfirmedVisibleYinYangSummary(
+  facts: Pick<ProfessionalBaziFactsV1, "pillars" | "uncertainty">
+): BaziYinYangSummary | null {
+  const candidatePositions = new Set<string>([
+    ...(facts.uncertainty.yearPillarCandidates.value.length ? ["年柱"] : []),
+    ...(facts.uncertainty.monthPillarCandidates.value.length ? ["月柱"] : [])
+  ]);
+  const sources = facts.pillars
+    .map((pillar, index) => ({ pillar, index }))
+    .flatMap(({ pillar, index }): BaziYinYangPillarSource[] => {
+      if (
+        candidatePositions.has(pillar.position.value)
+        ||
+        pillar.ganzhi.certainty !== "confirmed"
+        || !isConfirmedValue(pillar.stemYinYang)
+        || !isConfirmedValue(pillar.branchYinYang)
+      ) return [];
+      return [{
+        pillarIndex: index,
+        position: pillar.position.value,
+        stem: pillar.stemYinYang,
+        branch: pillar.branchYinYang
+      }];
+    });
+  if (!sources.length) return null;
 
   const counts: Record<YinYang, number> = { 阳: 0, 阴: 0 };
-  available.forEach(({ pillar }) => {
-    counts[pillar.stemYinYang.value!] += 1;
-    counts[pillar.branchYinYang.value!] += 1;
+  sources.forEach(source => {
+    counts[source.stem.value] += 1;
+    counts[source.branch.value] += 1;
   });
   const coverageCount = counts.阳 + counts.阴;
   if (coverageCount === 0) return null;
   const yangRatio = Math.round((counts.阳 / coverageCount) * 100);
 
-  const pillarEvidence = available.flatMap(({ pillar, index }) => [
+  return {
+    coverageCount,
+    counts,
+    ratios: { 阳: yangRatio, 阴: 100 - yangRatio },
+    sources
+  };
+}
+
+function buildYinYangTheme(
+  facts: ProfessionalBaziFactsV1
+): ReadyBaziAnalysisTheme | null {
+  const summary = buildConfirmedVisibleYinYangSummary(facts);
+  if (!summary) return null;
+
+  const pillarEvidence = summary.sources.flatMap(source => [
     evidence(
-      `pillars.${index}.stemYinYang`,
-      `${pillar.position.value}天干阴阳`,
-      pillar.stemYinYang.value!,
-      pillar.stemYinYang
+      `pillars.${source.pillarIndex}.stemYinYang`,
+      `${source.position}天干阴阳`,
+      source.stem.value,
+      source.stem
     ),
     evidence(
-      `pillars.${index}.branchYinYang`,
-      `${pillar.position.value}地支阴阳`,
-      pillar.branchYinYang.value!,
-      pillar.branchYinYang
+      `pillars.${source.pillarIndex}.branchYinYang`,
+      `${source.position}地支阴阳`,
+      source.branch.value,
+      source.branch
     )
   ]);
 
@@ -450,18 +536,11 @@ function buildYinYangTheme(
     status: "ready",
     id: "yin-yang",
     title: "阴阳",
-    scope: `明字统计覆盖${coverageCount}个已确认位置`,
+    scope: `明字统计覆盖${summary.coverageCount}个已确认位置`,
     factIds: pillarEvidence.map(item => item.id),
     evidence: pillarEvidence,
     limitation: null,
-    yinYangSummary: {
-      coverageCount,
-      counts,
-      ratios: {
-        阳: yangRatio,
-        阴: 100 - yangRatio
-      }
-    }
+    yinYangSummary: summary
   };
 }
 
