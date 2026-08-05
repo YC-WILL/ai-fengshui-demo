@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import BaziMainlinePanel from "@/components/BaziMainlinePanel";
 import ProfessionalBaziPanel from "@/components/ProfessionalBaziPanel";
+import RelationshipMainlineFoundation from "@/components/RelationshipMainlineFoundation";
 import { computeBazi } from "@/lib/domain/bazi";
 import { buildBaziBirthMoonPhaseFacts } from "@/lib/domain/baziBirthMoonPhaseFacts";
 import { buildBaziBirthSolarTermFacts } from "@/lib/domain/baziBirthSolarTermFacts";
@@ -34,6 +35,7 @@ import { BirthProfileForm } from "@/components/TodayCorrespondence";
 import { PlateSaveControl, stablePlateSaveKey } from "@/components/PlateSaveControl";
 import { profileGenderLabel } from "@/lib/profileGender";
 import type { Gender } from "@/lib/types";
+import { buildRelationshipMainlineDataFlow } from "@/lib/relationshipMainlineDataFlow";
 import PlateContinuationNotice from "@/components/PlateContinuationNotice";
 import {
   cloneHomeInput,
@@ -261,6 +263,9 @@ export function RelationWorkspace({
   const [relationshipType, setRelationshipType] = useState<RelationshipType>(
     continuation?.input.relationshipType ?? "partner"
   );
+  const [relationshipView, setRelationshipView] = useState<"analysis" | "legacy">(
+    continuation ? "legacy" : "analysis"
+  );
   const firstChart = useMemo(() => profile ? computeBazi({
     gender: profile.gender,
     birthDate: profile.birthDate,
@@ -276,6 +281,23 @@ export function RelationWorkspace({
     timezone: "Asia/Shanghai",
     unknownTime: true
   }) : null, [otherDate]);
+  const relationshipCalculatedAt = useMemo(
+    () => new Date(),
+    [firstChart, secondChart]
+  );
+  const mainlineReading = useMemo(
+    () => firstChart && secondChart
+      ? buildRelationshipMainlineDataFlow({
+          personAChart: firstChart,
+          personBChart: secondChart,
+          personATimezoneBasis: "provided",
+          personBTimezoneBasis: "product_assumption",
+          relationshipTypeId: relationshipType,
+          calculatedAt: relationshipCalculatedAt
+        }).reading
+      : null,
+    [firstChart, secondChart, relationshipType, relationshipCalculatedAt]
+  );
   const facts = useMemo(() => firstChart && secondChart ? buildPairInteractionFacts(firstChart, secondChart) : null, [firstChart, secondChart]);
   const cards = useMemo(() => buildRelationshipObservationCards(facts, relationshipType), [facts, relationshipType]);
   const jointAction = useMemo(() => buildRelationshipJointAction(cards), [cards]);
@@ -305,68 +327,89 @@ export function RelationWorkspace({
           </div>
         </section>
 
-        {!facts ? <div className="plate-empty relation-empty">
+        {!facts || !mainlineReading ? <div className="plate-empty relation-empty">
           <span className="plate-seal" aria-hidden>合</span>
-          <div><h2 className="font-serif text-xl">先填写另一人的出生日期</h2><p className="mt-1 text-sm leading-6 text-ink/55">有了双方日柱后，再展开连接、摩擦与协作三项观察；资料不足时不会补写结论。</p></div>
+          <div><h2 className="font-serif text-xl">先填写另一人的出生日期</h2><p className="mt-1 text-sm leading-6 text-ink/55">资料齐备后，会按已确认事实依次展开双方基础、物象与关系结构；资料不足的部分不会补写。</p></div>
         </div> : <>
-          <section className="relation-summary" aria-labelledby="relation-summary-title">
-            <div><span className="section-kicker">{RELATIONSHIP_TYPES.find(item => item.id === relationshipType)?.label}关系 · 结构初见</span><h2 id="relation-summary-title" className="mt-2 font-serif text-2xl">先看你们怎样回应彼此</h2><p>这里不是两份个人性格并排，而是观察同一件事来到两个人之间时，双方可能先处理什么。</p><small>关系初见以双方日柱为观察入口，不代表完整合婚，也不判断关系结果；出生时辰不参与本次生活判断。</small></div>
-            <div className="relation-input-summary"><span>你的资料</span><b>{profile.birthDate}</b><span>对方资料</span><b>{otherDate}</b></div>
-          </section>
+          <nav className="relationship-view-switch" aria-label="关系内容层级">
+            <button type="button" aria-pressed={relationshipView === "analysis"} onClick={() => setRelationshipView("analysis")}>
+              <span>关系分析</span><small>连续阅读</small>
+            </button>
+            <button type="button" aria-pressed={relationshipView === "legacy"} onClick={() => setRelationshipView("legacy")}>
+              <span>关系盘1.0</span><small>旧版结果与保存</small>
+            </button>
+          </nav>
 
-          <div className="relationship-card-grid">
-            {cards.map((card, index) => <article className="relationship-card" key={card.id}>
-              <header><span>0{index + 1}</span><div><small>关系观察</small><h2>{card.title}</h2></div></header>
-              <p className="relationship-conclusion">{card.conclusion}</p>
-              <dl>
-                <div><dt>什么时候明显</dt><dd>{card.trigger}</dd></div>
-                <div><dt>能带来什么</dt><dd>{card.strength}</dd></div>
-                <div><dt>容易卡在哪里</dt><dd>{card.watchout}</dd></div>
-                <div><dt>可以怎么做</dt><dd>{card.action}</dd></div>
-              </dl>
-              <details className="relationship-evidence"><summary>为什么这样说</summary>
-                <div><b>主要依据</b>{card.evidence.filter(item => item.role === "primary").map(item => <p key={`${item.source}-${item.fact}`}><strong>{item.source}</strong>{item.fact}<small>{item.explanation}</small></p>)}</div>
-                <div><b>辅助线索</b>{card.evidence.filter(item => item.role === "supporting").map(item => <p key={`${item.source}-${item.fact}`}><strong>{item.source}</strong>{item.fact}<small>{item.explanation}</small></p>)}</div>
-                <p className="relationship-card-boundary"><strong>本卡边界</strong>{card.limitation}</p>
-              </details>
-            </article>)}
-          </div>
+          {relationshipView === "analysis" && (
+            <section className="relationship-mainline-result" aria-labelledby="relationship-mainline-result-title">
+              <header className="relation-summary">
+                <div><span className="section-kicker">{RELATIONSHIP_TYPES.find(item => item.id === relationshipType)?.label}关系 · 双方结构</span><h2 id="relationship-mainline-result-title" className="mt-2 font-serif text-2xl">从双方基础事实开始连续阅读</h2><p>先分别认识两个人的基础结构，再依次查看物象、阴阳、日值宿、五行、十神与日支关系。</p><small>只显示已经确认且满足准入条件的内容，不评分，也不判断关系结果。</small></div>
+                <div className="relation-input-summary"><span>你的资料</span><b>{profile.birthDate}</b><span>对方资料</span><b>{otherDate}</b></div>
+              </header>
+              <RelationshipMainlineFoundation {...mainlineReading} />
+            </section>
+          )}
 
-          {jointAction && <section className="relationship-joint-action"><span className="section-kicker">来自“{cards.find(card => card.id === jointAction.sourceCardId)?.title}”</span><h2>{jointAction.title}</h2><p>{jointAction.action}</p><small>{jointAction.durationMinutes}分钟内 · {jointAction.doneWhen}</small></section>}
+          {relationshipView === "legacy" && <>
+            <section className="relation-summary" aria-labelledby="relation-summary-title">
+              <div><span className="section-kicker">{RELATIONSHIP_TYPES.find(item => item.id === relationshipType)?.label}关系 · 1.0结构初见</span><h2 id="relation-summary-title" className="mt-2 font-serif text-2xl">查看原有互动观察</h2><p>这里保留关系盘1.0的观察、行动与日柱依据，供历史能力继续使用。</p><small>关系初见以双方日柱为观察入口，不代表完整合婚，也不判断关系结果；出生时辰不参与本次生活判断。</small></div>
+              <div className="relation-input-summary"><span>你的资料</span><b>{profile.birthDate}</b><span>对方资料</span><b>{otherDate}</b></div>
+            </section>
 
-          <section className="relationship-professional" aria-labelledby="relationship-pillars-title">
-            <span className="section-kicker">查看双方日柱</span><h2 id="relationship-pillars-title">日柱是本次关系观察的边界</h2>
-            <div className="pair-axis">
-              <PersonNode label="你" pillar={facts.first.pillar} element={facts.first.element} />
-              <div className="pair-bridge"><i /><span>{facts.elementRelation.label}</span><small>{facts.branchRelations.map(item => item.label).join(" · ")}</small></div>
-              <PersonNode label="对方" pillar={facts.second.pillar} element={facts.second.element} />
+            <div className="relationship-card-grid">
+              {cards.map((card, index) => <article className="relationship-card" key={card.id}>
+                <header><span>0{index + 1}</span><div><small>关系观察</small><h2>{card.title}</h2></div></header>
+                <p className="relationship-conclusion">{card.conclusion}</p>
+                <dl>
+                  <div><dt>什么时候明显</dt><dd>{card.trigger}</dd></div>
+                  <div><dt>能带来什么</dt><dd>{card.strength}</dd></div>
+                  <div><dt>容易卡在哪里</dt><dd>{card.watchout}</dd></div>
+                  <div><dt>可以怎么做</dt><dd>{card.action}</dd></div>
+                </dl>
+                <details className="relationship-evidence"><summary>为什么这样说</summary>
+                  <div><b>主要依据</b>{card.evidence.filter(item => item.role === "primary").map(item => <p key={`${item.source}-${item.fact}`}><strong>{item.source}</strong>{item.fact}<small>{item.explanation}</small></p>)}</div>
+                  <div><b>辅助线索</b>{card.evidence.filter(item => item.role === "supporting").map(item => <p key={`${item.source}-${item.fact}`}><strong>{item.source}</strong>{item.fact}<small>{item.explanation}</small></p>)}</div>
+                  <p className="relationship-card-boundary"><strong>本卡边界</strong>{card.limitation}</p>
+                </details>
+              </article>)}
             </div>
-          </section>
 
-          <section className="relationship-facts"><span className="section-kicker">日干怎样双向作用</span><h2>同一对日干，要从两个方向分别看</h2><div className="relationship-fact-grid"><article><b>{facts.firstPerspective.perspective}</b><strong>{facts.firstPerspective.tenGod}</strong><p>{facts.firstPerspective.fact}</p></article><article><b>{facts.secondPerspective.perspective}</b><strong>{facts.secondPerspective.tenGod}</strong><p>{facts.secondPerspective.fact}</p></article><article><b>五行与阴阳</b><strong>{facts.elementRelation.label}</strong><p>{facts.elementRelation.fact}；{facts.polarityFact}。</p></article></div><p className="bazi-method-note">“你看对方”和“对方看你”，是把双方日干互相作为参照得到的结构观察，用来提示可能的互动顺序；它不代表双方在现实中固定承担某种角色，也不等于完整四柱合参。</p></section>
+            {jointAction && <section className="relationship-joint-action"><span className="section-kicker">来自“{cards.find(card => card.id === jointAction.sourceCardId)?.title}”</span><h2>{jointAction.title}</h2><p>{jointAction.action}</p><small>{jointAction.durationMinutes}分钟内 · {jointAction.doneWhen}</small></section>}
 
-          <section className="relationship-facts"><span className="section-kicker">日支之间有什么关系</span><h2>名称保留，关系好坏不由它决定</h2><div className="relationship-branch-list">{facts.branchRelations.map(item => <article key={`${item.id}-${item.fact}`}><b>{item.label}</b><p>{item.fact}。{item.explanation}</p></article>)}</div><p className="bazi-method-note">同一对日支可能同时出现多种传统关系名称。它们表示不同观察角度，不自动互相抵消，也不共同生成吉凶结论。</p></section>
+            <section className="relationship-professional" aria-labelledby="relationship-pillars-title">
+              <span className="section-kicker">查看双方日柱</span><h2 id="relationship-pillars-title">日柱是本次关系观察的边界</h2>
+              <div className="pair-axis">
+                <PersonNode label="你" pillar={facts.first.pillar} element={facts.first.element} />
+                <div className="pair-bridge"><i /><span>{facts.elementRelation.label}</span><small>{facts.branchRelations.map(item => item.label).join(" · ")}</small></div>
+                <PersonNode label="对方" pillar={facts.second.pillar} element={facts.second.element} />
+              </div>
+            </section>
 
-          <details className="relationship-method"><summary>查看本次方法与边界</summary><p>{facts.boundary}</p><p>六合、六冲、六害、六破与刑是传统结构名称，不等于现实事件，也不替代你们对真实沟通和处境的判断。</p></details>
+            <section className="relationship-facts"><span className="section-kicker">日干怎样双向作用</span><h2>同一对日干，要从两个方向分别看</h2><div className="relationship-fact-grid"><article><b>{facts.firstPerspective.perspective}</b><strong>{facts.firstPerspective.tenGod}</strong><p>{facts.firstPerspective.fact}</p></article><article><b>{facts.secondPerspective.perspective}</b><strong>{facts.secondPerspective.tenGod}</strong><p>{facts.secondPerspective.fact}</p></article><article><b>五行与阴阳</b><strong>{facts.elementRelation.label}</strong><p>{facts.elementRelation.fact}；{facts.polarityFact}。</p></article></div><p className="bazi-method-note">“你看对方”和“对方看你”，是把双方日干互相作为参照得到的结构观察，用来提示可能的互动顺序；它不代表双方在现实中固定承担某种角色，也不等于完整四柱合参。</p></section>
+
+            <section className="relationship-facts"><span className="section-kicker">日支之间有什么关系</span><h2>名称保留，关系好坏不由它决定</h2><div className="relationship-branch-list">{facts.branchRelations.map(item => <article key={`${item.id}-${item.fact}`}><b>{item.label}</b><p>{item.fact}。{item.explanation}</p></article>)}</div><p className="bazi-method-note">同一对日支可能同时出现多种传统关系名称。它们表示不同观察角度，不自动互相抵消，也不共同生成吉凶结论。</p></section>
+
+            <details className="relationship-method"><summary>查看本次方法与边界</summary><p>{facts.boundary}</p><p>六合、六冲、六害、六破与刑是传统结构名称，不等于现实事件，也不替代你们对真实沟通和处境的判断。</p></details>
+
+            <PlateSaveControl
+              plateType="RELATION"
+              input={{
+                relationshipType,
+                otherBirthDate: otherDate,
+                ...(otherNickname.trim() ? { otherNickname: otherNickname.trim() } : {})
+              }}
+              resetKey={stablePlateSaveKey({
+                profile,
+                relationshipType,
+                otherBirthDate: otherDate,
+                otherNickname: otherNickname.trim() || undefined
+              })}
+              disabled={!facts}
+              disabledReason="填写有效的另一人出生日期并生成互动结果后才能保存"
+              relationPrivacyNote="只有点击保存后，另一人的出生日期和可选昵称才会保存到当前浏览器对应的账号记录中。"
+            />
+          </>}
         </>}
-
-        <PlateSaveControl
-          plateType="RELATION"
-          input={{
-            relationshipType,
-            otherBirthDate: otherDate,
-            ...(otherNickname.trim() ? { otherNickname: otherNickname.trim() } : {})
-          }}
-          resetKey={stablePlateSaveKey({
-            profile,
-            relationshipType,
-            otherBirthDate: otherDate,
-            otherNickname: otherNickname.trim() || undefined
-          })}
-          disabled={!facts}
-          disabledReason="填写有效的另一人出生日期并生成互动结果后才能保存"
-          relationPrivacyNote="只有点击保存后，另一人的出生日期和可选昵称才会保存到当前浏览器对应的账号记录中。"
-        />
       </div>
     </section>
   );

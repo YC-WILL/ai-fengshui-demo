@@ -68,11 +68,14 @@ describe("four plate product UI", () => {
     expect(baziPage).toContain("如有已确认的本命地支关系");
     expect(baziWorkspace).toContain("先读已确认的基础结构");
 
-    expect(relationshipPage).toContain('status="1.0 已冻结"');
-    expect(relationshipPage).toContain("先看三种互动");
-    expect(relationshipPage).toContain("一起试一个动作");
-    expect(relationshipPage).toContain("再查双方日柱");
-    expect(relationshipWorkspace.indexOf("relationship-setup")).toBeLessThan(relationshipWorkspace.indexOf("relationship-card-grid"));
+    expect(relationshipPage).toContain('status="关系分析已接入"');
+    expect(relationshipPage).toContain("认识双方基础");
+    expect(relationshipPage).toContain("进入关系物象");
+    expect(relationshipPage).toContain("查看结构事实");
+    expect(relationshipWorkspace).toContain('aria-label="关系内容层级"');
+    expect(relationshipWorkspace.indexOf("relationship-setup")).toBeLessThan(relationshipWorkspace.indexOf("relationship-view-switch"));
+    expect(relationshipWorkspace.indexOf("relationship-view-switch")).toBeLessThan(relationshipWorkspace.indexOf("<RelationshipMainlineFoundation"));
+    expect(relationshipWorkspace.indexOf("<RelationshipMainlineFoundation")).toBeLessThan(relationshipWorkspace.indexOf("relationship-card-grid"));
     expect(relationshipWorkspace.indexOf("relationship-card-grid")).toBeLessThan(relationshipWorkspace.indexOf("relationship-joint-action"));
     expect(relationshipWorkspace.indexOf("relationship-joint-action")).toBeLessThan(relationshipWorkspace.indexOf("relationship-professional"));
   });

@@ -13,7 +13,7 @@ export default async function MarriagePage({
 }) {
   const continuation = await getContinuation(searchParams?.from);
   return (
-    <MethodPageShell current="relation" title="关系盘" basis="日柱 · 双向十神 · 合冲刑害" status="1.0 已冻结" stages={["先看三种互动", "一起试一个动作", "再查双方日柱"]} lead="先看同一件事来到两个人之间时，双方可能怎样回应，再展开日柱与双向作用依据。不评分、不判断关系好坏。">
+    <MethodPageShell current="relation" title="关系盘" basis="双方八字 · 连续关系阅读" status="关系分析已接入" stages={["认识双方基础", "进入关系物象", "查看结构事实"]} lead="从双方已经确认的八字事实开始，连续查看基础、物象与关系结构。各区块只在事实可靠时显示，不评分、不判断关系好坏。">
       <RelationWorkspace
         key={continuation?.sourceId ?? "new-relation"}
         continuation={continuation}

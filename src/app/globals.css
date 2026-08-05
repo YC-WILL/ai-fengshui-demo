@@ -451,6 +451,12 @@ html, body {
 .bazi-view-switch button small { @apply mt-0.5 text-[9px] tracking-wide text-ink/35; }
 .bazi-view-switch button[aria-pressed="true"] { @apply border-cinnabar/25 bg-cinnabar text-white shadow-sm; }
 .bazi-view-switch button[aria-pressed="true"] small { @apply text-white/70; }
+.relationship-view-switch { @apply mb-5 mt-5 grid grid-cols-2 gap-1 rounded-2xl border border-mist bg-white/70 p-1 shadow-sm; }
+.relationship-view-switch button { @apply flex min-h-14 flex-col items-center justify-center rounded-xl border border-transparent px-3 py-2 text-ink/50 transition; }
+.relationship-view-switch button span { @apply font-serif text-base; }
+.relationship-view-switch button small { @apply mt-0.5 text-[9px] tracking-wide text-ink/35; }
+.relationship-view-switch button[aria-pressed="true"] { @apply border-cinnabar/25 bg-cinnabar text-white shadow-sm; }
+.relationship-view-switch button[aria-pressed="true"] small { @apply text-white/70; }
 
 .professional-bazi-v1 { @apply space-y-4; }
 .professional-bazi-intro { @apply flex flex-wrap items-end justify-between gap-3 rounded-2xl border border-mist bg-white/75 px-5 py-4 shadow-sm; }
@@ -686,6 +692,75 @@ html, body {
 .relationship-method { @apply mt-5 rounded-2xl border border-mist bg-white/60 p-5 text-sm shadow-sm; }
 .relationship-method summary { @apply cursor-pointer text-cinnabar; }
 .relationship-method p { @apply mt-3 leading-7 text-ink/55; }
+.relationship-mainline-foundation { @apply overflow-hidden rounded-2xl border border-gold/40 bg-white/70; }
+.relationship-mainline-foundation > h3 { @apply border-b border-gold/25 px-5 py-5 font-serif text-2xl font-normal text-ink/85; }
+.relationship-foundation-grid { @apply grid md:grid-cols-3; }
+.relationship-foundation-grid > section { @apply border-b border-gold/25 px-5 py-5 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0; }
+.relationship-foundation-field-label { @apply text-xs font-normal tracking-[0.14em] text-ink/45; }
+.relationship-foundation-grid dl { @apply mt-3 space-y-3; }
+.relationship-foundation-grid dl > div { @apply grid grid-cols-[3rem_minmax(0,1fr)] items-baseline gap-2; }
+.relationship-foundation-grid dt { @apply text-[11px] text-ink/40; }
+.relationship-foundation-grid dd { @apply font-serif text-lg text-ink/80; }
+.relationship-mainline-day-master { @apply mt-5 rounded-2xl border border-gold/40 bg-white/70 px-5 py-5; }
+.relationship-mainline-day-master > h3 { @apply font-serif text-2xl font-normal text-ink/85; }
+.relationship-mainline-day-master > div { @apply mt-4 space-y-3; }
+.relationship-mainline-day-master p { @apply text-base leading-8 text-ink/75; }
+.relationship-mainline-section, .relationship-mainline-imagery { @apply mt-5 rounded-2xl border border-gold/40 bg-white/70 px-5 py-5; }
+.relationship-mainline-section > h3, .relationship-mainline-imagery > h3 { @apply font-serif text-2xl font-normal text-ink/85; }
+.relationship-mainline-pair-lines { @apply mt-4 space-y-3; }
+.relationship-mainline-pair-lines > div { @apply grid grid-cols-[3rem_minmax(0,1fr)] items-baseline gap-2; }
+.relationship-mainline-pair-lines dt { @apply text-xs text-ink/45; }
+.relationship-mainline-pair-lines dd { @apply font-serif text-lg text-ink/80; }
+.relationship-mainline-imagery > h4 { @apply mt-4 font-serif text-xl font-normal text-cinnabar; }
+.relationship-mainline-imagery > div { @apply mt-4 space-y-4; }
+.relationship-mainline-imagery p { @apply text-base leading-8 text-ink/75; }
+.relationship-mainline-imagery-cores article { @apply border-b border-gold/20 pb-4 last:border-b-0 last:pb-0; }
+.relationship-mainline-imagery-cores h4 { @apply mb-2 font-serif text-xl font-normal text-cinnabar; }
+.relationship-mainline-imagery-interaction { @apply border-t border-gold/25 pt-4; }
+.relationship-mainline-yin-yang { @apply mt-5 rounded-2xl border border-gold/40 bg-white/70 px-5 py-5; }
+.relationship-mainline-yin-yang > h3 { @apply font-serif text-2xl font-normal text-ink/85; }
+.relationship-yin-yang-pair { @apply mt-4 space-y-5; }
+.relationship-yin-yang-pair article { @apply space-y-3; }
+.relationship-yin-yang-pair header { @apply flex items-baseline justify-between gap-3; }
+.relationship-yin-yang-pair header > b { @apply font-serif text-lg font-normal text-ink/80; }
+.relationship-yin-yang-pair header > small { @apply text-xs text-ink/45; }
+.relationship-yin-yang-pair article > div > span { @apply flex items-baseline justify-between gap-3 text-sm; }
+.relationship-yin-yang-pair article > div > span b { @apply font-normal text-ink/75; }
+.relationship-yin-yang-pair article > div > span small { @apply text-xs text-ink/45; }
+.relationship-yin-yang-pair article > div > i { @apply mt-1 block h-1.5 overflow-hidden rounded-full bg-rice; }
+.relationship-yin-yang-pair article > div > i > em { @apply block h-full rounded-full bg-cinnabar/55; }
+.relationship-mainline-birth-xiu { @apply mt-5 rounded-2xl border border-gold/40 bg-white/70 px-5 py-5; }
+.relationship-mainline-birth-xiu > h3 { @apply font-serif text-2xl font-normal text-ink/85; }
+.relationship-birth-xiu-pair { @apply mt-4 space-y-5; }
+.relationship-birth-xiu-pair article { @apply space-y-1; }
+.relationship-birth-xiu-pair header > b { @apply text-xs font-normal text-ink/50; }
+.relationship-birth-xiu-pair strong { @apply font-serif text-xl font-normal text-ink/80; }
+.relationship-birth-xiu-pair p { @apply text-sm text-ink/50; }
+.relationship-mainline-five-elements { @apply mt-5 rounded-2xl border border-gold/40 bg-white/70 px-5 py-5; }
+.relationship-mainline-five-elements > h3 { @apply font-serif text-2xl font-normal text-ink/85; }
+.relationship-five-elements-pair { @apply mt-4 space-y-5; }
+.relationship-five-elements-pair article { @apply space-y-3; }
+.relationship-five-elements-pair header { @apply flex items-baseline justify-between gap-3; }
+.relationship-five-elements-pair header > b { @apply font-serif text-lg font-normal text-ink/80; }
+.relationship-five-elements-pair header > small { @apply text-xs text-ink/45; }
+.relationship-five-elements-pair dl { @apply grid grid-cols-5 gap-2; }
+.relationship-five-elements-pair dl > div { @apply rounded-lg border border-mist bg-rice/35 px-2 py-2 text-center; }
+.relationship-five-elements-pair dt { @apply font-serif text-base text-ink/70; }
+.relationship-five-elements-pair dd { @apply mt-0.5 text-xs text-ink/45; }
+.relationship-mainline-ten-gods { @apply mt-5 rounded-2xl border border-gold/40 bg-white/70 px-5 py-5; }
+.relationship-mainline-ten-gods > h3 { @apply font-serif text-2xl font-normal text-ink/85; }
+.relationship-mainline-ten-gods > div { @apply mt-4 space-y-3; }
+.relationship-mainline-ten-gods p { @apply text-base leading-8 text-ink/75; }
+.relationship-mainline-day-branches { @apply mt-5 rounded-2xl border border-gold/40 bg-white/70 px-5 py-5; }
+.relationship-mainline-day-branches > h3 { @apply font-serif text-2xl font-normal text-ink/85; }
+.relationship-day-branch-pair { @apply mt-4 grid grid-cols-2 gap-3; }
+.relationship-day-branch-pair > div { @apply rounded-xl border border-mist bg-rice/35 px-4 py-3; }
+.relationship-day-branch-pair dt { @apply text-xs text-ink/45; }
+.relationship-day-branch-pair dd { @apply mt-1 font-serif text-xl text-ink/80; }
+.relationship-day-branch-narratives { @apply mt-5 space-y-5; }
+.relationship-day-branch-narratives article { @apply border-t border-gold/25 pt-4 first:border-t-0 first:pt-0; }
+.relationship-day-branch-narratives h4 { @apply font-serif text-xl font-normal text-cinnabar; }
+.relationship-day-branch-narratives p { @apply mt-2 text-base leading-8 text-ink/75; }
 
 .home-space-workspace { @apply space-y-5; }
 .home-input-panel { @apply rounded-2xl border border-mist bg-white/75 shadow-scroll; }
